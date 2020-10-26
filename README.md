@@ -1,4 +1,4 @@
-# Discord Electron
+# Electron Discord WebApp
 A Discord Web App based on the [Electron](https://github.com/electron/electron) engine.
 
 It is completely indpenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I used it to learn why my previous attepms of doing electron discord app have failed – it was because `nodeIntegration` was set to `true`. So thanks to the author for that comment he typed – wouldn't probably know that without checking it!
@@ -25,4 +25,4 @@ sudo npm install -g electron-builder
 See [their docs](https://www.electron.build/multi-platform-build) if you wish to learn how to use it.
 
 ## License
-This project is redistributed under the [MIT License](LICENSE.md).
+This project is redistributed under the [MIT License](LICENSE).
