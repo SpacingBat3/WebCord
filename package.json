@@ -1,0 +1,52 @@
+{
+  "name": "electron-discord-webapp",
+  "version": "0.1.0",
+  "description": "A Discord Web App based on the Electron Engine.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "keywords": [
+    "discord",
+    "webapp",
+    "electron"
+  ],
+  "author": "SpacingBat3",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpacingBat3/discord-electron-webapp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SpacingBat3/discord-electron-webapp/issues"
+  },
+  "homepage": "https://github.com/SpacingBat3/discord-electron-webapp#readme",
+  "build": {
+    "appId": "com.spacingbat3.webapp-discord-electron",
+    "linux": {
+      "target": [
+        "pacman",
+        "snap",
+        "deb"
+      ],
+      "desktop": {
+        "Name": "Discord",
+        "Icon": "discord",
+        "Comment": "Electron Web App for Discord.",
+        "Categories": [
+          "Network",
+          "discord",
+          "electron",
+          "web"
+        ]
+      },
+      "category": "Network"
+    }
+  },
+  "devDependencies": {
+    "electron": "^10.1.5",
+    "electron-builder": "^22.9.1"
+  }
+}
