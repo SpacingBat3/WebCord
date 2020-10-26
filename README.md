@@ -25,4 +25,4 @@ sudo npm install -g electron-builder
 See [their docs](https://www.electron.build/multi-platform-build) if you wish to learn how to use it.
 
 ## License
-This project is redistributed under the [MIT License](LICENSE).
+This project is redistributed under the [MIT License](LICENSE.md).
