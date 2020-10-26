@@ -1,23 +1,27 @@
 // Load the functions that we need to have from the electron
 const { app, BrowserWindow, Tray, Menu, MenuItem, shell } = require('electron')
 
+// Read properties from package.json
+var packageJson = require('./package.json');
+
 // Vars to modify app behavior
 var appName = 'Discord'
 var appURL = 'https://discord.com/app'
 var appIcon = 'icons/app.png'
 var appTrayIcon = 'icons/tray.png'
 var appTrayIconSmall = 'icons/tray-small.png'
-var wWidth = '1000'
-var wHeight = '600'
+var winWidth = 1000
+var winHeight = 600
 
 // "About" information
 var appFullName = 'Electron Discord WebApp'
-var appVersion = '0.1.0'
+var appVersion = packageJson.version;
 var appAuthor = 'Spacingbat3'
 var appCredits = "Thanks to GyozaGuy for his electron discord app – it was good source\nto learn about electron and making the Discord web app."
 var appYear = '2020' // the year from app exists
 var appRepo = "https://github.com/SpacingBat3/electron-discord-webapp"
-
+const singleInstance = app.requestSingleInstanceLock()
+var mainWindow
 // Add yourself there if you're doing PR to this repository.
 // The valid format if JavaScript array. ( = [var,"string"] )
 // Removing any entry of array there will deny your PR!
@@ -56,10 +60,10 @@ function createWindow () {
 	//Browser window
 	
 	const win = new BrowserWindow({
-		tittle: appName,
-		width: wWidth,
-		height: wHeight,
-		backgroundColor: "#202225",
+		title: appName,
+		height: winHeight,
+		width: winWidth,
+		backgroundColor: "#2F3136",
 		icon: appIcon,
 		webPreferences: {
 			nodeIntegration: false, // won't work with the true value
@@ -115,23 +119,26 @@ function createWindow () {
 	})
 
 	// Open external URLs in default browser
+
 	win.webContents.on('new-window', (event, externalURL) => {
 		event.preventDefault();
 		shell.openExternal(externalURL)
 	})
+	return win
 }
-
-const singleInstance = app.requestSingleInstanceLock()
 
 if (!singleInstance) {
 	app.quit()
 } else {
 	app.on('second-instance', (event, commandLine, workingDirectory) => {
-		if (win && win.isMinimized()) win.restore()
-		win.focus()
+		if (mainWindow){
+			if(!mainWindow.isVisible()) mainWindow.show()
+			if(mainWindow.isMinimized()) mainWindow.restore()
+			mainWindow.focus()
+		}
 	})
 	app.on('ready', () => {
-		createWindow()
+		mainWindow = createWindow() // catch window as mainWindow 
 	})
 }
 
@@ -143,7 +150,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
 	if (BrowserWindow.getAllWindows().length === 0) {
-		createWindow()
+		mainWindow = createWindow()
 	}
 })
 
