@@ -14,9 +14,6 @@ npm install && npm start
 ## Install
 Check the [releases](https://github.com/SpacingBat3/electron-discord-webapp/releases/).
 
-(Probably still empty through, so you need to run or build it by yourself)
-
-
 ## Build
 I recommend building this app with the `electron-builder` tool.
 You can install it on Linux using `npm` with the following command:
