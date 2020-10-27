@@ -16,6 +16,7 @@ Check the [releases](https://github.com/SpacingBat3/electron-discord-webapp/rele
 
 (Probably still empty through, so you need to run or build it by yourself)
 
+
 ## Build
 I recommend building this app with the `electron-builder` tool.
 You can install it on Linux using `npm` with the following command:
@@ -26,3 +27,7 @@ See [their docs](https://www.electron.build/multi-platform-build) if you wish to
 
 ## License
 This project is redistributed under the [MIT License](LICENSE).
+
+## Want to contribute to my project?
+- If you want to improve my code, do a Pull Request and add yourself to the list of contributors in `main.js`.
+- If you want to translate strings in `lang` folder, please visit [TRANSLATE.md](TRANSLATE.md).

@@ -1,8 +1,23 @@
-// Load the functions that we need to have from the electron
+// Load the stuff we need to have there:
 const { app, BrowserWindow, Tray, Menu, MenuItem, shell } = require('electron')
+const fs = require('fs')
 
 // Read properties from package.json
-var packageJson = require('./package.json');
+var packageJson = require('./package.json')
+
+// Load string translations:
+function loadTranslations() {
+	systemLang = app.getLocale() 
+	langDir = `./lang/${systemLang}/strings.json`
+	if(fs.existsSync(`./lang/${systemLang}/strings.json`)) {
+		langDir = `./lang/${systemLang}/strings.json`
+	} else {	
+		// Default lang to english
+		langDir = "./lang/en-GB/strings.json"
+	}
+	var l10nStrings = require(langDir)
+	return l10nStrings
+}
 
 // Vars to modify app behavior
 var appName = 'Discord'
@@ -17,7 +32,6 @@ var winHeight = 600
 var appFullName = 'Electron Discord WebApp'
 var appVersion = packageJson.version;
 var appAuthor = 'Spacingbat3'
-var appCredits = "Thanks to GyozaGuy for his electron discord app – it was good source\nto learn about electron and making the Discord web app."
 var appYear = '2020' // the year from app exists
 var appRepo = "https://github.com/SpacingBat3/electron-discord-webapp"
 const singleInstance = app.requestSingleInstanceLock()
@@ -55,9 +69,28 @@ if (process.platform == 'darwin') {
 	var fakeUserAgent = `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
 };
 
+		
+// "About" Panel:
+function aboutPanel() {
+	l10nStrings = loadTranslations()
+	const aboutWindow = app.setAboutPanelOptions({
+		applicationName: appFullName,
+		iconPath: appIcon,
+		applicationVersion: appVersion,
+		authors: appContributors,
+		website: appRepo,
+		credits: `${l10nStrings.contributors}${stringContributors}`,
+		copyright: `Copyright © ${copyYear} ${appAuthor}\n\n${l10nStrings.credits}`
+	})
+	return aboutWindow
+}
+
 function createWindow () {
 
-	//Browser window
+	// Load translations for this window:
+	l10nStrings = loadTranslations()
+
+	// Browser window
 	
 	const win = new BrowserWindow({
 		title: appName,
@@ -87,7 +120,7 @@ function createWindow () {
 		if (params.misspelledWord) {
 			cmenu.append(
 				new MenuItem({
-					label: 'Add to dictionary',
+					label: 'l10n-strings.disctionaryAdd',
 					click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
 				})
 			)
@@ -101,10 +134,10 @@ function createWindow () {
 	const contextMenu = Menu.buildFromTemplate([
 		{ label: 'Top Secret Cotrol Panel', enabled: false, icon: appTrayIconSmall },
 		{ type: 'separator' },
-		{ label: 'About', role: 'about', click: function() { app.showAboutPanel();;}},
+		{ label: l10nStrings.trayAbout, role: 'about', click: function() { app.showAboutPanel();;}},
 		{ type: 'separator' },
-		{ label: 'Toggle', click: function() { win.isVisible() ? win.hide() : win.show();; } },
-		{ label: 'Quit Discord', click: function() {  wantQuit=true; app.quit();; } }
+		{ label: l10nStrings.trayToggle, click: function() { win.isVisible() ? win.hide() : win.show();; } },
+		{ label: l10nStrings.trayQuit, click: function() {  wantQuit=true; app.quit();; } }
 	])
 	tray.setToolTip('Discord')
 	tray.setContextMenu(contextMenu)
@@ -138,7 +171,8 @@ if (!singleInstance) {
 		}
 	})
 	app.on('ready', () => {
-		mainWindow = createWindow() // catch window as mainWindow 
+		mainWindow = createWindow() // catch window as mainWindow
+		aboutWindow = aboutPanel()
 	})
 }
 
@@ -151,16 +185,6 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
 	if (BrowserWindow.getAllWindows().length === 0) {
 		mainWindow = createWindow()
+		aboutWindow = aboutPanel()
 	}
-})
-
-// About panel
-app.setAboutPanelOptions({
-	applicationName: appFullName,
-	iconPath: appIcon,
-	applicationVersion: appVersion,
-	authors: appContributors,
-	website: appRepo,
-	credits: `Authors and contributors: ${stringContributors}`,
-	copyright: `Copyright © ${copyYear} ${appAuthor}\n\n${appCredits}`
 })

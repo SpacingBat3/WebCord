@@ -1,0 +1,8 @@
+{
+	"trayAbout": "About",
+	"trayToggle": "Toggle",
+	"trayQuit": "Quit Discord",
+	"dictionaryAdd": "Add to the local dictrionary",
+	"contributors": "Authors and contributors:",
+	"credits": "Thanks to GyozaGuy for his electron discord app – it was good source\nto learn about electron and making the Discord web app."
+}
