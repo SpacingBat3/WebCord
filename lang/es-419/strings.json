@@ -1,0 +1,8 @@
+{
+	"trayAbout": "Acerca de",
+	"trayToggle": "Alternar",
+	"trayQuit": "Salir de Discord",
+	"dictionaryAdd": "Añadir al diccionario local",
+	"contributors": "Autores y contribuyentes:",
+	"credits": "Gracias a GyozaGuy por su aplicacion de Discord Electron – Fue una buena fuente para aprender acerca de Electron y la creación de la aplicación web de Discord."
+}
