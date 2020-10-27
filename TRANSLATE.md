@@ -9,4 +9,4 @@
 
 # The people that helped me with the app translation:
 (add yourself there if you weren't added after you did PR):
-- no one (seriously, we need a translators);
+- MrCoolAndroid
