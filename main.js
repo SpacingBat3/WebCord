@@ -103,7 +103,7 @@ function createWindow () {
 		{ type: 'separator' },
 		{ label: 'About', role: 'about', click: function() { app.showAboutPanel();;}},
 		{ type: 'separator' },
-		{ label: 'Toogle', click: function() { win.isVisible() ? win.hide() : win.show();; } },
+		{ label: 'Toggle', click: function() { win.isVisible() ? win.hide() : win.show();; } },
 		{ label: 'Quit Discord', click: function() {  wantQuit=true; app.quit();; } }
 	])
 	tray.setToolTip('Discord')
