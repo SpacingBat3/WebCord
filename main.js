@@ -2,21 +2,30 @@
 const { app, BrowserWindow, Tray, Menu, MenuItem, shell } = require('electron')
 const fs = require('fs')
 
-// Get current app dir
+// Get current app dir – also removes the need of importing icons manualy to the electron package dir.
 var appDir = app.getAppPath()
+
+// Check if we are using the packaged version – fixes `fs` for electron packagers.
+// Seems to break the electron, when it is using the same variable (so needed to specify the new one)
+if (fs.existsSync(`${appDir}/resources/app.asar`)) {
+	var appFsDir = `${appDir}/resources/app.asar`
+} else {
+	var appFsDir = appDir
+}
 
 // Read properties from package.json
 var packageJson = require(`${appDir}/package.json`)
 
 // Load string translations:
 function loadTranslations() {
-	systemLang = app.getLocale() 
-	langDir = `${appDir}/lang/${systemLang}/strings.json`
-	if(fs.existsSync(`${appDir}/lang/${systemLang}/strings.json`)) {
-		langDir = `${appDir}/lang/${systemLang}/strings.json`
-	} else {	
+	var systemLang = app.getLocale()
+	var langDir = `lang/${systemLang}/strings.json`
+	if(fs.existsSync(`${appFsDir}/${langDir}`)) {
+		// Always recycle variables ;)
+		var langDir = `${appDir}/lang/${systemLang}/strings.json`
+	} else {
 		// Default lang to english
-		langDir = `${appDir}/lang/en-GB/strings.json`
+		var langDir = `${appDir}/lang/en-GB/strings.json`
 	}
 	var l10nStrings = require(langDir)
 	return l10nStrings
@@ -75,6 +84,7 @@ if (process.platform == 'darwin') {
 
 		
 // "About" Panel:
+
 function aboutPanel() {
 	l10nStrings = loadTranslations()
 	const aboutWindow = app.setAboutPanelOptions({
