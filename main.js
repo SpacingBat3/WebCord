@@ -2,18 +2,21 @@
 const { app, BrowserWindow, Tray, Menu, MenuItem, shell } = require('electron')
 const fs = require('fs')
 
+// Get current app dir
+var appDir = app.getAppPath()
+
 // Read properties from package.json
-var packageJson = require('./package.json')
+var packageJson = require(`${appDir}/package.json`)
 
 // Load string translations:
 function loadTranslations() {
 	systemLang = app.getLocale() 
-	langDir = `./lang/${systemLang}/strings.json`
-	if(fs.existsSync(`./lang/${systemLang}/strings.json`)) {
-		langDir = `./lang/${systemLang}/strings.json`
+	langDir = `${appDir}/lang/${systemLang}/strings.json`
+	if(fs.existsSync(`${appDir}/lang/${systemLang}/strings.json`)) {
+		langDir = `${appDir}/lang/${systemLang}/strings.json`
 	} else {	
 		// Default lang to english
-		langDir = "./lang/en-GB/strings.json"
+		langDir = `${appDir}/lang/en-GB/strings.json`
 	}
 	var l10nStrings = require(langDir)
 	return l10nStrings
@@ -22,9 +25,9 @@ function loadTranslations() {
 // Vars to modify app behavior
 var appName = 'Discord'
 var appURL = 'https://discord.com/app'
-var appIcon = 'icons/app.png'
-var appTrayIcon = 'icons/tray.png'
-var appTrayIconSmall = 'icons/tray-small.png'
+var appIcon = `${appDir}/icons/app.png`
+var appTrayIcon = `${appDir}/icons/tray.png`
+var appTrayIconSmall = `${appDir}/icons/tray-small.png`
 var winWidth = 1000
 var winHeight = 600
 
@@ -32,10 +35,9 @@ var winHeight = 600
 var appFullName = 'Electron Discord WebApp'
 var appVersion = packageJson.version;
 var appAuthor = 'Spacingbat3'
-var appYear = '2020' // the year from app exists
+var appYear = '2020' // the year since this app exists
 var appRepo = "https://github.com/SpacingBat3/electron-discord-webapp"
-const singleInstance = app.requestSingleInstanceLock()
-var mainWindow
+
 // Add yourself there if you're doing PR to this repository.
 // The valid format if JavaScript array. ( = [var,"string"] )
 // Removing any entry of array there will deny your PR!
@@ -47,11 +49,13 @@ var appContributors = [
 
 // "Static" Variables that shouldn't be changed
 
-var chromeVersion = process.versions['chrome']
+var chromeVersion = process.versions.chrome
 let tray = null
 var wantQuit = false
 var currentYear = new Date().getFullYear()
 var stringContributors = appContributors.join(', ')
+const singleInstance = app.requestSingleInstanceLock()
+var mainWindow
 
 // Year format for copyright
 if (appYear == currentYear){
