@@ -4,15 +4,16 @@ const fs = require('fs')
 
 // Get current app dir – also removes the need of importing icons manualy to the electron package dir.
 var appDir = app.getAppPath()
-
-// Check if we are using the packaged version – fixes `fs` for electron packagers.
-// Seems to break the electron, when it is using the same variable (so needed to specify the new one)
-if (fs.existsSync(`${appDir}/resources/app.asar`)) {
-	var appFsDir = `${appDir}/resources/app.asar`
+// Somehow specifying appFsDir fixes `fs`
+var appFsDir = appDir
+// Check if we are using the packaged version.
+// Fix for "About" icon (that can't be loaded with the electron)
+if (appDir.indexOf("app.asar") < 0) {
+	var appIconDir = `${appDir}/icons`
 } else {
-	var appFsDir = appDir
+	var appIconDir = process.resourcesPath
 }
-
+console.log(appDir.indexOf("app.asar"))
 // Read properties from package.json
 var packageJson = require(`${appDir}/package.json`)
 
@@ -34,7 +35,7 @@ function loadTranslations() {
 // Vars to modify app behavior
 var appName = 'Discord'
 var appURL = 'https://discord.com/app'
-var appIcon = `${appDir}/icons/app.png`
+var appIcon = `${appIconDir}/app.png`
 var appTrayIcon = `${appDir}/icons/tray.png`
 var appTrayIconSmall = `${appDir}/icons/tray-small.png`
 var winWidth = 1000

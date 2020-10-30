@@ -43,7 +43,13 @@
         ]
       },
       "category": "Network"
-    }
+    },
+	"extraResources": [
+      {"from":"icons/app.png","to":"app.png"}
+    ],
+    "extraFiles": [
+      "LICENSE.md" 
+    ]
   },
   "devDependencies": {
     "electron": "^10.1.5",
