@@ -8,5 +8,5 @@
 - you're done!
 
 # The people that helped me with the app translation:
-(add yourself there if you weren't added after you did PR):
-- MrCoolAndroid
+(add yourself there if you weren't added before/after you do a PR):
+- [MrCoolAndroid](https://github.com/MrCoolAndroid)

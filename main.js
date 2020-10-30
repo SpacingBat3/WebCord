@@ -4,17 +4,19 @@ const fs = require('fs')
 
 // Get current app dir – also removes the need of importing icons manualy to the electron package dir.
 var appDir = app.getAppPath()
-// Somehow specifying appFsDir fixes `fs`
+
+// Somehow specifying appFsDir instead appDir fixes `fs`
 var appFsDir = appDir
+
 // Check if we are using the packaged version.
-// Fix for "About" icon (that can't be loaded with the electron)
+// Fix for "About" icon (that can't be loaded with the electron when it is packaged in ASAR)
 if (appDir.indexOf("app.asar") < 0) {
 	var appIconDir = `${appDir}/icons`
 } else {
 	var appIconDir = process.resourcesPath
 }
-console.log(appDir.indexOf("app.asar"))
-// Read properties from package.json
+
+// Read properties from *.json's files
 var packageJson = require(`${appDir}/package.json`)
 
 // Load string translations:
@@ -44,18 +46,18 @@ var winHeight = 600
 // "About" information
 var appFullName = 'Electron Discord WebApp'
 var appVersion = packageJson.version;
-var appAuthor = 'Spacingbat3'
+var appAuthor = packageJson.author
 var appYear = '2020' // the year since this app exists
-var appRepo = "https://github.com/SpacingBat3/electron-discord-webapp"
+var appRepo = packageJson.homepage;
 
-// Add yourself there if you're doing PR to this repository.
-// The valid format if JavaScript array. ( = [var,"string"] )
-// Removing any entry of array there will deny your PR!
-// Same when spamming random entries!
 
-var appContributors = [
-	appAuthor
-]
+/* Remember to add yourself to the contributors array in the package.json
+   If you're improving the code of this application */
+if (Array.isArray(packageJson.contributors) && packageJson.contributors.length) {
+	var appContributors = [ appAuthor, ...packageJson.contributors ]
+} else {
+	var appContributors = [appAuthor]
+}
 
 // "Static" Variables that shouldn't be changed
 
@@ -80,7 +82,18 @@ if (process.platform == 'darwin') {
 } else if (process.platform == 'win32') {
 	var fakeUserAgent = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
 } else {
-	var fakeUserAgent = `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
+	/* Don't lie we're using ARM (or x86) CPU – maybe then Discord will understand
+	then how popular it is on Raspberries and Linux ARM ;) */
+	if (process.arch == 'arm64') {
+		var cpuArch = "aarch64"
+	} else if (process.arch == 'arm') {
+		var cpuArch = "armv7"
+	} else if (process.arch == 'ia32') {
+		var cpuArch = "x86"
+	} else {
+		var cpuArch = "x86_64"
+	}
+	var fakeUserAgent = `Mozilla/5.0 (X11; Linux ${cpuArch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
 };
 
 		
@@ -94,7 +107,7 @@ function aboutPanel() {
 		applicationVersion: appVersion,
 		authors: appContributors,
 		website: appRepo,
-		credits: `${l10nStrings.contributors}${stringContributors}`,
+		credits: `${l10nStrings.contributors} ${stringContributors}`,
 		copyright: `Copyright © ${copyYear} ${appAuthor}\n\n${l10nStrings.credits}`
 	})
 	return aboutWindow
@@ -125,20 +138,32 @@ function createWindow () {
 	// Contex Menu with spell checker
 
 	win.webContents.on('context-menu', (event, params) => {
-		const cmenu = new Menu()
+		const cmenu = new Menu.buildFromTemplate([
+			{ type: 'separator'},
+			{ label: l10nStrings.contextCut, role: 'cut' },
+			{ label: l10nStrings.contextCopy, role: 'copy' },
+			{ label: l10nStrings.contextPaste, role: 'paste' },
+			{ type: 'separator'},
+		])
+		// All stuff associated to the dictionary
+		let dictionaryPos = 0
 		for (const suggestion of params.dictionarySuggestions) {
-			cmenu.append(new MenuItem({
+			cmenu.insert(dictionaryPos++,new MenuItem({
 				label: suggestion,
-				click: () => win.webContents.replaceMisspelling(suggestion)
+				click: () => win.webContents.replaceMisspelling(suggestion),
 			}))
 		}
 		if (params.misspelledWord) {
-			cmenu.append(
-				new MenuItem({
-					label: 'l10n-strings.disctionaryAdd',
-					click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
-				})
-			)
+			cmenu.insert(dictionaryPos++,new MenuItem({
+				type: 'separator'
+			}))
+			cmenu.insert(dictionaryPos++,new MenuItem({
+				label: l10nStrings.contextDictionaryAdd,
+				click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
+			}))
+			cmenu.insert(dictionaryPos++,new MenuItem({
+				type: 'separator'
+			}))
 		}
 		cmenu.popup()
 	})

@@ -5,6 +5,14 @@ It is completely indpenendent from [Discord-Electron](https://github.com/GyozaGu
 
 I previously forked his work, but now "I've stolen what's mine" from the code I've written in the fork, polished it a little and done this project. I've rewritten it from scratch, so it's simpler than it were before (for me) ~~and actually removes the "variable hell" of the original project~~.
 
+## Contents:
+- [Run from the source](#run)
+- [Install binaries](#install)
+- [Build](#build)
+- [Package](#package)
+- [License](#license)
+- [Contribution](#want-to-contribute-to-my-project)
+
 ## Run
 Go to your cloned repository and execute this as a regular user:
 ```sh
@@ -16,11 +24,24 @@ Check the [releases](https://github.com/SpacingBat3/electron-discord-webapp/rele
 
 ## Build
 I recommend building this app with the `electron-builder` tool.
-You can install it on Linux using `npm` with the following command:
+You can run it and install as nodejs module with:
 ```sh
-sudo npm install -g electron-builder
+npm install && npm run dist
 ```
-See [their docs](https://www.electron.build/multi-platform-build) if you wish to learn how to use it.
+See [their docs](https://www.electron.build/multi-platform-build) if you wish to learn it's usage or type `npm run dist --help` for the built-in help.
+
+Eg.
+```sh
+```
+To built the project for 
+
+## Package
+The app uses also `electron-builder` to quickly produce unpackaged directory (eg. for testing purpouses).
+You can use it (without globally installing it on your OS) like this:
+```sh
+npm install && npm run pack
+```
+This will produce a `./dist/*-unpackaged` directory containing the build.
 
 ## License
 This project is redistributed under the [MIT License](LICENSE).
