@@ -207,6 +207,10 @@ function createWindow () {
 		if(!win.isFocused()) tray.setImage(appTrayPing);
 	})
 
+	ipcMain.on('notification-clicked', () => {
+		tray.setImage(appTrayIcon)
+	})
+
 	app.on('browser-window-focus', () => {
 		tray.setImage(appTrayIcon)
 	})

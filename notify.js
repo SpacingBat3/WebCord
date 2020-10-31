@@ -13,6 +13,9 @@ var NativeNotification = Notification
 Notification = function(title, options) {
 	var notification = new NativeNotification(title, options)
 	ipc.send('receive-notification')
+	notification.on('click', () => {
+		ipc.send('notification-clicked')
+	})
 	return notification
 }
 

@@ -30,10 +30,10 @@ npm install && npm run dist
 ```
 See [their docs](https://www.electron.build/multi-platform-build) if you wish to learn it's usage or type `npm run dist --help` for the built-in help.
 
-Eg.
+I've also made a quick script to produce binaries for all architectures on Linux:
 ```sh
+npm run build-linux
 ```
-To built the project for 
 
 ## Package
 The app uses also `electron-builder` to quickly produce unpackaged directory (eg. for testing purpouses).
