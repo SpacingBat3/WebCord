@@ -1,6 +1,7 @@
 // Load the stuff we need to have there:
-const { app, BrowserWindow, Tray, Menu, MenuItem, shell } = require('electron')
+const { app, BrowserWindow, Tray, Menu, MenuItem, shell, ipcMain } = require('electron')
 const fs = require('fs')
+
 
 // Get current app dir – also removes the need of importing icons manualy to the electron package dir.
 var appDir = app.getAppPath()
@@ -39,6 +40,7 @@ var appName = 'Discord'
 var appURL = 'https://discord.com/app'
 var appIcon = `${appIconDir}/app.png`
 var appTrayIcon = `${appDir}/icons/tray.png`
+var appTrayPing = `${appDir}/icons/tray-ping.png`
 var appTrayIconSmall = `${appDir}/icons/tray-small.png`
 var winWidth = 1000
 var winHeight = 600
@@ -128,7 +130,8 @@ function createWindow () {
 		icon: appIcon,
 		webPreferences: {
 			nodeIntegration: false, // won't work with the true value
-			devTools: false
+			devTools: false,
+			preload: `${appDir}/notify.js` // a way to do a ping–pong
 		}
 	})
 	win.loadURL(appURL,{userAgent: fakeUserAgent})
@@ -197,6 +200,18 @@ function createWindow () {
 		event.preventDefault();
 		shell.openExternal(externalURL)
 	})
+	
+	// Notifications:
+	
+	ipcMain.on('receive-notification', () => {
+		if(!win.isFocused()) tray.setImage(appTrayPing);
+	})
+
+	app.on('browser-window-focus', () => {
+		tray.setImage(appTrayIcon)
+	})
+	
+	// Needed to "cap" the window:
 	return win
 }
 
