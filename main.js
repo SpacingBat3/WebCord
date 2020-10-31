@@ -1,19 +1,35 @@
 // Load the stuff we need to have there:
-const { app, BrowserWindow, Tray, Menu, MenuItem, shell } = require('electron')
+const { app, BrowserWindow, Tray, Menu, MenuItem, shell, ipcMain } = require('electron')
 const fs = require('fs')
 
-// Read properties from package.json
-var packageJson = require('./package.json')
+
+// Get current app dir – also removes the need of importing icons manualy to the electron package dir.
+var appDir = app.getAppPath()
+
+// Somehow specifying appFsDir instead appDir fixes `fs`
+var appFsDir = appDir
+
+// Check if we are using the packaged version.
+// Fix for "About" icon (that can't be loaded with the electron when it is packaged in ASAR)
+if (appDir.indexOf("app.asar") < 0) {
+	var appIconDir = `${appDir}/icons`
+} else {
+	var appIconDir = process.resourcesPath
+}
+
+// Read properties from *.json's files
+var packageJson = require(`${appDir}/package.json`)
 
 // Load string translations:
 function loadTranslations() {
-	systemLang = app.getLocale() 
-	langDir = `./lang/${systemLang}/strings.json`
-	if(fs.existsSync(`./lang/${systemLang}/strings.json`)) {
-		langDir = `./lang/${systemLang}/strings.json`
-	} else {	
+	var systemLang = app.getLocale()
+	var langDir = `lang/${systemLang}/strings.json`
+	if(fs.existsSync(`${appFsDir}/${langDir}`)) {
+		// Always recycle variables ;)
+		var langDir = `${appDir}/lang/${systemLang}/strings.json`
+	} else {
 		// Default lang to english
-		langDir = "./lang/en-GB/strings.json"
+		var langDir = `${appDir}/lang/en-GB/strings.json`
 	}
 	var l10nStrings = require(langDir)
 	return l10nStrings
@@ -22,36 +38,38 @@ function loadTranslations() {
 // Vars to modify app behavior
 var appName = 'Discord'
 var appURL = 'https://discord.com/app'
-var appIcon = 'icons/app.png'
-var appTrayIcon = 'icons/tray.png'
-var appTrayIconSmall = 'icons/tray-small.png'
+var appIcon = `${appIconDir}/app.png`
+var appTrayIcon = `${appDir}/icons/tray.png`
+var appTrayPing = `${appDir}/icons/tray-ping.png`
+var appTrayIconSmall = `${appDir}/icons/tray-small.png`
 var winWidth = 1000
 var winHeight = 600
 
 // "About" information
 var appFullName = 'Electron Discord WebApp'
 var appVersion = packageJson.version;
-var appAuthor = 'Spacingbat3'
-var appYear = '2020' // the year from app exists
-var appRepo = "https://github.com/SpacingBat3/electron-discord-webapp"
-const singleInstance = app.requestSingleInstanceLock()
-var mainWindow
-// Add yourself there if you're doing PR to this repository.
-// The valid format if JavaScript array. ( = [var,"string"] )
-// Removing any entry of array there will deny your PR!
-// Same when spamming random entries!
+var appAuthor = packageJson.author
+var appYear = '2020' // the year since this app exists
+var appRepo = packageJson.homepage;
 
-var appContributors = [
-	appAuthor
-]
+
+/* Remember to add yourself to the contributors array in the package.json
+   If you're improving the code of this application */
+if (Array.isArray(packageJson.contributors) && packageJson.contributors.length) {
+	var appContributors = [ appAuthor, ...packageJson.contributors ]
+} else {
+	var appContributors = [appAuthor]
+}
 
 // "Static" Variables that shouldn't be changed
 
-var chromeVersion = process.versions['chrome']
+var chromeVersion = process.versions.chrome
 let tray = null
 var wantQuit = false
 var currentYear = new Date().getFullYear()
 var stringContributors = appContributors.join(', ')
+const singleInstance = app.requestSingleInstanceLock()
+var mainWindow
 
 // Year format for copyright
 if (appYear == currentYear){
@@ -66,11 +84,23 @@ if (process.platform == 'darwin') {
 } else if (process.platform == 'win32') {
 	var fakeUserAgent = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
 } else {
-	var fakeUserAgent = `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
+	/* Don't lie we're using ARM (or x86) CPU – maybe then Discord will understand
+	then how popular it is on Raspberries and Linux ARM ;) */
+	if (process.arch == 'arm64') {
+		var cpuArch = "aarch64"
+	} else if (process.arch == 'arm') {
+		var cpuArch = "armv7"
+	} else if (process.arch == 'ia32') {
+		var cpuArch = "x86"
+	} else {
+		var cpuArch = "x86_64"
+	}
+	var fakeUserAgent = `Mozilla/5.0 (X11; Linux ${cpuArch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
 };
 
 		
 // "About" Panel:
+
 function aboutPanel() {
 	l10nStrings = loadTranslations()
 	const aboutWindow = app.setAboutPanelOptions({
@@ -79,7 +109,7 @@ function aboutPanel() {
 		applicationVersion: appVersion,
 		authors: appContributors,
 		website: appRepo,
-		credits: `${l10nStrings.contributors}${stringContributors}`,
+		credits: `${l10nStrings.contributors} ${stringContributors}`,
 		copyright: `Copyright © ${copyYear} ${appAuthor}\n\n${l10nStrings.credits}`
 	})
 	return aboutWindow
@@ -100,7 +130,8 @@ function createWindow () {
 		icon: appIcon,
 		webPreferences: {
 			nodeIntegration: false, // won't work with the true value
-			devTools: false
+			devTools: false,
+			preload: `${appDir}/notify.js` // a way to do a ping–pong
 		}
 	})
 	win.loadURL(appURL,{userAgent: fakeUserAgent})
@@ -110,20 +141,32 @@ function createWindow () {
 	// Contex Menu with spell checker
 
 	win.webContents.on('context-menu', (event, params) => {
-		const cmenu = new Menu()
+		const cmenu = new Menu.buildFromTemplate([
+			{ type: 'separator'},
+			{ label: l10nStrings.contextCut, role: 'cut' },
+			{ label: l10nStrings.contextCopy, role: 'copy' },
+			{ label: l10nStrings.contextPaste, role: 'paste' },
+			{ type: 'separator'},
+		])
+		// All stuff associated to the dictionary
+		let dictionaryPos = 0
 		for (const suggestion of params.dictionarySuggestions) {
-			cmenu.append(new MenuItem({
+			cmenu.insert(dictionaryPos++,new MenuItem({
 				label: suggestion,
-				click: () => win.webContents.replaceMisspelling(suggestion)
+				click: () => win.webContents.replaceMisspelling(suggestion),
 			}))
 		}
 		if (params.misspelledWord) {
-			cmenu.append(
-				new MenuItem({
-					label: 'l10n-strings.disctionaryAdd',
-					click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
-				})
-			)
+			cmenu.insert(dictionaryPos++,new MenuItem({
+				type: 'separator'
+			}))
+			cmenu.insert(dictionaryPos++,new MenuItem({
+				label: l10nStrings.contextDictionaryAdd,
+				click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
+			}))
+			cmenu.insert(dictionaryPos++,new MenuItem({
+				type: 'separator'
+			}))
 		}
 		cmenu.popup()
 	})
@@ -157,6 +200,22 @@ function createWindow () {
 		event.preventDefault();
 		shell.openExternal(externalURL)
 	})
+	
+	// Notifications:
+	
+	ipcMain.on('receive-notification', () => {
+		if(!win.isFocused()) tray.setImage(appTrayPing);
+	})
+
+	ipcMain.on('notification-clicked', () => {
+		tray.setImage(appTrayIcon)
+	})
+
+	app.on('browser-window-focus', () => {
+		tray.setImage(appTrayIcon)
+	})
+	
+	// Needed to "cap" the window:
 	return win
 }
 

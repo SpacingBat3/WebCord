@@ -1,12 +1,13 @@
 {
   "name": "electron-discord-webapp",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "A Discord Web App based on the Electron Engine.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "build-linux": "electron-builder -l tar.gz --arm64 --armv7l --x64 --ia32"
   },
   "keywords": [
     "discord",
@@ -17,12 +18,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SpacingBat3/discord-electron-webapp.git"
+    "url": "git+https://github.com/SpacingBat3/electron-discord-webapp"
   },
   "bugs": {
-    "url": "https://github.com/SpacingBat3/discord-electron-webapp/issues"
+    "url": "https://github.com/SpacingBat3/electron-discord-webapp/issues"
   },
-  "homepage": "https://github.com/SpacingBat3/discord-electron-webapp#readme",
+  "homepage": "https://github.com/SpacingBat3/electron-discord-webapp#readme",
   "build": {
     "appId": "com.spacingbat3.webapp-discord-electron",
     "linux": {
@@ -43,10 +44,20 @@
         ]
       },
       "category": "Network"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "icons/app.png",
+        "to": "app.png"
+      }
+    ],
+    "extraFiles": [
+      "LICENSE.md"
+    ]
   },
   "devDependencies": {
     "electron": "^10.1.5",
     "electron-builder": "^22.9.1"
-  }
+  },
+  "dependencies": {}
 }
