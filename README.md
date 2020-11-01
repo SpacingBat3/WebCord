@@ -1,4 +1,12 @@
 # Electron Discord WebApp
+[![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](https://github.com/SpacingBat3/electron-discord-webapp/LICENSE.md)
+[![Electron](https://img.shields.io/badge/Made%20with-Electron-486F8F.svg)](https://www.electronjs.org/)
+[![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg)](https://github.com/SpacingBat3/electron-discord-webapp/tags)
+[![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg)](https://github.com/SpacingBat3/electron-discord-webapp/releases)
+[![GitHub contributors](https://img.shields.io/github/contributors/SpacingBat3/electron-discord-webapp.svg)](https://github.com/SpacingBat3/electron-discord-webapp/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![Open Source?](https://badgen.net/badge/RPi%20Friendly%3F/Yes!/602739?icon=https://raw.githubusercontent.com/8radm1n/vendor-icons-svg/702f2ac88acc71759ce623bc5000a596195e9db3/raspberry-pi-logo.svg)](#)
+
 A Discord Web App based on the [Electron](https://github.com/electron/electron) engine.
 
 It is completely indpenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I used it to learn why my previous attepms of doing electron discord app have failed – it was because `nodeIntegration` was set to `true`. So thanks to the author for that comment he typed – wouldn't probably know that without checking it!
