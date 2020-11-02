@@ -175,7 +175,7 @@ function createWindow () {
 
 	tray = new Tray(appTrayIcon)
 	const contextMenu = Menu.buildFromTemplate([
-		{ label: 'Top Secret Cotrol Panel', enabled: false, icon: appTrayIconSmall },
+		{ label: 'Top Secret Control Panel', enabled: false, icon: appTrayIconSmall },
 		{ type: 'separator' },
 		{ label: l10nStrings.trayAbout, role: 'about', click: function() { app.showAboutPanel();;}},
 		{ type: 'separator' },
