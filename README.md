@@ -5,7 +5,7 @@
 [![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg)](https://github.com/SpacingBat3/electron-discord-webapp/releases)
 [![GitHub contributors](https://img.shields.io/github/contributors/SpacingBat3/electron-discord-webapp.svg)](https://github.com/SpacingBat3/electron-discord-webapp/graphs/contributors)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![Open Source?](https://badgen.net/badge/RPi%20Friendly%3F/Yes!/c51a4a?icon=https://raw.githubusercontent.com/8radm1n/vendor-icons-svg/702f2ac88acc71759ce623bc5000a596195e9db3/raspberry-pi-logo.svg)](https://github.com/Botspot/pi-apps)
+[![Pi apps](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://raw.githubusercontent.com/Botspot/pi-apps/3d61f713573ba591aba50c32dd95c9df2f845b37/icons/logo.svg)](https://github.com/Botspot/pi-apps)
 
 A Discord Web App based on the [Electron](https://github.com/electron/electron) engine.
 
