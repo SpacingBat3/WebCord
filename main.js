@@ -1,7 +1,7 @@
 // Load the stuff we need to have there:
 const { app, BrowserWindow, Tray, Menu, MenuItem, shell, ipcMain } = require('electron')
 const fs = require('fs')
-
+const appConfig = new require('electron-json-config')
 
 // Get current app dir – also removes the need of importing icons manualy to the electron package dir.
 var appDir = app.getAppPath()
@@ -54,7 +54,7 @@ var appRepo = packageJson.homepage;
 
 
 /* Remember to add yourself to the contributors array in the package.json
-   If you're improving the code of this application */
+   if you're improving the code of this application */
 if (Array.isArray(packageJson.contributors) && packageJson.contributors.length) {
 	var appContributors = [ appAuthor, ...packageJson.contributors ]
 } else {
@@ -70,6 +70,7 @@ var currentYear = new Date().getFullYear()
 var stringContributors = appContributors.join(', ')
 const singleInstance = app.requestSingleInstanceLock()
 var mainWindow
+
 
 // Year format for copyright
 if (appYear == currentYear){
@@ -117,6 +118,8 @@ function aboutPanel() {
 
 function createWindow () {
 
+	const mainWindowState = windowStateKeeper('win')
+
 	// Load translations for this window:
 	l10nStrings = loadTranslations()
 
@@ -124,8 +127,10 @@ function createWindow () {
 	
 	const win = new BrowserWindow({
 		title: appName,
-		height: winHeight,
-		width: winWidth,
+		x: mainWindowState.x,
+		y: mainWindowState.y,
+		height: mainWindowState.height,
+		width: mainWindowState.width,
 		backgroundColor: "#2F3136",
 		icon: appIcon,
 		webPreferences: {
@@ -137,7 +142,7 @@ function createWindow () {
 	win.loadURL(appURL,{userAgent: fakeUserAgent})
 	win.setAutoHideMenuBar(true);
 	win.setMenuBarVisibility(false);
-
+	mainWindowState.track(win)
 	// Contex Menu with spell checker
 
 	win.webContents.on('context-menu', (event, params) => {
@@ -217,6 +222,49 @@ function createWindow () {
 	
 	// Needed to "cap" the window:
 	return win
+}
+
+// Remember window state
+
+function windowStateKeeper(windowName) {
+  let window, windowState;
+  function setBounds() {
+    // Restore from appConfig
+    if (appConfig.has(`windowState.${windowName}`)) {
+      windowState = appConfig.get(`windowState.${windowName}`);
+      return;
+    }
+    // Default
+    windowState = {
+      x: undefined,
+      y: undefined,
+      width: winWidth,
+      height: winHeight,
+    };
+  }
+  function saveState() {
+    if (!windowState.isMaximized) {
+      windowState = window.getBounds();
+    }
+    windowState.isMaximized = window.isMaximized();
+    appConfig.set(`windowState.${windowName}`, windowState);
+  }
+  function track(win) {
+    window = win;
+	eventList = ['resize', 'move', 'close'];
+	for (var i = 0, len = eventList.length; i < len; i++) {
+		win.on(eventList[i], saveState);
+	}
+  }
+  setBounds();
+  return({
+    x: windowState.x,
+    y: windowState.y,
+    width: windowState.width,
+    height: windowState.height,
+    isMaximized: windowState.isMaximized,
+    track,
+  });
 }
 
 if (!singleInstance) {
