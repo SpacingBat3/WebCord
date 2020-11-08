@@ -1,11 +1,17 @@
 {
-	"trayAbout": "Acerca de",
-	"trayToggle": "Alternar",
-	"trayQuit": "Salir de Discord",
-	"contextCopy":"Copiar",
-	"contextPaste":"Pegar",
-	"contextCut":"Cortar",
-	"contextDictionaryAdd": "Añadir al diccionario local",
-	"contributors": "Autores y contribuyentes:",
-	"credits": "Gracias a GyozaGuy por su aplicacion de Discord Electron – Fue una buena fuente para aprender acerca de Electron y la creación de la aplicación web de Discord."
+	"tray":{
+		"toggle": "Alternar",
+		"quit": "Salir de Discord"
+	},
+	"context":{
+		"copy": "Copiar",
+		"paste": "Pegar",
+		"cut": "Cortar",
+		"dictionaryAdd": "Añadir al diccionario local"
+	},
+	"help": {
+		"about": "Acerca de",
+		"contributors": "Autores y contribuyentes:",
+		"credits": "Gracias a GyozaGuy por su aplicacion de Discord Electron – Fue una buena fuente para aprender acerca de Electron y la creación de la aplicación web de Discord."
+	}
 }

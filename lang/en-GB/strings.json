@@ -1,11 +1,42 @@
 {
-	"trayAbout": "About",
-	"trayToggle": "Toggle",
-	"trayQuit": "Quit Discord",
-	"contextCopy":"Copy",
-	"contextPaste":"Paste",
-	"contextCut":"Cut",
-	"contextDictionaryAdd": "Add to the local dictionary",
-	"contributors": "Authors and contributors:",
-	"credits": "Thanks to GyozaGuy for his Electron Discord app – it was good source to learn about the Electron and how make with it a Discord web app."
+	"tray": {
+		"toggle": "Toggle",
+		"quit": "Quit Discord"
+	},
+	"context":{
+		"copy": "Copy",
+		"paste": "Paste",
+		"cut": "Cut",
+		"dictionaryAdd": "Add to the local dictionary"
+	},
+	"menubar": {
+		"file":"File",
+		"edit":"Edit",
+		"view":"View",
+		"window":"Window",
+		"options": {
+			"groupName": "Settings",
+			"disableTray": "Disable tray",
+			"disableNotifications": "Disable notifications",
+			"hideMenuBar": "Hide menu bar"
+		}
+	},
+	"warning": {
+		"hideMenuBar": {
+			"title": "Warning",
+			"body": "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to unhide menu bar."
+			}
+	},
+	"buttons": {
+		"continue": "Continue"
+	},
+	"help":{
+		"groupName": "Help",
+		"about": "About",
+		"repo": "Repository",
+		"docs": "Documentation",
+		"bugs": "Report a bug",
+		"contributors": "Authors and contributors:",
+		"credits": "Thanks to GyozaGuy for his Electron Discord app – it was good source to learn about the Electron and how make with it a Discord web app."
+	}
 }

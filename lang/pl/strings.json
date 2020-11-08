@@ -1,11 +1,42 @@
 {
-	"trayAbout": "O aplikacji",
-	"trayToggle": "Przełącz",
-	"trayQuit": "Wyjdź z Disord'a",
-	"contextCopy":"Kopiuj",
-	"contextPaste":"Wklej",
-	"contextCut":"Wytnij",
-	"contextDictionaryAdd": "Dodaj do słownika",
-	"contributors": "Autorzy i osoby wnoszące wkład:",
-	"credits": "Podziękowania dla GyozaGuy za jego aplikację webową dla Discorda – była dobrym źródłem do dokształcenia się z Elektrona i z jego związku z Discordem."
+	"tray":{
+		"toggle": "Przełącz",
+		"quit": "Wyjdź z Disord'a"
+	},
+	"context":{
+		"copy": "Kopiuj",
+		"paste": "Wklej",
+		"cut": "Wytnij",
+		"dictionaryAdd": "Dodaj do słownika"
+	},
+	"menubar":{
+		"file": "Plik",
+		"edit": "Edycja",
+		"view": "Widok",
+		"window": "Okno",
+		"options":{
+			"groupName": "Ustawienia",
+			"disableTray": "Wyłącz zasobnik",
+			"disableNotifications": "Wyłącz powiadomienia",
+			"hideMenuBar": "Ukryj pasek menu"
+		}
+	},
+	"warning": {
+		"hideMenuBar": {
+			"title": "Ostrzeżenie",
+			"body": "Ponieważ włączyłeś blokadę paska menu, przy następnym uruchomieniu aplikacji nie będziesz miał do niego dostępu – chyba, że naciśniesz klawisz [ALT], aby przełączyć tymczasowo jego ukrycie."
+			}
+	},
+	"buttons": {
+		"continue": "Kontynuuj"
+	},
+	"help":{
+		"groupName": "Pomoc",
+		"about": "O aplikacji",
+		"repo": "Repozytorium",
+		"docs": "Dokumentacja",
+		"bugs": "Zgłoś błąd",
+		"contributors": "Autorzy i osoby wnoszące wkład:",
+		"credits": "Podziękowania dla GyozaGuy za jego aplikację webową dla Discorda – była dobrym źródłem do dokształcenia się z Elektrona i z jego związku z Discordem."
+	}
 }

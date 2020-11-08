@@ -7,6 +7,26 @@
 - do a Pull Request (here's [random youtube tutorial](https://www.youtube.com/watch?v=dSl_qnWO104) how to do that),
 - you're done!
 
+# Don't know the JSON syntax?
+I've written below the most important information about the proper JSON syntax:
+- the JSON file should begin from and end on the braces (`{`,`}`),
+- JSON file can contain keys, values, arrays and objects – example use of all of these:
+```json
+{
+	"key": "value",
+	"array": [ "firstValue", "secondValue" ],
+	"object": { "firstValue", "secondValue" }
+}
+```
+- the keys of JSON files needs to end with the comma (`,`) sign only when there's another key below them – for example:
+```json
+{
+	"key": "value",
+	"anotherKey": "anotherValue"
+}
+```
+Adding the comma sign at the end of `"anotherKey"` or removing it from the end of `"key"` would be a syntax error.
+
 # The people that helped me with the app translation:
 (add yourself there if you weren't added before/after you do a PR):
-- [MrCoolAndroid](https://github.com/MrCoolAndroid)
+- [MrCoolAndroid](https://github.com/MrCoolAndroid) – Spanish translation

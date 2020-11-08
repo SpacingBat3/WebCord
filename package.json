@@ -1,8 +1,8 @@
 {
   "name": "electron-discord-webapp",
-  "version": "0.1.5",
+  "version": "0.2.0-rc1",
   "description": "A Discord Web App based on the Electron Engine.",
-  "main": "main.js",
+  "main": "js/main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
@@ -60,5 +60,7 @@
     "electron-builder": "^22.9.1",
     "electron-json-config": "^1.5.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "deepmerge": "^4.2.2"
+  }
 }
