@@ -57,10 +57,10 @@
   },
   "devDependencies": {
     "electron": "^10.1.5",
-    "electron-builder": "^22.9.1",
-    "electron-json-config": "^1.5.3"
+    "electron-builder": "^22.9.1"
   },
   "dependencies": {
-    "deepmerge": "^4.2.2"
+    "deepmerge": "^4.2.2",
+    "electron-json-config": "^1.5.3"
   }
 }
