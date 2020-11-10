@@ -1,5 +1,5 @@
 {
-	"tray":{
+	"tray": {
 		"toggle": "Alternar",
 		"quit": "Salir de Discord"
 	},
@@ -9,8 +9,33 @@
 		"cut": "Cortar",
 		"dictionaryAdd": "Añadir al diccionario local"
 	},
-	"help": {
+	"menubar": {
+		"file":"Archivo",
+		"edit":"Editar",
+		"view":"Ver",
+		"window":"Ventana",
+		"options": {
+			"groupName": "Configuración",
+			"disableTray": "Desactivar bandeja",
+			"disableNotifications": "Desactivar notificaciones",
+			"hideMenuBar": "Esconder barra del menu"
+		}
+	},
+	"warning": {
+		"hideMenuBar": {
+			"title": "Advertencia",
+			"body": "Porque haz elegido esconder la barra del menu, no tendrás acceso a el cuando reinicias la aplicación, a menos que presiones la tecla [ALT] para mostrarla de nuevo."
+			}
+	},
+	"buttons": {
+		"continue": "Continuar"
+	},
+	"help":{
+		"groupName": "Ayuda",
 		"about": "Acerca de",
+		"repo": "Repositorio",
+		"docs": "Documentación",
+		"bugs": "Reportar un bug",
 		"contributors": "Autores y contribuyentes:",
 		"credits": "Gracias a GyozaGuy por su aplicacion de Discord Electron – Fue una buena fuente para aprender acerca de Electron y la creación de la aplicación web de Discord."
 	}
