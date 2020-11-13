@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-	"pack:out": "electron-builder --dir -c.directories.out",
+	"pack:out": "electron-builder --dir -c.directories.output",
     "dist": "electron-builder",
 	"dist:linux": "electron-builder -l",
 	"dist:linux-arm": "electron-builder -l tar.gz AppImage",
