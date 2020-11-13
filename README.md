@@ -32,16 +32,35 @@ Check the [releases](https://github.com/SpacingBat3/electron-discord-webapp/rele
 
 ## Build
 I recommend building this app with the `electron-builder` tool.
-You can run it and install as nodejs module with:
+Install it as node_module with:
 ```sh
-npm install && npm run dist
+npm install
 ```
-See [their docs](https://www.electron.build/multi-platform-build) if you wish to learn it's usage or type `npm run dist --help` for the built-in help.
+The usage of it would be like:
+```sh
+# Build all on X86 hosts (both ARM and X86 targets)
+npm run dist
+# Build all on ARM hosts (both ARM and X86 targets)
+npm run dist-armhosts
+```
+For `dist` command and it's ARM `dist:arm*` counterparts you can also specify a package format – for example:
+```sh
+npm run dist AppImage
+```
+will package the app into the `AppImage`. Also please note this will also built the app for your native architecture only (eg. `armv7l` with Linux ARMv7).
 
-I've also made a quick script to produce binaries for all architectures on Linux:
+### ARM Hosts
+If you're building it on ARM hosts, you can specify your arch – for instance:
 ```sh
-npm run build-linux
+npm run dist:arm64
 ```
+Builds the app for `aarch64` architecture with all supported formats.
+
+You can also specify it like this:
+```sh
+npm run dist:arm
+```
+to built it for both ARMv7 and ARMv8 architectures.
 
 ## Package
 The app uses also `electron-builder` to quickly produce unpackaged directory (eg. for testing purpouses).

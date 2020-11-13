@@ -3,6 +3,7 @@
 
 const { app, BrowserWindow, shell, ipcMain, Menu } = require('electron')
 const fs = require('fs')
+const path = require('path')
 const appConfig = new require('electron-json-config')
 var deepmerge = require('deepmerge')
 
@@ -10,10 +11,6 @@ var deepmerge = require('deepmerge')
 	manually to the electron package dir. */
 
 var appDir = app.getAppPath()
-
-// Somehow specifying appFsDir as clone of appDir fixes `fs`
-
-var appFsDir = appDir
 
 /*	Check if we are using the packaged version.
 	This also fixes for "About" icon (that can't be loaded with the electron
@@ -36,7 +33,7 @@ function loadTranslations() {
 	var systemLang = app.getLocale()
 	var localStrings = `lang/${systemLang}/strings.json`
 	var globalStrings = require(`${appDir}/lang/en-GB/strings.json`)
-	if(fs.existsSync(`${appFsDir}/${localStrings}`)) {
+	if(fs.existsSync(path.join(appDir, localStrings))) {
 		var localStrings = require(`${appDir}/lang/${systemLang}/strings.json`)
 		var l10nStrings = deepmerge(globalStrings, localStrings)
 	} else {
@@ -46,7 +43,6 @@ function loadTranslations() {
 }
 
 // Vars to modify app behavior
-var appName = 'Discord'
 var appURL = 'https://discord.com/app'
 var appIcon = `${appIconDir}/app.png`
 var appTrayIcon = `${appDir}/icons/tray.png`
@@ -56,9 +52,9 @@ var winWidth = 1000
 var winHeight = 600
 
 // "About" information
-var appFullName = 'Electron Discord WebApp'
+var appFullName = app.getName()
 var appVersion = packageJson.version;
-var appAuthor = packageJson.author
+var appAuthor = packageJson.author.name
 var appYear = '2020' // the year since this app exists
 var appRepo = packageJson.homepage;
 var chromiumVersion = process.versions.chrome
@@ -81,6 +77,15 @@ var currentYear = new Date().getFullYear()
 var stringContributors = appContributors.join(', ')
 var mainWindow
 const singleInstance = app.requestSingleInstanceLock()
+
+/*	Migrate old config dir to the new one.
+	This option exist because of the compability reasons. */
+
+const oldUserPath = path.join(app.getPath('userData'), '..', packageJson.name)
+if(fs.existsSync(oldUserPath)) {
+	fs.rmdirSync(app.getPath('userData'), { recursive: true })
+	fs.renameSync(oldUserPath, app.getPath('userData'))
+}
 
 // Known boolean keys from config
 
@@ -135,7 +140,7 @@ function createWindow () {
 	// Browser window
 	
 	const win = new BrowserWindow({
-		title: appName,
+		title: appFullName,
 		x: mainWindowState.x,
 		y: mainWindowState.y,
 		height: mainWindowState.height,
@@ -238,7 +243,6 @@ ipcMain.on('want-to-quit', () => {
 
 
 if (!singleInstance) {
-	console.log("Nope! This app is already running!")
 	app.quit()
 } else {
 	app.on('second-instance', (event, commandLine, workingDirectory) => {

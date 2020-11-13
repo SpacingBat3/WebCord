@@ -7,15 +7,22 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
+	"pack:out": "electron-builder --dir -c.directories.out",
     "dist": "electron-builder",
-    "build-linux": "electron-builder -l tar.gz --arm64 --armv7l --x64 --ia32"
+	"dist:linux": "electron-builder -l",
+	"dist:linux-arm": "electron-builder -l tar.gz AppImage",
+	"dist-armhost": "electron-builder --arm64 --armv7l --x64 --ia32 -l tar.gz AppImage"
   },
   "keywords": [
     "discord",
     "webapp",
     "electron"
   ],
-  "author": "SpacingBat3",
+  "author": {
+    "name": "SpacingBat3",
+    "email": "57194920+SpacingBat3@users.noreply.github.com",
+    "url": "https://github.com/SpacingBat3"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,11 +34,30 @@
   "homepage": "https://github.com/SpacingBat3/electron-discord-webapp#readme",
   "build": {
     "appId": "com.spacingbat3.webapp-discord-electron",
+    "icon": "icons/app.png",
+    "artifactName":"${productName} (v${version}) [${platform}-${arch}].${ext}",
     "linux": {
       "target": [
-        "pacman",
-        "snap",
-        "deb"
+        {
+          "target": "tar.gz",
+          "arch": ["ia32", "x64", "armv7l", "arm64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["ia32", "x64"]
+        },
+        {
+          "target": "AppImage",
+          "arch": ["ia32", "x64", "armv7l", "arm64"]
+        },
+        {
+          "target": "rpm",
+          "arch": ["ia32", "x64"]
+        },
+        {
+          "target": "pacman",
+          "arch": ["ia32", "x64"]
+        }
       ],
       "desktop": {
         "Name": "Discord",
