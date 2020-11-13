@@ -9,7 +9,7 @@
 
 A Discord Web App based on the [Electron](https://github.com/electron/electron) engine.
 
-It is completely indpenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I used it to learn why my previous attepms of doing electron discord app have failed – it was because `nodeIntegration` was set to `true`. So thanks to the author for that comment he typed – wouldn't probably know that without checking it!
+It is completely indpenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I used it to learn why my previous attempts of doing electron discord app have failed (it was because `nodeIntegration` was set to `true` – so thanks to the author for that comment he typed, I wouldn't probably know that without checking it).
 
 I previously forked his work, but now "I've stolen what's mine" from the code I've written in the fork, polished it a little and done this project. I've rewritten it from scratch, so it's simpler than it were before (for me) ~~and actually removes the "variable hell" of the original project~~.
 
