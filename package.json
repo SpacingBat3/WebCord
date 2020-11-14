@@ -35,7 +35,7 @@
   "build": {
     "appId": "com.spacingbat3.webapp-discord-electron",
     "icon": "icons/app.png",
-    "artifactName":"${productName} (v${version}) [${platform}-${arch}].${ext}",
+    "artifactName":"${name}-v${version}-${platform}-${arch}.${ext}",
     "linux": {
       "target": [
         {
