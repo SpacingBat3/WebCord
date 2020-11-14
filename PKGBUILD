@@ -4,12 +4,17 @@ pkgver=v0.2.0.rc2.r43.556b828
 pkgrel=1
 pkgdesc="An Discord Web App based on the Electron engine."
 arch=("x86_64" "i686" "aarch64" "armv7h")
+
+_march=${CARCH}
+_author="SpacingBat3"
+
 license=('MIT')
-makedepends=('npm' 'git' 'electron')
+makedepends=('npm' 'git')
 provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}" "discord" "discord_arch_electron")
-source=('git+https://github.com/SpacingBat3/electron-discord-webapp.git')
+source=('git+https://github.com/${_author}/${pkgname%-git}.git')
 md5sums=('SKIP')
+
 
 pkgver() {
 	cd "${srcdir}/${pkgname%-git}"
@@ -19,11 +24,11 @@ pkgver() {
 prepare() {
 	cd "${srcdir}/${pkgname%-git}"
 	npm install
-	if [[ "${arch}" -eq "aarch64" ]]; then
+	if [[ "${_march}" == "aarch64" ]]; then
 		_node_arch=arm64
-	elif [[ "${arch}" -eq "i686" ]]; then
+	elif [[ "${_march}" == "i686" ]]; then
 		_node_arch=ia32
-	elif [[ "${arch}" -eq "armv7h" ]]; then
+	elif [[ "${_march}" == "armv7h" ]]; then
 		_node_arch=armv7l
 	else
 		_node_arch=x64
@@ -38,9 +43,13 @@ build() {
 	printf "[Desktop Entry]\nVersion=1.0\nTerminal=false\nType=Application\nName=Discord\nExec=/usr/share/bin/discord\nIcon=discord\nCategories=Network;Chat;VideoConference;WebApp;Electron\nComment=Your place to talk!\nComment[pl]=Twoje miejsce do rozmów!\nGenericName=Network Messenger\nGenericName[pl]=Kommunikator internetowy\nStartupNotify=true">"$1"
 	}
 	cd "${srcdir}/${pkgname%-git}"
-	npm run pack:out "${srcdir}/build"
+	npm run pack:out "${srcdir}/build" -- --${_node_arch}
 	[[ -d ${srcdir}/build/${pkgname%-git} ]] && rm -Rf "${srcdir}/build/${pkgname%-git}"
-	mv -u "${srcdir}/build/linux-${_node_arch}-unpacked" "${srcdir}/build/${pkgname%-git}"
+	if [[ "${_node_arch}" == "x64" ]]; then
+		mv -u "${srcdir}/build/linux-unpacked" "${srcdir}/build/${pkgname%-git}"
+	else
+		mv -u "${srcdir}/build/linux-${_node_arch}-unpacked" "${srcdir}/build/${pkgname%-git}"
+	fi
 	_desktop "${srcdir}/${pkgname%-git}.desktop"
 	_terminal "${srcdir}/${pkgname%-git}.sh"
 }
