@@ -80,7 +80,8 @@
     ],
     "extraFiles": [
       "LICENSE.md"
-    ]
+    ],
+    "files": ["!PKGBUILD", "!README.md", "!TRANSLATE.md"]
   },
   "devDependencies": {
     "electron": "^10.1.5",
