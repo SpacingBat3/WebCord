@@ -12,7 +12,7 @@ license=('MIT')
 makedepends=('npm' 'git')
 provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}" "discord" "discord_arch_electron")
-source=('git+https://github.com/${_author}/${pkgname%-git}.git')
+source=("git+https://github.com/${_author}/${pkgname%-git}.git")
 md5sums=('SKIP')
 
 
