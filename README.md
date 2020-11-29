@@ -39,29 +39,21 @@ npm install
 The usage of it would be like:
 ```sh
 # Build all on X86 hosts (both ARM and X86 targets)
+# Also, use this command with flags instead of `dist-armhosts`
 npm run dist
 # Build all on ARM hosts (both ARM and X86 targets)
 npm run dist-armhosts
 ```
-For `dist` command and it's ARM `dist:arm*` counterparts you can also specify a package format – for example:
+If you want to run an `electron-builder` with flags, you can specify them you type `--`. For example:
 ```sh
-npm run dist AppImage
+npm run dist -- -l
 ```
-will package the app into the `AppImage`. Also please note this will also built the app for your native architecture only (eg. `armv7l` with Linux ARMv7).
+will build the application with all supported flags on Linux.
 
-### ARM Hosts
-If you're building it on ARM hosts, you can specify your arch – for instance:
+For more flags and help with the usage, you can visit the [`electron-builder` docs](https://www.electron.build/) or type in the terminal:
 ```sh
-npm run dist:arm64
+npm run dist -- --help
 ```
-Builds the app for `aarch64` architecture with all supported formats.
-
-You can also specify it like this:
-```sh
-npm run dist:arm
-```
-to built it for both ARMv7 and ARMv8 architectures.
-
 ## Package
 The app uses also `electron-builder` to quickly produce unpackaged directory (eg. for testing purpouses).
 You can use it (without globally installing it on your OS) like this:
