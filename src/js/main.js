@@ -10,7 +10,7 @@ var deepmerge = require('deepmerge')
 /*	Get current app dir – also removes the need of importing icons
 	manually to the electron package dir. */
 
-var appDir = app.getAppPath()
+const appDir = app.getAppPath()
 
 /*	Check if we are using the packaged version.
 	This also fixes for "About" icon (that can't be loaded with the electron
@@ -25,16 +25,16 @@ if (appDir.indexOf("app.asar") < 0) {
 var packageJson = require(`${appDir}/package.json`) // Read package.json
 
 // Load scripts:
-const getUserAgent = require(`${appDir}/js/userAgent.js`)
-const getMenu = require(`${appDir}/js/menus.js`)
+const getUserAgent = require(`${appDir}/src/js/userAgent.js`)
+const getMenu = require(`${appDir}/src/js/menus.js`)
 
 // Load string translations:
 function loadTranslations() {
 	var systemLang = app.getLocale()
-	var localStrings = `lang/${systemLang}/strings.json`
-	var globalStrings = require(`${appDir}/lang/en-GB/strings.json`)
+	var localStrings = `src/lang/${systemLang}/strings.json`
+	var globalStrings = require(`${appDir}/src/lang/en-GB/strings.json`)
 	if(fs.existsSync(path.join(appDir, localStrings))) {
-		var localStrings = require(`${appDir}/lang/${systemLang}/strings.json`)
+		var localStrings = require(`${appDir}/src/lang/${systemLang}/strings.json`)
 		var l10nStrings = deepmerge(globalStrings, localStrings)
 	} else {
 		var l10nStrings = globalStrings // Default lang to english
@@ -75,11 +75,13 @@ let tray = null
 var wantQuit = false
 var currentYear = new Date().getFullYear()
 var stringContributors = appContributors.join(', ')
-var mainWindow
+var mainWindow = null
+var noInternet = false
 const singleInstance = app.requestSingleInstanceLock()
 
 /*	Migrate old config dir to the new one.
-	This option exist because of the compability reasons. */
+ 	This option exist because of the compability reasons 
+ 	with v0.1.X versions of this script */
 
 const oldUserPath = path.join(app.getPath('userData'), '..', packageJson.name)
 if(fs.existsSync(oldUserPath)) {
@@ -120,7 +122,7 @@ function aboutPanel() {
 	return aboutWindow
 }
 
-function createWindow () {
+function createWindow() {
 
 	const mainWindowState = windowStateKeeper('win') // Check the window state
 
@@ -141,28 +143,25 @@ function createWindow () {
 	
 	const win = new BrowserWindow({
 		title: appFullName,
-		x: mainWindowState.x,
-		y: mainWindowState.y,
 		height: mainWindowState.height,
 		width: mainWindowState.width,
 		backgroundColor: "#2F3136",
 		icon: appIcon,
 		webPreferences: {
 			nodeIntegration: false, // won't work with the true value
-			devTools: false,
-			preload: `${appDir}/js/notify.js` // a way to do a ping–pong
+			devTools: false
 		}
 	})
 	win.loadURL(appURL,{userAgent: fakeUserAgent})
-	win.setAutoHideMenuBar(hideMenuBar);
-	win.setMenuBarVisibility(!hideMenuBar);
+	win.setAutoHideMenuBar(hideMenuBar)
+	win.setMenuBarVisibility(!hideMenuBar)
 	mainWindowState.track(win)
 
 	// Load all menus:
 
 	cmenu = getMenu.context(win)
 	if(!disableTray) tray = getMenu.tray(appTrayIcon, appTrayIconSmall, win)
-	menubar = getMenu.bar(packageJson.repository.url)
+	menubar = getMenu.bar(packageJson.repository.url, win)
 
 	// Open external URLs in default browser
 
@@ -170,19 +169,16 @@ function createWindow () {
 		event.preventDefault();
 		shell.openExternal(externalURL)
 	})
-	
-	// Notifications:
-	
-	ipcMain.on('receive-notification', () => {
-		if(!win.isFocused() && !disableTray) tray.setImage(appTrayPing);
-	})
 
-	ipcMain.on('notification-clicked', () => {
-		if(!disableTray) tray.setImage(appTrayIcon)
-	})
+	// "Red dot" icon feature
+	win.once('ready-to-show', () => {
+		win.webContents.on('page-favicon-updated', () => {
+			if(!win.isFocused() && !disableTray) tray.setImage(appTrayPing);
+		})
 
-	app.on('browser-window-focus', () => {
-		if(!disableTray) tray.setImage(appTrayIcon)
+		app.on('browser-window-focus', () => {
+			if(!disableTray) tray.setImage(appTrayIcon)
+		})
 	})
 	return win
 }
@@ -203,8 +199,6 @@ function windowStateKeeper(windowName) {
 		// Default
 
 		windowState = {
-			x: undefined,
-			y: undefined,
 			width: winWidth,
 			height: winHeight,
 		};
@@ -218,15 +212,13 @@ function windowStateKeeper(windowName) {
 	}
 	function track(win) {
 		window = win;
-		eventList = ['resize', 'move', 'close'];
+		eventList = ['resize', 'close'];
 		for (var i = 0, len = eventList.length; i < len; i++) {
 			win.on(eventList[i], saveState);
 		}
 	}
 	setBounds();
 	return({
-		x: windowState.x,
-		y: windowState.y,
 		width: windowState.width,
 		height: windowState.height,
 		isMaximized: windowState.isMaximized,
@@ -234,7 +226,7 @@ function windowStateKeeper(windowName) {
 	});
 }
 
-// Check if other scripts want app to quit
+// Check if other scripts wants app to quit
 
 ipcMain.on('want-to-quit', () => {
 	var wantQuit = true

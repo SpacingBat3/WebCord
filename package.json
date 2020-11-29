@@ -1,17 +1,17 @@
 {
   "name": "electron-discord-webapp",
   "productName": "Electron Discord WebApp",
-  "version": "0.2.0-rc2",
+  "version": "0.2.0-rc3",
   "description": "A Discord Web App based on the Electron Engine.",
-  "main": "js/main.js",
+  "main": "src/js/main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-	"pack:out": "electron-builder --dir -c.directories.output",
+    "pack:out": "electron-builder --dir -c.directories.output",
     "dist": "electron-builder",
-	"dist:linux": "electron-builder -l",
-	"dist:linux-arm": "electron-builder -l tar.gz AppImage",
-	"dist-armhost": "electron-builder --arm64 --armv7l --x64 --ia32 -l tar.gz AppImage"
+    "dist:linux": "electron-builder -l",
+    "dist:linux-arm": "electron-builder -l tar.gz AppImage",
+    "dist-armhost": "electron-builder --arm64 --armv7l --x64 --ia32 -l tar.gz AppImage"
   },
   "keywords": [
     "discord",
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/SpacingBat3/electron-discord-webapp#readme",
   "build": {
-    "appId": "com.spacingbat3.webapp-discord-electron",
+    "appId": "com.${author}.${name}",
     "icon": "icons/app.png",
     "artifactName":"${name}-v${version}-${platform}-${arch}.${ext}",
     "linux": {

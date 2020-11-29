@@ -1,6 +1,8 @@
-const { app, Menu, MenuItem, Tray, Notification, dialog, shell } = require('electron')
+const { app, Menu, BrowserWindow, MenuItem, Tray, Notification, dialog, shell } = require('electron')
 const appConfig = new require('electron-json-config')
 var wantQuit = false
+var isBadTime = false
+const appDir = app.getAppPath()
 
 // Contex Menu with spell checker
 
@@ -64,7 +66,7 @@ exports.tray = (Icon, IconSmall, windowName) => {
 
 // Menu Bar
 
-exports.bar = (repoLink) => {
+exports.bar = (repoLink, mainWindow) => {
 	var webLink = repoLink.substring(repoLink.indexOf("+")+1)
 	const menu = Menu.buildFromTemplate([
 		{ role: 'fileMenu', label: l10nStrings.menubar.file},
@@ -84,7 +86,8 @@ exports.bar = (repoLink) => {
 			},
 			{
 				label: l10nStrings.menubar.options.hideMenuBar,
-				type: 'checkbox', checked: appConfig.get('hideMenuBar'),
+				type: 'checkbox',
+				checked: appConfig.get('hideMenuBar'),
 				click: () => { 
 					if (appConfig.has('hideMenuBar')) {
 						appConfig.set('hideMenuBar', !appConfig.get('hideMenuBar'))
@@ -101,7 +104,32 @@ exports.bar = (repoLink) => {
 						
 					}
 				}
+			},
+			/* This will be back once I'll do my own JS game :)
+			 * Right now, if you're reading this, you can use it
+			 * to integrate any website within my app (for some reason)
+			{
+			
+				label: "Template",
+				click: () => {
+					const child = new BrowserWindow({
+						parent: mainWindow,
+						title: "Not working!",
+						width: 640,
+						height: 480,
+						modal: true,
+						background: "#000",
+						icon: `${appDir}/icons/game.png`
+					})
+					child.loadFile(`${appDir}/offline/index.html`)
+					child.setAutoHideMenuBar(true)
+					child.setMenuBarVisibility(false)
+					child.removeMenu()
+					console.log("Do you want to have a Bad Time? 'Cause if you don't close this window right now... you're not going to like what's happen next.")
+				}
+				
 			}
+			*/
 		]},
 		{ label: l10nStrings.help.groupName, role: 'help', submenu: [
 			{ label: l10nStrings.help.about, role: 'about', click: function() { app.showAboutPanel();;}},
