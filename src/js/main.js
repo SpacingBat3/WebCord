@@ -171,7 +171,7 @@ function createWindow() {
 	})
 
 	// "Red dot" icon feature
-	win.once('ready-to-show', () => {
+	win.webContents.once('did-finish-load', () => {
 		win.webContents.on('page-favicon-updated', () => {
 			if(!win.isFocused() && !disableTray) tray.setImage(appTrayPing);
 		})
