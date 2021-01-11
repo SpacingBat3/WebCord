@@ -33,28 +33,47 @@
   "build": {
     "appId": "com.${author}.${name}",
     "icon": "icons/app.png",
-    "artifactName":"${name}-v${version}-${platform}-${arch}.${ext}",
+    "artifactName": "${name}-v${version}-${platform}-${arch}.${ext}",
     "linux": {
       "target": [
         {
           "target": "tar.gz",
-          "arch": ["ia32", "x64", "armv7l", "arm64"]
+          "arch": [
+            "ia32",
+            "x64",
+            "armv7l",
+            "arm64"
+          ]
         },
         {
           "target": "deb",
-          "arch": ["ia32", "x64"]
+          "arch": [
+            "ia32",
+            "x64"
+          ]
         },
         {
           "target": "AppImage",
-          "arch": ["ia32", "x64", "armv7l", "arm64"]
+          "arch": [
+            "ia32",
+            "x64",
+            "armv7l",
+            "arm64"
+          ]
         },
         {
           "target": "rpm",
-          "arch": ["ia32", "x64"]
+          "arch": [
+            "ia32",
+            "x64"
+          ]
         },
         {
           "target": "pacman",
-          "arch": ["ia32", "x64"]
+          "arch": [
+            "ia32",
+            "x64"
+          ]
         }
       ],
       "desktop": {
@@ -79,10 +98,14 @@
     "extraFiles": [
       "LICENSE.md"
     ],
-    "files": ["!PKGBUILD", "!README.md", "!TRANSLATE.md"]
+    "files": [
+      "!PKGBUILD",
+      "!README.md",
+      "!TRANSLATE.md"
+    ]
   },
   "devDependencies": {
-    "electron": "^10.1.5",
+    "electron": "^11.0.4",
     "electron-builder": "^22.9.1"
   },
   "dependencies": {
