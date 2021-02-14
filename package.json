@@ -1,15 +1,13 @@
 {
   "name": "electron-discord-webapp",
-  "productName": "Electron Discord WebApp",
-  "version": "0.2.0-rc3",
+  "productName": "Electron Discord Web App",
+  "version": "1.0.0",
   "description": "A Discord Web App based on the Electron Engine.",
   "main": "src/js/main.js",
   "scripts": {
-    "start": "electron .",
-    "pack": "electron-builder --dir",
-    "pack:out": "electron-builder --dir -c.directories.output",
-    "dist": "electron-builder",
-    "dist-armhost": "electron-builder --arm64 --armv7l --x64 --ia32 -l tar.gz AppImage"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "keywords": [
     "discord",
@@ -30,86 +28,61 @@
     "url": "https://github.com/SpacingBat3/electron-discord-webapp/issues"
   },
   "homepage": "https://github.com/SpacingBat3/electron-discord-webapp#readme",
-  "build": {
-    "appId": "com.${author}.${name}",
-    "icon": "icons/app.png",
-    "artifactName": "${name}-v${version}-${platform}-${arch}.${ext}",
-    "linux": {
-      "target": [
-        {
-          "target": "tar.gz",
-          "arch": [
-            "ia32",
-            "x64",
-            "armv7l",
-            "arm64"
-          ]
-        },
-        {
-          "target": "deb",
-          "arch": [
-            "ia32",
-            "x64"
-          ]
-        },
-        {
-          "target": "AppImage",
-          "arch": [
-            "ia32",
-            "x64",
-            "armv7l",
-            "arm64"
-          ]
-        },
-        {
-          "target": "rpm",
-          "arch": [
-            "ia32",
-            "x64"
-          ]
-        },
-        {
-          "target": "pacman",
-          "arch": [
-            "ia32",
-            "x64"
-          ]
-        }
-      ],
-      "desktop": {
-        "Name": "Discord",
-        "Icon": "discord",
-        "Comment": "Electron Web App for Discord.",
-        "Categories": [
-          "Network",
-          "discord",
-          "electron",
-          "web"
-        ]
-      },
-      "category": "Network"
-    },
-    "extraResources": [
-      {
-        "from": "icons/app.png",
-        "to": "app.png"
-      }
-    ],
-    "extraFiles": [
-      "LICENSE.md"
-    ],
-    "files": [
-      "!PKGBUILD",
-      "!README.md",
-      "!TRANSLATE.md"
-    ]
-  },
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "electron": "^11.0.4",
-    "electron-builder": "^22.9.1"
+    "electron-forge-maker-appimage": "SpacingBat3/electron-forge-maker-appimage"
   },
   "dependencies": {
     "deepmerge": "^4.2.2",
-    "electron-json-config": "^1.5.3"
+    "electron-json-config": "^1.5.3",
+    "electron-squirrel-startup": "^1.0.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "executableName": "electron-discord-webapp"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "electron_discord_webapp"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        },
+        {
+          "name": "electron-forge-maker-appimage",
+          "config": {
+            "icon": "icons/app.png"
+          }
+        }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "prerelease": true
+          }
+        }
+      ]
+    }
   }
 }

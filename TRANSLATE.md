@@ -1,4 +1,4 @@
-# How to translate?
+## How to translate?
 - fork this project,
 - clone (download) it to your computer,
 - create new folder for your translation (check [electron docs](https://www.electronjs.org/docs/api/locales) for list of possible codes – names of the folders),
@@ -7,26 +7,32 @@
 - do a Pull Request (here's [random youtube tutorial](https://www.youtube.com/watch?v=dSl_qnWO104) how to do that),
 - you're done!
 
-# Don't know the JSON syntax?
-I've written below the most important information about the proper JSON syntax:
+## Don't know the JSON syntax?
+Here's the basic information about the proper JSON syntax:
 - the JSON file should begin from and end on the braces (`{`,`}`),
 - JSON file can contain keys, values, arrays and objects – example use of all of these:
 ```json
 {
 	"key": "value",
 	"array": [ "firstValue", "secondValue" ],
-	"object": { "firstValue", "secondValue" }
+	"object": { "firstKey": "firstValue", "secondKey": "secondValue" }
 }
 ```
-- the keys of JSON files needs to end with the comma (`,`) sign only when there's another key below them – for example:
+- the keys of JSON files must end with the comma (`,`) signs only when there's another key after them – for an example:
 ```json
 {
 	"key": "value",
 	"anotherKey": "anotherValue"
 }
 ```
-Adding the comma sign at the end of `"anotherKey"` or removing it from the end of `"key"` would be a syntax error.
+Adding the comma sign at the end of `"anotherKey"` or removing it from the end of `"key"` would be a syntax error:
+```
+{
+	"key": "value",
+	"anotherKey": "anotherValue",
+}
+```
 
-# The people that helped me with the app translation:
+## The people that helped me with the app translation:
 (add yourself there if you weren't added before/after you do a PR):
 - [MrCoolAndroid](https://github.com/MrCoolAndroid) – Spanish translation
