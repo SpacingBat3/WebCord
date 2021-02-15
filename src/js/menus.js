@@ -1,3 +1,6 @@
+/*
+ * Menu Objects (menus.js
+ */
 const { app, Menu, BrowserWindow, MenuItem, Tray, Notification, dialog, shell } = require('electron')
 const appConfig = new require('electron-json-config')
 var wantQuit = false
@@ -105,9 +108,7 @@ exports.bar = (repoLink, mainWindow) => {
 					}
 				}
 			},
-			/* This will be back once I'll do my own JS game :)
-			 * Right now, if you're reading this, you can use it
-			 * to integrate any website within my app (for some reason)
+			/* An unused placeholder
 			{
 			
 				label: "Template",
@@ -119,13 +120,13 @@ exports.bar = (repoLink, mainWindow) => {
 						height: 480,
 						modal: true,
 						background: "#000",
-						icon: `${appDir}/icons/game.png`
+						icon: `${appDir}/icons/temp.png`
 					})
 					child.loadFile(`${appDir}/offline/index.html`)
 					child.setAutoHideMenuBar(true)
 					child.setMenuBarVisibility(false)
 					child.removeMenu()
-					console.log("Do you want to have a Bad Time? 'Cause if you don't close this window right now... you're not going to like what's happen next.")
+					console.log("You just found an easter egg!")
 				}
 				
 			}

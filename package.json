@@ -1,13 +1,14 @@
 {
   "name": "electron-discord-webapp",
   "productName": "Electron Discord Web App",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Discord Web App based on the Electron Engine.",
   "main": "src/js/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "make:linux": "bash ./build/linux/make-linux.sh"
   },
   "keywords": [
     "discord",
@@ -43,46 +44,6 @@
     "electron-squirrel-startup": "^1.0.0"
   },
   "config": {
-    "forge": {
-      "packagerConfig": {
-        "executableName": "electron-discord-webapp"
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "electron_discord_webapp"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        },
-        {
-          "name": "electron-forge-maker-appimage",
-          "config": {
-            "icon": "icons/app.png"
-          }
-        }
-      ],
-      "publishers": [
-        {
-          "name": "@electron-forge/publisher-github",
-          "config": {
-            "prerelease": true
-          }
-        }
-      ]
-    }
+    "forge": "./src/js/configForge.js"
   }
 }
