@@ -20,6 +20,11 @@ npm i && npm run make
 ```
 Type `npm run make -- --help` in the Terminal for more advanced usage.
 
+To package for all supported architectures for Linux (on Linux hosts):
+```sh
+npm i && npm run make:linux
+```
+
 ## Packaging
 Sometimes you don't want to package the application (to quickly debug the application after packaging it) or there's no standard for your OS supported by the Electron Forge. Fortunately, you can still produce the directory containing the electron binary for your OS and architecture and packaged sources in `app.asar` with the Electron Forge.
 
