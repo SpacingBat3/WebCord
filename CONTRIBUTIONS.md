@@ -21,7 +21,7 @@ npm i && npm run make
 Type `npm run make -- --help` in the Terminal for more advanced usage.
 
 ## Packaging
-Sometimes you don't want to package the application (to quickly debug the application after packaging it) or there's no standard for your OS supported by the Electron Forge. Fortunelly, you can still produce the directory containing the electron binary for your OS and architecture and packaged sources in `app.asar` with the Electron Forge.
+Sometimes you don't want to package the application (to quickly debug the application after packaging it) or there's no standard for your OS supported by the Electron Forge. Fortunately, you can still produce the directory containing the electron binary for your OS and architecture and packaged sources in `app.asar` with the Electron Forge.
 
 ### How-to
 ```sh
