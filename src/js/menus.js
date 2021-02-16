@@ -94,20 +94,36 @@ exports.bar = (repoLink, mainWindow) => {
 				click: () => { 
 					if (appConfig.has('hideMenuBar')) {
 						appConfig.set('hideMenuBar', !appConfig.get('hideMenuBar'))
-						if (appConfig.get('hideMenuBar') == true) {
-							dialog.showMessageBoxSync({
-								type: "warning",
-								title: l10nStrings.warning.hideMenuBar.title,
-								message: l10nStrings.warning.hideMenuBar.body,
-								buttons: [l10nStrings.buttons.continue]
-							})
-						}
 					} else {
-							appConfig.set('hideMenuBar', true)
-						
+						appConfig.set('hideMenuBar', true)
+						dialog.showMessageBoxSync({
+							type: "warning",
+							title: l10nStrings.warning.hideMenuBar.title,
+							message: l10nStrings.warning.hideMenuBar.body,
+							buttons: [l10nStrings.buttons.continue]
+						})
 					}
 				}
 			},
+			{
+				label: l10nStrings.menubar.options.mobileMode,
+				type: 'checkbox',
+				checked: appConfig.get('mobileMode'),
+				click: () => { 
+					if (appConfig.has('mobileMode')) {
+						appConfig.set('mobileMode', !appConfig.get('mobileMode'));
+					} else {
+						appConfig.set('mobileMode', true);
+					}
+					// who cares it will produce a lot of entries in CSS:
+					if (appConfig.get('mobileMode')) {
+						mainWindow.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
+					} else {
+						mainWindow.webContents.insertCSS(".sidebar-2K8pFh{ width: 240px !important; }");
+					}
+				}
+			}
+		]},
 			/* An unused placeholder
 			{
 			
@@ -131,7 +147,6 @@ exports.bar = (repoLink, mainWindow) => {
 				
 			}
 			*/
-		]},
 		{ label: l10nStrings.help.groupName, role: 'help', submenu: [
 			{ label: l10nStrings.help.about, role: 'about', click: function() { app.showAboutPanel();;}},
 			{ label: l10nStrings.help.repo, click: function() { shell.openExternal(webLink);;} },

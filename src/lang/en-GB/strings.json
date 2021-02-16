@@ -18,7 +18,8 @@
 			"groupName": "Settings",
 			"disableTray": "Disable tray",
 			"disableNotifications": "Disable notifications",
-			"hideMenuBar": "Hide menu bar"
+			"hideMenuBar": "Hide menu bar",
+			"mobileMode": "Hide side bar"
 		}
 	},
 	"warning": {

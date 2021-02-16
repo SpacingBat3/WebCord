@@ -104,7 +104,8 @@ if(fs.existsSync(oldUserPath)) {
 
 configKnownObjects = [
     'disableTray',
-    'hideMenuBar'
+    'hideMenuBar',
+    'mobileMode'
 ];
 
 // Year format for the copyright
@@ -124,7 +125,7 @@ function aboutPanel() {
     const aboutWindow = app.setAboutPanelOptions({
         applicationName: appFullName,
         iconPath: appIcon,
-        applicationVersion: `v${appVersion}`,
+        applicationVersion: `v${appVersion} (Electron v${process.versions.electron})`,
         authors: appContributors,
         website: appRepo,
         credits: `${l10nStrings.help.contributors} ${stringContributors}`,
@@ -162,7 +163,8 @@ function createWindow() {
         icon: appIcon,
         webPreferences: {
             nodeIntegration: false, // won't work with the true value
-            devTools: false
+            devTools: false,
+            contextIsolation: true
         }
     });
     win.loadURL(appURL,{userAgent: fakeUserAgent});
@@ -193,8 +195,15 @@ function createWindow() {
         app.on('browser-window-focus', () => {
             if(!disableTray) tray.setImage(appTrayIcon);
         });
+    
+        // Experimental CSS to hide side bar:
+
+        if (appConfig.has('mobileMode') && appConfig.get('mobileMode')) {
+            var css = ".sidebar-2K8pFh{ width: 0px !important; }"
+            win.webContents.insertCSS(css);
+        }
     });
-    return win
+    return win;
 }
 
 // Remember window state
