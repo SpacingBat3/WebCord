@@ -23,7 +23,7 @@ exports.context = (windowName) => {
 		for (const suggestion of params.dictionarySuggestions) {
 			cmenu.insert(dictionaryPos++,new MenuItem({
 				label: suggestion,
-				click: () => win.webContents.replaceMisspelling(suggestion),
+				click: () => windowName.webContents.replaceMisspelling(suggestion),
 			}))
 		}
 		if (params.misspelledWord) {
@@ -32,7 +32,7 @@ exports.context = (windowName) => {
 			}))
 			cmenu.insert(dictionaryPos++,new MenuItem({
 				label: l10nStrings.context.dictionaryAdd,
-				click: () => win.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
+				click: () => windowName.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
 			}))
 			cmenu.insert(dictionaryPos++,new MenuItem({
 				type: 'separator'

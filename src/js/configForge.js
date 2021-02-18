@@ -45,7 +45,9 @@ module.exports = {
       name: "@electron-forge/maker-deb",
       config: {
         options: {
-          icon: iconFile
+          icon: iconFile,
+          section: "web",
+          categories: "Network"
         }
       }
     },
