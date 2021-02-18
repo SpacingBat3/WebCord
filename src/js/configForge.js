@@ -47,7 +47,7 @@ module.exports = {
         options: {
           icon: iconFile,
           section: "web",
-          categories: "Network"
+          categories: ["Network"]
         }
       }
     },
