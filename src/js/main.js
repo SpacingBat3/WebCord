@@ -19,15 +19,20 @@ const appDir = app.getAppPath();
 
 /*  
  * Check if we are using the packaged version.
- * This also fixes for "About" icon (that can't be loaded with the
- * electron when it is packaged in ASAR)
  */
 
-if (appDir.indexOf("app.asar") < 0) {
-    var appIconDir = `${appDir}/icons`;
+if (appDir.indexOf(".asar") < 0) {
+    var devel = true;
+    var devFlag = " [DEV]"
 } else {
-    var appIconDir = process.resourcesPath;
+    var devel = false;
 }
+
+/*
+ * "About icon" doesn't work with the older GTK versions
+ * (newer don't have it anyway)
+ */
+var appIconDir = `${appDir}/icons`;
 
 const packageJson = require(`${appDir}/package.json`); // Read package.json
 
@@ -125,7 +130,7 @@ function aboutPanel() {
     const aboutWindow = app.setAboutPanelOptions({
         applicationName: appFullName,
         iconPath: appIcon,
-        applicationVersion: `v${appVersion} (Electron v${process.versions.electron})`,
+        applicationVersion: `v${appVersion} (Electron v${process.versions.electron})${devFlag}`,
         authors: appContributors,
         website: appRepo,
         credits: `${l10nStrings.help.contributors} ${stringContributors}`,
@@ -163,7 +168,7 @@ function createWindow() {
         icon: appIcon,
         webPreferences: {
             nodeIntegration: false, // won't work with the true value
-            devTools: false,
+            devTools: devel,
             contextIsolation: true
         }
     });
@@ -196,12 +201,22 @@ function createWindow() {
             if(!disableTray) tray.setImage(appTrayIcon);
         });
     
-        // Experimental CSS to hide side bar:
+        /* 
+         * Hideable animated side bar:
+         * (and now it isn't "dirty"!)
+         */
 
         if (appConfig.has('mobileMode') && appConfig.get('mobileMode')) {
-            var css = ".sidebar-2K8pFh{ width: 0px !important; }"
-            win.webContents.insertCSS(css);
+            async function hideCSS() {
+                const key = await win.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
+                appConfig.set('css1Key',key);
+            }
+            hideCSS();
         }
+
+        // Animate menu
+        
+        win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width 1s; transition-timing-function: ease;}");
     });
     return win;
 }

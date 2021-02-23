@@ -1,3 +1,5 @@
 node_modules/
 out/
 package-lock.json
+build/linux/*.pkg.tar*
+build/linux/*/

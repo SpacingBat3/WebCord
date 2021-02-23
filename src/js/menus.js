@@ -109,7 +109,7 @@ exports.bar = (repoLink, mainWindow) => {
 				label: l10nStrings.menubar.options.mobileMode,
 				type: 'checkbox',
 				checked: appConfig.get('mobileMode'),
-				click: () => { 
+				click: async () => { 
 					if (appConfig.has('mobileMode')) {
 						appConfig.set('mobileMode', !appConfig.get('mobileMode'));
 					} else {
@@ -117,9 +117,11 @@ exports.bar = (repoLink, mainWindow) => {
 					}
 					// who cares it will produce a lot of entries in CSS:
 					if (appConfig.get('mobileMode')) {
-						mainWindow.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
+						const key = await mainWindow.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
+						appConfig.set('css1Key',key);
 					} else {
-						mainWindow.webContents.insertCSS(".sidebar-2K8pFh{ width: 240px !important; }");
+						const key = appConfig.get('css1Key');
+						mainWindow.webContents.removeInsertedCSS(key);
 					}
 				}
 			}

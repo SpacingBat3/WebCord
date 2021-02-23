@@ -1,7 +1,7 @@
 {
   "name": "electron-discord-webapp",
   "productName": "Electron Discord Web App",
-  "version": "1.1.0-pre1",
+  "version": "1.1.0-pre2",
   "description": "A Discord Web App based on the Electron Engine.",
   "main": "src/js/main.js",
   "scripts": {

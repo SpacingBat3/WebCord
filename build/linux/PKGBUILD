@@ -1,6 +1,6 @@
 # Maintainer: Spacingbat3 (https://github.com/spacingbat3)
 pkgname=electron-discord-webapp-git
-pkgver=v0.2.0_rc2.r43.556b828
+pkgver=v1.1.0_pre1.r67.cbfb1a7
 pkgrel=1
 pkgdesc="A Discord Web App based on the Electron engine."
 arch=("x86_64" "i686" "aarch64" "armv7h")
@@ -10,6 +10,7 @@ _author="SpacingBat3"
 
 license=('MIT')
 makedepends=('npm' 'git' 'jq')
+depends=('electron')
 provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}" "discord" "discord_arch_electron")
 source=("git+https://github.com/${_author}/${pkgname%-git}.git")
@@ -23,55 +24,28 @@ pkgver() {
 
 prepare() {
     cd "${srcdir}/${pkgname%-git}"
-    npm install
-    if [[ "${_march}" == "aarch64" ]]; then
-        _node_arch=arm64
-    elif [[ "${_march}" == "i686" ]]; then
-        _node_arch=ia32
-    elif [[ "${_march}" == "armv7h" ]]; then
-        _node_arch=armv7l
-    else
-        _node_arch=x64
-    fi
+    npm install --only=prod
 }
 
 build() {
     _terminal() {
-        printf "#!/bin/sh\n/usr/share/${pkgname%-git}/${pkgname%-git}\nexit \$?">"$1"
+        printf "#!/bin/bash\nelectron /usr/lib/${pkgname%-git}.asar\nexit \$?">"$1"
     }
     _desktop() {
-        printf "[Desktop Entry]\nVersion=1.0\nTerminal=false\nType=Application\nName=Discord\nExec=/usr/share/bin/discord\nIcon=discord\nCategories=Network;Chat;VideoConference;WebApp;Electron\nComment=Your place to talk!\nComment[pl]=Twoje miejsce do rozmów!\nGenericName=Network Messenger\nGenericName[pl]=Kommunikator internetowy\nStartupNotify=true">"$1"
+        printf "[Desktop Entry]\nVersion=1.0\nTerminal=false\nType=Application\nName=Discord\nExec=/usr/bin/discord\nIcon=discord\nCategories=Network;Chat;VideoConference;WebApp;Electron\nComment=Your place to talk!\nComment[pl]=Twoje miejsce do rozmów!\nGenericName=Network Messenger\nGenericName[pl]=Kommunikator internetowy\nStartupNotify=true">"$1"
     }
     cd "${srcdir}/${pkgname%-git}"
-    npm run pack:out "${srcdir}/build" -- --${_node_arch}
-    [[ -d ${srcdir}/build/${pkgname%-git} ]] && rm -Rf "${srcdir}/build/${pkgname%-git}"
-    if [[ "${_node_arch}" == "x64" ]]; then
-        mv -u "${srcdir}/build/linux-unpacked" "${srcdir}/build/${pkgname%-git}"
-    else
-        mv -u "${srcdir}/build/linux-${_node_arch}-unpacked" "${srcdir}/build/${pkgname%-git}"
-    fi
+    [[ -f docs/LICENSE.md ]] && mv docs/LICENSE.md ../ && rm -R docs
+    [[ -f ../${pkgname%-git}.asar ]] && rm ../${pkgname%-git}.asar
+    npx asar pack . ../${pkgname%-git}.asar
     _desktop "${srcdir}/${pkgname%-git}.desktop"
     _terminal "${srcdir}/${pkgname%-git}.sh"
 }
 
 package() {
-    cd "${srcdir}/build/${pkgname%-git}"
-    for x in `find * -type f`; do
-        if [[ "${x}" =~ "electron-discord-webapp" ]]; then
-            install -Dm755 "${srcdir}/build/${pkgname%-git}/$x" "${pkgdir}/usr/share/${pkgname%-git}/${x}"
-            _error="$?"
-            [[ "${_error}" != 0 ]] && exit "${_error}"
-        elif [[ "${x}" =~ "LICENSE" ]]; then
-            install -Dm644 "${srcdir}/build/${pkgname%-git}/${x}" "${pkgdir}/usr/share/licenses/${pkgname%-git}/`basename ${x}`"
-            _error=$?
-            [[ "${_error}" != 0 ]] && exit "${_error}"
-        else
-            install -Dm755 "${srcdir}/build/${pkgname%-git}/$x" "${pkgdir}/usr/share/${pkgname%-git}/${x}"
-            _error=$?
-            [[ "${_error}" != 0 ]] && (echo "Error code: ${_error}!"; exit "${_error}")
-        fi
-    done
     cd "${srcdir}"
+    install -Dm755 "${srcdir}/${pkgname%-git}.asar" "${pkgdir}/usr/lib/${pkgname%-git}.asar"
+    install -Dm644 "${srcdir}/LICENSE.md" "${pkgdir}/usr/share/licenses/${pkgname%-git}/LICENSE.md"
     install -Dm644 "${srcdir}/${pkgname%-git}/icons/app.png" "${pkgdir}/usr/share/icons/hicolor/512x512/apps/discord.png"
     install -Dm755 "${srcdir}/${pkgname%-git}.desktop" "${pkgdir}/usr/share/applications/${pkgname%-git}.desktop"   
     install -Dm755 "${srcdir}/${pkgname%-git}.sh" "${pkgdir}/usr/bin/discord"
