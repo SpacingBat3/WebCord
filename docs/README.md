@@ -1,5 +1,5 @@
 # Electron Discord WebApp
-[![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](LICENSE.md)
+[![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
 [![Electron](https://img.shields.io/badge/Made%20with-Electron-486F8F.svg)](https://www.electronjs.org/)
 [![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg)](../../../tags)
 [![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg)](../../../releases)
