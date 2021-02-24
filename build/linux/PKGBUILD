@@ -35,7 +35,8 @@ build() {
         printf "[Desktop Entry]\nVersion=1.0\nTerminal=false\nType=Application\nName=Discord\nExec=/usr/bin/discord\nIcon=discord\nCategories=Network;Chat;VideoConference;WebApp;Electron\nComment=Your place to talk!\nComment[pl]=Twoje miejsce do rozmów!\nGenericName=Network Messenger\nGenericName[pl]=Kommunikator internetowy\nStartupNotify=true">"$1"
     }
     cd "${srcdir}/${pkgname%-git}"
-    [[ -f docs/LICENSE.md ]] && mv docs/LICENSE.md ../ && rm -R docs
+    [[ -f docs/COPYING ]] && mv docs/COPYING ../ && rm -R docs
+    [[ -f build ]] && rm -R build
     [[ -f ../${pkgname%-git}.asar ]] && rm ../${pkgname%-git}.asar
     npx asar pack . ../${pkgname%-git}.asar
     _desktop "${srcdir}/${pkgname%-git}.desktop"
@@ -45,7 +46,7 @@ build() {
 package() {
     cd "${srcdir}"
     install -Dm755 "${srcdir}/${pkgname%-git}.asar" "${pkgdir}/usr/lib/${pkgname%-git}.asar"
-    install -Dm644 "${srcdir}/LICENSE.md" "${pkgdir}/usr/share/licenses/${pkgname%-git}/LICENSE.md"
+    install -Dm644 "${srcdir}/COPYING" "${pkgdir}/usr/share/licenses/${pkgname%-git}/COPYING"
     install -Dm644 "${srcdir}/${pkgname%-git}/icons/app.png" "${pkgdir}/usr/share/icons/hicolor/512x512/apps/discord.png"
     install -Dm755 "${srcdir}/${pkgname%-git}.desktop" "${pkgdir}/usr/share/applications/${pkgname%-git}.desktop"   
     install -Dm755 "${srcdir}/${pkgname%-git}.sh" "${pkgdir}/usr/bin/discord"

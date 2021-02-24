@@ -19,10 +19,10 @@ It is completely indpenendent from [Discord-Electron](https://github.com/GyozaGu
 - [Translating the application](TRANSLATE.md)
   - [JSON basics](TRANSLATE.md#dont-know-the-json-syntax)
   - [Credits](TRANSLATE.md#the-people-that-hepled-me-with-the-app-translation)
-- [License](LICENSE.md)
+- [License](COPYING)
 
 ## License
-This project is redistributed under the [MIT License](LICENSE.md).
+This project is redistributed under the [MIT License](COPYING).
 
 ## Want to contribute to my project?
 - If you want to improve my code, do a Pull Request and add yourself to the list of contributors in `main.js`.

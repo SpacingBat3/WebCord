@@ -167,11 +167,21 @@ function createWindow() {
         backgroundColor: "#2F3136",
         icon: appIcon,
         webPreferences: {
-            nodeIntegration: false, // won't work with the true value
+            nodeIntegration: false, // Won't work with the true value
             devTools: devel,
-            contextIsolation: true
+            contextIsolation: !devel // Experimental desktop capturer.
         }
     });
+    if (devel) {
+        // Screen Capturer
+        win.webContents.session.setPreloads([`${appDir}/src/js/preload-capturer.js`])
+        win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
+            return true
+        })
+        win.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback, details) => {
+            callback(true)
+        })
+    }
     win.loadURL(appURL,{userAgent: fakeUserAgent});
     win.setAutoHideMenuBar(hideMenuBar);
     win.setMenuBarVisibility(!hideMenuBar);
