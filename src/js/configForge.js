@@ -64,7 +64,11 @@ module.exports = {
     {
       name: "@electron-forge/publisher-github",
       config: {
-        prerelease: true
+        repository: {
+          owner: packageJson.author.name,
+          name: packageJson.name
+        },
+        draft: true
       }
     }
   ]

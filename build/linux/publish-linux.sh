@@ -14,10 +14,11 @@ ARCH=("x64" "ia32" "armv7l" "arm64");
 MAKERS=("electron-forge-maker-appimage"  # AppImage maker
         "@electron-forge/maker-deb"); # DEB package maker
 
-# Package native:
-src="$SOURCES" bash -c 'cd "$src"; npm run make';
+# Publish native packages:
+GITHUB_TOKEN="${GITHUB_TOKEN}" src="$SOURCES" \
+bash -c 'cd "$src"; npm run publish';
 
-# Package for non-native arch:
+# Publish non-native packages:
 err=0
 for maker in "${MAKERS[@]}"; do
 	[[ -z "$maker_list" ]] || maker_list="${maker_list},";
@@ -25,8 +26,8 @@ for maker in "${MAKERS[@]}"; do
 done;
 for cpu_arch in "${ARCH[@]}"; do
 	[[ "$cpu_arch" == "$HOST" || "$err" != 0 ]] && break;
-	makers="$maker_list" arch="$cpu_arch" src="$SOURCES" \
-	bash -c 'cd "$src"; npm run make -- -p linux -a "$arch" --targets "$makers"';
+	GITHUB_TOKEN="${GITHUB_TOKEN}" makers="$maker_list" arch="$cpu_arch" src="$SOURCES" \
+	bash -c 'cd "$src"; npm run publish -- -p linux -a "$arch" --targets "$makers"';
 	err=$?;
 done;
 exit $err;
