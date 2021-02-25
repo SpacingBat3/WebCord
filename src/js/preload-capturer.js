@@ -55,13 +55,14 @@ navigator.mediaDevices.getDisplayMedia = () => {
           border: 0;
           border-radius: 3px;
           padding: 4px;
-          background: #252626;
+          color: #FFFFFF;
+          background: #36393F;
           text-align: left;
           transition: background-color .15s, box-shadow .15s;
         }
         .desktop-capturer-selection__btn:hover,
         .desktop-capturer-selection__btn:focus {
-          background: rgba(98,100,167,.8);
+          background: #7289DA;
         }
         .desktop-capturer-selection__thumbnail {
           width: 100%;
@@ -73,6 +74,18 @@ navigator.mediaDevices.getDisplayMedia = () => {
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;
+        }
+        .desktop-capturer-close {
+          background-color: #36393F;
+          position: fixed;
+          top: 50%;
+          transform: translateY(-50%);
+          right: 15px;
+          padding-top: 5px;
+          transition: background-color .15s
+        }
+        .desktop-capturer-close:hover {
+          background-color: #823A3A;
         }
         </style>
         <div class="desktop-capturer-selection__scroller">
@@ -86,6 +99,12 @@ navigator.mediaDevices.getDisplayMedia = () => {
               </li>
             `).join('')}
           </ul>
+          <button class="desktop-capturer-close">
+            <svg viewBox="0 0 10 10" height=20px>
+              <line x1="0" y1="10" x2="10" y2="0" stroke="white" />
+              <line x1="0" y1="0" x2="10" y2="10" stroke="white" />
+            </svg>
+          </button>
         </div>
       `
       document.body.appendChild(selectionElem)
@@ -116,6 +135,12 @@ navigator.mediaDevices.getDisplayMedia = () => {
               console.error('Error selecting desktop capture source:', err)
               reject(err)
             }
+          })
+        })
+        document.querySelectorAll('.desktop-capturer-close')
+        .forEach(button => {
+          button.addEventListener('click', () => {
+              selectionElem.remove()
           })
         })
     } catch (err) {
