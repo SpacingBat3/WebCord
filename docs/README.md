@@ -1,4 +1,4 @@
-# Electron Discord WebApp
+#  [<img src='../icons/app.png' width='64px'>](#) Electron Discord Web App
 [![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
 [![Electron](https://img.shields.io/badge/Made%20with-Electron-486F8F.svg)](https://www.electronjs.org/)
 [![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg)](../../../tags)
@@ -7,11 +7,11 @@
 [![PRs/Translations Welcome](https://img.shields.io/badge/PRs/Translations-welcome-brightgreen.svg)](#want-to-contribute-to-my-project)
 [![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=http://raw.githubusercontent.com/Botspot/pi-apps/3d61f713573ba591aba50c32dd95c9df2f845b37/icons/logo.svg)](https://github.com/Botspot/pi-apps)
 
-A Discord Web App based on the [Electron](https://github.com/electron/electron) engine, enchanced with the [Electron Forge](https://github.com/electron-userland/electron-forge).
+A Discord Web App made with the [Electron](https://github.com/electron/electron) API, developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
 
-It is completely indpenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I used it to learn why my previous attempts of doing electron discord app have failed – so I really apprieciate that someone wrote that code. I've previously forked his work, but right now I've made a seperate one – this fixed some issues that the fork had and overall improved multiple things a lot.
+It is completely indepenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I've maintained a fork of it before, which I used to learn about the Electron itself and implementing a Discord web app with it. So, thank you, [@GyozaGuy](https://github.com/GyozaGuy), without that code this project could not exist.
 
-## Docs:
+## Documentation:
 - [Contributing](CONTRIBUTING.md)
   - [Run from the sources](CONTRIBUTING.md#run)
   - [Creating the distributables](CONTRIBUTING.md#creating-distributables)
