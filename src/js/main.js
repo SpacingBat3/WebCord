@@ -167,9 +167,9 @@ function createWindow() {
         backgroundColor: "#2F3136",
         icon: appIcon,
         webPreferences: {
-            nodeIntegration: false, // Won't work with the true value
+            nodeIntegration: false, // Won't work with the true value.
             devTools: devel,
-            contextIsolation: !devel // Experimental desktop capturer.
+            contextIsolation: false // Disabled because of the capturer.
         }
     });
     if (devel) {
