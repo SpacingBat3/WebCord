@@ -4,8 +4,12 @@
 
 // Let's import some keys from the package.json:
 const packageJson = require(`../../package.json`);
+
 // Global variables in the config:
 const iconFile = "icons/app.png"
+const desktopName = "Discord (Web App)"
+const desktopGeneric = "Internet Messenger"
+const desktopCategories = ["Network","InstantMessaging"]
 
 module.exports = {
   packagerConfig: {
@@ -19,7 +23,8 @@ module.exports = {
     quiet: true,
     ignore:[
       "docs",
-      "build"
+      "build",
+      "src/js/configForge.js"
     ]
   },
   makers: [
@@ -47,7 +52,9 @@ module.exports = {
         options: {
           icon: iconFile,
           section: "web",
-          categories: ["Network"]
+          productName: desktopName,
+          genericName: desktopGeneric,
+          categories: desktopCategories
         }
       }
     },
@@ -55,7 +62,10 @@ module.exports = {
       name: "@electron-forge/maker-rpm",
       config: {
         options: {
-          icon: iconFile
+          icon: iconFile,
+          productName: desktopName,
+          genericName: desktopGeneric,
+          categories: desktopCategories
         }
       }
     }

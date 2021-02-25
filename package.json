@@ -1,8 +1,8 @@
 {
   "name": "electron-discord-webapp",
   "productName": "Electron Discord Web App",
-  "version": "1.1.0-pre4",
-  "description": "A Discord Web App based on the Electron Engine.",
+  "version": "1.1.0-pre5",
+  "description": "A Discord Web App made with the Electron API.",
   "main": "src/js/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -14,7 +14,7 @@
   },
   "keywords": [
     "discord",
-    "webapp",
+    "web app",
     "electron"
   ],
   "author": {
