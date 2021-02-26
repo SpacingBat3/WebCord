@@ -15,8 +15,8 @@ MAKERS=("electron-forge-maker-appimage"  # AppImage maker
         "@electron-forge/maker-deb"); # DEB package maker
 
 # Publish native packages:
-GITHUB_TOKEN="${GITHUB_TOKEN}" src="$SOURCES" \
-bash -c 'cd "$src"; npm run publish';
+GITHUB_TOKEN="${GITHUB_TOKEN}" src="$SOURCES" args="$@" \
+bash -c 'cd "$src"; npm run publish -- $args';
 
 # Publish non-native packages:
 err=0
@@ -26,8 +26,10 @@ for maker in "${MAKERS[@]}"; do
 done;
 for cpu_arch in "${ARCH[@]}"; do
 	[[ "$cpu_arch" == "$HOST" || "$err" != 0 ]] && break;
-	GITHUB_TOKEN="${GITHUB_TOKEN}" makers="$maker_list" arch="$cpu_arch" src="$SOURCES" \
-	bash -c 'cd "$src"; npm run publish -- -p linux -a "$arch" --targets "$makers"';
+	GITHUB_TOKEN="${GITHUB_TOKEN}" makers="$maker_list" arch="$cpu_arch" \
+	src="$SOURCES" args="$@" \
+	bash -c 'cd "$src"; npm run publish -- -p linux -a "$arch" --targets "$makers" $args';
 	err=$?;
 done;
+[[ "$err" != 0 ]] && echo "Error code: \"${err}\"."
 exit $err;
