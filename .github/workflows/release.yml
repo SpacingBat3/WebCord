@@ -1,0 +1,19 @@
+name: Draft release
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  publish_on_linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2       
+    - uses: actions/setup-node@master
+      with:
+        node-version: 14
+    - name: Install dependencies
+      run: npm install
+    - name: Publish artifacts
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run publish:linux
