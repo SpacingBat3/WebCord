@@ -20,11 +20,11 @@ jobs:
     - name: Publish artifacts (arm64)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish -- -a arm64 --targets "electron-forge-maker-appimage,@electron-forge/maker-deb"
+      run: npm run publish -- -a arm64
     - name: Publish artifacts (armv7l)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish -- -a armv7l --targets "electron-forge-maker-appimage,@electron-forge/maker-deb"
+      run: npm run publish -- -a armv7l
     - name: Publish artifacts (ia32)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
