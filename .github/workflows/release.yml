@@ -13,7 +13,19 @@ jobs:
         node-version: 14
     - name: Install dependencies
       run: npm install
-    - name: Publish artifacts
+    - name: Publish artifacts (x64)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish:linux
+      run: npm run publish
+    - name: Publish artifacts (arm64)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run publish -- -a arm64 --targets "electron-forge-maker-appimage,@electron-forge/maker-deb"
+    - name: Publish artifacts (armv7l)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run publish -- -a armv7l --targets "electron-forge-maker-appimage,@electron-forge/maker-deb"
+    - name: Publish artifacts (ia32)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run publish -- -a ia32
