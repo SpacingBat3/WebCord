@@ -6,7 +6,7 @@
 
 const { app, BrowserWindow, shell, ipcMain, Menu, Notification } = require('electron');
 const fs = require('fs');
-const fetch = require('node-fetch');
+const fetch = require('electron-fetch').default;
 const path = require('path');
 const appConfig = new require('electron-json-config');
 const deepmerge = require('deepmerge');
@@ -129,7 +129,7 @@ fakeUserAgent = getUserAgent(chromiumVersion);
 
 async function checkVersion(){
     const remoteJson = await (await fetch(`https://raw.githubusercontent.com/${repoName}/master/package.json`)).json();
-    const githubAPI = await (await fetch('https://api.github.com/repos/${repoName}/releases/latest')).json();
+    const githubApi = await (await fetch(`https://api.github.com/repos/${repoName}/releases/latest`)).json();
     const localVersion = packageJson.version.split('.')
     let remoteTag = null;
     let updateMsg = null;
@@ -140,10 +140,9 @@ async function checkVersion(){
         remoteTag = remoteJson.version;
         updateURL = `https://github.com/${repoName}/commit/master`;
     } else {
-        remoteTag = githubAPI.tag_name;
+        remoteTag = githubApi.tag_name;
         updateURL = `https://github.com/${repoName}/releases/latest`;
     }
-
     var remoteVersion = remoteTag.split('.');
 
     if(localVersion[0] < remoteVersion[0] || (localVersion[0] == remoteVersion[0] && localVersion[1] < remoteVersion[1]) || (localVersion[0] == remoteVersion[0] && localVersion[1] == remoteVersion[1] && localVersion[2] < remoteVersion[2])) {

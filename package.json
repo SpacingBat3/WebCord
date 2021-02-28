@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "deepmerge": "^4.2.2",
+    "electron-fetch": "^1.7.3",
     "electron-json-config": "^1.5.3",
     "electron-squirrel-startup": "^1.0.0"
   },
