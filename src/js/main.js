@@ -4,8 +4,9 @@
  
 // Load the stuff we need to have there:
 
-const { app, BrowserWindow, shell, ipcMain, Menu } = require('electron');
+const { app, BrowserWindow, shell, ipcMain, Menu, Notification } = require('electron');
 const fs = require('fs');
+const fetch = require('node-fetch');
 const path = require('path');
 const appConfig = new require('electron-json-config');
 const deepmerge = require('deepmerge');
@@ -29,8 +30,8 @@ if (appDir.indexOf(".asar") < 0) {
 }
 
 /*
- * "About icon" doesn't work with the older GTK versions
- * (newer don't have it anyway)
+ * "About" window icon doesn't work
+ * (newer GTK versions don't have it anyway)
  */
 var appIconDir = `${appDir}/icons`;
 
@@ -55,6 +56,7 @@ function loadTranslations() {
 }
 
 // Vars to modify app behavior
+const repoName = "SpacingBat3/electron-discord-webapp";
 const appURL = 'https://discord.com/app';
 const appIcon = `${appIconDir}/app.png`;
 const appTrayIcon = `${appDir}/icons/tray.png`;
@@ -90,7 +92,7 @@ let tray = null;
 var wantQuit = false;
 var stringContributors = appContributors.join(', ');
 var mainWindow = null;
-var noInternet = false;
+var updateInterval = false;
 const singleInstance = app.requestSingleInstanceLock();
 
 /*
@@ -122,6 +124,57 @@ if (appYear == updateYear){
 }
 
 fakeUserAgent = getUserAgent(chromiumVersion);
+
+// Check if there's an update available:
+
+async function checkVersion(){
+    const remoteJson = await (await fetch(`https://raw.githubusercontent.com/${repoName}/master/package.json`)).json();
+    const githubAPI = await (await fetch('https://api.github.com/repos/${repoName}/releases/latest')).json();
+    const localVersion = packageJson.version.split('.')
+    let remoteTag = null;
+    let updateMsg = null;
+    let updateURL = null;
+    var showGui = false;
+
+    if(devel){
+        remoteTag = remoteJson.version;
+        updateURL = `https://github.com/${repoName}/commit/master`;
+    } else {
+        remoteTag = githubAPI.tag_name;
+        updateURL = `https://github.com/${repoName}/releases/latest`;
+    }
+
+    var remoteVersion = remoteTag.split('.');
+
+    if(localVersion[0] < remoteVersion[0] || (localVersion[0] == remoteVersion[0] && localVersion[1] < remoteVersion[1]) || (localVersion[0] == remoteVersion[0] && localVersion[1] == remoteVersion[1] && localVersion[2] < remoteVersion[2])) {
+        showGui = true
+        updateMsg = `There's an update available! (v${packageJson.version} → v${remoteTag})`
+    } else if(localVersion[0] > remoteVersion[0] || (localVersion[0] == remoteVersion[0] && localVersion[1] > remoteVersion[1]) || (localVersion[0] == remoteVersion[0] && localVersion[1] == remoteVersion[1] && localVersion[2] > remoteVersion[2])) {
+        updateMsg = `Application is newer than in the repository! (v${packageJson.version} → v${remoteTag})`
+    } else if(localVersion[0] != remoteVersion[0] || localVersion[1] != remoteVersion[1] || localVersion[2] != remoteVersion[2]) {
+        updateMsg = `Application version is different than in the repository! (v${packageJson.version} ≠ v${remoteTag})`
+    } else {
+        updateMsg = "Application is up-to-date!"
+    }
+
+    console.log(`[UPDATE] ${updateMsg}`)
+
+    const updatePopup = {
+        title: 'Electron Discord Web App: Update is available!',
+        icon: appIcon,
+        body: updateMsg
+    }
+    if(showGui){
+        const notification = new Notification(updatePopup);
+        notification.on('click', () => {
+            shell.openExternal(updateURL);
+        });
+        notification.show();
+    }
+    if(updateInterval){
+        clearInterval(updateInterval);
+    }
+}
 
 // "About" Panel:
 
@@ -162,6 +215,8 @@ function createWindow() {
     
     const win = new BrowserWindow({
         title: appFullName,
+        minWidth: 312,
+        minHeight: 412,
         height: mainWindowState.height,
         width: mainWindowState.width,
         backgroundColor: "#2F3136",
@@ -172,16 +227,17 @@ function createWindow() {
             contextIsolation: false // Disabled because of the capturer.
         }
     });
-    if (devel) {
-        // Screen Capturer
-        win.webContents.session.setPreloads([`${appDir}/src/js/preload-capturer.js`])
-        win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
-            return true
-        })
-        win.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback, details) => {
-            callback(true)
-        })
-    }
+
+    // Screen Capturer
+
+    win.webContents.session.setPreloads([`${appDir}/src/js/preload-capturer.js`])
+    win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
+        return true
+    });
+    win.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback, details) => {
+        callback(true)
+    });
+
     win.loadURL(appURL,{userAgent: fakeUserAgent});
     win.setAutoHideMenuBar(hideMenuBar);
     win.setMenuBarVisibility(!hideMenuBar);
@@ -203,9 +259,10 @@ function createWindow() {
     // "Red dot" icon feature
 
     win.webContents.once('did-finish-load', () => {
-        win.webContents.on('page-favicon-updated', () => {
-            if(!win.isFocused() && !disableTray) tray.setImage(appTrayPing);
-        });
+        setTimeout(function(){
+            win.webContents.on('page-favicon-updated', () => {
+                if(!win.isFocused() && !disableTray) tray.setImage(appTrayPing);
+        })}, 1000);
 
         app.on('browser-window-focus', () => {
             if(!disableTray) tray.setImage(appTrayIcon);
@@ -274,7 +331,10 @@ function windowStateKeeper(windowName) {
     });
 }
 
-// Check if other scripts wants app to quit (through the IPC)
+/*
+ * Check if other scripts wants app to quit (through the IPC).
+ * Currently unused.
+ */
 
 ipcMain.on('want-to-quit', () => {
     var wantQuit = true;
@@ -293,6 +353,8 @@ if (!singleInstance) {
         }
     });
     app.on('ready', () => {
+        checkVersion();
+        updateInterval = setInterval(checkVersion, 1800000);
         mainWindow = createWindow(); // catch window as mainWindow
         aboutWindow = aboutPanel();
     });
@@ -306,6 +368,8 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
+        checkVersion();
+        updateInterval = setInterval(checkVersion, 1800000);
         mainWindow = createWindow();
         aboutWindow = aboutPanel();
     }
