@@ -5,7 +5,7 @@
 [![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg)](../../../releases)
 [![GitHub contributors](https://img.shields.io/github/contributors/SpacingBat3/electron-discord-webapp.svg)](../../../graphs/contributors)
 [![PRs/Translations Welcome](https://img.shields.io/badge/PRs/Translations-welcome-brightgreen.svg)](#want-to-contribute-to-my-project)
-[![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=http://raw.githubusercontent.com/Botspot/pi-apps/3d61f713573ba591aba50c32dd95c9df2f845b37/icons/logo.svg)](https://github.com/Botspot/pi-apps)
+<!--[![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=http://raw.githubusercontent.com/Botspot/pi-apps/3d61f713573ba591aba50c32dd95c9df2f845b37/icons/logo.svg)](https://github.com/Botspot/pi-apps)-->
 
 A Discord Web App made with the [Electron](https://github.com/electron/electron) API, developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
 
