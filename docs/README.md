@@ -6,17 +6,17 @@
   <a href="COPYING" alt="MIT license">
     <img src="https://img.shields.io/badge/License-MIT-C23939.svg"</a>
   <a href="https://www.electronjs.org/" alt="Electron">
-     <img src="https://img.shields.io/badge/Made%20with-Electron-486F8F.svg"</a>
+     <img src="https://img.shields.io/badge/Made%20with-Electron-486F8F.svg" /></a>
   <a href="../../../tags" alt="GitHub release">
-    <img src="https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg"</a>
+    <img src="https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg" /></a>
   <a href="../../../releases" alt="GitHub downloads">
-    <img src="https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg"</a>
+    <img src="https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg" /></a>
   <a href="../../../graphs/contributors" alt="GitHub contrinutors">
-    <img src="https://img.shields.io/github/contributors/SpacingBat3/electron-discord-webapp.svg"</a>
+    <img src="https://img.shields.io/github/contributors/SpacingBat3/electron-discord-webapp.svg" /></a>
     <a href="#want-to-contribute-to-my-project" alt="PR's/Translations Welcome">
-      <img src="https://img.shields.io/badge/PRs/Translations-welcome-brightgreen.svg"</a>
+      <img src="https://img.shields.io/badge/PRs/Translations-welcome-brightgreen.svg" /></a>
     <a href="https://github.com/Botspot/pi-apps" alt="Pi-Apps badge">
-      <img src="https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://gitcdn.link/repo/Botspot/pi-apps/master/icons/logo.svg"</a>
+      <img src="https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://gitcdn.link/repo/Botspot/pi-apps/master/icons/logo.svg" /></a>
 </p>
 
 A Discord Web App made with the [Electron API](https://github.com/electron/electron), developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
