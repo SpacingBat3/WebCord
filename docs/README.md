@@ -1,14 +1,22 @@
 <h1><a href='https://discord.com'><img src='../icons/app.png' width='64px'></a> Electron Discord Web App </h1>
+
 <p align="center">
-  
-  [![Build](https://github.com/SpacingBat3/electron-discord-webapp/actions/workflows/build.yml/badge.svg)](https://github.com/SpacingBat3/electron-discord-webapp/actions/workflows/build.yml)
-  [![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
-  [![Electron](https://img.shields.io/badge/Made%20with-Electron-486F8F.svg)](https://www.electronjs.org/)
-  [![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg)](../../../tags)
-  [![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg)](../../../releases)
-  [![GitHub contributors](https://img.shields.io/github/contributors/SpacingBat3/electron-discord-webapp.svg)](../../../graphs/contributors)
-  [![PRs/Translations Welcome](https://img.shields.io/badge/PRs/Translations-welcome-brightgreen.svg)](#want-to-contribute-to-my-project)
-  [![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://gitcdn.link/repo/Botspot/pi-apps/master/icons/logo.svg)](https://github.com/Botspot/pi-apps)
+  <a href="https://github.com/SpacingBat3/electron-discord-webapp/actions/workflows/build.yml" alt="build">
+    <img src="https://github.com/SpacingBat3/electron-discord-webapp/actions/workflows/build.yml/badge.svg"</a>
+  <a href="COPYING" alt="MIT license">
+    <img src="https://img.shields.io/badge/License-MIT-C23939.svg"</a>
+  <a href="https://www.electronjs.org/" alt="Electron">
+     <img src="https://img.shields.io/badge/Made%20with-Electron-486F8F.svg"</a>
+  <a href="../../../tags" alt="GitHub release">
+    <img src="https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg"</a>
+  <a href="../../../releases" alt="GitHub downloads">
+    <img src="https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg"</a>
+  <a href="../../../graphs/contributors" alt="GitHub contrinutors">
+    <img src="https://img.shields.io/github/contributors/SpacingBat3/electron-discord-webapp.svg"</a>
+    <a href="#want-to-contribute-to-my-project" alt="PR's/Translations Welcome">
+      <img src="https://img.shields.io/badge/PRs/Translations-welcome-brightgreen.svg"</a>
+    <a href="https://github.com/Botspot/pi-apps" alt="Pi-Apps badge">
+      <img src="https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://gitcdn.link/repo/Botspot/pi-apps/master/icons/logo.svg"</a>
 </p>
 
 A Discord Web App made with the [Electron API](https://github.com/electron/electron), developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
