@@ -26,7 +26,7 @@ It is completely indepenendent from [Discord-Electron](https://github.com/GyozaG
 This project is redistributed under the [MIT License](COPYING).
 
 ## Want to contribute to my project?
-- If you want to improve my code, do a Pull Request and add yourself to the list of contributors in `main.js`.
+- If you want to improve my code, do a Pull Request and add yourself to the list of contributors in `main.ts`.
 - If you want to translate strings in `lang` folder, please visit [TRANSLATE.md](TRANSLATE.md).
 
 Never made a pull request before? Please reffer to [this website](http://makeapullrequest.com). 
