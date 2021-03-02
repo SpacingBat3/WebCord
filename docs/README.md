@@ -20,8 +20,8 @@
   <a href="https://github.com/Botspot/pi-apps" alt="Pi-Apps badge">
     <img src="https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://gitcdn.link/repo/Botspot/pi-apps/master/icons/logo.svg" />
   </a>
-  <a href="../../../actions/workflows/build.yml/badge.svg?event=push" alt="Run tests">
-    <img src="../../../actions/workflows/build.yml"
+  <a href="../../../actions/workflows/build.yml" alt="Run tests">
+    <img src="../../../actions/workflows/build.yml/badge.svg?event=push" />
   </a>
 </p>
 
