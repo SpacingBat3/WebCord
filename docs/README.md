@@ -25,9 +25,12 @@
   </a>
 </p>
 
-A Discord Web App made with the [Electron API](https://github.com/electron/electron), developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
-
-It is completely indepenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I've maintained a fork of it before, which I used to learn about the Electron itself and implementing a Discord web app with it. So, thank you, [@GyozaGuy](https://github.com/GyozaGuy), without that code this project could not exist.
+<p align="center">
+A Discord Web App made with the <a href="https://github.com/electron/electron">Electron API</a>, developed with the <a href= https://github.com/electron-userland/electron-forge>Electron Forge</a>.
+</p>
+<p align="center">
+It is completely indepenendent from <a href=https://github.com/GyozaGuy/Discord-Electron>Discord-Electron</a>, but I've maintained a fork of it before, which I used to learn about the Electron itself and implementing a Discord web app with it. So, thank you, <a href="https://github.com/GyozaGuy">@GyozaGuy</a>, without that code this project could not exist.
+</p>
 
 ## Documentation:
 - [Contributing](CONTRIBUTING.md)
