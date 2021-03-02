@@ -21,7 +21,7 @@
     <img src="https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://gitcdn.link/repo/Botspot/pi-apps/master/icons/logo.svg" />
   </a>
   <a href="../../../actions/workflows/build.yml/badge.svg?event=push" alt="Run tests">
-    <img src="../../../actions/workflows/build.yml"
+    <img src="../../../actions/workflows/build.yml" />
   </a>
 </p>
 
@@ -43,7 +43,7 @@ It is completely indepenendent from [Discord-Electron](https://github.com/GyozaG
 This project is redistributed under the [MIT License](COPYING).
 
 ## Want to contribute to my project?
-- If you want to improve my code, do a Pull Request and add yourself to the list of contributors in `main.js`.
+- If you want to improve my code, do a Pull Request and add yourself to the list of contributors in `main.ts`.
 - If you want to translate strings in `lang` folder, please visit [TRANSLATE.md](TRANSLATE.md).
 
 Never made a pull request before? Please reffer to [this website](http://makeapullrequest.com). 
