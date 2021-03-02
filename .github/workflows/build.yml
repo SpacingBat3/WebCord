@@ -1,4 +1,4 @@
-name: Check build
+name: Run tests
 on: [push, pull_request]
 jobs:
   linux:
