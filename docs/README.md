@@ -1,5 +1,6 @@
 <h1><a href='https://discord.com'><img src='../icons/app.png' width='64px'></a> Electron Discord Web App </h1>
 
+[![Build](https://github.com/SpacingBat3/electron-discord-webapp/actions/workflows/build.yml/badge.svg)](https://github.com/SpacingBat3/electron-discord-webapp/actions/workflows/build.yml)
 [![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
 [![Electron](https://img.shields.io/badge/Made%20with-Electron-486F8F.svg)](https://www.electronjs.org/)
 [![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg)](../../../tags)
