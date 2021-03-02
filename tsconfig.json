@@ -1,0 +1,17 @@
+{ 
+    "compilerOptions": {
+        "allowJs": true,
+        "module": "commonjs",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "baseUrl": ".",
+        "outDir": "src/js",
+        "moduleResolution": "node",
+        "removeComments": true,
+        "pretty": false,
+        "paths": {
+            "*": ["node_modules/*"]
+        }
+    },
+    "include": [ "src/ts/*" ]
+}

@@ -1,16 +1,20 @@
 {
   "name": "electron-discord-webapp",
   "productName": "Electron Discord Web App",
-  "version": "1.1.2",
+  "version": "1.2.0-pre1",
   "description": "A Discord Web App made with the Electron API.",
   "main": "src/js/main.js",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "make:linux": "bash ./build/linux/make-linux.sh",
-    "publish": "electron-forge publish",
-    "publish:linux": "bash ./build/linux/publish-linux.sh"
+    "test": "tsc && eslint --ext .ts .",
+    "lint": "eslint --ext .ts .",
+    "start": "tsc && electron-forge start",
+    "start:fast": "electron-forge start",
+    "package": "tsc && electron-forge package",
+    "package:fast": "electron-forge package",
+    "make": "tsc && electron-forge make",
+    "make:fast": "electron-forge make",
+    "publish": "tsc && electron-forge publish",
+    "publish:fast": "electron-forge publish"
   },
   "keywords": [
     "discord",
@@ -38,8 +42,15 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@electron-forge/publisher-github": "^6.0.0-beta.54",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
     "electron": "^11.0.4",
-    "electron-forge-maker-appimage": "SpacingBat3/electron-forge-maker-appimage"
+    "electron-forge-maker-appimage": "SpacingBat3/electron-forge-maker-appimage",
+    "eslint": "^7.21.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.22.1",
+    "tsc": "^1.20150623.0",
+    "typescript": "^4.2.2"
   },
   "dependencies": {
     "deepmerge": "^4.2.2",

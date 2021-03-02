@@ -1,13 +1,13 @@
-#  [<img src='../icons/app.png' width='64px'>](#) Electron Discord Web App
+<h1><a href='https://discord.com'><img src='../icons/app.png' width='64px'></a> Electron Discord Web App </h1>
 [![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
 [![Electron](https://img.shields.io/badge/Made%20with-Electron-486F8F.svg)](https://www.electronjs.org/)
 [![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg)](../../../tags)
 [![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg)](../../../releases)
 [![GitHub contributors](https://img.shields.io/github/contributors/SpacingBat3/electron-discord-webapp.svg)](../../../graphs/contributors)
 [![PRs/Translations Welcome](https://img.shields.io/badge/PRs/Translations-welcome-brightgreen.svg)](#want-to-contribute-to-my-project)
-<!--[![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=http://raw.githubusercontent.com/Botspot/pi-apps/3d61f713573ba591aba50c32dd95c9df2f845b37/icons/logo.svg)](https://github.com/Botspot/pi-apps)-->
+<!--[![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://gitcdn.link/repo/Botspot/pi-apps/master/icons/logo.svg)](https://github.com/Botspot/pi-apps)-->
 
-A Discord Web App made with the [Electron](https://github.com/electron/electron) API, developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
+A Discord Web App made with the [Electron API](https://github.com/electron/electron), developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
 
 It is completely indepenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I've maintained a fork of it before, which I used to learn about the Electron itself and implementing a Discord web app with it. So, thank you, [@GyozaGuy](https://github.com/GyozaGuy), without that code this project could not exist.
 

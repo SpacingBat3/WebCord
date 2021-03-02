@@ -1,21 +1,24 @@
 /*
  * Menu Objects (menus.js
  */
-const { app, Menu, BrowserWindow, MenuItem, Tray, Notification, dialog, shell } = require('electron')
-const appConfig = new require('electron-json-config')
-var wantQuit = false
-var isBadTime = false
-const appDir = app.getAppPath()
+import { app, Menu, BrowserWindow, MenuItem, Tray, dialog, shell } from 'electron'
+import appConfig = require('electron-json-config')
+let wantQuit = false
+
+interface json {
+	[key: string]: any
+}
+//const appDir = app.getAppPath()
 
 // Contex Menu with spell checker
 
-exports.context = (windowName) => {
-	cname = windowName.webContents.on('context-menu', (event, params) => {
-		const cmenu = new Menu.buildFromTemplate([
+export function context (windowName: BrowserWindow, strings: json): void {
+	windowName.webContents.on('context-menu', (event, params) => {
+		const cmenu = Menu.buildFromTemplate([
 			{ type: 'separator'},
-			{ label: l10nStrings.context.cut, role: 'cut' },
-			{ label: l10nStrings.context.copy, role: 'copy' },
-			{ label: l10nStrings.context.paste, role: 'paste' },
+			{ label: strings.context.cut, role: 'cut' },
+			{ label: strings.context.copy, role: 'copy' },
+			{ label: strings.context.paste, role: 'paste' },
 			{ type: 'separator'},
 		])
 		// All stuff associated to the dictionary
@@ -31,7 +34,7 @@ exports.context = (windowName) => {
 				type: 'separator'
 			}))
 			cmenu.insert(dictionaryPos++,new MenuItem({
-				label: l10nStrings.context.dictionaryAdd,
+				label: strings.context.dictionaryAdd,
 				click: () => windowName.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord),
 			}))
 			cmenu.insert(dictionaryPos++,new MenuItem({
@@ -45,15 +48,15 @@ exports.context = (windowName) => {
 
 // Tray menu
 
-exports.tray = (Icon, IconSmall, windowName) => {
-	tray = new Tray(Icon)
+export function tray (Icon: string, IconSmall: string, windowName: BrowserWindow, strings: json): Tray {
+	const tray = new Tray(Icon)
 	const contextMenu = Menu.buildFromTemplate([
 		{ label: 'Top Secret Control Panel', enabled: false, icon: IconSmall },
 		{ type: 'separator' },
-		{ label: l10nStrings.help.about, role: 'about', click: function() { app.showAboutPanel();;}},
+		{ label: strings.help.about, role: 'about', click: function() { app.showAboutPanel();}},
 		{ type: 'separator' },
-		{ label: l10nStrings.tray.toggle, click: function() { windowName.isVisible() ? windowName.hide() : windowName.show();; } },
-		{ label: l10nStrings.tray.quit, click: function() { wantQuit = true; app.quit();; } }
+		{ label: strings.tray.toggle, click: function() { windowName.isVisible() ? windowName.hide() : windowName.show(); } },
+		{ label: strings.tray.quit, click: function() { wantQuit = true; app.quit(); } }
 	])
 	tray.setToolTip('Discord')
 	tray.setContextMenu(contextMenu)
@@ -69,15 +72,15 @@ exports.tray = (Icon, IconSmall, windowName) => {
 
 // Menu Bar
 
-exports.bar = (repoLink, mainWindow) => {
-	var webLink = repoLink.substring(repoLink.indexOf("+")+1)
+export function bar (repoLink: string, mainWindow: BrowserWindow, strings: json): Menu {
+	const webLink = repoLink.substring(repoLink.indexOf("+")+1)
 	const menu = Menu.buildFromTemplate([
-		{ role: 'fileMenu', label: l10nStrings.menubar.file},
-		{ role: 'editMenu', label: l10nStrings.menubar.edit},
-		{ role: 'viewMenu', label: l10nStrings.menubar.view},
-		{ role: 'windowMenu', label: l10nStrings.menubar.window},
-		{ label: l10nStrings.menubar.options.groupName, submenu: [{
-				label: l10nStrings.menubar.options.disableTray,
+		{ role: 'fileMenu', label: strings.menubar.file},
+		{ role: 'editMenu', label: strings.menubar.edit},
+		{ role: 'viewMenu', label: strings.menubar.view},
+		{ role: 'windowMenu', label: strings.menubar.window},
+		{ label: strings.menubar.options.groupName, submenu: [{
+				label: strings.menubar.options.disableTray,
 				type: 'checkbox', checked: appConfig.get('disableTray'),
 				click: () => { 
 					if (appConfig.has('disableTray')) {
@@ -88,7 +91,7 @@ exports.bar = (repoLink, mainWindow) => {
 				}
 			},
 			{
-				label: l10nStrings.menubar.options.hideMenuBar,
+				label: strings.menubar.options.hideMenuBar,
 				type: 'checkbox',
 				checked: appConfig.get('hideMenuBar'),
 				click: () => { 
@@ -98,15 +101,15 @@ exports.bar = (repoLink, mainWindow) => {
 						appConfig.set('hideMenuBar', true)
 						dialog.showMessageBoxSync({
 							type: "warning",
-							title: l10nStrings.warning.hideMenuBar.title,
-							message: l10nStrings.warning.hideMenuBar.body,
-							buttons: [l10nStrings.buttons.continue]
+							title: strings.warning.hideMenuBar.title,
+							message: strings.warning.hideMenuBar.body,
+							buttons: [strings.buttons.continue]
 						})
 					}
 				}
 			},
 			{
-				label: l10nStrings.menubar.options.mobileMode,
+				label: strings.menubar.options.mobileMode,
 				type: 'checkbox',
 				checked: appConfig.get('mobileMode'),
 				click: async () => { 
@@ -149,11 +152,11 @@ exports.bar = (repoLink, mainWindow) => {
 				
 			}
 			*/
-		{ label: l10nStrings.help.groupName, role: 'help', submenu: [
-			{ label: l10nStrings.help.about, role: 'about', click: function() { app.showAboutPanel();;}},
-			{ label: l10nStrings.help.repo, click: function() { shell.openExternal(webLink);;} },
-			{ label: l10nStrings.help.docs, enabled: false, click: function() { shell.openExternal('https://electronjs.org/docs');;} },
-			{ label: l10nStrings.help.bugs, click: function() { shell.openExternal(`${webLink}/issues`);;} }
+		{ label: strings.help.groupName, role: 'help', submenu: [
+			{ label: strings.help.about, role: 'about', click: function() { app.showAboutPanel();}},
+			{ label: strings.help.repo, click: function() { shell.openExternal(webLink);} },
+			{ label: strings.help.docs, enabled: false, click: function() { shell.openExternal('https://electronjs.org/docs');} },
+			{ label: strings.help.bugs, click: function() { shell.openExternal(`${webLink}/issues`);} }
 		]}
 	])
 	Menu.setApplicationMenu(menu)

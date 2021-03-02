@@ -4,27 +4,32 @@ on:
     tags:
       - '*'
 jobs:
-  publish_on_linux:
+  linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2       
     - uses: actions/setup-node@master
       with:
         node-version: 14
+
     - name: Install dependencies
       run: npm install
+
     - name: Publish artifacts (x64)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish
+
     - name: Publish artifacts (arm64)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a arm64
+
     - name: Publish artifacts (armv7l)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a armv7l
+
     - name: Publish artifacts (ia32)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

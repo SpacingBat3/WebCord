@@ -3,7 +3,9 @@
  */
 
 // Let's import some keys from the package.json:
-const packageJson = require(`../../package.json`);
+
+/* eslint-disable */
+const packageJson = require("../../package.json");
 
 // Global variables in the config:
 const iconFile = "icons/app.png"
@@ -24,7 +26,9 @@ module.exports = {
     ignore:[
       "docs",
       "build",
-      "src/js/configForge.js"
+      "src/js/*.js.map",
+      "src/js/configForge.js",
+      "src/ts"
     ]
   },
   makers: [

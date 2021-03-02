@@ -4,12 +4,13 @@
  
 // Load the stuff we need to have there:
 
-const { app, BrowserWindow, shell, ipcMain, Menu, Notification } = require('electron');
-const fs = require('fs');
-const fetch = require('electron-fetch').default;
-const path = require('path');
-const appConfig = new require('electron-json-config');
-const deepmerge = require('deepmerge');
+import { app, BrowserWindow, shell, Notification } from 'electron';
+import fetch from 'electron-fetch';
+
+import fs = require('fs');
+import path = require('path');
+import appConfig = require('electron-json-config');
+import deepmerge = require('deepmerge');
 
 /*
  * Get current app dir – also removes the need of importing icons
@@ -22,35 +23,40 @@ const appDir = app.getAppPath();
  * Check if we are using the packaged version.
  */
 
+let devel, devFlag
 if (appDir.indexOf(".asar") < 0) {
-    var devel = true;
-    var devFlag = " [DEV]"
+    devel = true;
+    devFlag = " [DEV]"
 } else {
-    var devel = false;
+    devel = false;
 }
 
 /*
  * "About" window icon doesn't work
  * (newer GTK versions don't have it anyway)
  */
-var appIconDir = `${appDir}/icons`;
+const appIconDir = `${appDir}/icons`;
 
-const packageJson = require(`${appDir}/package.json`); // Read package.json
+/* eslint-disable */
+const packageJson = require("../../package.json"); // Read package.json
 
 // Load scripts:
-const getUserAgent = require(`${appDir}/src/js/userAgent.js`);
-const getMenu = require(`${appDir}/src/js/menus.js`);
+import {getUserAgent} from './userAgent.js';
+import * as getMenu from "./menus.js";
 
 // Load string translations:
+
 function loadTranslations() {
+    let l10nStrings, localStrings;
     const systemLang = app.getLocale();
-    var localStrings = `src/lang/${systemLang}/strings.json`;
-    var globalStrings = require(`${appDir}/src/lang/en-GB/strings.json`);
+    /* eslint-disable */
+    const globalStrings = require("../lang/en-GB/strings.json");
+    localStrings = `src/lang/${systemLang}/strings.json`;
     if(fs.existsSync(path.join(appDir, localStrings))) {
-        var localStrings = require(`${appDir}/src/lang/${systemLang}/strings.json`);
-        var l10nStrings = deepmerge(globalStrings, localStrings);
+        localStrings = require(`${appDir}/src/lang/${systemLang}/strings.json`);
+        l10nStrings = deepmerge(globalStrings, localStrings);
     } else {
-        var l10nStrings = globalStrings; // Default lang to english
+        l10nStrings = globalStrings; // Default lang to english
     }
     return l10nStrings;
 }
@@ -62,8 +68,8 @@ const appIcon = `${appIconDir}/app.png`;
 const appTrayIcon = `${appDir}/icons/tray.png`;
 const appTrayPing = `${appDir}/icons/tray-ping.png`;
 const appTrayIconSmall = `${appDir}/icons/tray-small.png`;
-var winWidth = 1000;
-var winHeight = 600;
+const winWidth = 1000;
+const winHeight = 600;
 
 // "About" information
 const appFullName = app.getName()
@@ -79,21 +85,18 @@ const chromiumVersion = process.versions.chrome;
  * Remember to add yourself to the contributors array in the package.json
  * if you're improving the code of this application
  */
-
-if (Array.isArray(packageJson.contributors) && packageJson.contributors.length) {
-    var appContributors = [ appAuthor, ...packageJson.contributors ];
-} else {
-    var appContributors = [appAuthor];
-}
+/*if (Array.isArray(packageJson.contributors) && packageJson.contributors.length) {
+    appContributors = [ appAuthor, ...packageJson.contributors ];
+} else {*/
+    const appContributors = [ appAuthor ];
+//}
 
 // "Dynamic" variables that shouldn't be changed:
 
-let tray = null;
-var wantQuit = false;
-var stringContributors = appContributors.join(', ');
-var mainWindow = null;
-var updateInterval = false;
+const stringContributors = appContributors.join(', ');
 const singleInstance = app.requestSingleInstanceLock();
+let mainWindow
+let tray, l10nStrings, updateInterval;
 
 /*
  * Migrate old config dir to the new one.
@@ -107,23 +110,25 @@ if(fs.existsSync(oldUserPath)) {
     fs.renameSync(oldUserPath, app.getPath('userData'));
 }
 
-// Known boolean keys from config
+// Mix default values with the one being in config:
 
-configKnownObjects = [
-    'disableTray',
-    'hideMenuBar',
-    'mobileMode'
-];
+const defaultConfig = {
+    hideMenuBar: false,
+    mobileMode: false,
+    disableTray: false
+}
+
+/* eslint-disable */
+const configJson = require(appConfig.file());
+
+const configData = deepmerge(defaultConfig, configJson)
 
 // Year format for the copyright
 
-if (appYear == updateYear){
-    var copyYear = appYear;
-} else {
-    var copyYear = `${appYear}-${updateYear}`;
-}
+const copyYear = `${appYear}-${updateYear}`;
 
-fakeUserAgent = getUserAgent(chromiumVersion);
+
+const fakeUserAgent = getUserAgent(chromiumVersion);
 
 // Check if there's an update available:
 
@@ -134,7 +139,7 @@ async function checkVersion(){
     let remoteTag = null;
     let updateMsg = null;
     let updateURL = null;
-    var showGui = false;
+    let showGui = false;
 
     if(devel){
         remoteTag = remoteJson.version;
@@ -143,7 +148,7 @@ async function checkVersion(){
         remoteTag = githubApi.tag_name;
         updateURL = `https://github.com/${repoName}/releases/latest`;
     }
-    var remoteVersion = remoteTag.split('.');
+    const remoteVersion = remoteTag.split('.');
 
     if(localVersion[0] < remoteVersion[0] || (localVersion[0] == remoteVersion[0] && localVersion[1] < remoteVersion[1]) || (localVersion[0] == remoteVersion[0] && localVersion[1] == remoteVersion[1] && localVersion[2] < remoteVersion[2])) {
         showGui = true
@@ -196,19 +201,9 @@ function createWindow() {
     // Check the window state
 
     const mainWindowState = windowStateKeeper('win');
+    
 
-    // Get known boolean vars from the config
-
-    for (var x = 0, len = configKnownObjects.length; x < len; x++) {
-        var y = configKnownObjects[x];
-        if (appConfig.get(y)) {
-            this[y] = appConfig.get(y);
-        } else {
-            this[y] = false;
-        }
-    }
-
-    l10nStrings = loadTranslations(); // Load translations for this window
+    const l10nStrings = loadTranslations(); // Load translations for this window
 
     // Browser window
     
@@ -230,23 +225,23 @@ function createWindow() {
     // Screen Capturer
 
     win.webContents.session.setPreloads([`${appDir}/src/js/preload-capturer.js`])
-    win.webContents.session.setPermissionCheckHandler(async (webContents, permission, details) => {
+    win.webContents.session.setPermissionCheckHandler( () => {
         return true
     });
-    win.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback, details) => {
-        callback(true)
+    win.webContents.session.setPermissionRequestHandler( () => {
+        return true
     });
 
     win.loadURL(appURL,{userAgent: fakeUserAgent});
-    win.setAutoHideMenuBar(hideMenuBar);
-    win.setMenuBarVisibility(!hideMenuBar);
+    win.setAutoHideMenuBar(configData.hideMenuBar);
+    win.setMenuBarVisibility(!configData.hideMenuBar);
     mainWindowState.track(win);
 
     // Load all menus:
 
-    cmenu = getMenu.context(win);
-    if(!disableTray) tray = getMenu.tray(appTrayIcon, appTrayIconSmall, win);
-    menubar = getMenu.bar(packageJson.repository.url, win);
+    getMenu.context(win, l10nStrings);
+    if(!configData.disableTray) tray = getMenu.tray(appTrayIcon, appTrayIconSmall, win, l10nStrings);
+    getMenu.bar(packageJson.repository.url, win, l10nStrings);
 
     // Open external URLs in default browser
 
@@ -260,11 +255,11 @@ function createWindow() {
     win.webContents.once('did-finish-load', () => {
         setTimeout(function(){
             win.webContents.on('page-favicon-updated', () => {
-                if(!win.isFocused() && !disableTray) tray.setImage(appTrayPing);
+                if(!win.isFocused() && !configData.disableTray) tray.setImage(appTrayPing);
         })}, 1000);
 
         app.on('browser-window-focus', () => {
-            if(!disableTray) tray.setImage(appTrayIcon);
+            if(!configData.disableTray) tray.setImage(appTrayIcon);
         });
     
         /* 
@@ -272,12 +267,9 @@ function createWindow() {
          * (and now it isn't "dirty"!)
          */
 
-        if (appConfig.has('mobileMode') && appConfig.get('mobileMode')) {
-            async function hideCSS() {
-                const key = await win.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
-                appConfig.set('css1Key',key);
-            }
-            hideCSS();
+        if (appConfig.has('mobileMode') && appConfig.get('mobileMode')) async () => {
+            const key = await win.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
+            appConfig.set('css1Key',key);
         }
 
         // Animate menu
@@ -290,7 +282,7 @@ function createWindow() {
 // Remember window state
 
 function windowStateKeeper(windowName) {
-    let window, windowState;
+    let window, windowState, eventList;
     function setBounds() {
 
         // Restore from appConfig
@@ -317,7 +309,7 @@ function windowStateKeeper(windowName) {
     function track(win) {
         window = win;
         eventList = ['resize', 'close'];
-        for (var i = 0, len = eventList.length; i < len; i++) {
+        for (let i = 0, len = eventList.length; i < len; i++) {
             win.on(eventList[i], saveState);
         }
     }
@@ -330,21 +322,10 @@ function windowStateKeeper(windowName) {
     });
 }
 
-/*
- * Check if other scripts wants app to quit (through the IPC).
- * Currently unused.
- */
-
-ipcMain.on('want-to-quit', () => {
-    var wantQuit = true;
-    app.quit();
-});
-
-
 if (!singleInstance) {
     app.quit();
 } else {
-    app.on('second-instance', (event, commandLine, workingDirectory) => {
+    app.on('second-instance', () => {
         if (mainWindow){
             if(!mainWindow.isVisible()) mainWindow.show();
             if(mainWindow.isMinimized()) mainWindow.restore();
@@ -355,7 +336,8 @@ if (!singleInstance) {
         checkVersion();
         updateInterval = setInterval(checkVersion, 1800000);
         mainWindow = createWindow(); // catch window as mainWindow
-        aboutWindow = aboutPanel();
+        aboutPanel();
+        console.log(typeof mainWindow);
     });
 }
 
@@ -370,6 +352,6 @@ app.on('activate', () => {
         checkVersion();
         updateInterval = setInterval(checkVersion, 1800000);
         mainWindow = createWindow();
-        aboutWindow = aboutPanel();
+        aboutPanel();
     }
 });
