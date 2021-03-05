@@ -47,7 +47,13 @@ module.exports = {
     {
       name: "electron-forge-maker-appimage",
       config: {
-        icon: iconFile
+        options: {
+          icon: iconFile,
+          productName: desktopName,
+          genericName: desktopGeneric,
+          categories: desktopCategories,
+          compression: "xz"
+        }
       }
     },
     {
