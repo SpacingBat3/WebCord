@@ -222,14 +222,29 @@ function createWindow() {
         }
     });
 
-    // Screen Capturer
+    // Preload scripts:
 
-    win.webContents.session.setPreloads([`${appDir}/src/js/preload-capturer.js`])
-    win.webContents.session.setPermissionCheckHandler( () => {
-        return true
+    win.webContents.session.setPreloads([
+        `${appDir}/src/js/preload-capturer.js`
+    ])
+    
+    // Permissions:
+    
+    win.webContents.session.setPermissionCheckHandler( (webContents, permission) => {
+        if(webContents.getURL().includes('https://discord.com')){
+            return true;
+        } else {
+            console.warn(`WARNING: ${webContents.getURL()}: Permission check to ${permission} denied.`);
+            return false;
+        }
     });
-    win.webContents.session.setPermissionRequestHandler( () => {
-        return true
+    win.webContents.session.setPermissionRequestHandler( (webContents, permission, callback) => {
+        if(webContents.getURL().includes('https://discord.com')){
+            return callback(true);
+        } else {
+            console.warn(`WARNING: ${webContents.getURL()}: Permission request to ${permission} denied.`);
+            return callback(false);
+        }
     });
 
     win.loadURL(appURL,{userAgent: fakeUserAgent});
