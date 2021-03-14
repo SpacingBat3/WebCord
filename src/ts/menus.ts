@@ -1,18 +1,15 @@
 /*
- * Menu Objects (menus.js
+ * Menu Objects (menus.ts)
  */
-import { app, Menu, BrowserWindow, MenuItem, Tray, dialog, shell } from 'electron'
-import appConfig = require('electron-json-config')
-let wantQuit = false
-
-interface json {
-	[key: string]: any
-}
-//const appDir = app.getAppPath()
+import { app, Menu, BrowserWindow, MenuItem, Tray, dialog, shell } from 'electron';
+import { lang } from './object.js';
+import appConfig = require('electron-json-config');
+import os = require('os');
+let wantQuit = false;
 
 // Contex Menu with spell checker
 
-export function context (windowName: BrowserWindow, strings: json): void {
+export function context (windowName: BrowserWindow, strings: lang): void {
 	windowName.webContents.on('context-menu', (event, params) => {
 		const cmenu = Menu.buildFromTemplate([
 			{ type: 'separator'},
@@ -21,7 +18,9 @@ export function context (windowName: BrowserWindow, strings: json): void {
 			{ label: strings.context.paste, role: 'paste' },
 			{ type: 'separator'},
 		])
+
 		// All stuff associated to the dictionary
+
 		let dictionaryPos = 0
 		for (const suggestion of params.dictionarySuggestions) {
 			cmenu.insert(dictionaryPos++,new MenuItem({
@@ -46,33 +45,81 @@ export function context (windowName: BrowserWindow, strings: json): void {
 	})
 }
 
+let funMode = false;
+const today = new Date();
+if(os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.getMonth() == 3)) {
+	funMode = true // There's always fun for me ;)
+}
+
 // Tray menu
 
-export function tray (Icon: string, IconSmall: string, windowName: BrowserWindow, strings: json): Tray {
-	const tray = new Tray(Icon)
+export function tray (Icon: string, IconSmall: string, windowName: BrowserWindow, strings: lang): Tray {
+	const tray = new Tray(Icon);
 	const contextMenu = Menu.buildFromTemplate([
-		{ label: 'Top Secret Control Panel', enabled: false, icon: IconSmall },
+		{
+			label: 'Top Secret Control Panel',
+			enabled: funMode,
+			icon: IconSmall,
+			click: () => {
+				const child = new BrowserWindow({
+					parent: windowName,
+					title: "Top Secret Control Panel",
+					minWidth: 640,
+					maxWidth: 640,
+					width: 640,
+					minHeight: 480,
+					maxHeight: 480,
+					height: 480,
+					modal: true,
+					backgroundColor: "#000",
+					icon: Icon,
+					webPreferences: {
+						nodeIntegration: false,
+						contextIsolation: true
+					}
+				})
+				// Let's load a virus! Surely, nothing wrong will happen:
+				child.loadURL('http://www.5z8.info/worm.exe_i0b8xn_snufffilms')
+				child.setAutoHideMenuBar(true)
+				child.setMenuBarVisibility(false)
+				child.removeMenu()
+			}
+		},
 		{ type: 'separator' },
-		{ label: strings.help.about, role: 'about', click: function() { app.showAboutPanel();}},
+		{
+			label: strings.help.about,
+			role: 'about',
+			click: function() { app.showAboutPanel();}
+		},
 		{ type: 'separator' },
-		{ label: strings.tray.toggle, click: function() { windowName.isVisible() ? windowName.hide() : windowName.show(); } },
-		{ label: strings.tray.quit, click: function() { wantQuit = true; app.quit(); } }
-	])
-	tray.setToolTip('Discord')
-	tray.setContextMenu(contextMenu)
+		{
+			label: strings.tray.toggle,
+			click: function() { 
+				windowName.isVisible() ? windowName.hide() : windowName.show(); 
+			} 
+		},
+		{ label: strings.tray.quit,
+			click: function(){
+				wantQuit = true;
+				app.quit();
+			}
+		}
+	]);
+	tray.setContextMenu(contextMenu);
+	tray.setToolTip("Electron Discord Web App");
 	// Exit to the tray
 	windowName.on('close', (event) => {
 		if (!wantQuit){
-			event.preventDefault()
-			windowName.hide()
+			event.preventDefault();
+			windowName.hide();
 		}
-	})
-	return tray
+	});
+	return tray;
 }
 
 // Menu Bar
 
-export function bar (repoLink: string, mainWindow: BrowserWindow, strings: json): Menu {
+export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang): Menu {
 	const webLink = repoLink.substring(repoLink.indexOf("+")+1)
 	const menu = Menu.buildFromTemplate([
 		{ role: 'fileMenu', label: strings.menubar.file},
@@ -101,9 +148,9 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: json)
 						appConfig.set('hideMenuBar', true)
 						dialog.showMessageBoxSync({
 							type: "warning",
-							title: strings.warning.hideMenuBar.title,
-							message: strings.warning.hideMenuBar.body,
-							buttons: [strings.buttons.continue]
+							title: strings.dialog.warning,
+							message: strings.dialog.hideMenuBar,
+							buttons: [strings.dialog.buttons.continue]
 						})
 					}
 				}
@@ -118,7 +165,6 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: json)
 					} else {
 						appConfig.set('mobileMode', true);
 					}
-					// who cares it will produce a lot of entries in CSS:
 					if (appConfig.get('mobileMode')) {
 						const key = await mainWindow.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
 						appConfig.set('css1Key',key);
@@ -141,9 +187,9 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: json)
 						height: 480,
 						modal: true,
 						background: "#000",
-						icon: `${appDir}/icons/temp.png`
+						icon: "https://jcw87.github.io/c2-sans-fight/icon-256.png
 					})
-					child.loadFile(`${appDir}/offline/index.html`)
+					child.loadFile('https://jcw87.github.io/c2-sans-fight/')
 					child.setAutoHideMenuBar(true)
 					child.setMenuBarVisibility(false)
 					child.removeMenu()

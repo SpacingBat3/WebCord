@@ -1,11 +1,11 @@
 /*
- * Main process script (main.js)
+ * Main process script (main.ts)
  */
  
 // Load the stuff we need to have there:
 
-import { app, BrowserWindow, shell, Notification } from 'electron';
-import fetch from 'electron-fetch';
+import { app, BrowserWindow, shell } from 'electron';
+import { packageJson, configData } from './object.js'
 
 import fs = require('fs');
 import path = require('path');
@@ -37,10 +37,8 @@ if (appDir.indexOf(".asar") < 0) {
  */
 const appIconDir = `${appDir}/icons`;
 
-/* eslint-disable */
-const packageJson = require("../../package.json"); // Read package.json
-
 // Load scripts:
+import {checkVersion} from './update.js'
 import {getUserAgent} from './userAgent.js';
 import * as getMenu from "./menus.js";
 
@@ -110,88 +108,25 @@ if(fs.existsSync(oldUserPath)) {
     fs.renameSync(oldUserPath, app.getPath('userData'));
 }
 
-// Mix default values with the one being in config:
-
-const defaultConfig = {
-    hideMenuBar: false,
-    mobileMode: false,
-    disableTray: false
-}
-
-/* eslint-disable */
-const configJson = require(appConfig.file());
-
-const configData = deepmerge(defaultConfig, configJson)
-
 // Year format for the copyright
 
 const copyYear = `${appYear}-${updateYear}`;
 
+// Fake Chromium User Agent:
 
 const fakeUserAgent = getUserAgent(chromiumVersion);
-
-// Check if there's an update available:
-
-async function checkVersion(){
-    const remoteJson = await (await fetch(`https://raw.githubusercontent.com/${repoName}/master/package.json`)).json();
-    const githubApi = await (await fetch(`https://api.github.com/repos/${repoName}/releases/latest`)).json();
-    const localVersion = packageJson.version.split('.')
-    let remoteTag = null;
-    let updateMsg = null;
-    let updateURL = null;
-    let showGui = false;
-
-    if(devel){
-        remoteTag = remoteJson.version;
-        updateURL = `https://github.com/${repoName}/commit/master`;
-    } else {
-        remoteTag = githubApi.tag_name;
-        updateURL = `https://github.com/${repoName}/releases/latest`;
-    }
-    const remoteVersion = remoteTag.split('.');
-
-    if(localVersion[0] < remoteVersion[0] || (localVersion[0] == remoteVersion[0] && localVersion[1] < remoteVersion[1]) || (localVersion[0] == remoteVersion[0] && localVersion[1] == remoteVersion[1] && localVersion[2] < remoteVersion[2])) {
-        showGui = true
-        updateMsg = `There's an update available! (v${packageJson.version} → v${remoteTag})`
-    } else if(localVersion[0] > remoteVersion[0] || (localVersion[0] == remoteVersion[0] && localVersion[1] > remoteVersion[1]) || (localVersion[0] == remoteVersion[0] && localVersion[1] == remoteVersion[1] && localVersion[2] > remoteVersion[2])) {
-        updateMsg = `Application is newer than in the repository! (v${packageJson.version} → v${remoteTag})`
-    } else if(localVersion[0] != remoteVersion[0] || localVersion[1] != remoteVersion[1] || localVersion[2] != remoteVersion[2]) {
-        updateMsg = `Application version is different than in the repository! (v${packageJson.version} ≠ v${remoteTag})`
-    } else {
-        updateMsg = "Application is up-to-date!"
-    }
-
-    console.log(`[UPDATE] ${updateMsg}`)
-
-    const updatePopup = {
-        title: 'Electron Discord Web App: Update is available!',
-        icon: appIcon,
-        body: updateMsg
-    }
-    if(showGui){
-        const notification = new Notification(updatePopup);
-        notification.on('click', () => {
-            shell.openExternal(updateURL);
-        });
-        notification.show();
-    }
-    if(updateInterval){
-        clearInterval(updateInterval);
-    }
-}
 
 // "About" Panel:
 
 function aboutPanel() {
-    l10nStrings = loadTranslations();
     const aboutWindow = app.setAboutPanelOptions({
         applicationName: appFullName,
-        iconPath: appIcon,
         applicationVersion: `v${appVersion} (Electron v${process.versions.electron})${devFlag}`,
         authors: appContributors,
         website: appRepo,
         credits: `${l10nStrings.help.contributors} ${stringContributors}`,
-        copyright: `Copyright © ${copyYear} ${appAuthor}\n\n${l10nStrings.help.credits}`
+        copyright: `Copyright © ${copyYear} ${appAuthor}\n\n${l10nStrings.help.credits}`,
+        iconPath: appIcon
     });
     return aboutWindow;
 }
@@ -201,9 +136,6 @@ function createWindow() {
     // Check the window state
 
     const mainWindowState = windowStateKeeper('win');
-    
-
-    const l10nStrings = loadTranslations(); // Load translations for this window
 
     // Browser window
     
@@ -234,7 +166,7 @@ function createWindow() {
         if(webContents.getURL().includes('https://discord.com')){
             return true;
         } else {
-            console.warn(`WARNING: ${webContents.getURL()}: Permission check to ${permission} denied.`);
+            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
             return false;
         }
     });
@@ -242,7 +174,7 @@ function createWindow() {
         if(webContents.getURL().includes('https://discord.com')){
             return callback(true);
         } else {
-            console.warn(`WARNING: ${webContents.getURL()}: Permission request to ${permission} denied.`);
+            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
             return callback(false);
         }
     });
@@ -337,6 +269,14 @@ function windowStateKeeper(windowName) {
     });
 }
 
+function main() {
+    l10nStrings = loadTranslations();
+    checkVersion(l10nStrings, devel, repoName, appIcon, updateInterval);
+    updateInterval = setInterval(function(){checkVersion(l10nStrings, devel, repoName, appIcon, updateInterval)}, 1800000);
+    mainWindow = createWindow();
+    aboutPanel();
+}
+
 if (!singleInstance) {
     app.quit();
 } else {
@@ -347,13 +287,7 @@ if (!singleInstance) {
             mainWindow.focus();
         }
     });
-    app.on('ready', () => {
-        checkVersion();
-        updateInterval = setInterval(checkVersion, 1800000);
-        mainWindow = createWindow(); // catch window as mainWindow
-        aboutPanel();
-        console.log(typeof mainWindow);
-    });
+    app.on('ready', main);
 }
 
 app.on('window-all-closed', () => {
@@ -363,10 +297,5 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        checkVersion();
-        updateInterval = setInterval(checkVersion, 1800000);
-        mainWindow = createWindow();
-        aboutPanel();
-    }
+    if (BrowserWindow.getAllWindows().length === 0) main();
 });

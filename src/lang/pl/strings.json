@@ -22,14 +22,29 @@
 			"mobileMode": "Ukryj pasek boczny"
 		}
 	},
-	"warning": {
-		"hideMenuBar": {
-			"title": "Ostrzeżenie",
-			"body": "Ponieważ włączyłeś blokadę paska menu, przy następnym uruchomieniu aplikacji nie będziesz miał do niego dostępu – chyba, że naciśniesz klawisz [ALT], aby przełączyć tymczasowo jego ukrycie."
+	"dialog": {
+		"error": "Błąd",
+		"warning": "Uwaga",
+		"ver": {
+			"update": "Dostępna nowa wersja programu!",
+			"updateBadge": "[ZMIANY]",
+			"updateTitle": "Dostęna aktualizacja!",
+			"recent": "Aplikacja jest w najnowszej wersji!",
+			"newer": "Wersja aplikacji jest nowsza niż w repozytorium!",
+			"diff": "Wersja aplikacji jest inna niż w repozytorium!"
+		},
+		"permission": {
+			"request": {
+				"denied": "%s: Prośba o dostęp do elementu '%s' odrzucona."
+			},
+			"check": {
+				"denied": "%s: Zapytanie o uprawnienia do elementu '%s' odrzucone."
 			}
-	},
-	"buttons": {
-		"continue": "Kontynuuj"
+		},
+		"buttons": {
+			"continue": "Kontynuuj"
+		},
+		"hideMenuBar": "Ponieważ włączyłeś blokadę paska menu, przy następnym uruchomieniu aplikacji nie będziesz miał do niego dostępu – chyba, że naciśniesz klawisz [ALT], aby przełączyć tymczasowo jego ukrycie."
 	},
 	"help":{
 		"groupName": "Pomoc",

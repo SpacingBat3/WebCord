@@ -22,14 +22,29 @@
 			"mobileMode": "Hide side bar"
 		}
 	},
-	"warning": {
-		"hideMenuBar": {
-			"title": "Warning",
-			"body": "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to unhide menu bar."
+	"dialog": {
+		"error": "Error",
+		"warning": "Warning",
+		"ver": {
+			"update": "New app version is available!",
+			"updateBadge": "[UPDATE]",
+			"updateTitle": "Update available!",
+			"recent": "Application is up-to-date!",
+			"newer": "Application version is newer than in the repository!",
+			"diff": "Application version is different than in the repository!"
+		},
+		"permission": {
+			"request": {
+				"denied": "%s: Permission request to %s denied."
+			},
+			"check": {
+				"denied": "%s: Permission check to %s denied."
 			}
-	},
-	"buttons": {
-		"continue": "Continue"
+		},
+		"buttons": {
+			"continue": "Continue"
+		},
+		"hideMenuBar": "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to unhide menu bar."
 	},
 	"help":{
 		"groupName": "Help",

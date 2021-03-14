@@ -1,15 +1,19 @@
 /*
  * Thanks, @WesselKroos!
- * 
- * NOTE: This will work only in the [DEV] mode,
- * because it needs to have right now disabled "contextIsolation".
  */
 const { desktopCapturer } = require('electron')
 navigator.mediaDevices.getDisplayMedia = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const sources = await desktopCapturer.getSources({ types: ['screen', 'window'] })
-
+      // To-do: "Entire screen" as localized name:
+      function l10n(origin, locale){
+        if(originalString == 'Entire Screen') {
+          return locale;
+        } else {
+          return origin;
+        }
+      }
       const selectionElem = document.createElement('div')
       selectionElem.classList = 'desktop-capturer-selection'
       selectionElem.innerHTML = `
@@ -82,7 +86,7 @@ navigator.mediaDevices.getDisplayMedia = () => {
           transform: translateY(-50%);
           right: 15px;
           padding-top: 5px;
-          transition: background-color .15s
+          transition: background-color .15s;
         }
         .desktop-capturer-close:hover {
           background-color: #823A3A;
@@ -113,12 +117,11 @@ navigator.mediaDevices.getDisplayMedia = () => {
         .forEach(button => {
           button.addEventListener('click', async () => {
             try {
-              const id = button.getAttribute('data-id')
-              const source = sources.find(source => source.id === id)
+              const id = button.getAttribute('data-id');
+              const source = sources.find(source => source.id === id);
               if(!source) {
-                throw new Error(`Source with id ${id} does not exist`)
+                throw new Error(`Source with id ${id} does not exist`);
               }
-              
               const stream = await navigator.mediaDevices.getUserMedia({
                 audio: false,
                 video: {
@@ -127,20 +130,19 @@ navigator.mediaDevices.getDisplayMedia = () => {
                     chromeMediaSourceId: source.id
                   }
                 }
-              })
-              resolve(stream)
-
-              selectionElem.remove()
+              });
+              resolve(stream);
+              selectionElem.remove();
             } catch (err) {
-              console.error('Error selecting desktop capture source:', err)
-              reject(err)
+              console.error('Error selecting desktop capture source:', err);
+              reject(err);
             }
           })
         })
         document.querySelectorAll('.desktop-capturer-close')
         .forEach(button => {
           button.addEventListener('click', () => {
-              selectionElem.remove()
+              selectionElem.remove();
           })
         })
     } catch (err) {
