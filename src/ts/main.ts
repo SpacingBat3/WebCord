@@ -187,7 +187,7 @@ function createWindow() {
     // Load all menus:
 
     getMenu.context(win, l10nStrings);
-    if(!configData.disableTray) tray = getMenu.tray(appTrayIcon, appTrayIconSmall, win, l10nStrings);
+    if(!configData.disableTray) tray = getMenu.tray(appTrayIcon, win, l10nStrings);
     getMenu.bar(packageJson.repository.url, win, l10nStrings);
 
     // Open external URLs in default browser
@@ -200,13 +200,14 @@ function createWindow() {
     // "Red dot" icon feature
 
     win.webContents.once('did-finish-load', () => {
-        setTimeout(function(){
-            win.webContents.on('page-favicon-updated', () => {
-                if(!win.isFocused() && !configData.disableTray) tray.setImage(appTrayPing);
-        })}, 1000);
+        win.webContents.on('page-favicon-updated', async () => {
+            const t = await tray
+            if(!win.isFocused() && !configData.disableTray) t.setImage(appTrayPing);
+        });
 
-        app.on('browser-window-focus', () => {
-            if(!configData.disableTray) tray.setImage(appTrayIcon);
+        app.on('browser-window-focus', async () => {
+            const t = await tray
+            if(!configData.disableTray) t.setImage(appTrayIcon);
         });
     
         /* 

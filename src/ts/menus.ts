@@ -1,8 +1,9 @@
 /*
  * Menu Objects (menus.ts)
  */
-import { app, Menu, BrowserWindow, MenuItem, Tray, dialog, shell } from 'electron';
+import { app, Menu, BrowserWindow, MenuItem, Tray, dialog, shell, nativeImage } from 'electron';
 import { lang } from './object.js';
+import fetch from 'electron-fetch';
 import appConfig = require('electron-json-config');
 import os = require('os');
 let wantQuit = false;
@@ -45,21 +46,29 @@ export function context (windowName: BrowserWindow, strings: lang): void {
 	})
 }
 
-let funMode = false;
+let funMode = 0;
 const today = new Date();
 if(os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.getMonth() == 3)) {
-	funMode = true // There's always fun for me ;)
+	funMode = 1; // There's always fun for me ;)
+} else if (os.userInfo().username == 'pi' && today.getDate() == 14 && today.getMonth() == 3) {
+	funMode = 2; // Happy π day!
 }
 
 // Tray menu
 
-export function tray (Icon: string, IconSmall: string, windowName: BrowserWindow, strings: lang): Tray {
+export async function tray (Icon: string, windowName: BrowserWindow, strings: lang): Promise<Tray> {
 	const tray = new Tray(Icon);
+	let image:string|nativeImage;
+	if (funMode === 2) {
+		image = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
+	} else {
+		image = nativeImage.createFromPath(Icon).resize({width:16})
+	}
 	const contextMenu = Menu.buildFromTemplate([
 		{
 			label: 'Top Secret Control Panel',
-			enabled: funMode,
-			icon: IconSmall,
+			enabled: (funMode === 1),
+			icon: image,
 			click: () => {
 				const child = new BrowserWindow({
 					parent: windowName,
@@ -72,7 +81,7 @@ export function tray (Icon: string, IconSmall: string, windowName: BrowserWindow
 					height: 480,
 					modal: true,
 					backgroundColor: "#000",
-					icon: Icon,
+					icon: image,
 					webPreferences: {
 						nodeIntegration: false,
 						contextIsolation: true
@@ -175,29 +184,6 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang)
 				}
 			}
 		]},
-			/* An unused placeholder
-			{
-			
-				label: "Template",
-				click: () => {
-					const child = new BrowserWindow({
-						parent: mainWindow,
-						title: "Not working!",
-						width: 640,
-						height: 480,
-						modal: true,
-						background: "#000",
-						icon: "https://jcw87.github.io/c2-sans-fight/icon-256.png
-					})
-					child.loadFile('https://jcw87.github.io/c2-sans-fight/')
-					child.setAutoHideMenuBar(true)
-					child.setMenuBarVisibility(false)
-					child.removeMenu()
-					console.log("You just found an easter egg!")
-				}
-				
-			}
-			*/
 		{ label: strings.help.groupName, role: 'help', submenu: [
 			{ label: strings.help.about, role: 'about', click: function() { app.showAboutPanel();}},
 			{ label: strings.help.repo, click: function() { shell.openExternal(webLink);} },
