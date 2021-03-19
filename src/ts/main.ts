@@ -61,7 +61,8 @@ function loadTranslations() {
 
 // Vars to modify app behavior
 const repoName = "SpacingBat3/electron-discord-webapp";
-const appURL = 'https://discord.com/app';
+const appRootURL = 'https://discord.com'
+const appURL = appRootURL + '/app';
 const appIcon = `${appIconDir}/app.png`;
 const appTrayIcon = `${appDir}/icons/tray.png`;
 const appTrayPing = `${appDir}/icons/tray-ping.png`;
@@ -148,6 +149,7 @@ function createWindow() {
         backgroundColor: "#2F3136",
         icon: appIcon,
         webPreferences: {
+            enableRemoteModule: false,
             nodeIntegration: false, // Won't work with the true value.
             devTools: devel,
             contextIsolation: false // Disabled because of the capturer.
@@ -158,12 +160,41 @@ function createWindow() {
 
     win.webContents.session.setPreloads([
         `${appDir}/src/js/preload-capturer.js`
-    ])
+    ]);
+
+    // Content Security Policy
     
+    let csp="default-src 'self' blob: data: 'unsafe-inline'";
+    csp+=" https://*.discordapp.net https://*.discord.com https://*.discordapp.com https://discord.com https://jcw87.github.io" // HTTPS
+    csp+=" wss://*.discord.media wss://*.discord.gg wss://*.discord.com"; // WSS
+    /**
+     * Discord servers, blocking them makes web app unusable.
+     */
+    if (!configData.csp.strict) {
+        csp+=" wss://dealer.spotify.com https://api.spotify.com" // Spotify API
+        csp+=" https://media.tenor.co https://media.tenor.com https://c.tenor.com https://media.giphy.com" // GIF providers
+    }
+    /**
+     * Servers above are blocked with the 'strict' CSP switch.
+     */
+    csp+="; script-src 'self' 'unsafe-inline' 'unsafe-eval'"; // Discord scripts
+    if (!configData.csp.disabled) {
+        win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+            callback({
+                responseHeaders: {
+                    ...details.responseHeaders,
+                    'Content-Security-Policy': [csp]
+                }
+            });
+        });
+    }
+    let childCsp="default-src 'self' blob:"
+    if(devel) childCsp+=" 'unsafe-eval' 'unsafe-inline'"
+
     // Permissions:
-    
+
     win.webContents.session.setPermissionCheckHandler( (webContents, permission) => {
-        if(webContents.getURL().includes('https://discord.com')){
+        if(webContents.getURL().includes(appRootURL)){
             return true;
         } else {
             console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
@@ -171,7 +202,7 @@ function createWindow() {
         }
     });
     win.webContents.session.setPermissionRequestHandler( (webContents, permission, callback) => {
-        if(webContents.getURL().includes('https://discord.com')){
+        if(webContents.getURL().includes(appRootURL)){
             return callback(true);
         } else {
             console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
@@ -187,7 +218,7 @@ function createWindow() {
     // Load all menus:
 
     getMenu.context(win, l10nStrings);
-    if(!configData.disableTray) tray = getMenu.tray(appTrayIcon, win, l10nStrings);
+    if(!configData.disableTray) tray = getMenu.tray(appTrayIcon, win, l10nStrings, childCsp);
     getMenu.bar(packageJson.repository.url, win, l10nStrings);
 
     // Open external URLs in default browser
@@ -200,16 +231,17 @@ function createWindow() {
     // "Red dot" icon feature
 
     win.webContents.once('did-finish-load', () => {
-        win.webContents.on('page-favicon-updated', async () => {
-            const t = await tray
-            if(!win.isFocused() && !configData.disableTray) t.setImage(appTrayPing);
-        });
-
+        setTimeout(function(){
+            win.webContents.on('page-favicon-updated', async () => {
+                const t = await tray
+                if(!win.isFocused() && !configData.disableTray) t.setImage(appTrayPing);
+            });
+        }, 5000);
         app.on('browser-window-focus', async () => {
             const t = await tray
             if(!configData.disableTray) t.setImage(appTrayIcon);
         });
-    
+
         /* 
          * Hideable animated side bar:
          * (and now it isn't "dirty"!)

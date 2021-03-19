@@ -3,19 +3,30 @@
  */
 
 import appConfig = require('electron-json-config');
-import deepmerge = require('deepmerge'); 
+import deepmerge = require('deepmerge');
+import fs = require('fs')
+
+let configJson;
+
+if(fs.existsSync(appConfig.file())){
+	configJson = require(appConfig.file());
+} else {
+	configJson = {};
+}
 
 // JSON Objects:
  
 /* eslint-disable */
 export const packageJson = require("../../package.json");
 export const configData = deepmerge({
-		hideMenuBar: false,
-		mobileMode: false,
-		disableTray: false
-	},
-	require(appConfig.file())
-)
+	hideMenuBar: false,
+	mobileMode: false,
+	disableTray: false,
+	csp: {
+		disabled: false,
+		strict: false
+	}
+}, configJson)
 
 // Interfaces:
 
@@ -31,11 +42,18 @@ export interface lang {
 		[key: string]: string
 	},
 	menubar: {
-		file: string,
+		enabled: string,
+		file: { [key: string]: string },
 		edit: string,
 		view: string,
 		window: string,
-		options: { [key: string]: string }
+		options: {
+			groupName: string,
+			disableTray: string,
+			hideMenuBar: string,
+			mobileMode: string,
+			csp: { [key: string]: string }
+		}
 	},
 	dialog: {
 		error: string,

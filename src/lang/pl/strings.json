@@ -10,16 +10,24 @@
 		"dictionaryAdd": "Dodaj do słownika"
 	},
 	"menubar":{
-		"file": "Plik",
+		"enabled": "Włączony",
+		"file": {
+			"groupName":"Plik",
+			"quit":"Wyjdź",
+			"relaunch":"Uruchom ponownie"
+		},
 		"edit": "Edycja",
 		"view": "Widok",
 		"window": "Okno",
 		"options":{
 			"groupName": "Ustawienia",
 			"disableTray": "Wyłącz zasobnik",
-			"disableNotifications": "Wyłącz powiadomienia",
 			"hideMenuBar": "Ukryj pasek menu",
-			"mobileMode": "Ukryj pasek boczny"
+			"mobileMode": "Ukryj pasek boczny",
+			"csp": {
+				"groupName": "Nagłówek CSP",
+				"strict": "Tylko serwery Discorda"
+			}
 		}
 	},
 	"dialog": {

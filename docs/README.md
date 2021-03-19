@@ -1,3 +1,6 @@
+<!--
+		Electron Discord Web App – README.md (Markdown + HTML)
+-->
 <h1><a href='https://discord.com'><img src='../icons/app.png' width='64px'></a> Electron Discord Web App </h1>
 
 [![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
@@ -13,6 +16,11 @@ A Discord Web App made with the [Electron API](https://github.com/electron/elect
 It is completely indepenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I've maintained a fork of it before, which I used to learn about the Electron itself and implementing a Discord web app with it. So, thank you, [@GyozaGuy](https://github.com/GyozaGuy), without that code this project could not exist.
 
 ## Documentation:
+- [Configuring the application](SETTINGS.md)
+  - [Automatically hide menu bar](SETTINGS.md#auto-hide-menu-bar)
+  - [Disable tray functionality](SETTINGS.md#disable-tray)
+  - [Hide Discord's side bar](SETTINGS.md#hide-side-bar)
+  - [About CSP settings](SETTINGS.md#content-security-policy-settings)
 - [Contributing](CONTRIBUTING.md)
   - [Run from the sources](CONTRIBUTING.md#run)
   - [Creating the distributables](CONTRIBUTING.md#creating-distributables)

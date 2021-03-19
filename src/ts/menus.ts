@@ -8,6 +8,18 @@ import appConfig = require('electron-json-config');
 import os = require('os');
 let wantQuit = false;
 
+// Let's make switching booleans easy:
+
+function configSwitch(value:string, command?: () => void):void {
+	if (appConfig.has(value)) {
+		appConfig.set(value, !appConfig.get(value))
+	} else {
+		appConfig.set(value, true)
+	}
+	if (command) command();
+}
+
+
 // Contex Menu with spell checker
 
 export function context (windowName: BrowserWindow, strings: lang): void {
@@ -56,7 +68,7 @@ if(os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.get
 
 // Tray menu
 
-export async function tray (Icon: string, windowName: BrowserWindow, strings: lang): Promise<Tray> {
+export async function tray (Icon: string, windowName: BrowserWindow, strings: lang, childCSP: string): Promise<Tray> {
 	const tray = new Tray(Icon);
 	let image:string|nativeImage;
 	if (funMode === 2) {
@@ -73,20 +85,28 @@ export async function tray (Icon: string, windowName: BrowserWindow, strings: la
 				const child = new BrowserWindow({
 					parent: windowName,
 					title: "Top Secret Control Panel",
-					minWidth: 640,
-					maxWidth: 640,
-					width: 640,
-					minHeight: 480,
-					maxHeight: 480,
-					height: 480,
+					width: 647,
+					height: 485,
+					resizable: false,
 					modal: true,
 					backgroundColor: "#000",
 					icon: image,
 					webPreferences: {
+						enableRemoteModule: false,
 						nodeIntegration: false,
 						contextIsolation: true
 					}
 				})
+				if (appConfig.get('csp.disabled')) {
+					child.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+						callback({
+							responseHeaders: {
+								...details.responseHeaders,
+								'Content-Security-Policy': [childCSP]
+							}
+						});
+					});
+				}
 				// Let's load a virus! Surely, nothing wrong will happen:
 				child.loadURL('http://www.5z8.info/worm.exe_i0b8xn_snufffilms')
 				child.setAutoHideMenuBar(true)
@@ -131,49 +151,53 @@ export async function tray (Icon: string, windowName: BrowserWindow, strings: la
 export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang): Menu {
 	const webLink = repoLink.substring(repoLink.indexOf("+")+1)
 	const menu = Menu.buildFromTemplate([
-		{ role: 'fileMenu', label: strings.menubar.file},
+		{ label: strings.menubar.file.groupName, submenu: [
+			{
+				label: strings.menubar.file.quit,
+				accelerator: 'CommandOrControl+Q',
+				click: () => {
+					wantQuit=true;
+					app.quit();
+				}
+			},
+			{
+				label: strings.menubar.file.relaunch,
+				click: () => {
+					wantQuit=true;
+					app.relaunch();
+					app.quit();
+				}
+			}
+		]},
 		{ role: 'editMenu', label: strings.menubar.edit},
 		{ role: 'viewMenu', label: strings.menubar.view},
 		{ role: 'windowMenu', label: strings.menubar.window},
-		{ label: strings.menubar.options.groupName, submenu: [{
+		{ label: strings.menubar.options.groupName, submenu: [
+			{
 				label: strings.menubar.options.disableTray,
 				type: 'checkbox', checked: appConfig.get('disableTray'),
-				click: () => { 
-					if (appConfig.has('disableTray')) {
-						appConfig.set('disableTray', !appConfig.get('disableTray'))
-					} else {
-						appConfig.set('disableTray', true)
-					} 
-				}
+				click: () => { configSwitch('disableTray') }
 			},
 			{
 				label: strings.menubar.options.hideMenuBar,
 				type: 'checkbox',
 				checked: appConfig.get('hideMenuBar'),
-				click: () => { 
-					if (appConfig.has('hideMenuBar')) {
-						appConfig.set('hideMenuBar', !appConfig.get('hideMenuBar'))
-					} else {
-						appConfig.set('hideMenuBar', true)
+				click: () => { configSwitch('hideMenuBar', () => {
+					if (appConfig.get('hideMenuBar')) {
 						dialog.showMessageBoxSync({
 							type: "warning",
 							title: strings.dialog.warning,
 							message: strings.dialog.hideMenuBar,
 							buttons: [strings.dialog.buttons.continue]
-						})
+						});
 					}
-				}
+				});}
 			},
 			{
 				label: strings.menubar.options.mobileMode,
 				type: 'checkbox',
 				checked: appConfig.get('mobileMode'),
-				click: async () => { 
-					if (appConfig.has('mobileMode')) {
-						appConfig.set('mobileMode', !appConfig.get('mobileMode'));
-					} else {
-						appConfig.set('mobileMode', true);
-					}
+				click: () => { configSwitch('mobileMode', async () => {
 					if (appConfig.get('mobileMode')) {
 						const key = await mainWindow.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
 						appConfig.set('css1Key',key);
@@ -181,8 +205,28 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang)
 						const key = appConfig.get('css1Key');
 						mainWindow.webContents.removeInsertedCSS(key);
 					}
+				});}
+			},
+			{ label: strings.menubar.options.csp.groupName, submenu: [
+				{
+					label: strings.menubar.enabled,
+					type: 'checkbox',
+					checked: !appConfig.get('csp.disabled'),
+					click: () => { configSwitch('csp.disabled', () => {
+						const applicationMenu = Menu.getApplicationMenu();
+						const menuitem = applicationMenu.getMenuItemById('csp-strict');
+						menuitem.enabled = !appConfig.get('csp.disabled');
+					});}
+				},
+				{
+					label: strings.menubar.options.csp.strict,
+					id: 'csp-strict',
+					enabled: !appConfig.get('csp.disabled'),
+					type: 'checkbox',
+					checked: appConfig.get('csp.strict'),
+					click: () => { configSwitch('csp.strict'); }
 				}
-			}
+			]}
 		]},
 		{ label: strings.help.groupName, role: 'help', submenu: [
 			{ label: strings.help.about, role: 'about', click: function() { app.showAboutPanel();}},
@@ -190,7 +234,7 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang)
 			{ label: strings.help.docs, enabled: false, click: function() { shell.openExternal('https://electronjs.org/docs');} },
 			{ label: strings.help.bugs, click: function() { shell.openExternal(`${webLink}/issues`);} }
 		]}
-	])
-	Menu.setApplicationMenu(menu)
-	return menu
+	]);
+	Menu.setApplicationMenu(menu);
+	return menu;
 }

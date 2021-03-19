@@ -10,16 +10,24 @@
 		"dictionaryAdd": "Add to the local dictionary"
 	},
 	"menubar": {
-		"file":"File",
-		"edit":"Edit",
-		"view":"View",
-		"window":"Window",
+		"enabled": "Enabled",
+		"file": {
+			"groupName":"File",
+			"quit":"Quit",
+			"relaunch":"Relaunch"
+		},
+		"edit": "Edit",
+		"view": "View",
+		"window": "Window",
 		"options": {
 			"groupName": "Settings",
 			"disableTray": "Disable tray",
-			"disableNotifications": "Disable notifications",
 			"hideMenuBar": "Hide menu bar",
-			"mobileMode": "Hide side bar"
+			"mobileMode": "Hide side bar",
+			"csp": {
+				"groupName": "Content Security Policy",
+				"strict": "Discord only"
+			}
 		}
 	},
 	"dialog": {
