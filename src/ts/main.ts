@@ -23,20 +23,18 @@ const appDir = app.getAppPath();
  * Check if we are using the packaged version.
  */
 
-let devel, devFlag
+let devel:boolean, devFlag:string, appIconDir:string;
 if (appDir.indexOf(".asar") < 0) {
     devel = true;
-    devFlag = " [DEV]"
+    devFlag = " [DEV]";
+    appIconDir = appDir + "/icons";
 } else {
     devel = false;
+    devFlag = "";
+    appIconDir = path.join(appDir, "..");
 }
 
-/*
- * "About" window icon doesn't work
- * (newer GTK versions don't have it anyway)
- */
-const appIconDir = `${appDir}/icons`;
-
+console.log(appIconDir)
 // Load scripts:
 import {checkVersion} from './update.js'
 import {getUserAgent} from './userAgent.js';
@@ -177,7 +175,11 @@ function createWindow() {
     /**
      * Servers above are blocked with the 'strict' CSP switch.
      */
-    csp+="; script-src 'self' 'unsafe-inline' 'unsafe-eval'"; // Discord scripts
+    csp+="; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+    /**
+     * The scripts from the current domain are allowed to run
+     * (+ csp needs to allow 'unsafe-eval' for discord to work)
+     */
     if (!configData.csp.disabled) {
         win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
             callback({
@@ -242,10 +244,7 @@ function createWindow() {
             if(!configData.disableTray) t.setImage(appTrayIcon);
         });
 
-        /* 
-         * Hideable animated side bar:
-         * (and now it isn't "dirty"!)
-         */
+        // Hidable animated side bar:
 
         if (appConfig.has('mobileMode') && appConfig.get('mobileMode')) async () => {
             const key = await win.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");

@@ -4,8 +4,7 @@
 
 // Let's import some keys from the package.json:
 
-/* eslint-disable */
-const packageJson = require("../../package.json");
+import { packageJson } from './object.js'
 
 // Global variables in the config:
 const iconFile = "icons/app.png"
@@ -52,7 +51,7 @@ module.exports = {
           productName: desktopName,
           genericName: desktopGeneric,
           categories: desktopCategories,
-          compression: "xz"
+          compression: "gzip" // "xz" is too slow for the Electron AppImages
         }
       }
     },
