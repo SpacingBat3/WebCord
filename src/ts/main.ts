@@ -34,7 +34,6 @@ if (appDir.indexOf(".asar") < 0) {
     appIconDir = path.join(appDir, "..");
 }
 
-console.log(appIconDir)
 // Load scripts:
 import {checkVersion} from './update.js'
 import {getUserAgent} from './userAgent.js';

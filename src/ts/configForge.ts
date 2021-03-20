@@ -4,7 +4,8 @@
 
 // Let's import some keys from the package.json:
 
-import { packageJson } from './object.js'
+/* eslint-disable */
+const packageJson = require("../../package.json");
 
 // Global variables in the config:
 const iconFile = "icons/app.png"
