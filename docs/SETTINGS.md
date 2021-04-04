@@ -19,7 +19,4 @@ This option is implemented to hide the Discord's side menu bar (that displays th
 
 ### Content Security Policy settings
 
-It defines the rules that browser will use to either accept loading the content or not. Currently it can be configured to these states:
-- Disabled – no CSP, everything can be run or loaded that is on website. Use this to troubleshoot issues with CSP that may block the website that should be loaded.
-- Enabled – CSP, websites or content that is whitelisted will be able to run only. Should be used by most users that want full discord features.
-- Discord servers only (aka. *strict*) – all servers unasociated with the Discords are blocked by CSP, for even better security and privacy. Use this only if you aknowledge the limitations (like no GIF integrations or no Spotify API in the Discord).
+It defines the rules that browser will use to either accept loading the content or not. Currently, CSP can be disabled or enabled and optionally configured to block selected third-party websites.

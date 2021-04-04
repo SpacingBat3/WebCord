@@ -11,9 +11,11 @@
 [![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://gitcdn.link/repo/Botspot/pi-apps/master/icons/logo.svg)](https://github.com/Botspot/pi-apps)
 [![Run tests](../../../actions/workflows/build.yml/badge.svg?event=push)](../../../actions/workflows/build.yml)
 
-A Discord Web App made with the [Electron API](https://github.com/electron/electron), developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
+A Discord Web-based client made with the [Electron API](https://github.com/electron/electron), developed with the [Electron Forge](https://github.com/electron-userland/electron-forge).
 
-It is completely indepenendent from [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but I've maintained a fork of it before, which I used to learn about the Electron itself and implementing a Discord web app with it. So, thank you, [@GyozaGuy](https://github.com/GyozaGuy), without that code this project could not exist.
+It takes a differend approach from most client, as it isn't just a mod of the official client nor uses any of the API to be functional – it is currently based on the web version of the Discord, which makes it more trusted sollution in my opinion. As it even fakes it user agent to make it equal or similar to the one used by Chrome/Chromium, it is hard to detect it and ban users using it.
+
+Previously, it began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but then eventually I had rewritten it from scratch and called *Electron Discord Web App*. But because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about Electron and how to implement a Discord with it. Thanks to his work, this project could began on its own.
 
 ## Documentation:
 - [Configuring the application](SETTINGS.md)
