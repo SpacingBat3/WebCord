@@ -3,5 +3,5 @@ out/
 package-lock.json
 build/linux/*.pkg.tar*
 build/linux/*/
-src/js
-!src/js/preload-capturer.js
+src/js/*
+!src/js/renderer
