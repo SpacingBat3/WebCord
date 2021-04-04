@@ -87,7 +87,7 @@ module.exports = {
       config: {
         repository: {
           owner: packageJson.author.name,
-          name: packageJson.name
+          name: "electron-discord-webapp"
         },
         draft: true
       }
