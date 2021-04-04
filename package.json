@@ -1,7 +1,7 @@
 {
-  "name": "electron-discord-webapp",
-  "productName": "Electron Discord Web App",
-  "version": "1.2.1",
+  "name": "webcord",
+  "productName": "WebCord",
+  "version": "1.3.0",
   "description": "A Discord Web App made with the Electron API.",
   "main": "src/js/main.js",
   "scripts": {
@@ -10,17 +10,24 @@
     "build": "tsc",
     "start": "tsc && electron-forge start",
     "start:fast": "electron-forge start",
+    "start:faster": "electron .",
     "package": "tsc && electron-forge package",
     "package:fast": "electron-forge package",
     "make": "tsc && electron-forge make",
     "make:fast": "electron-forge make",
     "publish": "tsc && electron-forge publish",
-    "publish:fast": "electron-forge publish"
+    "publish:fast": "electron-forge publish",
+    "clean:linux": "rm src/js/*.js*"
   },
   "keywords": [
     "discord",
-    "web app",
-    "electron"
+    "web",
+    "electron",
+    "arm",
+    "armv7l",
+    "aarch64",
+    "arm64",
+    "Instant Messaging"
   ],
   "author": {
     "name": "SpacingBat3",
@@ -30,12 +37,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SpacingBat3/electron-discord-webapp"
+    "url": "git+https://github.com/SpacingBat3/WebCord"
   },
   "bugs": {
-    "url": "https://github.com/SpacingBat3/electron-discord-webapp/issues"
+    "url": "https://github.com/SpacingBat3/WebCord/issues"
   },
-  "homepage": "https://github.com/SpacingBat3/electron-discord-webapp#readme",
+  "homepage": "https://github.com/SpacingBat3/WebCord#readme",
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.54",
     "@electron-forge/maker-deb": "^6.0.0-beta.54",
@@ -45,19 +52,19 @@
     "@electron-forge/publisher-github": "^6.0.0-beta.54",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
-    "electron": "^12.0.1",
+    "electron": "^12.0.2",
     "electron-forge-maker-appimage": "SpacingBat3/electron-forge-maker-appimage",
-    "eslint": "^7.21.0",
+    "eslint": "^7.23.0",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.22.1",
-    "tsc": "^1.20150623.0",
-    "typescript": "^4.2.2"
+    "typescript": "^4.2.3"
   },
   "dependencies": {
     "deepmerge": "^4.2.2",
     "electron-fetch": "^1.7.3",
-    "electron-json-config": "^1.5.3",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-json-config": "^2.0.0-beta",
+    "electron-squirrel-startup": "^1.0.0",
+    "source-map-support": "^0.5.19"
   },
   "config": {
     "forge": "./src/js/configForge.js"

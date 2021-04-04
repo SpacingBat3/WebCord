@@ -6,7 +6,20 @@ import { Notification, shell } from 'electron';
 import { packageJson, lang } from './object.js';
 import fetch from 'electron-fetch';
 
-export async function checkVersion(strings: lang, devel: boolean, repoName: string, appIcon: string, updateInterval: number|undefined): Promise<void>{
+async function guessRepository ():Promise<string> {
+    const oldRepo = "SpacingBat3/electron-discord-webapp";
+    const newRepo = "SpacingBat3/WebCord";
+    if ((await fetch("https://github.com/"+oldRepo)).ok) {
+        console.warn("[WARN] Repository will be renamed soon to "+newRepo+'.');
+        console.warn("[WARN] Because of that, updater will stop working in the older builds.");
+        return oldRepo;
+    } else {
+        return newRepo;
+    }
+}
+
+export async function checkVersion(strings: lang, devel: boolean, appIcon: string, updateInterval: NodeJS.Timeout|undefined): Promise<void>{
+    const repoName = await guessRepository();
     const remoteJson = await (await fetch(`https://raw.githubusercontent.com/${repoName}/master/package.json`)).json();
     const githubApi = await (await fetch(`https://api.github.com/repos/${repoName}/releases/latest`)).json();
     const localVersion = packageJson.version.split('.');

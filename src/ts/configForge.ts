@@ -26,9 +26,10 @@ module.exports = {
     ignore:[
       "docs",
       "build",
-      "src/js/*.js.map",
+      "extra",
       "src/js/configForge.js",
-      "src/ts"
+      "src/ts/configForge.ts",
+      "icons/app.*"
     ]
   },
   makers: [

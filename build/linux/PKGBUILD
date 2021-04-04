@@ -1,19 +1,20 @@
 # Maintainer: Spacingbat3 (https://github.com/spacingbat3)
-pkgname=electron-discord-webapp-git
+pkgname=webcord-git
 pkgver=v1.1.0_pre1.r67.cbfb1a7
 pkgrel=1
-pkgdesc="A Discord Web App based on the Electron engine."
-arch=("x86_64" "i686" "aarch64" "armv7h")
+pkgdesc="A Discord client based on the Electron engine."
+arch=("any")
 
-_march=${CARCH}
+_repo="WebCord"
 _author="SpacingBat3"
 
 license=('MIT')
 makedepends=('npm' 'git' 'jq')
 depends=('electron')
 provides=("${pkgname%-git}")
-conflicts=("${pkgname%-git}" "discord" "discord_arch_electron")
-source=("git+https://github.com/${_author}/${pkgname%-git}.git")
+conflicts=("${pkgname%-git}")
+source=("${pkgname%-git}::git+https://github.com/${_author}/${_repo}.git"
+        "${pkgname%-git}.desktop")
 md5sums=('SKIP')
 
 
@@ -31,9 +32,6 @@ build() {
     _terminal() {
         printf "#!/bin/bash\nelectron /usr/lib/${pkgname%-git}.asar\nexit \$?">"$1"
     }
-    _desktop() {
-        printf "[Desktop Entry]\nVersion=1.0\nTerminal=false\nType=Application\nName=Discord\nExec=/usr/bin/discord\nIcon=discord\nCategories=Network;Chat;VideoConference;WebApp;Electron\nComment=Your place to talk!\nComment[pl]=Twoje miejsce do rozmów!\nGenericName=Network Messenger\nGenericName[pl]=Kommunikator internetowy\nStartupNotify=true">"$1"
-    }
     cd "${srcdir}/${pkgname%-git}"
     [[ -f docs/COPYING ]] && mv docs/COPYING ../ && rm -R docs
     [[ -f build ]] && rm -R build
@@ -47,7 +45,8 @@ package() {
     cd "${srcdir}"
     install -Dm755 "${srcdir}/${pkgname%-git}.asar" "${pkgdir}/usr/lib/${pkgname%-git}.asar"
     install -Dm644 "${srcdir}/COPYING" "${pkgdir}/usr/share/licenses/${pkgname%-git}/COPYING"
-    install -Dm644 "${srcdir}/${pkgname%-git}/icons/app.png" "${pkgdir}/usr/share/icons/hicolor/512x512/apps/discord.png"
+    install -Dm644 "${srcdir}/${pkgname%-git}/icons/app.png" "${pkgdir}/usr/share/icons/hicolor/512x512/apps/webcord.png"
+    install -Dm644 "${srcdir}/${pkgname%-git}/icons/extra/iconThemes/Papirus/webcord.png" "${pkgdir}/usr/share/icons/Papirus/128x128/apps/webcord.png" 
     install -Dm755 "${srcdir}/${pkgname%-git}.desktop" "${pkgdir}/usr/share/applications/${pkgname%-git}.desktop"   
-    install -Dm755 "${srcdir}/${pkgname%-git}.sh" "${pkgdir}/usr/bin/discord"
+    install -Dm755 "${srcdir}/${pkgname%-git}.sh" "${pkgdir}/usr/bin/${pkgname%-git}"
 }

@@ -7,7 +7,10 @@
 		"copy": "Kopiuj",
 		"paste": "Wklej",
 		"cut": "Wytnij",
-		"dictionaryAdd": "Dodaj do słownika"
+		"dictionaryAdd": "Dodaj do słownika",
+		"copyURL": "Kopiuj adres linku",
+		"copyURLText": "Kopiuj tekst linku",
+		"inspectElement": "Zbadaj"
 	},
 	"menubar":{
 		"enabled": "Włączony",
@@ -17,7 +20,16 @@
 			"relaunch":"Uruchom ponownie"
 		},
 		"edit": "Edycja",
-		"view": "Widok",
+		"view": {
+			"groupName": "Widok",
+			"reload": "Odśwież",
+			"forceReload": "Wymuś odświeżanie",
+			"devTools": "Narzędzia deweloperskie",
+			"resetZoom": "Resetuj rozmiar",
+			"zoomIn": "Powiększ",
+			"zoomOut": "Pomniejsz",
+			"fullScreen": "Przełącz pełny ekran"
+		},
 		"window": "Okno",
 		"options":{
 			"groupName": "Ustawienia",
@@ -26,8 +38,10 @@
 			"mobileMode": "Ukryj pasek boczny",
 			"csp": {
 				"groupName": "Nagłówek CSP",
-				"strict": "Tylko serwery Discorda"
-			}
+				"thirdparty": "Witryny firm trzecich",
+				"gifProviders": "Dostawcy GIF-ów"
+			},
+			"develMode": "Tryb programisty"
 		}
 	},
 	"dialog": {

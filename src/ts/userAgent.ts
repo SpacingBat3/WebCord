@@ -3,17 +3,23 @@
  */
 
 export function getUserAgent(chromeVersion: string):string {
-	let fakeUserAgent, cpuArch
 
-	if (process.platform == 'darwin') {
-		fakeUserAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
-	} else if (process.platform == 'win32') {
-		fakeUserAgent = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
-	} else {
-		/* 
-		 * Don't lie we're using ARM (or x86) CPU – maybe then Discord will understand
-		 * how popular it is on Raspberries and Linux ARM ;)
-		 */
+	let fakeUserAgent, cpuArch
+	const os = process.getSystemVersion().split('.')
+	let osVersion:string;
+
+	if (process.platform == 'darwin') { // MacOS
+		osVersion = os[0]+'_'+os[1]
+		if (os[2] && os[2] != "0") osVersion += '_'+os[2]
+		fakeUserAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X ${osVersion}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
+
+	} else if (process.platform == 'win32') { // Windows
+		let WOW64:string;
+		osVersion = os[0]+'.'+os[1];
+		os[0] == "10" ? WOW64 = "Win64; x64" : WOW64 = "WOW64";
+		fakeUserAgent = `Mozilla/5.0 (Windows NT ${osVersion}; ${WOW64}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
+
+	} else { // Linux
 		if (process.arch == 'arm64') {
 			cpuArch = "aarch64"
 		} else if (process.arch == 'arm') {
@@ -23,6 +29,9 @@ export function getUserAgent(chromeVersion: string):string {
 		} else {
 			cpuArch = "x86_64"
 		}
+		/**
+		 * Do not fake arch on Linux
+		 */
 		fakeUserAgent = `Mozilla/5.0 (X11; Linux ${cpuArch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
 	}
 	return fakeUserAgent

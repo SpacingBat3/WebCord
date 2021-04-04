@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=WebCord
+GenericName=Instant Messenger
+GenericName[pl]=Komunikator internetowy
+Comment=Discord web app that uses the Electron API
+Comment[pl]=Aplikacja internetowa Discorda wykorzystująca API Elektron'a
+Exec=webcord
+Icon=webcord
+Categories=Network;Chat;InstantMessaging;
+Keywords=Electron;Web;Talk;Chat;Message;Internet;Screen share;Meeting
+Keywords[pl]=Electron;Sieć;Rozmowa;Czat;Wiadomość;Internet;Przesyłanie ekranu;Spotkanie
+Terminal=false
+StartupNotify=false

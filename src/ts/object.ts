@@ -2,17 +2,23 @@
  * Global interfaces and JSON objects (object.ts)
  */
 
-import appConfig = require('electron-json-config');
+import { app } from 'electron';
+import { factory, Conf } from 'electron-json-config';
 import deepmerge = require('deepmerge');
 import fs = require('fs')
 
-let configJson;
+const tmpdir = app.getPath('temp')+'/'+app.getName()
 
-if(fs.existsSync(appConfig.file())){
-	configJson = require(appConfig.file());
-} else {
-	configJson = {};
+function tempConfig():Conf {
+	if(!fs.existsSync(tmpdir)) {
+		fs.mkdirSync(tmpdir, { recursive: true });
+	}
+	return factory(tmpdir+"/globalVars.json",tmpdir);
 }
+
+export const appConfig = factory();
+export const winStorage = factory(app.getPath('userData')+"/windowState.json");
+export const globalVars = tempConfig();
 
 // JSON Objects:
  
@@ -22,11 +28,24 @@ export const configData = deepmerge({
 	hideMenuBar: false,
 	mobileMode: false,
 	disableTray: false,
+	devel: false,
 	csp: {
 		disabled: false,
-		strict: false
+		thirdparty: {
+			spotify: false,
+			gif: false,
+			hcaptcha: false
+		}
 	}
-}, configJson)
+}, appConfig.all())
+
+export function getDevel(dev:boolean,conf:boolean):boolean {
+	if(dev) {
+		return dev;
+	} else {
+		return conf;
+	}
+}
 
 // Interfaces:
 
@@ -39,19 +58,26 @@ export interface lang {
 		[key: string]: string
 	},
 	context:{
-		[key: string]: string
+		copy: string,
+		paste: string,
+		cut: string,
+		dictionaryAdd: string,
+		copyURL: string,
+		copyURLText: string,
+		inspectElement: string
 	},
 	menubar: {
 		enabled: string,
 		file: { [key: string]: string },
 		edit: string,
-		view: string,
+		view: { [key: string]: string },
 		window: string,
 		options: {
 			groupName: string,
 			disableTray: string,
 			hideMenuBar: string,
 			mobileMode: string,
+			develMode: string,
 			csp: { [key: string]: string }
 		}
 	},
@@ -59,6 +85,7 @@ export interface lang {
 		error: string,
 		warning: string,
 		hideMenuBar: string,
+		devel: string,
 		ver: {
 			[key: string]: string
 		},
