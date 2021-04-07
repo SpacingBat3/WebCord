@@ -2,15 +2,29 @@
  * Main process script (main.ts)
  */
  
-// Handle source maps (should be loaded first in case something breaks):
+/*
+ * Handle source maps.
+ * This module will provide more readable crash output.
+ * 
+ * It is good idea to load it first to maximize the chance
+ * it will load before Electron will print any error.
+ */
 
 /* eslint-disable */
 require('source-map-support').install();
 
-// Load the stuff we need to have there:
+/*
+ * Electron API and other node modules.
+ */
 
-import { app, BrowserWindow, shell, Tray, screen, nativeImage } from 'electron';
-import { packageJson, configData, winStorage, appConfig, globalVars, lang } from './object.js'
+import {
+    app,
+    BrowserWindow,
+    shell,
+    Tray,
+    screen,
+    nativeImage
+} from 'electron';
 
 import fs = require('fs');
 import path = require('path');
@@ -25,6 +39,18 @@ if(fs.existsSync(oldUserPath)) {
     fs.rmdirSync(app.getPath('userData'), { recursive: true });
     fs.renameSync(oldUserPath, app.getPath('userData'));
 }
+
+/*
+ * Some types and JavaScript objects declarations.
+ */
+import {
+    packageJson,
+    configData,
+    winStorage,
+    appConfig,
+    globalVars,
+    lang
+} from './object.js';
 
 /*
  * Get current app dir – also removes the need of importing icons
@@ -55,12 +81,11 @@ import * as getMenu from './menus.js';
 
 // Load string translations:
 
-function loadTranslations() {
-    let l10nStrings, localStrings;
+function loadTranslations():lang {
+    let l10nStrings:lang, localStrings:lang;
     const systemLang:string = app.getLocale();
     l10nStrings = require("../lang/en-GB/strings.json"); // Default lang to english
-    localStrings = "src/lang/"+systemLang+"/strings.json";
-    if(fs.existsSync(path.join(appDir, localStrings))) {
+    if(fs.existsSync(path.join(appDir, "src/lang/"+systemLang+"/strings.json"))) {
         localStrings = require(appDir+"/src/lang/"+systemLang+"/strings.json");
         l10nStrings = deepmerge(l10nStrings, localStrings);
     }
@@ -209,7 +234,6 @@ function createWindow():BrowserWindow {
         });
     }
     let childCsp="default-src 'self' blob:"
-    //if(devel) childCsp+=" 'unsafe-eval' 'unsafe-inline'"
 
     // Permissions:
 
@@ -328,8 +352,8 @@ function windowStateKeeper(windowName:string) {
 
     function track(win:BrowserWindow):void {
         window = win;
-        win.on('resize', saveState)
-        win.on('close', saveState)
+        win.on('resize', saveState);
+        win.on('close', saveState);
     }
     windowState=setBounds();
     return({

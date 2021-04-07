@@ -8,8 +8,18 @@
 const packageJson = require("../../package.json");
 
 // Global variables in the config:
-const iconFile = "icons/app.png"
-const desktopName = "Discord (Web App)"
+let iconFile:string;
+switch (process.platform) {
+  case 'win32':
+    iconFile="icons/app.ico"
+  break;
+  case 'darwin':
+    iconFile="icons/app.icns"
+  break;
+  default:
+    iconFile="icons/app.png"
+}
+const desktopName = packageJson.productName
 const desktopGeneric = "Internet Messenger"
 const desktopCategories = ["Network","InstantMessaging"]
 
