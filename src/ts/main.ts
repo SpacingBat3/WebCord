@@ -202,7 +202,7 @@ function createWindow():BrowserWindow {
      */
     if (!configData.csp.thirdparty.hcaptcha) {
 		// hCaptcha
-		csp+=" https://assets.hcaptcha.com https://imgs.hcaptcha.com https://hcaptcha.com"
+		csp+=" https://assets.hcaptcha.com https://imgs.hcaptcha.com https://hcaptcha.com https://newassets.hcaptcha.com"
 	}
 	if (!configData.csp.thirdparty.spotify) {
 		// Spotify API
@@ -218,7 +218,7 @@ function createWindow():BrowserWindow {
     csp+="; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
     if (!configData.csp.thirdparty.hcaptcha){
 		// hCaptcha
-		csp+=" https://hcaptcha.com https://assets.hcaptcha.com"
+		csp+=" https://hcaptcha.com https://assets.hcaptcha.com https://newassets.hcaptcha.com"
 	}
 	/**
 	 * Scripts that allowed to run by CSP.
