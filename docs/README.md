@@ -16,7 +16,7 @@ A Discord Web-based client made with the [Electron API](https://github.com/elect
 
 It takes a differend approach from most client, as it isn't just a mod of the official client nor uses Discord API to be functional – it is currently based on the web version of the Discord, which makes it more trusted solution in my opinion. As it even fakes it user agent to make it equal or similar to the one used by Chrome/Chromium, it is hard to detect it and ban users using it.
 
-Previously, it began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but then eventually I had rewritten it from scratch and called *Electron Discord Web App*. But because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about Electron and how to implement a Discord with it. Thanks to his work, this project could began on its own.
+It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but then eventually I had rewritten it from scratch and called *Electron Discord Web App*. But because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about Electron and how to implement a Discord with it. Thanks to his work, this project could began on its own.
 
 ## Documentation:
 - [Configuring the application](SETTINGS.md)
