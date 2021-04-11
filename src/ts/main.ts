@@ -125,11 +125,35 @@ const chromiumVersion:string = process.versions.chrome;
  * if you're improving the code of this application
  */
 
-let appContributors:Array<string>;
-if (Array.isArray(packageJson.contributors) && packageJson.contributors.length) {
-    appContributors = [ appAuthor, ...packageJson.contributors ];
-} else {
-    appContributors = [ appAuthor ];
+let appContributors:Array<string> = [ appAuthor ];
+
+// Hence GTK allows for tags there, generate links to website/email
+if (packageJson.author.url) {
+    appContributors = [ '<a href="'+packageJson.author.url+'">'+appAuthor+'</a>' ]
+} else if (packageJson.author.email) {
+    appContributors = [ '<a href="'+packageJson.author.email+'">'+appAuthor+'</a>' ]
+}
+if (Array.isArray(packageJson.contributors) && packageJson.contributors.length>0) {
+    for (let n=0; n<packageJson.contributors.length; n++) {
+		// Guess "person" format:
+		if (packageJson.contributors[n].name) {
+            if (process.platform=="linux") {
+                const { name, email, url } = packageJson.contributors[n]
+                let linkTag:string="", linkTagClose:string="";
+                if (url) {
+                    linkTag='<a href="'+url+'">'
+                } else if (email) {
+                    linkTag='<a href="mailto:'+email+'">'
+                }
+                if (linkTag!=="") linkTagClose = "</a>"
+                appContributors.push(linkTag+name+linkTagClose)
+            } else {
+                appContributors.push(packageJson.contributors[n].name);
+            }
+		} else {
+			appContributors.push(packageJson.contributors[n])
+		}
+	}
 }
 
 // "Dynamic" variables that shouldn't be changed:
