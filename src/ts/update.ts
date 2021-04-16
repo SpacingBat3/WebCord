@@ -3,7 +3,8 @@
  */
 
 import { Notification, shell } from 'electron';
-import { packageJson, lang } from './object.js';
+import { packageJson } from './global';
+import { lang } from './object';
 import fetch from 'electron-fetch';
 
 async function guessRepository ():Promise<string> {

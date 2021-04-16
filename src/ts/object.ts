@@ -5,9 +5,9 @@
 import { app } from 'electron';
 import { factory, Conf } from 'electron-json-config';
 import deepmerge = require('deepmerge');
-import fs = require('fs')
+import fs = require('fs');
 
-const tmpdir = app.getPath('temp')+'/'+app.getName()
+const tmpdir = app.getPath('temp')+'/'+app.getName();
 
 function tempConfig():Conf {
 	if(!fs.existsSync(tmpdir)) {
@@ -21,9 +21,6 @@ export const winStorage = factory(app.getPath('userData')+"/windowState.json");
 export const globalVars = tempConfig();
 
 // JSON Objects:
- 
-/* eslint-disable */
-export const packageJson = require("../../package.json");
 export const configData = deepmerge({
 	hideMenuBar: false,
 	mobileMode: false,
@@ -48,10 +45,6 @@ export function getDevel(dev:boolean,conf:boolean):boolean {
 }
 
 // Interfaces:
-
-export interface json { // currently unused
-	[key: string]: any
-}
 
 export interface lang {
 	tray: {

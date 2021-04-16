@@ -10,7 +10,7 @@
  * it will load before Electron will print any error.
  */
 
-/* eslint-disable */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('source-map-support').install();
 
 /*
@@ -22,8 +22,7 @@ import {
     BrowserWindow,
     shell,
     Tray,
-    screen,
-    nativeImage
+    screen
 } from 'electron';
 
 import fs = require('fs');
@@ -44,13 +43,14 @@ if(fs.existsSync(oldUserPath)) {
  * Some types and JavaScript objects declarations.
  */
 import {
-    packageJson,
     configData,
     winStorage,
     appConfig,
     globalVars,
     lang
-} from './object.js';
+} from './object';
+
+import { packageJson } from './global'
 
 /*
  * Get current app dir – also removes the need of importing icons
@@ -75,16 +75,16 @@ if (appDir.indexOf(".asar") < 0) {
 }
 
 // Load scripts:
-import {checkVersion} from './update.js'
-import {getUserAgent} from './userAgent.js';
-import * as getMenu from './menus.js';
+import {checkVersion} from './update'
+import {getUserAgent} from './userAgent';
+import * as getMenu from './menus';
 
 // Load string translations:
 
 function loadTranslations():lang {
     let l10nStrings:lang, localStrings:lang;
     const systemLang:string = app.getLocale();
-    l10nStrings = require("../lang/en-GB/strings.json"); // Default lang to english
+    l10nStrings = require("../lang/en-GB/strings.json"); // Fallback to English
     if(fs.existsSync(path.join(appDir, "src/lang/"+systemLang+"/strings.json"))) {
         localStrings = require(appDir+"/src/lang/"+systemLang+"/strings.json");
         l10nStrings = deepmerge(l10nStrings, localStrings);
@@ -98,7 +98,7 @@ const deprecated = ["csp.strict","windowState","css1Key"];
 appConfig.deleteBulk(deprecated);
 
 // Vars to modify app behavior
-const repoName = "SpacingBat3/WebCord";
+// const repoName = "SpacingBat3/WebCord";
 const appRootURL = 'https://discord.com'
 const appURL = appRootURL + '/app';
 const appIcon = appIconDir + "/app.png";
@@ -139,7 +139,7 @@ if (Array.isArray(packageJson.contributors) && packageJson.contributors.length>0
 		if (packageJson.contributors[n].name) {
             if (process.platform=="linux") {
                 const { name, email, url } = packageJson.contributors[n]
-                let linkTag:string="", linkTagClose:string="";
+                let linkTag="", linkTagClose="";
                 if (url) {
                     linkTag='<a href="'+url+'">'
                 } else if (email) {
@@ -213,13 +213,14 @@ function createWindow():BrowserWindow {
     // Preload scripts:
 
     win.webContents.session.setPreloads([
-        appDir+"/src/js/renderer/preload-capturer.js"
+        appDir+"/src/js/renderer/capturer.js",
+        appDir+"/src/js/renderer/cosmetic.js"
     ]);
 
     // Content Security Policy
     
     let csp="default-src 'self' blob: data: 'unsafe-inline'";
-    csp+=" https://*.discordapp.net https://*.discord.com https://*.discordapp.com https://discord.com https://jcw87.github.io" // HTTPS
+    csp+=" https://*.discordapp.net https://*.discord.com https://*.discordapp.com https://discord.com" // HTTPS
     csp+=" wss://*.discord.media wss://*.discord.gg wss://*.discord.com"; // WSS
     /**
      * Discord servers, blocking them makes web app unusable.
@@ -227,6 +228,11 @@ function createWindow():BrowserWindow {
     if (!configData.csp.thirdparty.hcaptcha) {
 		// hCaptcha
 		csp+=" https://assets.hcaptcha.com https://imgs.hcaptcha.com https://hcaptcha.com https://newassets.hcaptcha.com"
+	}
+    if (!configData.csp.thirdparty.algoria) {
+		// Algoria
+		csp+=" https://nktzz4aizu-dsn.algolia.net https://nktzz4aizu-1.algolianet.com"
+        csp+=" https://nktzz4aizu-2.algolianet.com https://nktzz4aizu-3.algolianet.com https://i.scdn.co"
 	}
 	if (!configData.csp.thirdparty.spotify) {
 		// Spotify API
@@ -257,7 +263,7 @@ function createWindow():BrowserWindow {
             });
         });
     }
-    let childCsp="default-src 'self' blob:"
+    const childCsp="default-src 'self' blob:"
 
     // Permissions:
 

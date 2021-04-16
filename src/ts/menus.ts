@@ -20,7 +20,7 @@ import {
 	globalVars,
 	configData,
 	getDevel
-} from './object.js';
+} from './object';
 
 import fetch from 'electron-fetch';
 import os = require('os');
@@ -310,11 +310,11 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang,
 					enabled: !appConfig.get('csp.disabled'),
 					submenu: [
 						{
-							label: "Spotify",
+							label: "Algolia",
 							type: 'checkbox',
-							checked: !appConfig.get('csp.thirdparty.spotify'),
-							click: () => configSwitch('csp.thirdparty.spotify')
-						},
+							checked: !appConfig.get('csp.thirdparty.algolia'),
+							click: function () { return configSwitch('csp.thirdparty.algolia'); }
+                        },
 						{
 							label: strings.menubar.options.csp.gifProviders,
 							type: 'checkbox',
@@ -326,6 +326,12 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang,
 							type: 'checkbox',
 							checked: !appConfig.get('csp.thirdparty.hcaptcha'),
 							click: () => configSwitch('csp.thirdparty.hcaptcha')
+						},
+												{
+							label: "Spotify",
+							type: 'checkbox',
+							checked: !appConfig.get('csp.thirdparty.spotify'),
+							click: () => configSwitch('csp.thirdparty.spotify')
 						}
 					]
 				}

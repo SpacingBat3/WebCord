@@ -4,4 +4,4 @@ package-lock.json
 build/linux/*.pkg.tar*
 build/linux/*/
 src/js/*
-!src/js/renderer
+!src/js/renderer/capturer.js
