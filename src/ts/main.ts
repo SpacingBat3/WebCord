@@ -25,6 +25,11 @@ import {
     screen
 } from 'electron';
 
+if(app.commandLine.hasSwitch('version')){
+    console.log(app.getName()+' v'+app.getVersion());
+    app.exit();
+}
+
 import fs = require('fs');
 import path = require('path');
 import deepmerge = require('deepmerge');
