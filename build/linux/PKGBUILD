@@ -5,7 +5,7 @@ pkgrel=1
 pkgdesc="A Discord client based on the Electron engine."
 arch=("any")
 
-_repo="WebCord"
+_repo="electron-discord-webapp"
 _author="SpacingBat3"
 
 license=('MIT')
@@ -15,7 +15,8 @@ provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}")
 source=("${pkgname%-git}::git+https://github.com/${_author}/${_repo}.git"
         "${pkgname%-git}.desktop")
-md5sums=('SKIP')
+md5sums=('SKIP'
+         '85d234a65c69f3cf817fac5c54c194c8')
 
 
 pkgver() {
