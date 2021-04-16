@@ -1,6 +1,6 @@
 # Maintainer: Spacingbat3 (https://github.com/spacingbat3)
 pkgname=webcord-git
-pkgver=v1.1.0_pre1.r67.cbfb1a7
+pkgver=v1.4.0_pre1.r127.901707b
 pkgrel=1
 pkgdesc="A Discord client based on the Electron engine."
 arch=("any")
@@ -9,7 +9,7 @@ _repo="electron-discord-webapp"
 _author="SpacingBat3"
 
 license=('MIT')
-makedepends=('npm' 'git' 'jq')
+makedepends=('npm' 'git' 'jq' 'librsvg' 'imagemagick')
 depends=('electron')
 provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}")
@@ -17,7 +17,6 @@ source=("${pkgname%-git}::git+https://github.com/${_author}/${_repo}.git"
         "${pkgname%-git}.desktop")
 md5sums=('SKIP'
          '85d234a65c69f3cf817fac5c54c194c8')
-
 
 pkgver() {
     cd "${srcdir}/${pkgname%-git}"
@@ -30,24 +29,67 @@ prepare() {
 }
 
 build() {
+    _print() {
+        printf "\r%-${1}s" "${2}"
+    }
+    _icons=("${srcdir}/${pkgname%-git}/icons/app.png"
+            "${srcdir}/${pkgname%-git}/extra/iconThemes/Papirus/webcord.svg")
     _terminal() {
         printf "#!/bin/bash\nelectron /usr/lib/${pkgname%-git}.asar\nexit \$?">"$1"
     }
     cd "${srcdir}/${pkgname%-git}"
     [[ -f docs/COPYING ]] && mv docs/COPYING ../ && rm -R docs
     [[ -f build ]] && rm -R build
-    [[ -f ../${pkgname%-git}.asar ]] && rm ../${pkgname%-git}.asar
-    npx asar pack . ../${pkgname%-git}.asar
-    _desktop "${srcdir}/${pkgname%-git}.desktop"
-    _terminal "${srcdir}/${pkgname%-git}.sh"
+    for _target in "../${pkgname%-git}.asar" "../iconThemes" "icons/app.ico" "icons/app.icns"; do
+        if [[ -f "${_target}" ]]; then
+            rm "${_target}"
+        elif [[ -d "${_target}" ]]; then
+            rm -R "${_target}"
+        fi
+    done
+    npx asar pack . ../${pkgname%-git}.asar || { echo "Failed to package to ASAR!"; exit 1;}
+    _terminal "../${pkgname%-git}.sh"
+    mkdir "../iconThemes"
+    cd "../iconThemes"
+    _sizes_2=(128 96 64 48 32 24 22 18 16 8)
+    _sizes_1=(512 256 ${_sizes_2[@]})
+    _i=1
+    mkdir "themeId-${_i}"
+    for _file in "${_icons[@]}"; do
+        _sizes="_sizes_${_i}"
+        _sizes=($(eval echo -n \"\${$_sizes[@]}\"))
+        [[ $(file "${_file}") =~ "PNG" ]] && _ext="png"
+        [[ $(file "${_file}") =~ "SVG" ]] && _ext="svg"
+        for _size in "${_sizes[@]}"; do
+            [[ ! -z "${_msg}" ]] && _old_msg="${#_msg}" || _old_msg=0
+            _msg="Generating images: F=`basename "${_file}"`; S=${_size}x${_size}"
+            _print "${_old_msg}" "${_msg}"
+            _out="themeId-${_i}/${_size}x${_size}/apps/${pkgname%-git}.${_ext}"
+            mkdir -p "$(dirname "$_out")"
+            if [[ "${_ext}" == "png" ]]; then
+                convert "$_file" -size "${_size}x${_size}" "$_out"
+            elif [[ "${_ext}" == "svg" ]]; then
+                rsvg-convert -w "${_size}" -h "${_size}" -o "${_out}" "${_file}"
+            else
+                echo -e "\nERROR: Unknown image type!"
+                exit 1
+            fi
+        done
+        let _i++
+    done
+    _print "${#_msg}" && printf '\r'
 }
 
 package() {
     cd "${srcdir}"
-    install -Dm755 "${srcdir}/${pkgname%-git}.asar" "${pkgdir}/usr/lib/${pkgname%-git}.asar"
-    install -Dm644 "${srcdir}/COPYING" "${pkgdir}/usr/share/licenses/${pkgname%-git}/COPYING"
-    install -Dm644 "${srcdir}/${pkgname%-git}/icons/app.png" "${pkgdir}/usr/share/icons/hicolor/512x512/apps/webcord.png"
-    install -Dm644 "${srcdir}/${pkgname%-git}/icons/extra/iconThemes/Papirus/webcord.png" "${pkgdir}/usr/share/icons/Papirus/128x128/apps/webcord.png" 
-    install -Dm755 "${srcdir}/${pkgname%-git}.desktop" "${pkgdir}/usr/share/applications/${pkgname%-git}.desktop"   
-    install -Dm755 "${srcdir}/${pkgname%-git}.sh" "${pkgdir}/usr/bin/${pkgname%-git}"
+    install -Dm755 "${pkgname%-git}.asar" "${pkgdir}/usr/lib/${pkgname%-git}.asar"
+    install -Dm644 "COPYING" "${pkgdir}/usr/share/licenses/${pkgname%-git}/COPYING"
+    install -dm755 "${pkgdir}/usr/share/icons"
+    cp -R "iconThemes/themeId-1/" "${pkgdir}/usr/share/icons/hicolor"
+    cp -R "iconThemes/themeId-2/" "${pkgdir}/usr/share/icons/Papirus"
+    cp -R "iconThemes/themeId-2/" "${pkgdir}/usr/share/icons/Papirus-Dark"
+    cp -R "iconThemes/themeId-2/" "${pkgdir}/usr/share/icons/ePapirus"
+    chmod 0644 "${pkgdir}/usr/share/icons"/*/*/*/"${pkgname%-git}."*
+    install -Dm755 "${pkgname%-git}.desktop" "${pkgdir}/usr/share/applications/${pkgname%-git}.desktop"   
+    install -Dm755 "${pkgname%-git}.sh" "${pkgdir}/usr/bin/${pkgname%-git}"
 }
