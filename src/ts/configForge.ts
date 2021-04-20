@@ -7,7 +7,7 @@
 import { packageJson } from './global';
 
 // Global variables in the config:
-const iconFile="icons/app.png"
+const iconFile="icons/app"
 const desktopName = packageJson.productName
 const desktopGeneric = "Internet Messenger"
 const desktopCategories = ["Network","InstantMessaging"]
