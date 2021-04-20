@@ -4,10 +4,20 @@
 
 import { app } from 'electron';
 import { factory, Conf } from 'electron-json-config';
-import deepmerge = require('deepmerge');
-import fs = require('fs');
+import * as deepmerge from 'deepmerge';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const tmpdir = app.getPath('temp')+'/'+app.getName();
+
+function isJson (string:string) {
+	try {
+		JSON.parse(string);
+	} catch {
+		return false
+	}
+	return true
+}
 
 function tempConfig():Conf {
 	if(!fs.existsSync(tmpdir)) {
@@ -16,9 +26,28 @@ function tempConfig():Conf {
 	return factory(tmpdir+"/globalVars.json",tmpdir);
 }
 
-export const appConfig = factory();
-export const winStorage = factory(app.getPath('userData')+"/windowState.json");
-export const globalVars = tempConfig();
+// Check configuration files for errors
+
+const configs:Array<string> = [
+	app.getPath('userData')+"/config.json",
+	app.getPath('userData')+"/windowState.json"
+]
+
+for (const file of configs) {
+	if(fs.existsSync(file)) {
+		const stringOfFile = fs.readFileSync(file).toString()
+		if(!isJson(stringOfFile)) {
+			fs.rmSync(file);
+			console.warn("[WARN] Removed '"+path.basename(file)+" due to syntax errors.")
+		}
+	}
+}
+
+// Export app configuration files
+
+export const appConfig = factory(configs[0]);
+export const winStorage = factory(configs[1]);
+// export const globalVars = tempConfig(); // todo: use eventEmitter instead
 
 // JSON Objects:
 export const configData = deepmerge({

@@ -7,17 +7,7 @@
 import { packageJson } from './global';
 
 // Global variables in the config:
-let iconFile:string;
-switch (process.platform) {
-  case 'win32':
-    iconFile="icons/app.ico"
-  break;
-  case 'darwin':
-    iconFile="icons/app.icns"
-  break;
-  default:
-    iconFile="icons/app.png"
-}
+const iconFile="icons/app.png"
 const desktopName = packageJson.productName
 const desktopGeneric = "Internet Messenger"
 const desktopCategories = ["Network","InstantMessaging"]
@@ -29,7 +19,7 @@ module.exports = {
     icon: iconFile, // used in Windows and MacOS binaries
     extraResource: [
       "docs/COPYING",
-      iconFile
+      iconFile+".png"
     ],
     quiet: true,
     ignore:[
@@ -58,7 +48,7 @@ module.exports = {
       name: "electron-forge-maker-appimage",
       config: {
         options: {
-          icon: iconFile,
+          icon: iconFile+".png",
           productName: desktopName,
           genericName: desktopGeneric,
           categories: desktopCategories,
@@ -70,7 +60,7 @@ module.exports = {
       name: "@electron-forge/maker-deb",
       config: {
         options: {
-          icon: iconFile,
+          icon: iconFile+".png",
           section: "web",
           productName: desktopName,
           genericName: desktopGeneric,
@@ -82,7 +72,7 @@ module.exports = {
       name: "@electron-forge/maker-rpm",
       config: {
         options: {
-          icon: iconFile,
+          icon: iconFile+".png",
           productName: desktopName,
           genericName: desktopGeneric,
           categories: desktopCategories

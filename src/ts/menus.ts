@@ -11,19 +11,29 @@ import {
 	shell,
 	nativeImage,
 	MenuItemConstructorOptions,
-	clipboard
+	clipboard,
+	WebContents
 } from 'electron';
 
 import {
 	lang,
 	appConfig,
-	globalVars,
 	configData,
 	getDevel
 } from './object';
 
 import fetch from 'electron-fetch';
-import os = require('os');
+import * as os from 'os';
+import * as EventEmitter from 'events';
+
+const sideBar = new EventEmitter();
+
+sideBar.on('hide', async (contents:WebContents) => {
+	const cssKey = await contents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
+	sideBar.once('show', () => {
+		contents.removeInsertedCSS(cssKey);
+	});
+});
 
 let wantQuit = false;
 
@@ -196,7 +206,7 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang,
 		{ label: strings.menubar.file.groupName, submenu: [
 			{
 				label: strings.menubar.file.quit,
-				accelerator: 'CommandOrControl+Q',
+				accelerator: 'CmdOrCtrl+Q',
 				click: () => {
 					wantQuit=true;
 					app.quit();
@@ -229,7 +239,21 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang,
 			{ type: 'separator' },
 			{ label: strings.menubar.view.fullScreen, role: 'togglefullscreen' }
 		]},
-		{ role: 'windowMenu', label: strings.menubar.window},
+		{ label: strings.menubar.window, submenu: [
+			{
+				label: strings.menubar.options.mobileMode,
+				type: 'checkbox',
+				accelerator: 'CmdOrCtrl+Alt+M',
+				checked: false,
+				click: () => configSwitch('mobileMode', async () => {
+					if ((sideBar.listenerCount('show')+sideBar.listenerCount('hide')) > 1) {
+						sideBar.emit('show');
+					} else {
+						sideBar.emit('hide', mainWindow.webContents);
+					}
+				})
+			}
+		]},
 		{ label: strings.menubar.options.groupName, submenu: [
 			{
 				label: strings.menubar.options.disableTray,
@@ -248,23 +272,6 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang,
 							message: strings.dialog.hideMenuBar,
 							buttons: [strings.dialog.buttons.continue]
 						});
-					}
-				})
-			},
-			{
-				label: strings.menubar.options.mobileMode,
-				type: 'checkbox',
-				checked: appConfig.get('mobileMode'),
-				click: () => configSwitch('mobileMode', async () => {
-					if (appConfig.get('mobileMode')) {
-						const key = await mainWindow.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
-						globalVars.set('css1Key',key);
-					} else {
-						const undefinedKey:string|undefined = globalVars.get('css1Key');
-						if(undefinedKey!==undefined) {
-							const key:string=undefinedKey;
-							mainWindow.webContents.removeInsertedCSS(key);
-						}
 					}
 				})
 			},

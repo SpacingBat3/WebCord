@@ -10,8 +10,8 @@
  * it will load before Electron will print any error.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('source-map-support').install();
+import * as srcMap from 'source-map-support';
+srcMap.install();
 
 /*
  * Electron API and other node modules.
@@ -30,9 +30,9 @@ if(app.commandLine.hasSwitch('version')){
     app.exit();
 }
 
-import fs = require('fs');
-import path = require('path');
-import deepmerge = require('deepmerge');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as deepmerge from 'deepmerge';
 
 /*
  * Migrate old config dir to the new one.
@@ -51,7 +51,6 @@ import {
     configData,
     winStorage,
     appConfig,
-    globalVars,
     lang
 } from './object';
 
@@ -235,7 +234,7 @@ function createWindow():BrowserWindow {
 		csp+=" https://assets.hcaptcha.com https://imgs.hcaptcha.com https://hcaptcha.com https://newassets.hcaptcha.com"
 	}
     if (!configData.csp.thirdparty.algoria) {
-		// Algoria
+		// Algolia
 		csp+=" https://nktzz4aizu-dsn.algolia.net https://nktzz4aizu-1.algolianet.com"
         csp+=" https://nktzz4aizu-2.algolianet.com https://nktzz4aizu-3.algolianet.com https://i.scdn.co"
 	}
@@ -320,17 +319,6 @@ function createWindow():BrowserWindow {
             const t = await tray
             if(!configData.disableTray) t.setImage(appTrayIcon);
         });
-
-        // Hidable animated side bar:
-
-        if (appConfig.has('mobileMode') && appConfig.get('mobileMode')) async () => {
-            const key = await win.webContents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
-            globalVars.set('css1Key',key);
-        }
-
-        // Animate menu
-        
-        win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width 1s; transition-timing-function: ease;}");
     });
 
     // Window Title
@@ -341,6 +329,13 @@ function createWindow():BrowserWindow {
 			win.setTitle(appFullName);
 		}
 	});
+
+    // Animate menu
+
+    win.webContents.on('did-finish-load', () => {
+        win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width 1s; transition-timing-function: ease;}");
+    })
+
     return win;
 }
 
