@@ -4,10 +4,10 @@
 
 import { Notification, shell } from 'electron';
 import { packageJson } from './global';
-import { lang } from './object';
+import { lang } from './mainGlobal';
 import fetch from 'electron-fetch';
 
-async function guessRepository ():Promise<string> {
+async function guessRepository():Promise<string> {
     const oldRepo = "SpacingBat3/electron-discord-webapp";
     const newRepo = "SpacingBat3/WebCord";
     if ((await fetch("https://github.com/"+oldRepo)).ok) {

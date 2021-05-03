@@ -7,6 +7,12 @@ assignees: SpacingBat3
 
 ---
 
+**Enviroment**
+ - Platform: [e.g. `linux`]
+ - Architecture: [e.g `arm64`/`aarch64`]
+ - Electron version: [e.g. `v12.0.4`]
+ - Application version: [e.g. `v1.4.0`]
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -22,12 +28,6 @@ A clear and concise description of what you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
-
-**Desktop (please complete the following information):**
- - Platform: [e.g. `linux`]
- - Architecture: [e.g `arm64`/`aarch64`]
- - Electron version: [e.g. `v11.2.3`]
- - Application version: [e.g. `v1.0.0`]
 
 **Additional context**
 Add any other context about the problem here.

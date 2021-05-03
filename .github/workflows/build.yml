@@ -26,3 +26,46 @@ jobs:
 
     - name: Test build (ia32)
       run: npm run package -- -a ia32
+
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Run tests (build and lint)
+      run: npm test
+
+    - name: Test build (x64)
+      run: npm run package
+
+    - name: Test build (arm64)
+      run: npm run package -- -a arm64
+
+    - name: Test build (ia32)
+      run: npm run package -- -a ia32
+
+  macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2       
+    - uses: actions/setup-node@master
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Run tests (build and lint)
+      run: npm test
+
+    - name: Test build (x64)
+      run: npm run package
+
+    - name: Test build (arm64)
+      run: npm run package -- -a arm64

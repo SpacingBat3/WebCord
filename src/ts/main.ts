@@ -32,7 +32,6 @@ if(app.commandLine.hasSwitch('version')){
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as deepmerge from 'deepmerge';
 
 /*
  * Migrate old config dir to the new one.
@@ -45,14 +44,17 @@ if(fs.existsSync(oldUserPath)) {
 }
 
 /*
- * Some types and JavaScript objects declarations.
+ * Import functions/types/variables declarations:
  */
 import {
+    appInfo,
+    guessDevel,
     configData,
     winStorage,
     appConfig,
-    lang
-} from './object';
+    lang,
+    loadTranslations
+} from './mainGlobal';
 
 import { packageJson } from './global'
 
@@ -61,40 +63,16 @@ import { packageJson } from './global'
  * manually to the electron package dir.
  */
 
-const appDir = app.getAppPath();
-
 /*  
  * Check if we are using the packaged version.
  */
 
-let devel:boolean, devFlag:string, appIconDir:string;
-if (appDir.indexOf(".asar") < 0) {
-    devel = true;
-    devFlag = " [DEV]";
-    appIconDir = appDir + "/icons";
-} else {
-    devel = false;
-    devFlag = "";
-    appIconDir = path.join(appDir, "..");
-}
+const { devel, devFlag } = guessDevel()
 
 // Load scripts:
 import {checkVersion} from './update'
 import {getUserAgent} from './userAgent';
 import * as getMenu from './menus';
-
-// Load string translations:
-
-function loadTranslations():lang {
-    let l10nStrings:lang, localStrings:lang;
-    const systemLang:string = app.getLocale();
-    l10nStrings = require("../lang/en-GB/strings.json"); // Fallback to English
-    if(fs.existsSync(path.join(appDir, "src/lang/"+systemLang+"/strings.json"))) {
-        localStrings = require(appDir+"/src/lang/"+systemLang+"/strings.json");
-        l10nStrings = deepmerge(l10nStrings, localStrings);
-    }
-    return l10nStrings;
-}
 
 // Removes deprecated config properties (if they exists)
 
@@ -102,17 +80,7 @@ const deprecated = ["csp.strict","windowState","css1Key"];
 appConfig.deleteBulk(deprecated);
 
 // Vars to modify app behavior
-// const repoName = "SpacingBat3/WebCord";
-const appRootURL = 'https://discord.com'
-const appURL = appRootURL + '/app';
-const appIcon = appIconDir + "/app.png";
-const appTrayIcon = appDir + "/icons/tray.png";
-const appTrayPing = appDir + "/icons/tray-ping.png";
 
-const minWinWidth = 312;
-const minWinHeight = 412;
-let winWidth:number;
-let winHeight:number;
 
 // "About" information
 const appFullName:string = app.getName()
@@ -164,7 +132,7 @@ if (Array.isArray(packageJson.contributors) && packageJson.contributors.length>0
 
 const stringContributors = appContributors.join(', ');
 const singleInstance = app.requestSingleInstanceLock();
-let mainWindow:BrowserWindow;
+let mainWindow:BrowserWindow,winHeight:number,winWidth:number;
 let tray:Promise<Tray>, l10nStrings:lang, updateInterval:NodeJS.Timeout|undefined;
 
 // Year format for the copyright
@@ -178,6 +146,12 @@ const fakeUserAgent = getUserAgent(chromiumVersion);
 // "About" Panel:
 
 function aboutPanel():void {
+    let iconPath:string;
+    if (fs.existsSync(appInfo.icon)) {
+        iconPath=appInfo.icon
+    } else {
+        iconPath='/usr/share/icons/hicolor/512x512/apps/'+packageJson.name+'.png'
+    }
 	const aboutVersions = "Electron: "+process.versions.electron+"    Node: "+process.versions.node+"    Chromium: "+process.versions.chrome
     app.setAboutPanelOptions({
         applicationName: appFullName,
@@ -186,7 +160,7 @@ function aboutPanel():void {
         website: appRepo,
         credits: `${l10nStrings.help.contributors} ${stringContributors}`,
         copyright: `Copyright © ${copyYear} ${appAuthor}\n\n${l10nStrings.help.credits}\n\n${aboutVersions}`,
-        iconPath: appIcon
+        iconPath: iconPath
     });
 }
 
@@ -200,12 +174,12 @@ function createWindow():BrowserWindow {
     
     const win = new BrowserWindow({
         title: appFullName,
-        minWidth: minWinWidth,
-        minHeight: minWinHeight,
+        minWidth: appInfo.minWinWidth,
+        minHeight: appInfo.minWinHeight,
         height: mainWindowState.height,
         width: mainWindowState.width,
         backgroundColor: "#2F3136",
-        icon: appIcon,
+        icon: appInfo.icon,
         webPreferences: {
             enableRemoteModule: false,
             nodeIntegration: false, // Won't work with the true value.
@@ -217,8 +191,8 @@ function createWindow():BrowserWindow {
     // Preload scripts:
 
     win.webContents.session.setPreloads([
-        appDir+"/src/js/renderer/capturer.js",
-        appDir+"/src/js/renderer/cosmetic.js"
+        app.getAppPath()+"/src/js/renderer/capturer.js",
+        app.getAppPath()+"/src/js/renderer/cosmetic.js"
     ]);
 
     // Content Security Policy
@@ -272,7 +246,7 @@ function createWindow():BrowserWindow {
     // Permissions:
 
     win.webContents.session.setPermissionCheckHandler( (webContents, permission) => {
-        if(webContents.getURL().includes(appRootURL)){
+        if(webContents.getURL().includes(appInfo.rootURL)){
             return true;
         } else {
             console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
@@ -280,7 +254,7 @@ function createWindow():BrowserWindow {
         }
     });
     win.webContents.session.setPermissionRequestHandler( (webContents, permission, callback) => {
-        if(webContents.getURL().includes(appRootURL)){
+        if(webContents.getURL().includes(appInfo.rootURL)){
             return callback(true);
         } else {
             console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
@@ -288,16 +262,16 @@ function createWindow():BrowserWindow {
         }
     });
 
-    win.loadURL(appURL,{userAgent: fakeUserAgent});
+    win.loadURL(appInfo.URL,{userAgent: fakeUserAgent});
     win.setAutoHideMenuBar(configData.hideMenuBar);
     win.setMenuBarVisibility(!configData.hideMenuBar);
     mainWindowState.track(win);
 
     // Load all menus:
 
-    getMenu.context(win, l10nStrings, devel);
-    if(!configData.disableTray) tray = getMenu.tray(appTrayIcon, win, l10nStrings, childCsp, appFullName);
-    getMenu.bar(packageJson.repository.url, win, l10nStrings, devel);
+    getMenu.context(win);
+    if(!configData.disableTray) tray = getMenu.tray(win, childCsp, appFullName);
+    getMenu.bar(packageJson.repository.url, win);
 
     // Open external URLs in default browser
 
@@ -312,12 +286,12 @@ function createWindow():BrowserWindow {
         setTimeout(function(){
             win.webContents.on('page-favicon-updated', async () => {
                 const t = await tray
-                if(!win.isFocused() && !configData.disableTray) t.setImage(appTrayPing);
+                if(!win.isFocused() && !configData.disableTray) t.setImage(appInfo.trayPing);
             });
         }, 5000);
         app.on('browser-window-focus', async () => {
             const t = await tray
-            if(!configData.disableTray) t.setImage(appTrayIcon);
+            if(!configData.disableTray) t.setImage(appInfo.trayIcon);
         });
     });
 
@@ -395,16 +369,17 @@ function windowStateKeeper(windowName:string) {
 }
 
 function main():void {
-    winWidth = minWinWidth+(screen.getPrimaryDisplay().workAreaSize.width/3);
-    winHeight = minWinHeight+(screen.getPrimaryDisplay().workAreaSize.height/3);
+    winWidth = appInfo.minWinWidth+(screen.getPrimaryDisplay().workAreaSize.width/3);
+    winHeight = appInfo.minWinHeight+(screen.getPrimaryDisplay().workAreaSize.height/3);
     l10nStrings = loadTranslations();
-    checkVersion(l10nStrings, devel, appIcon, updateInterval);
-    updateInterval = setInterval(function(){checkVersion(l10nStrings, devel, appIcon, updateInterval)}, 1800000);
+    checkVersion(l10nStrings, devel, appInfo.icon, updateInterval);
+    updateInterval = setInterval(function(){checkVersion(l10nStrings, devel, appInfo.icon, updateInterval)}, 1800000);
     mainWindow = createWindow();
     aboutPanel();
 }
 
 if (!singleInstance) {
+    console.log(loadTranslations().misc.singleInstance)
     app.quit();
 } else {
     app.on('second-instance', () => {

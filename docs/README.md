@@ -31,6 +31,7 @@ It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord
 - [Translating the application](TRANSLATE.md)
   - [JSON basics](TRANSLATE.md#dont-know-the-json-syntax)
   - [Credits](TRANSLATE.md#the-people-that-hepled-me-with-the-app-translation)
+- [Supported platforms](SUPPORT.md)
 - [License](COPYING)
 
 ## License

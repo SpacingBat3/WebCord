@@ -17,7 +17,24 @@
 		"file": {
 			"groupName":"File",
 			"quit":"Quit",
-			"relaunch":"Relaunch"
+			"relaunch":"Relaunch",
+			"options": {
+				"groupName": "Settings",
+				"disableTray": "Disable tray",
+				"hideMenuBar": "Hide menu bar",
+				"mobileMode": "Hide side bar",
+				"csp": {
+					"groupName": "Content Security Policy",
+					"thirdparty": "Third-party websites",
+					"gifProviders": "GIF Providers"
+				},
+				"develMode": "Developer mode"
+			},
+			"addon": {
+				"groupName": "Extensions",
+				"loadNode": "Load node extension",
+				"loadChrome": "Load Chrome extension"
+			}
 		},
 		"edit": "Edit",
 		"view": {
@@ -30,19 +47,7 @@
 			"zoomOut": "Zoom out",
 			"fullScreen": "Toggle fullscreen"
 		},
-		"window": "Window",
-		"options": {
-			"groupName": "Settings",
-			"disableTray": "Disable tray",
-			"hideMenuBar": "Hide menu bar",
-			"mobileMode": "Hide side bar",
-			"csp": {
-				"groupName": "Content Security Policy",
-				"thirdparty": "Third-party websites",
-				"gifProviders": "GIF Providers"
-			},
-			"develMode": "Developer mode"
-		}
+		"window": "Window"
 	},
 	"dialog": {
 		"error": "Error",
@@ -68,6 +73,10 @@
 			"yes": "Yes",
 			"no": "No"
 		},
+		"mod": {
+			"nodeExt": "WebCord Node.js Addon",
+			"crx": "Chrome/Chromium Extension"
+		},
 		"hideMenuBar": "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to unhide menu bar.",
 		"devel": "When \"Developer mode\" is enabled, you have an access to experimental features, which might be unfinished yet and broken. Also, if you don't know what DevTools is, you may not want to enable this setting. In any cases, I (the developer of this application) am unresponsible for any commands you paste to DevTools or for anything broken after you enabled \"Developer mode\" – you switch that setting on your own risk. Proceed anyway?"
 	},
@@ -79,5 +88,8 @@
 		"bugs": "Report a bug",
 		"contributors": "Authors and contributors:",
 		"credits": "Thanks to GyozaGuy for his Electron Discord app – it was good source to learn about the Electron and how make with it a Discord web app."
+	},
+	"misc": {
+		"singleInstance": "Switching to existing instance..."
 	}
 }

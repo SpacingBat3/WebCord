@@ -16,17 +16,22 @@ import {
 } from 'electron';
 
 import {
-	lang,
 	appConfig,
 	configData,
-	getDevel
-} from './object';
+	getDevel,
+	guessDevel,
+	loadTranslations,
+	appInfo
+} from './mainGlobal';
+
+import { loadNodeAddons, loadChromeAddons } from './mod'
 
 import fetch from 'electron-fetch';
 import * as os from 'os';
 import * as EventEmitter from 'events';
 
 const sideBar = new EventEmitter();
+const { devel } = guessDevel();
 
 sideBar.on('hide', async (contents:WebContents) => {
 	const cssKey = await contents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
@@ -56,7 +61,8 @@ function updateMenuBarItem(id:string, value:boolean):void {
 
 // Contex Menu with spell checker
 
-export function context (windowName: BrowserWindow, strings: lang, devel: boolean): void {
+export function context (windowName: BrowserWindow): void {
+	const strings = loadTranslations();
 	windowName.webContents.on('context-menu', (event, params) => {
 		const cmenu:(MenuItemConstructorOptions|MenuItem)[] = [
 			{ type: 'separator'},
@@ -116,13 +122,14 @@ if(os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.get
 
 // Tray menu
 
-export async function tray (Icon: string, windowName: BrowserWindow, strings: lang, childCSP: string, toolTip: string): Promise<Tray> {
-	const tray = new Tray(Icon);
+export async function tray (windowName: BrowserWindow, childCSP: string, toolTip: string): Promise<Tray> {
+	const strings = loadTranslations();
+	const tray = new Tray(appInfo.trayIcon);
 	let image:string|nativeImage;
 	if (funMode === 2) {
 		image = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
 	} else {
-		image = nativeImage.createFromPath(Icon).resize({width:16})
+		image = nativeImage.createFromPath(appInfo.trayIcon).resize({width:16})
 	}
 	const contextMenu = Menu.buildFromTemplate([
 		{
@@ -199,19 +206,125 @@ export async function tray (Icon: string, windowName: BrowserWindow, strings: la
 
 // Menu Bar
 
-export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang, devMode: boolean): Menu {
+export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
+	const strings = loadTranslations();
 	const webLink = repoLink.substring(repoLink.indexOf("+")+1);
-	const devel = getDevel(devMode, configData.devel);
+	const devMode = getDevel(devel, configData.devel);
 	const menu = Menu.buildFromTemplate([
+		// File
 		{ label: strings.menubar.file.groupName, submenu: [
-			{
-				label: strings.menubar.file.quit,
-				accelerator: 'CmdOrCtrl+Q',
-				click: () => {
-					wantQuit=true;
-					app.quit();
+			// Settings
+			{ label: strings.menubar.file.options.groupName, submenu: [
+				// Menu Bar visibility
+				{
+					label: strings.menubar.file.options.hideMenuBar,
+					type: 'checkbox',
+					checked: appConfig.get('hideMenuBar'),
+					click: () => configSwitch('hideMenuBar', () => {
+						if (appConfig.get('hideMenuBar')) {
+							dialog.showMessageBoxSync({
+								type: "warning",
+								title: strings.dialog.warning,
+								message: strings.dialog.hideMenuBar,
+								buttons: [strings.dialog.buttons.continue]
+							});
+						}
+					})
+				},
+				// Tray feature
+				{
+					label: strings.menubar.file.options.disableTray,
+					type: 'checkbox', checked: appConfig.get('disableTray'),
+					click: () => configSwitch('disableTray')
+				},
+				{ type: 'separator' },
+				// Content Security Policy
+				{ label: strings.menubar.file.options.csp.groupName, submenu: [
+					{
+						label: strings.menubar.enabled,
+						type: 'checkbox',
+						checked: !appConfig.get('csp.disabled'),
+						click: () => configSwitch('csp.disabled', () => {
+							updateMenuBarItem('csp-thirdparty', !appConfig.get('csp.disabled'));
+						})
+					},
+					{
+						label: strings.menubar.file.options.csp.thirdparty,
+						id: 'csp-thirdparty',
+						enabled: !appConfig.get('csp.disabled'),
+						submenu: [
+							{
+								label: "Algolia",
+								type: 'checkbox',
+								checked: !appConfig.get('csp.thirdparty.algolia'),
+								click: function () { return configSwitch('csp.thirdparty.algolia'); }
+							},
+							{
+								label: strings.menubar.file.options.csp.gifProviders,
+								type: 'checkbox',
+								checked: !appConfig.get('csp.thirdparty.gif'),
+								click: () => configSwitch('csp.thirdparty.gif')
+							},
+							{
+								label: "hCaptcha",
+								type: 'checkbox',
+								checked: !appConfig.get('csp.thirdparty.hcaptcha'),
+								click: () => configSwitch('csp.thirdparty.hcaptcha')
+							},
+													{
+								label: "Spotify",
+								type: 'checkbox',
+								checked: !appConfig.get('csp.thirdparty.spotify'),
+								click: () => configSwitch('csp.thirdparty.spotify')
+							}
+						]
+					}
+				]},
+				// "Developer mode" switch
+				{
+					label: strings.menubar.file.options.develMode,
+					type: 'checkbox', checked: devMode,
+					enabled: !devMode,
+					click: () => {
+						if (!appConfig.get('devel')) {
+							const answer:number=dialog.showMessageBoxSync({
+								type: "warning",
+								title: strings.dialog.warning,
+								message: strings.dialog.devel,
+								buttons: [
+									strings.dialog.buttons.yes,
+									strings.dialog.buttons.no
+								],
+								cancelId: 1
+							});
+							if(answer===0) configSwitch('devel', () => {
+								updateMenuBarItem('devTools', !devMode);
+							});
+						} else {
+							configSwitch('devel', () => {
+								updateMenuBarItem('devTools', !devMode);
+							});
+						}
+					}
 				}
-			},
+			]},
+			// Extensions (Work In Progress state)
+			{ label: strings.menubar.file.addon.groupName, visible: devMode, submenu: [
+				// Node-based extensions
+				{
+					label: strings.menubar.file.addon.loadNode,
+					enabled: devel,
+					click: () => { loadNodeAddons(mainWindow) }
+				},
+				// Chrome/Chromium extensions
+				{
+					label: strings.menubar.file.addon.loadChrome,
+					enabled: devel,
+					click: () => { loadChromeAddons(mainWindow) }
+				}
+			]},
+			{ type: 'separator' },
+			// Reset
 			{
 				label: strings.menubar.file.relaunch,
 				click: () => {
@@ -219,29 +332,47 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang,
 					app.relaunch();
 					app.quit();
 				}
+			},
+			// Quit
+			{
+				label: strings.menubar.file.quit,
+				accelerator: 'CmdOrCtrl+Q',
+				click: () => {
+					wantQuit=true;
+					app.quit();
+				}
 			}
 		]},
+		// Edit
 		{ role: 'editMenu', label: strings.menubar.edit},
+		// View
 		{ label: strings.menubar.view.groupName, submenu: [
+			// Reload
 			{ label: strings.menubar.view.reload, role: 'reload' },
+			// Force reload
 			{ label: strings.menubar.view.forceReload, role: 'forceReload' },
 			{ type: 'separator' },
+			// DevTools
 			{
 				label: strings.menubar.view.devTools,
 				id: 'devTools',
 				role: 'toggleDevTools',
-				enabled: devel
+				enabled: devMode
 			},
 			{ type: 'separator' },
+			// Zoom settings (reset, zoom in, zoom out)
 			{ label: strings.menubar.view.resetZoom, role: 'resetZoom' },
 			{ label: strings.menubar.view.zoomIn, role: 'zoomIn' },
 			{ label: strings.menubar.view.zoomOut, role: 'zoomOut' },
 			{ type: 'separator' },
+			// Toggle full screen
 			{ label: strings.menubar.view.fullScreen, role: 'togglefullscreen' }
 		]},
+		// Window
 		{ label: strings.menubar.window, submenu: [
+			// Hide side bar
 			{
-				label: strings.menubar.options.mobileMode,
+				label: strings.menubar.file.options.mobileMode,
 				type: 'checkbox',
 				accelerator: 'CmdOrCtrl+Alt+M',
 				checked: false,
@@ -254,100 +385,15 @@ export function bar (repoLink: string, mainWindow: BrowserWindow, strings: lang,
 				})
 			}
 		]},
-		{ label: strings.menubar.options.groupName, submenu: [
-			{
-				label: strings.menubar.options.disableTray,
-				type: 'checkbox', checked: appConfig.get('disableTray'),
-				click: () => configSwitch('disableTray')
-			},
-			{
-				label: strings.menubar.options.hideMenuBar,
-				type: 'checkbox',
-				checked: appConfig.get('hideMenuBar'),
-				click: () => configSwitch('hideMenuBar', () => {
-					if (appConfig.get('hideMenuBar')) {
-						dialog.showMessageBoxSync({
-							type: "warning",
-							title: strings.dialog.warning,
-							message: strings.dialog.hideMenuBar,
-							buttons: [strings.dialog.buttons.continue]
-						});
-					}
-				})
-			},
-			{ type: 'separator' },
-			{
-				label: strings.menubar.options.develMode,
-				type: 'checkbox', checked: devel,
-				enabled: !devMode,
-				click: () => {
-					if (!appConfig.get('devel')) {
-						const answer:number=dialog.showMessageBoxSync({
-							type: "warning",
-							title: strings.dialog.warning,
-							message: strings.dialog.devel,
-							buttons: [
-								strings.dialog.buttons.yes,
-								strings.dialog.buttons.no
-							],
-							cancelId: 1
-						});
-						if(answer===0) configSwitch('devel', () => {
-							updateMenuBarItem('devTools', !devel);
-						});
-					} else {
-						configSwitch('devel', () => {
-							updateMenuBarItem('devTools', !devel);
-						});
-					}
-				}
-			},
-			{ label: strings.menubar.options.csp.groupName, submenu: [
-				{
-					label: strings.menubar.enabled,
-					type: 'checkbox',
-					checked: !appConfig.get('csp.disabled'),
-					click: () => configSwitch('csp.disabled', () => {
-						updateMenuBarItem('csp-thirdparty', !appConfig.get('csp.disabled'));
-					})
-				},
-				{
-					label: strings.menubar.options.csp.thirdparty,
-					id: 'csp-thirdparty',
-					enabled: !appConfig.get('csp.disabled'),
-					submenu: [
-						{
-							label: "Algolia",
-							type: 'checkbox',
-							checked: !appConfig.get('csp.thirdparty.algolia'),
-							click: function () { return configSwitch('csp.thirdparty.algolia'); }
-                        },
-						{
-							label: strings.menubar.options.csp.gifProviders,
-							type: 'checkbox',
-							checked: !appConfig.get('csp.thirdparty.gif'),
-							click: () => configSwitch('csp.thirdparty.gif')
-						},
-						{
-							label: "hCaptcha",
-							type: 'checkbox',
-							checked: !appConfig.get('csp.thirdparty.hcaptcha'),
-							click: () => configSwitch('csp.thirdparty.hcaptcha')
-						},
-												{
-							label: "Spotify",
-							type: 'checkbox',
-							checked: !appConfig.get('csp.thirdparty.spotify'),
-							click: () => configSwitch('csp.thirdparty.spotify')
-						}
-					]
-				}
-			]}
-		]},
+		// Help
 		{ label: strings.help.groupName, role: 'help', submenu: [
+			// About
 			{ label: strings.help.about, role: 'about', click: function() { app.showAboutPanel();}},
+			// Repository
 			{ label: strings.help.repo, click: function() { shell.openExternal(webLink);} },
+			// Documentation
 			{ label: strings.help.docs, click: function() { shell.openExternal(webLink+'#documentation');} },
+			// Report a bug
 			{ label: strings.help.bugs, click: function() { shell.openExternal(webLink+'/issues');} }
 		]}
 	]);
