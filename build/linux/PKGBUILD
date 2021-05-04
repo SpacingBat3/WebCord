@@ -9,7 +9,7 @@ _repo="WebCord"
 _author="SpacingBat3"
 
 license=('MIT')
-makedepends=('npm' 'git' 'jq' 'librsvg' 'imagemagick')
+makedepends=('npm' 'git' 'jq' 'librsvg' 'imagemagick' 'typescript')
 depends=('electron')
 provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}")
@@ -67,7 +67,7 @@ build() {
     # Build, package and generate simple executable script
     # that initializes Electron:
 
-    npm run build
+    tsc
     npx asar pack . ../${pkgname%-git}.asar || { echo "Failed to package to ASAR!"; exit 1; }
     _terminal "../${pkgname%-git}.sh"
 
