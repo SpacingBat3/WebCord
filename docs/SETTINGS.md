@@ -1,7 +1,7 @@
 ## About the application settings
 This section will describe different options found in the "Settings" submenu.
 
-**Note:** currently most settings requires to restart the app to see any effects of chaning them.
+**NOTE:** Currently most settings requires to restart the app to see any changes.
 
 ### Disable tray
 
@@ -17,6 +17,14 @@ This option is used to automatically hide menu bar (that contains submenus like 
 
 This option is implemented to hide the Discord's side menu bar (that displays the channel list). Currently, it is the only setting that can be changed when using Discord without the need to restart the app. It is also meant to make it more compact to look, making it a lot easier to use on mobile devices or on smaller displays.
 
+**TIP:** You can easily toogle this setting by pressing \[ALT+CTRL/CMD+M\] on the keyboard.
+
 ### Content Security Policy settings
 
 It defines the rules that browser will use to either accept loading the content or not. Currently, CSP can be disabled or enabled and optionally configured to block selected third-party websites.
+
+### Enable Developer mode
+
+Controls whenever experimental features and DevTools are enabled. It can be used to debug an application or test unfinished or experimental features. This setting can be only toggled in production builds – if you run the app without packaging it (via `npm start` command) you are unable to turn it off.
+
+**NOTE:** Some features may still not be available when app is packaged, even after toggling on this setting.
