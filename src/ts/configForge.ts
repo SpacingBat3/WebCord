@@ -33,14 +33,9 @@ module.exports = {
   },
   makers: [
     {
-      name: "@electron-forge/maker-squirrel",
-      config: {
-        name: "electron_discord_webapp"
-      }
-    },
-    {
       name: "@electron-forge/maker-zip",
       platforms: [
+        "win32",
         "darwin"
       ]
     },

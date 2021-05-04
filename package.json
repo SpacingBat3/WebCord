@@ -47,7 +47,6 @@
     "@electron-forge/cli": "^6.0.0-beta.54",
     "@electron-forge/maker-deb": "^6.0.0-beta.54",
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@electron-forge/publisher-github": "^6.0.0-beta.54",
     "@types/source-map-support": "^0.5.3",
@@ -64,7 +63,6 @@
     "deepmerge": "^4.2.2",
     "electron-fetch": "^1.7.3",
     "electron-json-config": "^2.0.0-beta",
-    "electron-squirrel-startup": "^1.0.0",
     "source-map-support": "^0.5.19"
   },
   "config": {
