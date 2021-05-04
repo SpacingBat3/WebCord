@@ -5,7 +5,7 @@ pkgrel=1
 pkgdesc="A Discord client based on the Electron engine."
 arch=("any")
 
-_repo="electron-discord-webapp"
+_repo="WebCord"
 _author="SpacingBat3"
 
 license=('MIT')
