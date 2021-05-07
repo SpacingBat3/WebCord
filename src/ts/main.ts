@@ -1,7 +1,7 @@
 /*
  * Main process script (main.ts)
  */
- 
+
 /*
  * Handle source maps.
  * This module will provide more readable crash output.
@@ -25,8 +25,8 @@ import {
     screen
 } from 'electron';
 
-if(app.commandLine.hasSwitch('version')){
-    console.log(app.getName()+' v'+app.getVersion());
+if (app.commandLine.hasSwitch('version')) {
+    console.log(app.getName() + ' v' + app.getVersion());
     app.exit();
 }
 
@@ -38,7 +38,7 @@ import * as path from 'path';
  */
 
 const oldUserPath = path.join(app.getPath('userData'), '..', "Electron Discord Web App");
-if(fs.existsSync(oldUserPath)) {
+if (fs.existsSync(oldUserPath)) {
     fs.rmdirSync(app.getPath('userData'), { recursive: true });
     fs.renameSync(oldUserPath, app.getPath('userData'));
 }
@@ -56,7 +56,7 @@ import {
     loadTranslations
 } from './mainGlobal';
 
-import { packageJson } from './global'
+import { packageJson } from './global';
 
 /*
  * Get current app dir – also removes the need of importing icons
@@ -67,29 +67,29 @@ import { packageJson } from './global'
  * Check if we are using the packaged version.
  */
 
-const { devel, devFlag } = guessDevel()
+const { devel, devFlag } = guessDevel();
 
 // Load scripts:
-import {checkVersion} from './update'
-import {getUserAgent} from './userAgent';
+import { checkVersion } from './update';
+import { getUserAgent } from './userAgent';
 import * as getMenu from './menus';
 
 // Removes deprecated config properties (if they exists)
 
-const deprecated = ["csp.strict","windowState","css1Key"];
+const deprecated = ["csp.strict", "windowState", "css1Key"];
 appConfig.deleteBulk(deprecated);
 
 // Vars to modify app behavior
 
 
 // "About" information
-const appFullName:string = app.getName()
-const appVersion:string = packageJson.version;
-const appAuthor:string = packageJson.author.name;
+const appFullName: string = app.getName();
+const appVersion: string = packageJson.version;
+const appAuthor: string = packageJson.author.name;
 const appYear = '2020'; // the year since this app exists
 const updateYear = '2021'; // the year when the last update got released
-const appRepo:string = packageJson.homepage;
-const chromiumVersion:string = process.versions.chrome;
+const appRepo: string = packageJson.homepage;
+const chromiumVersion: string = process.versions.chrome;
 
 
 /*
@@ -97,47 +97,52 @@ const chromiumVersion:string = process.versions.chrome;
  * if you're improving the code of this application
  */
 
-let appContributors:Array<string> = [ appAuthor ];
+let appContributors: Array<string> = [appAuthor];
 
-// Hence GTK allows for tags there, generate links to website/email
-if (packageJson.author.url) {
-    appContributors = [ '<a href="'+packageJson.author.url+'">'+appAuthor+'</a>' ]
-} else if (packageJson.author.email) {
-    appContributors = [ '<a href="'+packageJson.author.email+'">'+appAuthor+'</a>' ]
+// Hence GTK allows for tags there on Linux, generate links to website/email
+if (process.platform === "linux") {
+
+    if (packageJson.author.url)
+        appContributors = ['<a href="' + packageJson.author.url + '">' + appAuthor + '</a>'];
+
+    else if (packageJson.author.email)
+        appContributors = ['<a href="mailto:' + packageJson.author.email + '">' + appAuthor + '</a>'];
+
 }
-if (Array.isArray(packageJson.contributors) && packageJson.contributors.length>0) {
-    for (let n=0; n<packageJson.contributors.length; n++) {
-		// Guess "person" format:
-		if (packageJson.contributors[n].name) {
-            if (process.platform=="linux") {
-                const { name, email, url } = packageJson.contributors[n]
-                let linkTag="", linkTagClose="";
+
+if (Array.isArray(packageJson.contributors) && packageJson.contributors.length > 0) {
+    for (let n = 0; n < packageJson.contributors.length; n++) {
+        // Guess "person" format:
+        if (packageJson.contributors[n].name) {
+            if (process.platform == "linux") {
+                const { name, email, url } = packageJson.contributors[n];
+                let linkTag = "", linkTagClose = "";
                 if (url) {
-                    linkTag='<a href="'+url+'">'
+                    linkTag = '<a href="' + url + '">';
                 } else if (email) {
-                    linkTag='<a href="mailto:'+email+'">'
+                    linkTag = '<a href="mailto:' + email + '">';
                 }
-                if (linkTag!=="") linkTagClose = "</a>"
-                appContributors.push(linkTag+name+linkTagClose)
+                if (linkTag !== "") linkTagClose = "</a>";
+                appContributors.push(linkTag + name + linkTagClose);
             } else {
                 appContributors.push(packageJson.contributors[n].name);
             }
-		} else {
-			appContributors.push(packageJson.contributors[n])
-		}
-	}
+        } else {
+            appContributors.push(packageJson.contributors[n]);
+        }
+    }
 }
 
 // "Dynamic" variables that shouldn't be changed:
 
 const stringContributors = appContributors.join(', ');
 const singleInstance = app.requestSingleInstanceLock();
-let mainWindow:BrowserWindow,winHeight:number,winWidth:number;
-let tray:Promise<Tray>, l10nStrings:lang, updateInterval:NodeJS.Timeout|undefined;
+let mainWindow: BrowserWindow, winHeight: number, winWidth: number;
+let tray: Promise<Tray>, l10nStrings: lang, updateInterval: NodeJS.Timeout | undefined;
 
 // Year format for the copyright
 
-const copyYear = appYear+'-'+updateYear;
+const copyYear = appYear + '-' + updateYear;
 
 // Fake Chromium User Agent:
 
@@ -145,14 +150,14 @@ const fakeUserAgent = getUserAgent(chromiumVersion);
 
 // "About" Panel:
 
-function aboutPanel():void {
-    let iconPath:string;
+function aboutPanel(): void {
+    let iconPath: string;
     if (fs.existsSync(appInfo.icon)) {
-        iconPath=appInfo.icon
+        iconPath = appInfo.icon;
     } else {
-        iconPath='/usr/share/icons/hicolor/512x512/apps/'+packageJson.name+'.png'
+        iconPath = '/usr/share/icons/hicolor/512x512/apps/' + packageJson.name + '.png';
     }
-	const aboutVersions = "Electron: "+process.versions.electron+"    Node: "+process.versions.node+"    Chromium: "+process.versions.chrome
+    const aboutVersions = "Electron: " + process.versions.electron + "    Node: " + process.versions.node + "    Chromium: " + process.versions.chrome;
     app.setAboutPanelOptions({
         applicationName: appFullName,
         applicationVersion: `v${appVersion}${devFlag}`,
@@ -164,14 +169,14 @@ function aboutPanel():void {
     });
 }
 
-function createWindow():BrowserWindow {
+function createWindow(): BrowserWindow {
 
     // Check the window state
 
     const mainWindowState = windowStateKeeper('win');
 
     // Browser window
-    
+
     const win = new BrowserWindow({
         title: appFullName,
         minWidth: appInfo.minWinWidth,
@@ -191,46 +196,46 @@ function createWindow():BrowserWindow {
     // Preload scripts:
 
     win.webContents.session.setPreloads([
-        app.getAppPath()+"/src/js/renderer/capturer.js",
-        app.getAppPath()+"/src/js/renderer/cosmetic.js"
+        app.getAppPath() + "/src/js/renderer/capturer.js",
+        app.getAppPath() + "/src/js/renderer/cosmetic.js"
     ]);
 
     // Content Security Policy
-    
-    let csp="default-src 'self' blob: data: 'unsafe-inline'";
-    csp+=" https://*.discordapp.net https://*.discord.com https://*.discordapp.com https://discord.com" // HTTPS
-    csp+=" wss://*.discord.media wss://*.discord.gg wss://*.discord.com"; // WSS
+
+    let csp = "default-src 'self' blob: data: 'unsafe-inline'";
+    csp += " https://*.discordapp.net https://*.discord.com https://*.discordapp.com https://discord.com"; // HTTPS
+    csp += " wss://*.discord.media wss://*.discord.gg wss://*.discord.com"; // WSS
     /**
      * Discord servers, blocking them makes web app unusable.
      */
     if (!configData.csp.thirdparty.hcaptcha) {
-		// hCaptcha
-		csp+=" https://assets.hcaptcha.com https://imgs.hcaptcha.com https://hcaptcha.com https://newassets.hcaptcha.com"
-	}
+        // hCaptcha
+        csp += " https://assets.hcaptcha.com https://imgs.hcaptcha.com https://hcaptcha.com https://newassets.hcaptcha.com";
+    }
     if (!configData.csp.thirdparty.algoria) {
-		// Algolia
-		csp+=" https://nktzz4aizu-dsn.algolia.net https://nktzz4aizu-1.algolianet.com"
-        csp+=" https://nktzz4aizu-2.algolianet.com https://nktzz4aizu-3.algolianet.com https://i.scdn.co"
-	}
-	if (!configData.csp.thirdparty.spotify) {
-		// Spotify API
-        csp+=" wss://dealer.spotify.com https://api.spotify.com"
+        // Algolia
+        csp += " https://nktzz4aizu-dsn.algolia.net https://nktzz4aizu-1.algolianet.com";
+        csp += " https://nktzz4aizu-2.algolianet.com https://nktzz4aizu-3.algolianet.com https://i.scdn.co";
+    }
+    if (!configData.csp.thirdparty.spotify) {
+        // Spotify API
+        csp += " wss://dealer.spotify.com https://api.spotify.com";
     }
     if (!configData.csp.thirdparty.gif) {
-		// GIF providers
-        csp+=" https://media.tenor.co https://media.tenor.com https://c.tenor.com https://media.giphy.com"
+        // GIF providers
+        csp += " https://media.tenor.co https://media.tenor.com https://c.tenor.com https://media.giphy.com";
     }
     /**
      * Servers above can be blocked by user via settings.
      */
-    csp+="; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
-    if (!configData.csp.thirdparty.hcaptcha){
-		// hCaptcha
-		csp+=" https://hcaptcha.com https://assets.hcaptcha.com https://newassets.hcaptcha.com"
-	}
-	/**
-	 * Scripts that allowed to run by CSP.
-	 */
+    csp += "; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+    if (!configData.csp.thirdparty.hcaptcha) {
+        // hCaptcha
+        csp += " https://hcaptcha.com https://assets.hcaptcha.com https://newassets.hcaptcha.com";
+    }
+    /**
+     * Scripts that allowed to run by CSP.
+     */
     if (!configData.csp.disabled) {
         win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
             callback({
@@ -241,20 +246,20 @@ function createWindow():BrowserWindow {
             });
         });
     }
-    const childCsp="default-src 'self' blob:"
+    const childCsp = "default-src 'self' blob:";
 
     // Permissions:
 
-    win.webContents.session.setPermissionCheckHandler( (webContents, permission) => {
-        if(webContents.getURL().includes(appInfo.rootURL)){
+    win.webContents.session.setPermissionCheckHandler((webContents, permission) => {
+        if (webContents.getURL().includes(appInfo.rootURL)) {
             return true;
         } else {
             console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
             return false;
         }
     });
-    win.webContents.session.setPermissionRequestHandler( (webContents, permission, callback) => {
-        if(webContents.getURL().includes(appInfo.rootURL)){
+    win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+        if (webContents.getURL().includes(appInfo.rootURL)) {
             return callback(true);
         } else {
             console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
@@ -262,7 +267,7 @@ function createWindow():BrowserWindow {
         }
     });
 
-    win.loadURL(appInfo.URL,{userAgent: fakeUserAgent});
+    win.loadURL(appInfo.URL, { userAgent: fakeUserAgent });
     win.setAutoHideMenuBar(configData.hideMenuBar);
     win.setMenuBarVisibility(!configData.hideMenuBar);
     mainWindowState.track(win);
@@ -270,7 +275,7 @@ function createWindow():BrowserWindow {
     // Load all menus:
 
     getMenu.context(win);
-    if(!configData.disableTray) tray = getMenu.tray(win, childCsp, appFullName);
+    if (!configData.disableTray) tray = getMenu.tray(win, childCsp, appFullName);
     getMenu.bar(packageJson.repository.url, win);
 
     // Open external URLs in default browser
@@ -279,7 +284,7 @@ function createWindow():BrowserWindow {
             major: parseInt(process.versions.electron.split('.')[0]),
             minior: parseInt(process.versions.electron.split('.')[1]),
             patch: parseInt(process.versions.electron.split('.')[2])
-        }
+        };
         /** 
          * Use new function in Electron release 12.0.5 or newer.
          * 
@@ -309,32 +314,32 @@ function createWindow():BrowserWindow {
     // "Red dot" icon feature
 
     win.webContents.once('did-finish-load', () => {
-        setTimeout(function(){
+        setTimeout(function () {
             win.webContents.on('page-favicon-updated', async () => {
-                const t = await tray
-                if(!win.isFocused() && !configData.disableTray) t.setImage(appInfo.trayPing);
+                const t = await tray;
+                if (!win.isFocused() && !configData.disableTray) t.setImage(appInfo.trayPing);
             });
         }, 5000);
         app.on('browser-window-focus', async () => {
-            const t = await tray
-            if(!configData.disableTray) t.setImage(appInfo.trayIcon);
+            const t = await tray;
+            if (!configData.disableTray) t.setImage(appInfo.trayIcon);
         });
     });
 
     // Window Title
 
-    win.on('page-title-updated', (event:Event, title:string) => {
-		if(title == "Discord") {
-			event.preventDefault();
-			win.setTitle(appFullName);
-		}
-	});
+    win.on('page-title-updated', (event: Event, title: string) => {
+        if (title == "Discord") {
+            event.preventDefault();
+            win.setTitle(appFullName);
+        }
+    });
 
     // Animate menu
 
     win.webContents.on('did-finish-load', () => {
         win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width 1s; transition-timing-function: ease;}");
-    })
+    });
 
     return win;
 }
@@ -342,37 +347,37 @@ function createWindow():BrowserWindow {
 // Remember window state
 
 interface windowStatus {
-	width: number,
-	height: number,
-	isMaximized?: boolean
+    width: number,
+    height: number,
+    isMaximized?: boolean;
 }
 
-function windowStateKeeper(windowName:string) {
+function windowStateKeeper(windowName: string) {
 
-    let window:BrowserWindow, windowState:windowStatus;
+    let window: BrowserWindow, windowState: windowStatus;
 
-    function setBounds():windowStatus {
-		let wS:windowStatus|undefined,wState:windowStatus;
+    function setBounds(): windowStatus {
+        let wS: windowStatus | undefined, wState: windowStatus;
         if (winStorage.has(`${windowName}`)) {
             wS = winStorage.get(`${windowName}`);
             if (wS === undefined) {
-				wState = {
-					width: winWidth,
-					height: winHeight
-				}
-			} else {
-				wState = wS;
-			}
+                wState = {
+                    width: winWidth,
+                    height: winHeight
+                };
+            } else {
+                wState = wS;
+            }
         } else {
-			wState = {
-				width: winWidth,
-				height: winHeight
-			}
+            wState = {
+                width: winWidth,
+                height: winHeight
+            };
         }
         return wState;
     }
 
-    function saveState():void {
+    function saveState(): void {
         if (!windowState.isMaximized) {
             windowState = window.getBounds();
         }
@@ -380,13 +385,13 @@ function windowStateKeeper(windowName:string) {
         winStorage.set(`${windowName}`, windowState);
     }
 
-    function track(win:BrowserWindow):void {
+    function track(win: BrowserWindow): void {
         window = win;
         win.on('resize', saveState);
         win.on('close', saveState);
     }
-    windowState=setBounds();
-    return({
+    windowState = setBounds();
+    return ({
         width: windowState.width,
         height: windowState.height,
         isMaximized: windowState.isMaximized,
@@ -394,24 +399,24 @@ function windowStateKeeper(windowName:string) {
     });
 }
 
-function main():void {
-    winWidth = appInfo.minWinWidth+(screen.getPrimaryDisplay().workAreaSize.width/3);
-    winHeight = appInfo.minWinHeight+(screen.getPrimaryDisplay().workAreaSize.height/3);
+function main(): void {
+    winWidth = appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3);
+    winHeight = appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3);
     l10nStrings = loadTranslations();
     checkVersion(l10nStrings, devel, appInfo.icon, updateInterval);
-    updateInterval = setInterval(function(){checkVersion(l10nStrings, devel, appInfo.icon, updateInterval)}, 1800000);
+    updateInterval = setInterval(function () { checkVersion(l10nStrings, devel, appInfo.icon, updateInterval); }, 1800000);
     mainWindow = createWindow();
     aboutPanel();
 }
 
 if (!singleInstance) {
-    console.log(loadTranslations().misc.singleInstance)
+    console.log(loadTranslations().misc.singleInstance);
     app.quit();
 } else {
     app.on('second-instance', () => {
-        if (mainWindow){
-            if(!mainWindow.isVisible()) mainWindow.show();
-            if(mainWindow.isMinimized()) mainWindow.restore();
+        if (mainWindow) {
+            if (!mainWindow.isVisible()) mainWindow.show();
+            if (mainWindow.isMinimized()) mainWindow.restore();
             mainWindow.focus();
         }
     });
