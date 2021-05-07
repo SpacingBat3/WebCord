@@ -274,11 +274,37 @@ function createWindow():BrowserWindow {
     getMenu.bar(packageJson.repository.url, win);
 
     // Open external URLs in default browser
-
-    win.webContents.setWindowOpenHandler((details) => {
-        shell.openExternal(details.url);
-        return {action: 'deny'};
-    });
+    {
+        const electronVersion = {
+            major: parseInt(process.versions.electron.split('.')[0]),
+            minior: parseInt(process.versions.electron.split('.')[1]),
+            patch: parseInt(process.versions.electron.split('.')[2])
+        }
+        /** 
+         * Use new function in Electron release 12.0.5 or newer.
+         * 
+         * The `webContents.setWindowOpenHandler()` was broken
+         * in releases `>= 12.0.0` and `<= 12.0.4` and haven't existed in
+         * Electron version `< 12`.
+         * 
+         * When building app for Electron releases `< 12` this will cause
+         * TypeScript errors – just ignore them if so, `tsc` should generate
+         * JavaScript files anyway.
+         * 
+         * Be aware that old method might be removed once Electron will
+         * remove 'new-window' event from `webContents` in its API.
+         */
+        if (electronVersion.major >= 12 && electronVersion.minior >= 5)
+            win.webContents.setWindowOpenHandler((details) => {
+                shell.openExternal(details.url);
+                return { action: 'deny' };
+            });
+        else
+            win.webContents.on('new-window', (event, externalURL) => {
+                event.preventDefault();
+                shell.openExternal(externalURL);
+            });
+    }
 
     // "Red dot" icon feature
 
