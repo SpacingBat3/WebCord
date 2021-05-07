@@ -1,6 +1,6 @@
 # Maintainer: Spacingbat3 (https://github.com/spacingbat3)
 pkgname=webcord-git
-pkgver=v1.4.0.r139.07c9bea
+pkgver=v1.4.0.r140.c77b1ca
 pkgrel=1
 pkgdesc="A Discord client based on the Electron engine."
 arch=("any")
@@ -11,14 +11,13 @@ _author="SpacingBat3"
 license=('MIT')
 makedepends=('npm' 'git' 'jq' 'librsvg' 'imagemagick' 'typescript')
 depends=('electron')
+optdepends=('papirus-icon-theme: extra icons')
 provides=("${pkgname%-git}")
 conflicts=("${pkgname%-git}")
 source=("${pkgname%-git}::git+https://github.com/${_author}/${_repo}.git"
         "${pkgname%-git}.desktop")
 md5sums=('SKIP'
          '85d234a65c69f3cf817fac5c54c194c8')
-
-_types=('@types/node' '@types/source-map-support')
 
 pkgver() {
     cd "${srcdir}/${pkgname%-git}"
@@ -35,6 +34,12 @@ build() {
     _print() {
         printf "\r%-${1}s" "${2}"
     }
+
+    # TSC definitions – as of Electron, 'global' or "latest"
+    #   fallback version will be used:
+    _types=('@types/node' '@types/source-map-support'
+            "electron@$( { electron -v | cut -c 2-" } || printf "latest" )
+
     _icons=("${srcdir}/${pkgname%-git}/icons/app.png"
             "${srcdir}/extra/iconThemes/Papirus/webcord.svg")
     _terminal() {
@@ -64,15 +69,15 @@ build() {
     # Temporarily move '.git' outside the sources (if exists)
     [[ -d .git ]] && mv .git ../git-data
 
-    # Build TypeScript to JavaScript
-    tsc
+    # Compile TypeScript to JavaScript
+    tsc || { echo "Failed to compile TypeScript sources to JavaScript"; exit 1; }
 
     # Cleanup
     npm uninstall --save-prod --only=prod "${_types[@]}"
     rmdir node_modules/* --ignore-fail-on-non-empty
 
     # Package to ASAR
-    npx asar pack . ../${pkgname%-git}.asar || { echo "Failed to package to ASAR!"; exit 1; }
+    npx asar pack . ../${pkgname%-git}.asar || { echo "Failed to package to ASAR!"; exit 2; }
 
     _terminal "../${pkgname%-git}.sh"
 
@@ -103,7 +108,7 @@ build() {
                 rsvg-convert -w "${_size}" -h "${_size}" -o "${_out}" "${_file}"
             else
                 echo -e "\nERROR: Unknown image type!"
-                exit 1
+                exit 3
             fi
         done
         let _i++
