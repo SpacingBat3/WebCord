@@ -275,9 +275,9 @@ function createWindow():BrowserWindow {
 
     // Open external URLs in default browser
 
-    win.webContents.on('new-window', (event, externalURL) => {
-        event.preventDefault();
-        shell.openExternal(externalURL);
+    win.webContents.setWindowOpenHandler((details) => {
+        shell.openExternal(details.url);
+        return {action: 'deny'};
     });
 
     // "Red dot" icon feature
