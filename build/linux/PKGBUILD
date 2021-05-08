@@ -1,6 +1,6 @@
 # Maintainer: Spacingbat3 (https://github.com/spacingbat3)
 pkgname=webcord-git
-pkgver=v1.4.0.r140.c77b1ca
+pkgver=v1.4.0.r145.4912052
 pkgrel=1
 pkgdesc="A Discord client based on the Electron engine."
 arch=("any")
@@ -38,7 +38,7 @@ build() {
     # TSC definitions – as of Electron, 'global' or "latest"
     #   fallback version will be used:
     _types=('@types/node' '@types/source-map-support'
-            "electron@$( { electron -v | cut -c 2-" } || printf "latest" )
+            "electron@`{ electron -v | cut -c 2-; } || printf "latest"`")
 
     _icons=("${srcdir}/${pkgname%-git}/icons/app.png"
             "${srcdir}/extra/iconThemes/Papirus/webcord.svg")
