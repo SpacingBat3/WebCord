@@ -24,21 +24,10 @@ pkgver() {
     printf "v%s.r%s.%s" "$(cat ./package.json | jq -r '.version' | tr '-' '_')" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
-prepare() {
-    cd "${srcdir}/${pkgname%-git}"
-    # Install production dependencies only + some required types for 'tsc'
-    npm install --save-prod --only=prod "${_types[@]}"
-}
-
-build() {
+_make_sources_ready() {
     _print() {
         printf "\r%-${1}s" "${2}"
     }
-
-    # TSC definitions – as of Electron, 'global' or "latest"
-    #   fallback version will be used:
-    _types=('@types/node' '@types/source-map-support'
-            "electron@`{ electron -v | cut -c 2-; } || printf "latest"`")
 
     _icons=("${srcdir}/${pkgname%-git}/icons/app.png"
             "${srcdir}/extra/iconThemes/Papirus/webcord.svg")
@@ -114,6 +103,22 @@ build() {
         let _i++
     done
     _print "${#_msg}" && printf '\r'
+}
+
+build() {
+    # TSC definitions – as of Electron, 'global' or "latest"
+    #   fallback version will be used:
+    _types=('@types/node' '@types/source-map-support'
+            "electron@`{ electron -v | cut -c 2-; } || printf "latest"`")
+
+    cd "${srcdir}/${pkgname%-git}"
+
+    # Install production dependencies only + some required types for 'tsc'
+    echo "(1/2) Installing dependencies..."
+    npm install --save-prod --only=prod "${_types[@]}"
+    
+    # Generate ASAR package and compile app for TSC format.
+    echo "(2/2) Compiling TypeScript to Javascript and packaging..." && _make_sources_ready
 }
 
 package() {
