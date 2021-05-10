@@ -7,10 +7,12 @@
         "baseUrl": ".",
         "outDir": "src/js",
         "removeComments": true,
-        "pretty": false,
         "paths": {
             "*":["node_modules/*"]
         }
     },
-    "include": [ "src/ts/*.ts" ]
+    "include": [
+        "src/ts/*.ts",
+        "src/ts/renderer/*.ts"
+    ]
 }

@@ -8,7 +8,6 @@ import { packageJson } from './global';
 
 // Global variables in the config:
 const iconFile="icons/app"
-const desktopName = packageJson.productName
 const desktopGeneric = "Internet Messenger"
 const desktopCategories = ["Network","InstantMessaging"]
 
@@ -44,7 +43,6 @@ module.exports = {
       config: {
         options: {
           icon: iconFile+".png",
-          productName: desktopName,
           genericName: desktopGeneric,
           categories: desktopCategories,
           compression: "gzip" // "xz" is too slow for the Electron AppImages
@@ -57,7 +55,6 @@ module.exports = {
         options: {
           icon: iconFile+".png",
           section: "web",
-          productName: desktopName,
           genericName: desktopGeneric,
           categories: desktopCategories
         }
@@ -68,7 +65,6 @@ module.exports = {
       config: {
         options: {
           icon: iconFile+".png",
-          productName: desktopName,
           genericName: desktopGeneric,
           categories: desktopCategories
         }

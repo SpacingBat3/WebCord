@@ -84,7 +84,7 @@ appConfig.deleteBulk(deprecated);
 
 // "About" information
 const appFullName: string = app.getName();
-const appVersion: string = packageJson.version;
+const appVersion: string = app.getVersion();
 const appAuthor: string = packageJson.author.name;
 const appYear = '2020'; // the year since this app exists
 const updateYear = '2021'; // the year when the last update got released

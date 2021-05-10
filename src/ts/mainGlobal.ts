@@ -94,7 +94,7 @@ export function getDevel(dev:boolean,conf:boolean):boolean {
 
 // Translations (interface and function):
 
-export interface lang {
+export type lang = {
 	tray: {
 		[key: string]: string
 	},

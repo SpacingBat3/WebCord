@@ -6,5 +6,34 @@ export function wLog (msg:string):void {
 	console.log("%c[WebCord]",'color: #69A9C1',msg);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-export const packageJson = require("../../package.json");
+type person = string & {
+	name: string,
+	email?: string,
+	url?: string
+}
+
+interface packageJsonProperties {
+	name: string,
+	author: person,
+	contributors: Array<person>,
+	homepage: string,
+	repository: {
+		type: string,
+		url: string
+	}
+}
+
+function getPackageJsonProperties():packageJsonProperties {
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	const packageJSON = require("../../package.json")
+	return {
+		name: packageJSON.name,
+		author: packageJSON.author,
+		contributors: packageJSON.contributors,
+		homepage: packageJSON.homepage,
+		repository: packageJSON.repository
+	}
+}
+
+
+export const packageJson = getPackageJsonProperties();

@@ -2,28 +2,15 @@
  * Update checker (update.ts)
  */
 
-import { Notification, shell } from 'electron';
-import { packageJson } from './global';
-import { lang } from './mainGlobal';
+import { app, Notification, shell } from 'electron';
+import { lang, appInfo } from './mainGlobal';
 import fetch from 'electron-fetch';
 
-async function guessRepository():Promise<string> {
-    const oldRepo = "SpacingBat3/electron-discord-webapp";
-    const newRepo = "SpacingBat3/WebCord";
-    if ((await fetch("https://github.com/"+oldRepo)).ok) {
-        console.warn("[WARN] Repository will be renamed soon to "+newRepo+'.');
-        console.warn("[WARN] Because of that, updater will stop working in the older builds.");
-        return oldRepo;
-    } else {
-        return newRepo;
-    }
-}
-
 export async function checkVersion(strings: lang, devel: boolean, appIcon: string, updateInterval: NodeJS.Timeout|undefined): Promise<void>{
-    const repoName = await guessRepository();
+    const repoName = appInfo.repoName;
     const remoteJson = await (await fetch(`https://raw.githubusercontent.com/${repoName}/master/package.json`)).json();
     const githubApi = await (await fetch(`https://api.github.com/repos/${repoName}/releases/latest`)).json();
-    const localVersion = packageJson.version.split('.');
+    const localVersion = app.getVersion().split('.'); 
     let remoteTag:string, updateMsg:string, updateURL:string, remoteHeader:string;
     let showGui = false;
     if(devel){
@@ -48,11 +35,11 @@ export async function checkVersion(strings: lang, devel: boolean, appIcon: strin
 
     if(localVersion[0] < remoteVersion[0] || (localVersion[0] == remoteVersion[0] && localVersion[1] < remoteVersion[1]) || (localVersion[0] == remoteVersion[0] && localVersion[1] == remoteVersion[1] && localVersion[2] < remoteVersion[2])) {
         showGui = true
-        updateMsg = `${strings.dialog.ver.update} (v${packageJson.version} → ${remoteHeader}${remoteTag})`;
+        updateMsg = `${strings.dialog.ver.update} (v${app.getVersion()} → ${remoteHeader}${remoteTag})`;
     } else if(localVersion[0] > remoteVersion[0] || (localVersion[0] == remoteVersion[0] && localVersion[1] > remoteVersion[1]) || (localVersion[0] == remoteVersion[0] && localVersion[1] == remoteVersion[1] && localVersion[2] > remoteVersion[2])) {
-        updateMsg = `${strings.dialog.ver.newer} (v${packageJson.version} → ${remoteHeader}${remoteTag})`;
+        updateMsg = `${strings.dialog.ver.newer} (v${app.getVersion()} → ${remoteHeader}${remoteTag})`;
     } else if(localVersion[0] != remoteVersion[0] || localVersion[1] != remoteVersion[1] || localVersion[2] != remoteVersion[2]) {
-        updateMsg = `${strings.dialog.ver.diff} (v${packageJson.version} ≠ ${remoteHeader}${remoteTag})`;
+        updateMsg = `${strings.dialog.ver.diff} (v${app.getVersion()} ≠ ${remoteHeader}${remoteTag})`;
     } else {
         updateMsg = strings.dialog.ver.recent;
     }
@@ -60,7 +47,7 @@ export async function checkVersion(strings: lang, devel: boolean, appIcon: strin
     console.log(strings.dialog.ver.updateBadge+' '+updateMsg);
 
     const updatePopup = {
-        title: packageJson.productName+": "+strings.dialog.ver.updateTitle,
+        title: app.getName()+": "+strings.dialog.ver.updateTitle,
         icon: appIcon,
         body: updateMsg
     }
