@@ -2,7 +2,7 @@
  * Cosmetic.ts – Website improvements for better integration within client
  */
 
-import { wLog } from '../global.js';
+import { wLog } from '../global';
 
 function removeUnneded() {
   // If user is at login/register website, do not apply any cosmetic changes

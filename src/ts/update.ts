@@ -2,11 +2,20 @@
  * Update checker (update.ts)
  */
 
-import { app, Notification, shell } from 'electron';
+import { app, Notification, shell, net } from 'electron';
 import { lang, appInfo } from './mainGlobal';
 import fetch from 'electron-fetch';
 
+/**
+ * Checks and notifies users about the updates.
+ * 
+ * @param strings Object containing language strings.
+ * @param devel Boolean to detect whenever app is packaged.
+ * @param appIcon Path to application icon.
+ * @param updateInterval Object that indentifies currently running interval.
+ */
 export async function checkVersion(strings: lang, devel: boolean, appIcon: string, updateInterval: NodeJS.Timeout|undefined): Promise<void>{
+    if(!net.isOnline()) return;
     const repoName = appInfo.repoName;
     const remoteJson = await (await fetch(`https://raw.githubusercontent.com/${repoName}/master/package.json`)).json();
     const githubApi = await (await fetch(`https://api.github.com/repos/${repoName}/releases/latest`)).json();

@@ -11,7 +11,7 @@ const iconFile="icons/app"
 const desktopGeneric = "Internet Messenger"
 const desktopCategories = ["Network","InstantMessaging"]
 
-module.exports = {
+export default {
   packagerConfig: {
     executableName: packageJson.name, // name instead of the productName
     asar: true,

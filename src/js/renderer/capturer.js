@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
  * Thanks, @WesselKroos!
  */
@@ -10,7 +11,7 @@
   }
 }*/
 const { desktopCapturer } = require('electron');
-const { wLog } = require('../global.js');
+const { wLog } = require('../global');
 
 navigator.mediaDevices.getDisplayMedia = () => {
   return new Promise( async(resolve,reject) => {

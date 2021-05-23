@@ -7,6 +7,20 @@ import * as fs from 'fs';
 import * as path from 'path'
 import { loadTranslations } from './mainGlobal';
 
+/**
+ * Function used to load Node-based WebCord modification (packaged in ASAR format).
+ * 
+ * This has some advantages over Chrome extensions – it allows developers to use
+ * various packages as dependencies from Node registry, providing a way of doing
+ * more complex modifications. In the future, these format may allow injecting the
+ * code as a part of `main` process, providing even more control to developers to
+ * mod the application.
+ * 
+ * Currently, it allows for CSS modifications via `webcord.css` property in
+ * `package.json` – it should point to the path containing your CSS tweaks.
+ * 
+ * @param window Electron's `BrowserWindow` object.
+ */
 export const loadNodeAddons = async function(window:BrowserWindow):Promise<void>{
     const strings = loadTranslations();
     const files = dialog.showOpenDialogSync({
@@ -15,8 +29,9 @@ export const loadNodeAddons = async function(window:BrowserWindow):Promise<void>
             { name: strings.dialog.mod.nodeExt, extensions: ["asar"] }
         ]
     });
+    console.log(files);
     if (files===undefined) return;
-    for (const file in files) {
+    for (const file of files) {
         const modJson = JSON.parse(fs.readFileSync(file+"/package.json",'utf-8'));
         if(modJson===undefined) return;
         const modInfo = {
@@ -25,9 +40,18 @@ export const loadNodeAddons = async function(window:BrowserWindow):Promise<void>
             css: path.join(file+'/'+modJson.webcord.css),
             preload: path.join(file+'/'+modJson.webcord.preload)
         }
-        if(!fs.existsSync(modInfo.preload)) return;
+        console.log('CSS: '+fs.existsSync(modInfo.css));
+        console.log('Preload: '+fs.existsSync(modInfo.preload));
+        if (!fs.existsSync(modInfo.preload) && !fs.existsSync(modInfo.css)) {
+            console.error("Failed on loading extension!");
+            return;
+        }
         app.setName(app.getName()+' ('+modInfo.name+')');
-        if(fs.existsSync(modInfo.icon)) window.setIcon(modInfo.icon);
+        if (fs.existsSync(modInfo.icon)) window.setIcon(modInfo.icon);
+        if (fs.existsSync(modInfo.css)) {
+            window.webContents.insertCSS(fs.readFileSync(modInfo.css,'utf-8'));
+            fs.readFileSync(modInfo.css,'utf-8');
+        }
     }
 }
 
@@ -41,5 +65,5 @@ export const loadChromeAddons = async function(window:BrowserWindow):Promise<voi
         ]
     });
     if (files===undefined) return;
-    for (const file in files) session.loadExtension(file);
+    for (const file of files) session.loadExtension(file);
 }

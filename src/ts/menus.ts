@@ -122,7 +122,7 @@ if(os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.get
 
 // Tray menu
 
-export async function tray (windowName: BrowserWindow, childCSP: string, toolTip: string): Promise<Tray> {
+export async function tray (windowName: BrowserWindow, childCSP: string): Promise<Tray> {
 	const strings = loadTranslations();
 	const tray = new Tray(appInfo.trayIcon);
 	let image:string|nativeImage;
@@ -193,7 +193,7 @@ export async function tray (windowName: BrowserWindow, childCSP: string, toolTip
 		}
 	]);
 	tray.setContextMenu(contextMenu);
-	tray.setToolTip(toolTip);
+	tray.setToolTip(app.getName());
 	// Exit to the tray
 	windowName.on('close', (event) => {
 		if (!wantQuit){
@@ -210,6 +210,32 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 	const strings = loadTranslations();
 	const webLink = repoLink.substring(repoLink.indexOf("+")+1);
 	const devMode = getDevel(devel, configData.devel);
+
+	const csp:MenuItem|MenuItemConstructorOptions[] = [];
+	const websitesThirdParty:[string,string][] = [
+		['algolia','Algolia'],
+		['spotify','Spotify'],
+		['hcaptcha','hCaptcha'],
+		['paypal','PayPal'],
+		['gif',strings.menubar.file.options.csp.gifProviders],
+		['youtube','YouTube'],
+		['twitter','Twitter'],
+		['twitch','Twitch'],
+		['streamable','Streamable'],
+		['vimeo','Vimeo'],
+		['funimation','Funimation'],
+		['audius','Audius'],
+		['soundcloud','SoundCloud']
+	]
+	for (const website of websitesThirdParty.sort()) {
+		csp.push({
+			label: website[1],
+			type: 'checkbox',
+			checked: !appConfig.get('csp.thirdparty.'+website[0]),
+			click: function () { return configSwitch('csp.thirdparty.'+website[0]); }
+		});
+	}
+
 	const menu = Menu.buildFromTemplate([
 		// File
 		{ label: strings.menubar.file.groupName, submenu: [
@@ -252,32 +278,7 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 						label: strings.menubar.file.options.csp.thirdparty,
 						id: 'csp-thirdparty',
 						enabled: !appConfig.get('csp.disabled'),
-						submenu: [
-							{
-								label: "Algolia",
-								type: 'checkbox',
-								checked: !appConfig.get('csp.thirdparty.algolia'),
-								click: function () { return configSwitch('csp.thirdparty.algolia'); }
-							},
-							{
-								label: strings.menubar.file.options.csp.gifProviders,
-								type: 'checkbox',
-								checked: !appConfig.get('csp.thirdparty.gif'),
-								click: () => configSwitch('csp.thirdparty.gif')
-							},
-							{
-								label: "hCaptcha",
-								type: 'checkbox',
-								checked: !appConfig.get('csp.thirdparty.hcaptcha'),
-								click: () => configSwitch('csp.thirdparty.hcaptcha')
-							},
-													{
-								label: "Spotify",
-								type: 'checkbox',
-								checked: !appConfig.get('csp.thirdparty.spotify'),
-								click: () => configSwitch('csp.thirdparty.spotify')
-							}
-						]
+						submenu: csp
 					}
 				]},
 				// "Developer mode" switch

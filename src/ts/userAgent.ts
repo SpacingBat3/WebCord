@@ -2,6 +2,17 @@
  * Fake UserAgent generator (userAgent.js)
  */
 
+/**
+ * Generates fake Chrome/Chromium user agent string to use instead Electron ones.
+ * 
+ * This way, pages indentifies Electron client as regular Chromium browser.
+ * 
+ * To make it even harder to detect, it even uses current operating system version in
+ * the user agent string (via `process.getSystemVersion()` in Electron API).
+ * 
+ * @param chromeVersion Chome/Chromium version string to use.
+ * @returns Fake Chrome/Chromium user agent string.
+ */
 export function getUserAgent(chromeVersion: string):string {
 
 	let fakeUserAgent, cpuArch
@@ -29,7 +40,7 @@ export function getUserAgent(chromeVersion: string):string {
 		} else {
 			cpuArch = "x86_64"
 		}
-		/**
+		/*
 		 * Do not fake arch on Linux
 		 */
 		fakeUserAgent = `Mozilla/5.0 (X11; Linux ${cpuArch}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;

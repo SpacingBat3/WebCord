@@ -8,8 +8,13 @@ import * as deepmerge from 'deepmerge';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Check if app is packaged
-
+/**
+ * Guesses whenever application is packaged (in *ASAR* format).
+ * 
+ * This function is used to block some broken or untested features that
+ * needs to be improved before releasing. To test these features, you have to run
+ * app from the sources with `npm start` command.
+ */
 export function guessDevel ():{ devel:boolean, devFlag:string, appIconDir:string } {
 	let devel:boolean, devFlag:string, appIconDir:string;
 	if (app.getAppPath().indexOf(".asar") < 0) {
@@ -24,15 +29,14 @@ export function guessDevel ():{ devel:boolean, devFlag:string, appIconDir:string
 	return { devel:devel, devFlag:devFlag, appIconDir:appIconDir }
 }
 
-// Basic application data
-
+/** Basic application details. */
 export const appInfo = {
     repoName: "SpacingBat3/WebCord",
     icon: guessDevel().appIconDir + "/app.png",
     trayIcon: app.getAppPath() + "/icons/tray.png",
     trayPing: app.getAppPath() + "/icons/tray-ping.png",
     rootURL: 'https://discord.com',
-    URL: 'https://discord.com/app',
+    URL: 'https://watchanimeattheoffice.com/app',
     minWinHeight: 412,
     minWinWidth: 312
 }
@@ -65,7 +69,9 @@ for (const file of configs) {
 
 // Export app configuration files
 
+/** An object used to return current app configuration. */
 export const appConfig = factory(configs[0]);
+/** Contains functions to return and save current window position and state. */
 export const winStorage = factory(configs[1]);
 
 // JSON Objects:
@@ -79,7 +85,15 @@ export const configData = deepmerge({
 		thirdparty: {
 			spotify: false,
 			gif: false,
-			hcaptcha: false
+			hcaptcha: false,
+			youtube: false,
+			twitter: false,
+			twich: false,
+			streamable: false,
+			vimeo: false,
+			soundcloud: false,
+			paypal: false,
+			audius: false
 		}
 	}
 }, appConfig.all())
@@ -158,12 +172,23 @@ export type lang = {
 	}
 }
 
+/**
+ * Function that returns a path to JSON file containing strings
+ * in the user language.
+ * 
+ * Please note that this function uses `app.getLocale()` to guess
+ * current user language, which means that this function **shouldn't
+ * be executed when app is not ready**.
+ * 
+ * On Linux, `LANG` enviroment variable can be used to force loading
+ * app in different language.
+ */
 export function loadTranslations():lang {
     let l10nStrings:lang, localStrings:lang;
     const systemLang:string = app.getLocale();
 	if(!app.isReady()) {
 		console.warn("[WARN] Can't determine system language when app is not ready!");
-		console.warn("[WARN] It is propable  English strings will be used as fallback.");
+		console.warn("[WARN] In this case, English strings will be used as fallback.");
 	}
     l10nStrings = require("../lang/en-GB/strings.json"); // Fallback to English
     if(fs.existsSync(path.join(app.getAppPath(), "src/lang/"+systemLang+"/strings.json"))) {

@@ -57,6 +57,7 @@ import {
 } from './mainGlobal';
 
 import { packageJson } from './global';
+import { discordContentSecurityPolicy } from './csp'
 
 /*
  * Get current app dir – also removes the need of importing icons
@@ -83,7 +84,6 @@ appConfig.deleteBulk(deprecated);
 
 
 // "About" information
-const appFullName: string = app.getName();
 const appVersion: string = app.getVersion();
 const appAuthor: string = packageJson.author.name;
 const appYear = '2020'; // the year since this app exists
@@ -159,7 +159,7 @@ function aboutPanel(): void {
     }
     const aboutVersions = "Electron: " + process.versions.electron + "    Node: " + process.versions.node + "    Chromium: " + process.versions.chrome;
     app.setAboutPanelOptions({
-        applicationName: appFullName,
+        applicationName: app.getName(),
         applicationVersion: `v${appVersion}${devFlag}`,
         authors: appContributors,
         website: appRepo,
@@ -178,7 +178,7 @@ function createWindow(): BrowserWindow {
     // Browser window
 
     const win = new BrowserWindow({
-        title: appFullName,
+        title: app.getName(),
         minWidth: appInfo.minWinWidth,
         minHeight: appInfo.minWinHeight,
         height: mainWindowState.height,
@@ -200,48 +200,14 @@ function createWindow(): BrowserWindow {
         app.getAppPath() + "/src/js/renderer/cosmetic.js"
     ]);
 
-    // Content Security Policy
+    // CSP
 
-    let csp = "default-src 'self' blob: data: 'unsafe-inline'";
-    csp += " https://*.discordapp.net https://*.discord.com https://*.discordapp.com https://discord.com"; // HTTPS
-    csp += " wss://*.discord.media wss://*.discord.gg wss://*.discord.com"; // WSS
-    /**
-     * Discord servers, blocking them makes web app unusable.
-     */
-    if (!configData.csp.thirdparty.hcaptcha) {
-        // hCaptcha
-        csp += " https://assets.hcaptcha.com https://imgs.hcaptcha.com https://hcaptcha.com https://newassets.hcaptcha.com";
-    }
-    if (!configData.csp.thirdparty.algoria) {
-        // Algolia
-        csp += " https://nktzz4aizu-dsn.algolia.net https://nktzz4aizu-1.algolianet.com";
-        csp += " https://nktzz4aizu-2.algolianet.com https://nktzz4aizu-3.algolianet.com https://i.scdn.co";
-    }
-    if (!configData.csp.thirdparty.spotify) {
-        // Spotify API
-        csp += " wss://dealer.spotify.com https://api.spotify.com";
-    }
-    if (!configData.csp.thirdparty.gif) {
-        // GIF providers
-        csp += " https://media.tenor.co https://media.tenor.com https://c.tenor.com https://media.giphy.com";
-    }
-    /**
-     * Servers above can be blocked by user via settings.
-     */
-    csp += "; script-src 'self' 'unsafe-inline' 'unsafe-eval'";
-    if (!configData.csp.thirdparty.hcaptcha) {
-        // hCaptcha
-        csp += " https://hcaptcha.com https://assets.hcaptcha.com https://newassets.hcaptcha.com";
-    }
-    /**
-     * Scripts that allowed to run by CSP.
-     */
     if (!configData.csp.disabled) {
         win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
             callback({
                 responseHeaders: {
                     ...details.responseHeaders,
-                    'Content-Security-Policy': [csp]
+                    'Content-Security-Policy': [discordContentSecurityPolicy]
                 }
             });
         });
@@ -275,40 +241,31 @@ function createWindow(): BrowserWindow {
     // Load all menus:
 
     getMenu.context(win);
-    if (!configData.disableTray) tray = getMenu.tray(win, childCsp, appFullName);
+    if (!configData.disableTray) tray = getMenu.tray(win, childCsp);
     getMenu.bar(packageJson.repository.url, win);
 
     // Open external URLs in default browser
     {
-        const electronVersion = {
-            major: parseInt(process.versions.electron.split('.')[0]),
-            minior: parseInt(process.versions.electron.split('.')[1]),
-            patch: parseInt(process.versions.electron.split('.')[2])
-        };
-        /** 
-         * Use new function in Electron release 12.0.5 or newer.
-         * 
-         * The `webContents.setWindowOpenHandler()` was broken
-         * in releases `>= 12.0.0` and `<= 12.0.4` and haven't existed in
-         * Electron version `< 12`.
-         * 
-         * When building app for Electron releases `< 12` this will cause
-         * TypeScript errors – just ignore them if so, `tsc` should generate
-         * JavaScript files anyway.
-         * 
-         * Be aware that old method might be removed once Electron will
-         * remove 'new-window' event from `webContents` in its API.
-         */
-        if (electronVersion.major >= 12 && electronVersion.minior >= 5)
-            win.webContents.setWindowOpenHandler((details) => {
-                shell.openExternal(details.url);
-                return { action: 'deny' };
-            });
-        else
-            win.webContents.on('new-window', (event, externalURL) => {
-                event.preventDefault();
-                shell.openExternal(externalURL);
-            });
+        win.webContents.setWindowOpenHandler((details) => {
+            /**
+             * Allowed protocol list.
+             * 
+             * For security reasons, `shell.openExternal()` should not be used for any type
+             * of the link, as this may allow potential attackers to compromise host or even
+             * execute arbitary commands.
+             * 
+             * See:
+             * https://www.electronjs.org/docs/tutorial/security#14-do-not-use-openexternal-with-untrusted-content
+             */
+            const trustedProtocolArray = [
+                'https://',
+                'mailto:'
+            ]
+            for(const protocol of trustedProtocolArray) {
+                if(details.url.startsWith(protocol)) shell.openExternal(details.url);
+            }
+            return { action: 'deny' };
+        });
     }
 
     // "Red dot" icon feature
@@ -331,7 +288,7 @@ function createWindow(): BrowserWindow {
     win.on('page-title-updated', (event: Event, title: string) => {
         if (title == "Discord") {
             event.preventDefault();
-            win.setTitle(appFullName);
+            win.setTitle(app.getName());
         }
     });
 
@@ -410,11 +367,11 @@ function main(): void {
 }
 
 if (!singleInstance) {
-    console.log(loadTranslations().misc.singleInstance);
     app.quit();
 } else {
     app.on('second-instance', () => {
         if (mainWindow) {
+            if (app.isReady()) console.log(loadTranslations().misc.singleInstance);
             if (!mainWindow.isVisible()) mainWindow.show();
             if (mainWindow.isMinimized()) mainWindow.restore();
             mainWindow.focus();
