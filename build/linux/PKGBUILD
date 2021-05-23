@@ -9,7 +9,7 @@ _repo="WebCord"
 _author="SpacingBat3"
 
 license=('MIT')
-makedepends=('npm' 'git' 'jq' 'librsvg' 'imagemagick' 'typescript')
+makedepends=('npm' 'git' 'librsvg' 'imagemagick' 'typescript')
 depends=('electron')
 optdepends=('papirus-icon-theme: extra icons')
 provides=("${pkgname%-git}")
@@ -19,9 +19,17 @@ source=("${pkgname%-git}::git+https://github.com/${_author}/${_repo}.git"
 md5sums=('SKIP'
          '85d234a65c69f3cf817fac5c54c194c8')
 
+_TIMES='1'
+_TIMES_MAX='6'
+
+_echo_times() {
+    echo "(${_TIMES}/${_TIMES_MAX})" "${@}"
+    let _TIMES++
+}
+
 pkgver() {
     cd "${srcdir}/${pkgname%-git}"
-    printf "v%s.r%s.%s" "$(cat ./package.json | jq -r '.version' | tr '-' '_')" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+    printf "%s" "$(git describe --long --tags | sed 's~\([^-]*-\)g~r\1~;s~-~.~g;s~v~~g')"
 }
 
 _make_sources_ready() {
@@ -59,13 +67,16 @@ _make_sources_ready() {
     [[ -d .git ]] && mv .git ../git-data
 
     # Compile TypeScript to JavaScript
+    _echo_times "Compiling TypeScript to Javascript..."
     tsc || { echo "Failed to compile TypeScript sources to JavaScript"; exit 1; }
 
-    # Cleanup
-    npm uninstall --save-prod --only=prod "${_types[@]}"
+    # Cleanup – reinstall dependencies
+    _echo_times "Removing build dependencies..."
+    npm uninstall --save-prod --only=prod "${_remove[@]}"
     rmdir node_modules/* --ignore-fail-on-non-empty
 
     # Package to ASAR
+    _echo_times "Packaging app to ASAR archive..."
     npx asar pack . ../${pkgname%-git}.asar || { echo "Failed to package to ASAR!"; exit 2; }
 
     _terminal "../${pkgname%-git}.sh"
@@ -80,6 +91,7 @@ _make_sources_ready() {
     _sizes_1=(512 256 ${_sizes_2[@]})
     _i=1
     mkdir "themeId-${_i}"
+    _echo_times "Generating icon themes..."
     for _file in "${_icons[@]}"; do
         _sizes="_sizes_${_i}"
         _sizes=($(eval echo -n \"\${$_sizes[@]}\"))
@@ -110,15 +122,15 @@ build() {
     #   fallback version will be used:
     _types=('@types/node' '@types/source-map-support'
             "electron@`{ electron -v | cut -c 2-; } || printf "latest"`")
-
+    _remove=("${_types[@]}" 'electron') # electron@[VERSION] is ignored
     cd "${srcdir}/${pkgname%-git}"
 
     # Install production dependencies only + some required types for 'tsc'
-    echo "(1/2) Installing dependencies..."
+    _echo_times "Installing dependencies..."
     npm install --save-prod --only=prod "${_types[@]}"
     
     # Generate ASAR package and compile app for TSC format.
-    echo "(2/2) Compiling TypeScript to Javascript and packaging..." && _make_sources_ready
+    _make_sources_ready
 }
 
 package() {
