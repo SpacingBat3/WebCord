@@ -36,7 +36,7 @@ It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord
 - [Privacy policy](Privacy.md)
 
 ## License
-This project is redistributed under the [MIT License](Copying).
+This project is redistributed under the [MIT License](../LICENSE).
 
 ## Want to contribute to my project?
 - If you want to improve my code, make a Pull Request and add yourself to the list of contributors in `main.ts`.
