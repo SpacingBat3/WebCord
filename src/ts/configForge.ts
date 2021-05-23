@@ -17,7 +17,7 @@ module.exports = {
     asar: true,
     icon: iconFile, // used in Windows and MacOS binaries
     extraResource: [
-      "docs/COPYING",
+      "LICENSE",
       iconFile+".png"
     ],
     quiet: true,
