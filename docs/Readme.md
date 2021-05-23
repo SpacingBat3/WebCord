@@ -19,26 +19,27 @@ WebCord takes a differend approach from most clients, as it isn't just a mod of 
 It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but then eventually I had rewritten it from scratch and and made *Electron Discord Web App*. But because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about Electron and how to implement a Discord with it. Thanks to his work, this project could begin on its own.
 
 ## Documentation:
-- [Configuring the application](SETTINGS.md)
-  - [Automatically hide menu bar](SETTINGS.md#auto-hide-menu-bar)
-  - [Disable tray functionality](SETTINGS.md#disable-tray)
-  - [Hide Discord's side bar](SETTINGS.md#hide-side-bar)
-  - [About CSP settings](SETTINGS.md#content-security-policy-settings)
-- [Contributing](CONTRIBUTING.md)
-  - [Run from the sources](CONTRIBUTING.md#run)
-  - [Creating the distributables](CONTRIBUTING.md#creating-distributables)
-  - [Packaging the application](CONTRIBUTING.md#packaging)
-- [Translating the application](TRANSLATE.md)
-  - [JSON basics](TRANSLATE.md#dont-know-the-json-syntax)
-  - [Credits](TRANSLATE.md#the-people-that-hepled-me-with-the-app-translation)
-- [Supported platforms](SUPPORT.md)
-- [License](COPYING)
+- [Configuring the application](Settings.md)
+  - [Automatically hide menu bar](Settings.md#auto-hide-menu-bar)
+  - [Disable tray functionality](Settings.md#disable-tray)
+  - [Hide Discord's side bar](Settings.md#hide-side-bar)
+  - [About CSP settings](Settings.md#content-security-policy-settings)
+- [Contributing](Contributing.md)
+  - [Run from the sources](Contributing.md#run)
+  - [Creating the distributables](Contributing.md#creating-distributables)
+  - [Packaging the application](Contributing.md#packaging)
+- [Translating the application](Translate.md)
+  - [JSON basics](Translate.md#dont-know-the-json-syntax)
+  - [Credits](Translate.md#the-people-that-hepled-me-with-the-app-translation)
+- [Supported platforms](Support.md)
+- [License](Copying)
+- [Privacy policy](Privacy.md)
 
 ## License
-This project is redistributed under the [MIT License](COPYING).
+This project is redistributed under the [MIT License](Copying).
 
 ## Want to contribute to my project?
 - If you want to improve my code, make a Pull Request and add yourself to the list of contributors in `main.ts`.
-- If you want to translate strings in `lang` folder, please visit [TRANSLATE.md](TRANSLATE.md).
+- If you want to translate strings in `lang` folder, please visit [TRANSLATE.md](Translate.md).
 
 Never made a pull request before? Please refer to [this website](http://makeapullrequest.com). 
