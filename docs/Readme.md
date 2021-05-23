@@ -32,7 +32,7 @@ It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord
   - [JSON basics](Translate.md#dont-know-the-json-syntax)
   - [Credits](Translate.md#the-people-that-hepled-me-with-the-app-translation)
 - [Supported platforms](Support.md)
-- [License](Copying)
+- [License](../LICENSE)
 - [Privacy policy](Privacy.md)
 
 ## License

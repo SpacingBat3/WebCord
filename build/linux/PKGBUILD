@@ -59,7 +59,7 @@ _make_sources_ready() {
     done
 
     # Move documentation files, license and 'extra' files outside sources
-    [[ -f docs/COPYING ]] && mv docs/COPYING ../COPYING
+    [[ -f LICENSE ]] && mv LICENSE ../COPYING
     [[ -d docs ]] && mv docs ../docs
     [[ -d extra ]] && mv extra ../extra
 
