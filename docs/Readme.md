@@ -1,16 +1,38 @@
-<!--
-				WebCord – README.md (Markdown + HTML)
--->
-<h1><a href='https://discord.com'><img src='../icons/app.png' width='64px'></a> WebCord </h1>
+<!--                                   Now featuring: ASCII-friendly README <3                                          -->
+<div align='center'>
+<a href='https://discord.com'> <img src='../icons/app.png' width='128px'> </a> 
+<h1>WebCord</h1>
 
+<!--
+                                                 ______________________
+                                                /                      \
+                                                |                      |
+                                                |     /--\____/--\     |
+                                                |    /   _    _   \    |
+                                                |   /   (_)  (_)   \   |
+                                                |  |     ______     |  |
+                                                |   \___/      \___/   |
+                                                |                      |
+                                                \_________________\    |
+                                                                    \  |
+                                                                      \|        Art by SpacingBat3 (IT'S NOT STOLEN :P)
+						     
+–––––––––––––––––––––––––––––––––––––––––––––––––––– W e b C o r d ––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+		         MIT • Electron • Pull Request Welcome • Pi Apps • Debian Repository
+-->
+	
 [![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
 [![Electron](https://img.shields.io/badge/Made%20with-Electron-486F8F.svg)](https://www.electronjs.org/)
 [![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg)](../../../tags)
 [![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg)](../../../releases)
 [![PRs Welcome](https://img.shields.io/badge/Pull%20requests-welcome-brightgreen.svg)](#want-to-contribute-to-my-project)
 [![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://raw.githubusercontent.com/Botspot/pi-apps/master/icons/logo.svg)](https://github.com/Botspot/pi-apps)
-[![Unofficial Debian repository](https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster)](https://itai-nelken.github.io/electron-discord-webapp_debian-repo/)
+[![Unofficial Debian repository](https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster)](https://itai-nelken.github.io/Webcord_debian-repo/)
 [![Run tests](../../../actions/workflows/build.yml/badge.svg?event=push)](../../../actions/workflows/build.yml)
+</div>
+
+<!-- –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– -->
 
 A Discord Web-based client made with the [Electron API](https://github.com/electron/electron), developed with [Electron Forge](https://github.com/electron-userland/electron-forge).
 
