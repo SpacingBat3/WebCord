@@ -217,20 +217,18 @@ function createWindow(): BrowserWindow {
     // Permissions:
 
     win.webContents.session.setPermissionCheckHandler((webContents, permission) => {
-        if (webContents.getURL().includes(appInfo.rootURL)) {
+        if (webContents !== null && webContents.getURL().includes(appInfo.rootURL)) {
             return true;
-        } else {
-            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
-            return false;
         }
+        if(webContents !== null) console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
+        return false;
     });
     win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
         if (webContents.getURL().includes(appInfo.rootURL)) {
             return callback(true);
-        } else {
-            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
-            return callback(false);
         }
+        console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
+        return callback(false);
     });
 
     win.loadURL(appInfo.URL, { userAgent: fakeUserAgent });
