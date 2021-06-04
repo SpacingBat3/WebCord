@@ -36,9 +36,9 @@
 
 A Discord Web-based client made with the [Electron API](https://github.com/electron/electron), developed with [Electron Forge](https://github.com/electron-userland/electron-forge).
 
-WebCord takes a differend approach from most clients, as it isn't just a mod of the official client nor does it use the Discord API to be functional – it is currently based on the web version of the Discord, which makes it more trusted solution in my opinion. As it even fakes the user agent to make it equal or similar to the one used by Chrome/Chromium, it is hard to detect it and ban users using it.
+WebCord takes a differend approach from most clients, as it isn't just a mod of the official client nor does it use the Discord API to be functional – it is currently based on the web version of the Discord, which makes it more trusted solution in my opinion. As it even fakes the user agent to make it equal or similar to the one used by Chrome/Chromium, it is hard to detect it and block users from using it.
 
-It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but then eventually I had rewritten it from scratch and and made *Electron Discord Web App*. But because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about Electron and how to implement a Discord with it. Thanks to his work, this project could begin on its own.
+It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but then eventually I had rewritten it from scratch and called my project *Electron Discord Web App*, which I recently had renamed to *WebCord* (to make that horribly long name a bit shorter 😉). But because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about Electron and how to implement a Discord with it. Thanks to his work, this project could begin on its own.
 
 ## Documentation:
 - [Configuring the application](Settings.md)
