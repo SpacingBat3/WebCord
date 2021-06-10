@@ -36,3 +36,4 @@ Adding the comma sign at the end of `"anotherKey"` or removing it from the end o
 ## The people that helped me with the app translation:
 (add yourself there if you weren't added before/after you do a PR):
 - [MrCoolAndroid](https://github.com/MrCoolAndroid) – Spanish translation
+- [ElWazy](https://github.com/ElWazy) – Spanish translation
