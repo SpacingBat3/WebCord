@@ -13,9 +13,7 @@
 import * as srcMap from 'source-map-support';
 srcMap.install();
 
-/*
- * Electron API and other node modules.
- */
+// Electron API and other node modules.
 
 import {
     app,
@@ -25,9 +23,18 @@ import {
     screen
 } from 'electron';
 
-if (app.commandLine.hasSwitch('version')) {
-    console.log(app.getName() + ' v' + app.getVersion());
-    app.exit();
+// Handle command line switches:
+
+/** Whenever `--start-in-tray` or `-t` switch is used when running client. */
+let startHidden = false;
+{
+    const { hasSwitch } = app.commandLine
+    if (hasSwitch('version')||hasSwitch('v')) {
+        console.log(app.getName() + ' v' + app.getVersion());
+        app.exit();
+    } else if (hasSwitch('start-in-tray')||hasSwitch('t')) {
+        startHidden = true
+    }
 }
 
 import * as fs from 'fs';
@@ -43,9 +50,8 @@ if (fs.existsSync(oldUserPath)) {
     fs.renameSync(oldUserPath, app.getPath('userData'));
 }
 
-/*
- * Import functions/types/variables declarations:
- */
+// Import functions/types/variables declarations:
+
 import {
     appInfo,
     guessDevel,
@@ -59,18 +65,12 @@ import {
 import { packageJson } from './global';
 import { discordContentSecurityPolicy } from './csp'
 
-/*
- * Get current app dir – also removes the need of importing icons
- * manually to the electron package dir.
- */
-
-/*  
- * Check if we are using the packaged version.
- */
+// Check if we are using the packaged version:
 
 const { devel, devFlag } = guessDevel();
 
 // Load scripts:
+
 import { checkVersion } from './update';
 import { getUserAgent } from './userAgent';
 import * as getMenu from './menus';
@@ -79,8 +79,6 @@ import * as getMenu from './menus';
 
 const deprecated = ["csp.strict", "windowState", "css1Key"];
 appConfig.deleteBulk(deprecated);
-
-// Vars to modify app behavior
 
 
 // "About" information
@@ -185,6 +183,7 @@ function createWindow(): BrowserWindow {
         width: mainWindowState.width,
         backgroundColor: "#2F3136",
         icon: appInfo.icon,
+        show: !startHidden,
         webPreferences: {
             enableRemoteModule: false,
             nodeIntegration: false, // Won't work with the true value.
@@ -215,22 +214,29 @@ function createWindow(): BrowserWindow {
     const childCsp = "default-src 'self' blob:";
 
     // Permissions:
+    {
+        /** List of domains, urls or protocols accepted by permission handlers. */
+        const trustedURLs = [
+            appInfo.rootURL,
+            'devtools://'
+        ]
+        win.webContents.session.setPermissionCheckHandler((webContents, permission) => {
+            for(const url of trustedURLs)
+                if (webContents !== null && webContents.getURL().startsWith(url))
+                    return true;
 
-    win.webContents.session.setPermissionCheckHandler((webContents, permission) => {
-        if (webContents !== null && webContents.getURL().includes(appInfo.rootURL)) {
-            return true;
-        }
-        if(webContents !== null) console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
-        return false;
-    });
-    win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
-        if (webContents.getURL().includes(appInfo.rootURL)) {
-            return callback(true);
-        }
-        console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
-        return callback(false);
-    });
+            if(webContents !== null) console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
+            return false;
+        });
+        win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+            for(const url of trustedURLs)
+                if (webContents.getURL().startsWith(url))
+                    return callback(true);
 
+            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
+            return callback(false);
+        });
+    }
     win.loadURL(appInfo.URL, { userAgent: fakeUserAgent });
     win.setAutoHideMenuBar(configData.hideMenuBar);
     win.setMenuBarVisibility(!configData.hideMenuBar);
