@@ -2,6 +2,8 @@
  
 import { configData } from "./mainGlobal";
 
+console.log(configData)
+
 // Default + script
 
 let csp = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.discordapp.com/animations/";
@@ -34,6 +36,9 @@ if (!configData.csp.thirdparty.gif) {
 }
 if (!configData.csp.thirdparty.paypal) {
     csp += " https://checkout.paypal.com"; // PayPal
+}
+if (!configData.csp.thirdparty.hcaptcha) {
+    csp += " https://*.hcaptcha.com https://hcaptcha.com"; // hCaptcha
 }
 
 // Connect
