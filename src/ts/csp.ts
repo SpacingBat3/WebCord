@@ -2,8 +2,6 @@
  
 import { configData } from "./mainGlobal";
 
-console.log(configData)
-
 // Default + script
 
 let csp = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.discordapp.com/animations/";
