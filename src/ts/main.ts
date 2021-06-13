@@ -74,6 +74,7 @@ const { devel, devFlag } = guessDevel();
 import { checkVersion } from './update';
 import { getUserAgent } from './userAgent';
 import * as getMenu from './menus';
+import { defaultFavicon } from './favicons';
 
 // Removes deprecated config properties (if they exists)
 
@@ -220,19 +221,27 @@ function createWindow(): BrowserWindow {
             appInfo.rootURL,
             'devtools://'
         ]
-        win.webContents.session.setPermissionCheckHandler((webContents, permission) => {
-            for(const url of trustedURLs)
-                if (webContents !== null && webContents.getURL().startsWith(url))
+        win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
+            let websiteURL:string;
+            (webContents!==null&&webContents.getURL()!=="") ? websiteURL = webContents.getURL() : websiteURL = requestingOrigin;
+            // In some cases URL might be empty string, we should deny then request for that reason.
+            if(websiteURL==="")
+                return false;
+            const originURL = new URL(websiteURL).origin;
+            for(const secureURL of trustedURLs) {
+                if (originURL.startsWith(secureURL)) {
                     return true;
-
-            if(webContents !== null) console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, webContents.getURL(), permission);
+                }
+            }
+            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, originURL, permission);
             return false;
         });
         win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
-            for(const url of trustedURLs)
-                if (webContents.getURL().startsWith(url))
+            for(const secureURL of trustedURLs) {
+                if (webContents.getURL().startsWith(secureURL)) {
                     return callback(true);
-
+                }
+            }
             console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
             return callback(false);
         });
@@ -275,15 +284,12 @@ function createWindow(): BrowserWindow {
     // "Red dot" icon feature
 
     win.webContents.once('did-finish-load', () => {
-        setTimeout(function () {
-            win.webContents.on('page-favicon-updated', async () => {
-                const t = await tray;
-                if (!win.isFocused() && !configData.disableTray) t.setImage(appInfo.trayPing);
-            });
-        }, 5000);
-        app.on('browser-window-focus', async () => {
+        win.webContents.on('page-favicon-updated', async (event,favicons) => {
             const t = await tray;
-            if (!configData.disableTray) t.setImage(appInfo.trayIcon);
+            if(!configData.disableTray && favicons[0]==defaultFavicon)
+                t.setImage(appInfo.trayPing)
+            else
+                t.setImage(appInfo.trayIcon);
         });
     });
 
