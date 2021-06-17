@@ -21,26 +21,31 @@
 
 		         MIT • Electron • Pull Request Welcome • Pi Apps • Debian Repository
 -->
-	
+
 [![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
-[![Electron](https://img.shields.io/badge/Made%20with-Electron-486F8F.svg)](https://www.electronjs.org/)
-[![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg)](../../../tags)
-[![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg)](../../../releases)
+[![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg?label=Release)](https://github.com/SpacingBat3/WebCord/tags)
+[![Electron](https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron)](https://www.electronjs.org/)
+[![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Downloads&color=%236586B3)](https://github.com/SpacingBat3/releases)
+[![Build](https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github)](../../../actions/workflows/build.yml)
 [![PRs Welcome](https://img.shields.io/badge/Pull%20requests-welcome-brightgreen.svg)](#want-to-contribute-to-my-project)
 [![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://raw.githubusercontent.com/Botspot/pi-apps/master/icons/vector/logo.svg)](https://github.com/Botspot/pi-apps)
 [![Unofficial Debian repository](https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster)](https://itai-nelken.github.io/Webcord_debian-repo/)
-[![Run tests](../../../actions/workflows/build.yml/badge.svg?event=push)](../../../actions/workflows/build.yml)
 </div>
 
 <!-- –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– -->
 
-A Discord Web-based client made with the [Electron API](https://github.com/electron/electron), developed with [Electron Forge](https://github.com/electron-userland/electron-forge).
+A Discord web-based client made with the [Electron API](https://github.com/electron/electron), developed with [Electron Forge](https://github.com/electron-userland/electron-forge).
+
+WebCord tries to enchance a little more user privacy by allowing the user to block any third-party website by overwritting website CSP header to the one configured via the settings. It also blocks some unnecesary services as well, like [Sentry](https://sentry.io).
 
 WebCord takes a differend approach from most clients, as it isn't just a mod of the official client nor does it use the Discord API to be functional – it is currently based on the web version of the Discord, which makes it more trusted solution in my opinion. As it even fakes the user agent to make it equal or similar to the one used by Chrome/Chromium, it is hard to detect it and block users from using it.
 
-It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but then eventually I had rewritten it from scratch and called my project *Electron Discord Web App*, which I recently had renamed to *WebCord* (to make that horribly long name a bit shorter 😉). But because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about Electron and how to implement a Discord with it. Thanks to his work, this project could begin on its own.
+It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron), but then eventually I had rewritten it as *Electron Discord Web App* project, which is currently called *WebCord* (to make that horribly long name a bit shorter 😉). However because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about Electron and how to implement a Discord with it by analyzing his code. Thanks to his work, this project could begin on its own.
 
 ## Documentation:
+- [Frequently Asked Questions](FAQ.md)
+  - *[Which file I should download?](FAQ.md#which-file-i-should-download)*
+  - *[Content does not load properly...]()*
 - [Configuring the application](Settings.md)
   - [Automatically hide menu bar](Settings.md#auto-hide-menu-bar)
   - [Disable tray functionality](Settings.md#disable-tray)
