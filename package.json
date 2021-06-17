@@ -1,7 +1,7 @@
 {
   "name": "webcord",
   "productName": "WebCord",
-  "version": "1.4.2",
+  "version": "1.5.0-pre1",
   "description": "A Discord Web App made with the Electron API.",
   "main": "src/js/main.js",
   "scripts": {
@@ -44,25 +44,26 @@
   },
   "homepage": "https://github.com/SpacingBat3/WebCord#readme",
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.54",
-    "@electron-forge/maker-deb": "^6.0.0-beta.54",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
-    "@electron-forge/maker-zip": "^6.0.0-beta.54",
-    "@electron-forge/publisher-github": "^6.0.0-beta.54",
+    "@electron-forge/cli": "^6.0.0-beta.57",
+    "@electron-forge/maker-deb": "^6.0.0-beta.57",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.57",
+    "@electron-forge/maker-zip": "^6.0.0-beta.57",
+    "@electron-forge/publisher-github": "^6.0.0-beta.57",
     "@types/source-map-support": "^0.5.3",
-    "@typescript-eslint/eslint-plugin": "^4.15.2",
-    "@typescript-eslint/parser": "^4.15.2",
-    "electron": "^12.0.7",
-    "electron-forge-maker-appimage": "SpacingBat3/electron-forge-maker-appimage",
-    "eslint": "^7.23.0",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
+    "electron": "^13.1.2",
+    "electron-forge-maker-appimage": "github:SpacingBat3/electron-forge-maker-appimage",
+    "eslint": "^7.28.0",
     "eslint-import-resolver-typescript": "^2.4.0",
-    "eslint-plugin-import": "^2.22.1",
-    "typescript": "^4.2.3"
+    "eslint-plugin-import": "^2.23.4",
+    "typescript": "^4.3.4"
   },
   "dependencies": {
     "deepmerge": "^4.2.2",
     "electron-fetch": "^1.7.3",
     "electron-json-config": "^2.0.0-beta",
+    "new-github-issue-url": "^0.2.1",
     "source-map-support": "^0.5.19"
   },
   "config": {
