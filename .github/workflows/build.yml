@@ -28,6 +28,7 @@ jobs:
       run: npm run package -- -a ia32
 
   windows:
+    continue-on-error: true
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
@@ -51,6 +52,7 @@ jobs:
       run: npm run package -- -a ia32
 
   macos:
+    continue-on-error: true
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2       
