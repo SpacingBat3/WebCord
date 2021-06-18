@@ -7,6 +7,7 @@ import { factory } from 'electron-json-config';
 import * as deepmerge from 'deepmerge';
 import * as fs from 'fs';
 import * as path from 'path';
+import { packageJson, Person } from './global';
 
 /**
  * Guesses whenever application is packaged (in *ASAR* format).
@@ -29,9 +30,21 @@ export function guessDevel ():{ devel:boolean, devFlag:string, appIconDir:string
 	return { devel:devel, devFlag:devFlag, appIconDir:appIconDir }
 }
 
+function person2string(person:Person):string {
+	if(person.name)
+		return person.name
+	return person
+}
+
 /** Basic application details. */
 export const appInfo = {
-    repoName: "SpacingBat3/WebCord",
+	/** Application repository details */
+    repository: {
+		/** Repository indentifier in format `author/name`. */
+		name: person2string(packageJson.author)+'/'+app.getName(),
+		/** Web service on which app repository is published. */
+		provider: 'github.com'
+	},
     icon: guessDevel().appIconDir + "/app.png",
     trayIcon: app.getAppPath() + "/icons/tray.png",
     trayPing: app.getAppPath() + "/icons/tray-ping.png",

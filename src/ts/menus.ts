@@ -29,6 +29,7 @@ import { loadNodeAddons, loadChromeAddons } from './mod'
 import fetch from 'electron-fetch';
 import * as os from 'os';
 import * as EventEmitter from 'events';
+import { createGithubIssue } from './crash';
 
 const sideBar = new EventEmitter();
 const { devel } = guessDevel();
@@ -177,6 +178,10 @@ export async function tray (windowName: BrowserWindow, childCSP: string): Promis
 			label: strings.help.about,
 			role: 'about',
 			click: function() { app.showAboutPanel();}
+		},
+		{
+			label: strings.help.bugs,
+			click: createGithubIssue
 		},
 		{ type: 'separator' },
 		{
@@ -395,7 +400,7 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 			// Documentation
 			{ label: strings.help.docs, click: function() { shell.openExternal(webLink+'#documentation');} },
 			// Report a bug
-			{ label: strings.help.bugs, click: function() { shell.openExternal(webLink+'/issues');} }
+			{ label: strings.help.bugs, click: createGithubIssue }
 		]}
 	]);
 	Menu.setApplicationMenu(menu);

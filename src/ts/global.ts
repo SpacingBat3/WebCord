@@ -11,19 +11,26 @@ export function wLog (msg:string):void {
 	console.log("%c[WebCord]",'color: #69A9C1',msg);
 }
 
-type person = string & {
+export type Person = string & {
 	name: string,
 	email?: string,
 	url?: string
 }
 
-interface packageJsonProperties {
+export interface PackageJsonProperties {
+	/** NodeJS-friendly application name. */
 	name: string,
-	author: person,
-	contributors: Array<person>,
+	/** Application author. */
+	author: Person,
+	/** Array of application code contributors. */
+	contributors: Array<Person>,
+	/** Application homepage (`Readme.md` file). */
 	homepage: string,
+	/** Application repository. */
 	repository: {
+		/** Repository type (e.g. `git`). */
 		type: string,
+		/** Repository URL (e.g `git+https://example.com`) */
 		url: string
 	}
 }
@@ -34,7 +41,7 @@ interface packageJsonProperties {
  * To avoid leakage of some properties (like `scripts`) to the malicious code,
  * this function has limited number of properties that cannot be exceeded.
  */
-function getPackageJsonProperties():packageJsonProperties {
+function getPackageJsonProperties():PackageJsonProperties {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	const packageJSON = require("../../package.json")
 	return {
