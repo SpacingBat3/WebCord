@@ -1,7 +1,7 @@
 {
 	"tray":{
 		"toggle": "Przełącz",
-		"quit": "Wyjdź z Disord'a"
+		"quit": "Zakończ"
 	},
 	"context":{
 		"copy": "Kopiuj",
@@ -16,7 +16,7 @@
 		"enabled": "Włączony",
 		"file": {
 			"groupName":"Plik",
-			"quit":"Wyjdź",
+			"quit":"Zakończ",
 			"relaunch":"Uruchom ponownie",
 			"options":{
 				"groupName": "Ustawienia",
@@ -32,8 +32,8 @@
 			},
 			"addon": {
 				"groupName": "Rozszerzenia",
-				"loadNode": "Załaduj rozszerzenie Node.js",
-				"loadChrome": "Załaduj rozszerzenie Chrome"
+				"loadNode": "Załaduj dodatek Node.js",
+				"loadChrome": "Załaduj dodatek Chrome"
 			}
 		},
 		"edit": "Edycja",
