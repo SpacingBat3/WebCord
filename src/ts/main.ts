@@ -305,7 +305,7 @@ function createWindow(): BrowserWindow {
     // Animate menu
 
     win.webContents.on('did-finish-load', () => {
-        win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width 1s; transition-timing-function: ease;}");
+        win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s; transition-timing-function: linear;}");
     });
 
     return win;
