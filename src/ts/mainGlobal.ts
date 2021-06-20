@@ -119,7 +119,7 @@ export function getDevel(dev:boolean,conf:boolean):boolean {
 	}
 }
 
-// Translations (interface and function):
+// Translations (type and function):
 
 export type lang = {
 	tray: {

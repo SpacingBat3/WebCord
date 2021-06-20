@@ -224,7 +224,7 @@ function createWindow(): BrowserWindow {
         win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
             let websiteURL:string;
             (webContents!==null&&webContents.getURL()!=="") ? websiteURL = webContents.getURL() : websiteURL = requestingOrigin;
-            // In some cases URL might be empty string, we should deny then request for that reason.
+            // In some cases URL might be empty string, it should be denied then for that reason.
             if(websiteURL==="")
                 return false;
             const originURL = new URL(websiteURL).origin;
