@@ -25,14 +25,14 @@ import {
 
 // Handle command line switches:
 
-/** Whenever `--start-in-tray` or `-t` switch is used when running client. */
+/** Whenever `--start-minimized` or `-m` switch is used when running client. */
 let startHidden = false;
 {
     const { hasSwitch } = app.commandLine
     if (hasSwitch('version')||hasSwitch('v')) {
         console.log(app.getName() + ' v' + app.getVersion());
         app.exit();
-    } else if (hasSwitch('start-in-tray')||hasSwitch('t')) {
+    } else if (hasSwitch('start-minimized')||hasSwitch('m')) {
         startHidden = true
     }
 }
