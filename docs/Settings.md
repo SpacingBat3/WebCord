@@ -1,7 +1,7 @@
 ## About the application settings
-This section will describe different options found in the "Settings" submenu.
+This section will describe different options found in the "Settings" submenu and command line flags.
 
-**NOTE:** Currently most settings requires to restart the app to see any changes.
+**NOTE:** Currently most settings requires to restart the application to see any changes.
 
 ### Disable tray
 
@@ -28,3 +28,10 @@ It defines the rules that browser will use to either accept loading the content 
 Controls whenever experimental features and DevTools are enabled. It can be used to debug an application or test unfinished or experimental features. This setting can be only toggled in production builds – if you run the app without packaging it (via `npm start` command) you are unable to turn it off.
 
 **NOTE:** Some features may still not be available when app is packaged, even after toggling on this setting.
+
+### CLI Flags
+WebCord is capable of parsing some Chromium flags and following application-specific flags:
+
+* **`--start-minimized` or `-m`** – start WebCord minimized in tray; usefull when running WebCord at boot/login process;
+
+* **`--version` or `-v`** – display application version and exit even before *app is ready*.
