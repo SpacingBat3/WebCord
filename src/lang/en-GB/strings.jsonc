@@ -1,8 +1,14 @@
+/*
+ * WebCord's Official English (Great Britain) translations.
+ * (Might be inacurate a little, because English isn't my native language).
+ */
 {
+	/* Tray menu. */
 	"tray": {
 		"toggle": "Toggle",
 		"quit": "Quit"
 	},
+	/* Context menu on right mouse click */
 	"context":{
 		"copy": "Copy",
 		"paste": "Paste",
@@ -12,6 +18,7 @@
 		"copyURLText": "Copy link text",
 		"inspectElement": "Inspect"
 	},
+	/* Application menubar (File, Edit, View etc.) */
 	"menubar": {
 		"enabled": "Enabled",
 		"file": {
@@ -49,6 +56,7 @@
 		},
 		"window": "Window"
 	},
+	/* GTK / Terminal dialogs, warnings, errors etc. */
 	"dialog": {
 		"error": "Error",
 		"warning": "Warning",
@@ -73,13 +81,15 @@
 			"yes": "Yes",
 			"no": "No"
 		},
+		/* WebCord's extension format names (in file picker). */
 		"mod": {
 			"nodeExt": "WebCord Node.js Addon",
 			"crx": "Chrome/Chromium Extension"
 		},
-		"hideMenuBar": "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to unhide menu bar.",
-		"devel": "When \"Developer mode\" is enabled, you have an access to experimental features, which might be unfinished yet and broken. Also, if you don't know what DevTools is, you may not want to enable this setting. In any cases, I (the developer of this application) am unresponsible for any commands you paste to DevTools or for anything broken after you enabled \"Developer mode\" – you switch that setting on your own risk. Proceed anyway?"
+		"hideMenuBar": "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to temporarily unhide menu bar.",
+		"devel": "When \"Developer mode\" is enabled, you have an access to experimental features, which may not work or be finished yet. This setting is for people with at least basic JavaScript or IT knowledge (which should at least know how to use the \"DevTools\"). Be aware you may even harm your operating system once you have enabled this setting. Proceed anyway?"
 	},
+	/* Help menu (in menubar and partialy in tray context menu) */
 	"help":{
 		"groupName": "Help",
 		"about": "About",
@@ -87,9 +97,9 @@
 		"docs": "Documentation",
 		"bugs": "Report a bug",
 		"contributors": "Authors and contributors:",
-		"credits": "Thanks to GyozaGuy for his Electron Discord app – it was good source to learn about the Electron and how make with it a Discord web app."
+		"credits": "Thanks to GyozaGuy for his Electron Discord app – it was a good source to learn about the Electron API and how make with it a Discord web app."
 	},
 	"misc": {
-		"singleInstance": "Switching to existing instance..."
+		"singleInstance": "Switching to existing window..."
 	}
 }

@@ -57,9 +57,7 @@ import {
     guessDevel,
     configData,
     winStorage,
-    appConfig,
-    lang,
-    loadTranslations
+    appConfig
 } from './mainGlobal';
 
 import { packageJson } from './global';
@@ -75,6 +73,7 @@ import { checkVersion } from './update';
 import { getUserAgent } from './userAgent';
 import * as getMenu from './menus';
 import { defaultFavicon } from './favicons';
+import { lang, loadTranslations } from './lang';
 
 // Removes deprecated config properties (if they exists)
 

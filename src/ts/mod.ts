@@ -5,8 +5,7 @@
 import { app, dialog, BrowserWindow } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path'
-import { loadTranslations } from './mainGlobal';
-
+import { loadTranslations } from './lang';
 /**
  * Function used to load Node-based WebCord modification (packaged in ASAR format).
  * 
@@ -21,7 +20,7 @@ import { loadTranslations } from './mainGlobal';
  * 
  * @param window Electron's `BrowserWindow` object.
  */
-export const loadNodeAddons = async function(window:BrowserWindow):Promise<void>{
+export async function loadNodeAddons(window:BrowserWindow):Promise<void>{
     const strings = loadTranslations();
     const files = dialog.showOpenDialogSync({
         title: strings.menubar.file.addon.loadNode,
@@ -55,7 +54,7 @@ export const loadNodeAddons = async function(window:BrowserWindow):Promise<void>
     }
 }
 
-export const loadChromeAddons = async function(window:BrowserWindow):Promise<void> {
+export async function loadChromeAddons(window:BrowserWindow):Promise<void> {
     const strings = loadTranslations();
     const session = window.webContents.session;
     const files = dialog.showOpenDialogSync({

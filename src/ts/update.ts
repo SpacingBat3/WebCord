@@ -3,8 +3,9 @@
  */
 
 import { app, Notification, shell, net } from 'electron';
-import { lang, appInfo } from './mainGlobal';
+import { appInfo } from './mainGlobal';
 import fetch from 'electron-fetch';
+import { lang } from './lang';
 
 /**
  * Checks and notifies users about the updates.

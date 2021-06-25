@@ -20,7 +20,6 @@ import {
 	configData,
 	getDevel,
 	guessDevel,
-	loadTranslations,
 	appInfo
 } from './mainGlobal';
 
@@ -30,6 +29,7 @@ import fetch from 'electron-fetch';
 import * as os from 'os';
 import * as EventEmitter from 'events';
 import { createGithubIssue } from './crash';
+import { loadTranslations } from './lang';
 
 const sideBar = new EventEmitter();
 const { devel } = guessDevel();

@@ -11,7 +11,7 @@ import fetch from "electron-fetch"
  * Generates a link to new GitHub issue, based on `bug_report.md`
  * and current hardware / software configuration. This makes it
  * easy to aquire needed details (except screenshot, because of
- * lack of the GitHub support to do that via the CDN or using
+ * the lack of the GitHub support to do that via the CDN or using
  * 'base64' images).
  */
 export async function createGithubIssue():Promise<void> {

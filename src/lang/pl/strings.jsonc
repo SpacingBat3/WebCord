@@ -1,8 +1,13 @@
+/* 
+ * Oficjalne polskie tłumaczenie WebCorda! :)
+ */
 {
+	/* Zasobnik systemowy */
 	"tray":{
-		"toggle": "Przełącz",
+		"toggle": "Przełącz", 
 		"quit": "Zakończ"
 	},
+	/* Menu kontekstowe (prawego przycisku myszy) */
 	"context":{
 		"copy": "Kopiuj",
 		"paste": "Wklej",
@@ -12,6 +17,7 @@
 		"copyURLText": "Kopiuj tekst linku",
 		"inspectElement": "Zbadaj"
 	},
+	/* Pasek menu (Plik, Edycja, Widok itp.) */
 	"menubar":{
 		"enabled": "Włączony",
 		"file": {
@@ -49,6 +55,7 @@
 		},
 		"window": "Okno"
 	},
+	/* Tłumaczenie dialogów (błędy, ostrzeżenia, aktualizacje itp.) */
 	"dialog": {
 		"error": "Błąd",
 		"warning": "Uwaga",
@@ -75,8 +82,10 @@
 			"nodeExt": "Dodatek Node.js WebCorda",
 			"crx": "Rozszerzenie Chrome/Chromium"
 		},
-		"hideMenuBar": "Ponieważ włączyłeś blokadę paska menu, przy następnym uruchomieniu aplikacji nie będziesz miał do niego dostępu – chyba, że naciśniesz klawisz [ALT], aby przełączyć tymczasowo jego ukrycie."
+		"hideMenuBar": "Ponieważ włączyłeś blokadę paska menu, przy następnym uruchomieniu aplikacji nie będziesz miał do niego dostępu – chyba, że naciśniesz klawisz [ALT], aby przełączyć tymczasowo jego ukrycie.",
+		"devel": "Gdy „Tryb programisty” jest włączony, dostępne są eksperymentalne funkcje programu, które wciąż mogą być niestabilne i niedokończone. Z tego powodu, to ustawienie jest dla osób, które znają podstawy JavaScript bądź informatyki (co najmniej umią korzystać z „narzędzi deweloperskich”). Włączając to ustawienie, możesz nawet uszkodzić swój system operacyjny bądź sprzęt, jeżeli będziesz korzystać z tych funkcji w sposób nierozważny. Kontynuować?"
 	},
+	/* Menu pomocy (na pasku menu i częściowo w menu ikony zasobnika systemowego). */
 	"help":{
 		"groupName": "Pomoc",
 		"about": "O aplikacji",
@@ -85,5 +94,8 @@
 		"bugs": "Zgłoś błąd",
 		"contributors": "Autorzy i osoby wnoszące wkład:",
 		"credits": "Podziękowania dla GyozaGuy za jego aplikację webową dla Discorda – była dobrym źródłem do dokształcenia się z Elektrona i z jego powiązań z Discordem."
+	},
+	"misc":{
+		"singleInstance": "Przełączanie do istniejącego okna..."
 	}
 }
