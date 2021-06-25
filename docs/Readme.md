@@ -99,12 +99,12 @@ This project is redistributed under the **[MIT License](../LICENSE)**:
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 
-<div align=right><sub>
+<div align=right>
 
-This is **not** the copyright notice.\
-[Click here](../LICENSE) to display an actual license.
+<sub> This is <b> not </b> the copyright notice. </sub> <br>
+<sub> <a href='../LICENSE'> Click here </a> to display an actual license. </sub>
 
-</sub></div>
+</div>
 
 ## Want to contribute to my project?
 
