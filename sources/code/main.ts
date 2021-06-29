@@ -312,9 +312,9 @@ function createWindow(): BrowserWindow {
 
 // Remember window state
 
-interface windowStatus {
-    width: number,
-    height: number,
+type windowStatus = {
+    width: number;
+    height: number;
     isMaximized?: boolean;
 }
 

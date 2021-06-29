@@ -21,7 +21,7 @@ export function guessDevel ():{ devel:boolean, devFlag:string, appIconDir:string
 	if (app.getAppPath().indexOf(".asar") < 0) {
 		devel = true;
 		devFlag = " [DEV]";
-		appIconDir = app.getAppPath() + "/icons";
+		appIconDir = app.getAppPath() + "/sources/assets/icons";
 	} else {
 		devel = false;
 		devFlag = "";
@@ -46,8 +46,8 @@ export const appInfo = {
 		provider: 'github.com'
 	},
     icon: guessDevel().appIconDir + "/app.png",
-    trayIcon: app.getAppPath() + "/icons/tray.png",
-    trayPing: app.getAppPath() + "/icons/tray-ping.png",
+    trayIcon: app.getAppPath() + "/sources/assets/icons/tray.png",
+    trayPing: app.getAppPath() + "/sources/assets/icons/tray-ping.png",
     rootURL: 'https://discord.com',
     URL: 'https://watchanimeattheoffice.com/app',
     minWinHeight: 412,

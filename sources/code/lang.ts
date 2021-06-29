@@ -145,8 +145,8 @@ export function loadTranslations():lang {
     let localStrings:lang|Record<string,unknown>;
     const systemLang:string = app.getLocale();
 
-	const localizedStrings = app.getAppPath()+"/src/lang/"+systemLang+"/strings"
-	const fallbackStrings = app.getAppPath()+"/src/lang/en-GB/strings"
+	const localizedStrings = app.getAppPath()+"/sources/assets/translations/"+systemLang+"/strings"
+	const fallbackStrings = app.getAppPath()+"/sources/assets/translations/en-GB/strings"
 	
     if(!app.isReady()) console.warn(
 		"[WARN] Electron may fail loading localized strings,\n"+

@@ -1,9 +1,13 @@
 # Frequently asked questions
-Because many people that are Linux novices or Windows/MacOS users has many issues even installing my app, I decided to write a short FAQ answering many questions that I saw on Discord or issues
+Because many people that are Linux novices or Windows/MacOS users has many
+issues even installing my app, I decided to write a short FAQ answering many
+questions that I saw on Discord or issues.
 
 ## 1. Which file I should download?
 
-If you have a trouble indentifying which file you should install on your platform, here's the full list of platforms and recommended distributable names, grouped in tables by platforms:
+If you have a trouble indentifying which file you should install on your
+platform, here's the full list of platforms and recommended distributable names,
+grouped in tables by platforms:
 
 <div align=center>
 
@@ -44,4 +48,15 @@ If you have a trouble indentifying which file you should install on your platfor
 </div>
 
 ### 2. Image/video/content does not load properly, is there anything I can do about it?
-Yes, this is probably an issue due to Content Security Policy header not including all URLs that are allowed to load. You can disable it [in Settings](./Settings.md) as a workaround.
+Yes, this is probably an issue due to Content Security Policy header not
+including all URLs that are allowed to load. You can disable it
+[in Settings](./Settings.md) as a workaround.
+
+### 3. How to get a microphone permission for WebCord?
+You can't, as it is aquired automatically when Discord website asks for it.
+In fact, this is rather an issue with your system audio settings – for some reason,
+Electron doesn't seems to get access to microphone when there's no default/fallback
+device set. To fix it, set your microphone as default/fallback in your system's
+audio settings and restart the application – make sure it's properly
+closed and there's no icon in tray nor electron/webcord process running in the
+background!

@@ -25,6 +25,10 @@
 			"groupName":"File",
 			"quit":"Quit",
 			"relaunch":"Relaunch",
+			/**
+			 * Old options object
+			 * @deprecated
+			 */
 			"options": {
 				"groupName": "Settings",
 				"disableTray": "Disable tray",
@@ -98,6 +102,40 @@
 		"bugs": "Report a bug",
 		"contributors": "Authors and contributors:",
 		"credits": "Thanks to GyozaGuy for his Electron Discord app – it was a good source to learn about the Electron API and how make with it a Discord web app."
+	},
+	"settings": {
+		"basic": {
+			"name": "Podstawowe",
+			"group": {
+				"menuBar": {
+					"name": "Pasek menu",
+					"description": "Zmienia ustawienia widoczności natywnego paska menu.",
+					"label": "Ukrywaj automatycznie pasek menu."
+				},
+				"tray": {
+					"name": "Zasobnik systemowy",
+					"description": "Zmienia ustawienia widoczności ikony w zasobniku systemowym.",
+					"label": "Wyłącz funcję ukrywania okna do zasobnika systemowego."
+				}
+			}
+		},
+		"advanced": {
+			"name": "Zaawansowane",
+			"group": {
+				"csp": {
+					"name": "Polityka bezpieczeństwa treści",
+					"description": "Ustala listę witryn uprawnionych do wczytywania treści na stronie internetowej.",
+					"group": {
+						"thirdparty": {
+							"name":"Witryny firm trzecich",
+							"list": {
+								"gifProviders": "Dostawcy GIFów"
+							}
+						}
+					}
+				}
+			}
+		}
 	},
 	"misc": {
 		"singleInstance": "Switching to existing window..."

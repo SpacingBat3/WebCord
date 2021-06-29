@@ -1,7 +1,4 @@
 node_modules/
 out/
+sources/app
 package-lock.json
-build/linux/*.pkg.tar*
-build/linux/*/
-src/js/*.js*
-src/js/renderer/*.js*

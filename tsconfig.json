@@ -5,14 +5,14 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "baseUrl": ".",
-        "outDir": "src/js",
+        "outDir": "sources/app",
         "removeComments": true,
         "paths": {
             "*":["node_modules/*"]
         }
     },
     "include": [
-        "src/ts/*.ts",
-        "src/ts/renderer/*.ts"
+        "sources/code/*.ts",
+        "sources/code/renderer/*.ts"
     ]
 }

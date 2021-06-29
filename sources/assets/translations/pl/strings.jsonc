@@ -95,6 +95,40 @@
 		"contributors": "Autorzy i osoby wnoszące wkład:",
 		"credits": "Podziękowania dla GyozaGuy za jego aplikację webową dla Discorda – była dobrym źródłem do dokształcenia się z Elektrona i z jego powiązań z Discordem."
 	},
+	"settings": {
+		"basic": {
+			"name": "Podstawowe",
+			"group": {
+				"menuBar": {
+					"name": "Pasek menu",
+					"description": "Zmienia ustawienia widoczności natywnego paska menu.",
+					"label": "Ukrywaj automatycznie pasek menu."
+				},
+				"tray": {
+					"name": "Zasobnik systemowy",
+					"description": "Zmienia ustawienia widoczności ikony w zasobniku systemowym.",
+					"label": "Wyłącz funcję ukrywania okna do zasobnika systemowego."
+				}
+			}
+		},
+		"advanced": {
+			"name": "Zaawansowane",
+			"group": {
+				"csp": {
+					"name": "Polityka bezpieczeństwa treści",
+					"description": "Ustala listę witryn uprawnionych do wczytywania treści na stronie internetowej.",
+					"group": {
+						"thirdparty": {
+							"name":"Witryny firm trzecich",
+							"list": {
+								"gifProviders": "Dostawcy GIF–ów"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
 	"misc":{
 		"singleInstance": "Przełączanie do istniejącego okna..."
 	}
