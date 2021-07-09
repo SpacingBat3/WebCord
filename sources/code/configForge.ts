@@ -5,13 +5,27 @@
 // Let's import some keys from the package.json:
 
 import { packageJson } from './global';
+import { ForgeConfig, ForgePlatform } from '@electron-forge/shared-types'
 
 // Global variables in the config:
-const iconFile="icons/app"
+const iconFile="sources/assets/icons/app"
 const desktopGeneric = "Internet Messenger"
 const desktopCategories = ["Network","InstantMessaging"]
 
-module.exports = {
+type Redeclare<I, M> = Omit<I, keyof M> & M;
+
+type ForgeConfigFile = Redeclare<ForgeConfig,{
+    plugins?: ForgeConfig["plugins"];
+    pluginInterface?: ForgeConfig["pluginInterface"];
+    electronRebuildConfig?: ForgeConfig["electronRebuildConfig"];
+    makers?: ForgeConfig["makers"] | {
+      name: string;
+      platforms?: ForgePlatform[] | null;
+      config?: Record<string, unknown>;
+    }[]
+}>
+
+const config:ForgeConfigFile = {
   packagerConfig: {
     executableName: packageJson.name, // name instead of the productName
     asar: true,
@@ -22,12 +36,12 @@ module.exports = {
     ],
     quiet: true,
     ignore:[
-      "docs",
-      "build",
-      "extra",
-      "src/js/configForge.js",
-      "src/ts/configForge.ts",
-      "icons/app.*"
+      /docs/,
+      /build/,
+      /extra/,
+      /sources\/app\/configForge\..*/,
+      /sources\/code\/configForge\.ts/,
+      /sources\/assets\/icons\/app\..*/
     ]
   },
   makers: [
@@ -36,7 +50,7 @@ module.exports = {
       platforms: [
         "win32",
         "darwin"
-      ]
+      ],
     },
     {
       name: "electron-forge-maker-appimage",
@@ -62,6 +76,7 @@ module.exports = {
     },
     {
       name: "@electron-forge/maker-rpm",
+      platforms: [],
       config: {
         options: {
           icon: iconFile+".png",
@@ -84,3 +99,5 @@ module.exports = {
     }
   ]
 }
+
+module.exports = config

@@ -17,7 +17,7 @@
     "make:fast": "electron-forge make",
     "publish": "tsc && electron-forge publish",
     "publish:fast": "electron-forge publish",
-    "clean:linux": "rm src/js/*.js*"
+    "clean:linux": "rm sources/app/*.js*"
   },
   "keywords": [
     "discord",
@@ -67,6 +67,6 @@
     "source-map-support": "^0.5.19"
   },
   "config": {
-    "forge": "./src/js/configForge.js"
+    "forge": "./sources/app/configForge.js"
   }
 }
