@@ -43,11 +43,12 @@ import * as path from 'path';
 /*
  * Migrate old config dir to the new one.
  */
-
-const oldUserPath = path.join(app.getPath('userData'), '..', "Electron Discord Web App");
-if (fs.existsSync(oldUserPath)) {
-    fs.rmdirSync(app.getPath('userData'), { recursive: true });
-    fs.renameSync(oldUserPath, app.getPath('userData'));
+{
+    const oldUserPath = path.join(app.getPath('userData'), '..', "Electron Discord Web App");
+    if (fs.existsSync(oldUserPath)) {
+        fs.rmSync(app.getPath('userData'), { recursive: true });
+        fs.renameSync(oldUserPath, app.getPath('userData'));
+    }
 }
 
 // Import functions/types/variables declarations:
@@ -387,14 +388,13 @@ if (!singleInstance) {
         }
     });
     app.on('ready', main);
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) main();
+    });
 }
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
-});
-
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) main();
 });
