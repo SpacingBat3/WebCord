@@ -1,6 +1,6 @@
 <!--                 Now featuring: Notepad-friendly comments! <3                      -->
 <div align='center'>
-<a href='https://discord.com'> <img src='../icons/app.png' width='128px'> </a> 
+<a href='https://discord.com'> <img src='../sources/assets/icons/app.png' width='192px'> </a> 
 <h1>WebCord</h1>
 
 <!--
