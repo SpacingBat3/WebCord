@@ -154,9 +154,9 @@ export function loadTranslations():lang {
 		"[WARN] In this case, English strings will be used as a fallback.\n"
 	);
 
-    l10nStrings = jsonParseWithComments(jsonOrJsonc(fallbackStrings));
+    l10nStrings = jsonParseWithComments({path: jsonOrJsonc(fallbackStrings)});
     if(fs.existsSync(jsonOrJsonc(localizedStrings))) {
-        localStrings = jsonParseWithComments(jsonOrJsonc(localizedStrings));
+        localStrings = jsonParseWithComments({path: jsonOrJsonc(localizedStrings)});
         l10nStrings = deepmerge(l10nStrings, localStrings); 
     }
 	if(!isJsonLang(l10nStrings)) {

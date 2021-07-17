@@ -67,15 +67,31 @@ function getPackageJsonProperties():PackageJsonProperties {
 
 export const packageJson = getPackageJsonProperties();
 
+export type CommentRuleObject = { rule: RegExp; multiline?: "start" | "end" }
+
+/** Parameters that can be parsed by `readFileSync` function of `fs` module. */
+type FsReadFileSyncParams = {
+	/** Path to file, same as `path` parameter in `readFileSync` function of `fs` module. */
+	path: PathLike;
+	/**
+	 * Encoding to use for convertion of text file data from Buffer to String.
+	 */
+	encoding?: BufferEncoding;
+}
+
 /**
  * A funtion that parses the non-standard JSON file with comments
  * to regular JavaScript object – currently `JSON.parse()` function
  * should treat comments as syntax errors, as they are not a part
  * of JSON standard.
  * 
- * @param file Path to file.
- * @param encoding File encoding, ex. 'utf-8'.
+ * @param file Object containing `path` to file and optionally its `encoding`.
+ * 
+ * @param rules Array of `CommentRuleObject` objects that will be included to `commentRules`.
+ * 
  * @returns Parsed JavaScript object.
+ * 
+ * @todo Publish JSONC support as separate module for other projects' use.
  * 
  * @example
  * 
@@ -91,36 +107,46 @@ export const packageJson = getPackageJsonProperties();
  * 
  * JSON.parse(myRegularJson) // returns object
  * JSON.parse(myJsonWithComments) // syntax error!
- * jsonParseWithComments(myJsonWithComments) // returns object
- * jsonParseWithComments(myRegularJson) // returns object
+ * jsonParseWithComments({path:'/path/to/fileWithComments.json'}) // returns object
+ * jsonParseWithComments({path:'/path/to/file.json'}) // returns object
  * 
  */
 
-export const jsonParseWithComments = (file:PathLike, encoding?: BufferEncoding): Record<string,unknown> => {
+export const jsonParseWithComments = ( file:FsReadFileSyncParams, rules?: CommentRuleObject[] ): Record<string,unknown> => {
 
 	/* Do not parse JSON files (*.json) as JsonWithComments files (*.jsonc). */
 	let isJson = false;
-	if(typeof(file)==='string' && file.match('/^.*.json$')!==null)
+	if(typeof(file.path)==='string' && file.path.match('/^.*.json$')!==null)
 		isJson = true
 
-	const data = readFileSync(file).toString(encoding).split('\n');
+	const data = readFileSync(file.path).toString(file.encoding).split('\n');
 	const dataJson: string[] = [];
 
-	const commentRules = [
-		/\/\/.*/,            // C like comments: `// example`
-		/\/\*.*\*\//g,       // C++ like comments: `/* example */`
-		/\/\*.*/,            // Start of multiline comments: `/* example`
-		/.*\*\/$/,           // End of multiline comments: `example */`
+	const commentRules:CommentRuleObject[] = [
+		{ rule: /\/\/.*/ },                       // C like comments: `// example`
+		{ rule: /\/\*.*\*\//g },                  // C++ like comments: `/* example */`
+		{ rule: /\/\*.*/ , multiline: "start" },  // Start of multiline comments: `/* example`
+		{ rule: /.*\*\/$/, multiline: "end" },    // End of multiline comments: `example */`
 	]
-	let inComment = false;
+	
+	// Allow for additional comment rules
+	if(rules) commentRules.concat(rules)
+
+	/** Whenever next line might be in multiline comment */
+	let inCommentNext = false;
 
 	for (const line of data) {
-		let newLine: string = line;		
 
-		for (const rule in commentRules) if(!isJson) {
-			if(line.match(commentRules[rule]) && rule === '2') inComment = true;
-			if(line.match(commentRules[rule]) && rule === '3') inComment = false;
-			newLine = line.replace(commentRules[rule],'');
+		/** Whenever currently tested line might be in multiline comment */
+		let inComment:boolean = inCommentNext
+
+		let newLine = line;		
+
+		for (const ruleObject of commentRules) if(!isJson) {
+			if(newLine.match(ruleObject.rule) && ruleObject.multiline === 'start') inCommentNext = true;
+			if(newLine.match(ruleObject.rule) && ruleObject.multiline === 'end' && inComment === true)
+				inComment = inCommentNext = false;
+			newLine = newLine.replace(ruleObject.rule,'');
 		}
 		
 		if(!inComment) dataJson.push(newLine);
