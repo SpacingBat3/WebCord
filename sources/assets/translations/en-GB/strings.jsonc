@@ -105,31 +105,31 @@
 	},
 	"settings": {
 		"basic": {
-			"name": "Podstawowe",
+			"name": "Basic",
 			"group": {
 				"menuBar": {
-					"name": "Pasek menu",
-					"description": "Zmienia ustawienia widoczności natywnego paska menu.",
-					"label": "Ukrywaj automatycznie pasek menu."
+					"name": "Menu bar",
+					"description": "Changes visibility settings of native menu bar.",
+					"label": "Hide menu bar automatically."
 				},
 				"tray": {
-					"name": "Zasobnik systemowy",
-					"description": "Zmienia ustawienia widoczności ikony w zasobniku systemowym.",
-					"label": "Wyłącz funcję ukrywania okna do zasobnika systemowego."
+					"name": "Tray",
+					"description": "Changes the visibility of the icon in the system tray.",
+					"label": "Disable hiding window to the system tray functionality."
 				}
 			}
 		},
 		"advanced": {
-			"name": "Zaawansowane",
+			"name": "Advanced",
 			"group": {
 				"csp": {
-					"name": "Polityka bezpieczeństwa treści",
-					"description": "Ustala listę witryn uprawnionych do wczytywania treści na stronie internetowej.",
+					"name": "Content Security Policy",
+					"description": "Sets a list of the websites from which Discord is allowed to display content (images, videos, iframes etc.) or connect to.",
 					"group": {
 						"thirdparty": {
-							"name":"Witryny firm trzecich",
+							"name":"Third party websites",
 							"list": {
-								"gifProviders": "Dostawcy GIFów"
+								"gifProviders": "GIF Providers"
 							}
 						}
 					}
