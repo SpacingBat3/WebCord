@@ -12,6 +12,7 @@
  * 
  * @param chromeVersion Chome/Chromium version string to use.
  * @returns Fake Chrome/Chromium user agent string.
+ * @todo Publish userAgent.ts as separate module for other projects' use.
  */
 export function getUserAgent(chromeVersion: string):string {
 
