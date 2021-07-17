@@ -1,5 +1,7 @@
 { 
     "compilerOptions": {
+        "incremental": true,
+        "tsBuildInfoFile": "sources/app/.build/info.json",
         "strict": true,
         "module": "commonjs",
         "moduleResolution": "node",
