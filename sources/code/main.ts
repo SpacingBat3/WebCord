@@ -74,6 +74,7 @@ import { checkVersion } from './update';
 import { getUserAgent } from './userAgent';
 import * as getMenu from './menus';
 import { discordFavicons } from './favicons';
+import { TranslatedStrings } from './lang';
 
 // Removes deprecated config properties (if they exists)
 
@@ -136,7 +137,7 @@ if (Array.isArray(packageJson.contributors) && packageJson.contributors.length >
 const stringContributors = appContributors.join(', ');
 const singleInstance = app.requestSingleInstanceLock();
 let mainWindow: BrowserWindow, winHeight: number, winWidth: number;
-let tray: Promise<Tray>, l10nStrings: lang, updateInterval: NodeJS.Timeout | undefined;
+let tray: Promise<Tray>, l10nStrings: TranslatedStrings, updateInterval: NodeJS.Timeout | undefined;
 
 // Year format for the copyright
 
@@ -368,7 +369,7 @@ function windowStateKeeper(windowName: string) {
 function main(): void {
     winWidth = appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3);
     winHeight = appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3);
-    l10nStrings = loadTranslations();
+    l10nStrings = new TranslatedStrings();
     checkVersion(l10nStrings, devel, appInfo.icon, updateInterval);
     updateInterval = setInterval(function () { checkVersion(l10nStrings, devel, appInfo.icon, updateInterval); }, 1800000);
     mainWindow = createWindow();
@@ -380,7 +381,7 @@ if (!singleInstance) {
 } else {
     app.on('second-instance', () => {
         if (mainWindow) {
-            if (app.isReady()) console.log(loadTranslations().misc.singleInstance);
+            if (app.isReady()) console.log((new TranslatedStrings()).misc.singleInstance);
             if (!mainWindow.isVisible()) mainWindow.show();
             if (mainWindow.isMinimized()) mainWindow.restore();
             mainWindow.focus();

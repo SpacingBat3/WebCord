@@ -29,7 +29,7 @@ import fetch from 'electron-fetch';
 import * as os from 'os';
 import * as EventEmitter from 'events';
 import { createGithubIssue } from './crash';
-import { loadTranslations } from './lang';
+import { TranslatedStrings } from './lang';
 
 const sideBar = new EventEmitter();
 const { devel } = guessDevel();
@@ -63,7 +63,7 @@ function updateMenuBarItem(id:string, value:boolean):void {
 // Contex Menu with spell checker
 
 export function context (windowName: BrowserWindow): void {
-	const strings = loadTranslations();
+	const strings = new TranslatedStrings();
 	windowName.webContents.on('context-menu', (event, params) => {
 		const cmenu:(MenuItemConstructorOptions|MenuItem)[] = [
 			{ type: 'separator'},
@@ -124,7 +124,7 @@ if(os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.get
 // Tray menu
 
 export async function tray (windowName: BrowserWindow, childCSP: string): Promise<Tray> {
-	const strings = loadTranslations();
+	const strings = new TranslatedStrings();
 	const tray = new Tray(appInfo.trayIcon);
 	let image:string|nativeImage;
 	if (funMode === 2) {
@@ -212,7 +212,7 @@ export async function tray (windowName: BrowserWindow, childCSP: string): Promis
 // Menu Bar
 
 export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
-	const strings = loadTranslations();
+	const strings = new TranslatedStrings();
 	const webLink = repoLink.substring(repoLink.indexOf("+")+1);
 	const devMode = getDevel(devel, configData.devel);
 

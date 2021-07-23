@@ -5,7 +5,7 @@
 import { app, Notification, shell, net } from 'electron';
 import { appInfo } from './mainGlobal';
 import fetch from 'electron-fetch';
-import { lang } from './lang';
+import { TranslatedStrings } from './lang';
 
 /**
  * Checks and notifies users about the updates.
@@ -15,7 +15,7 @@ import { lang } from './lang';
  * @param appIcon Path to application icon.
  * @param updateInterval Object that indentifies currently running interval.
  */
-export async function checkVersion(strings: lang, devel: boolean, appIcon: string, updateInterval: NodeJS.Timeout|undefined): Promise<void>{
+export async function checkVersion(strings: TranslatedStrings, devel: boolean, appIcon: string, updateInterval: NodeJS.Timeout|undefined): Promise<void>{
     if(!net.isOnline()) return;
     const repoName = appInfo.repository.name;
     const remoteJson = await (await fetch('https://raw.githubusercontent.com/'+repoName+'/master/package.json')).json();
