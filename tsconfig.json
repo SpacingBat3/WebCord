@@ -1,17 +1,19 @@
 { 
     "compilerOptions": {
+        /* Whenever incremental compilation is enabled */
         "incremental": true,
+        /* Location to the file containing saved information about incremental compilation */
         "tsBuildInfoFile": "sources/app/.build/info.json",
+        /* Whenever strict type checking is enabled */
         "strict": true,
         "module": "commonjs",
         "moduleResolution": "node",
         "sourceMap": true,
         "baseUrl": ".",
+        /* Directrory in which are placed all emitted files */
         "outDir": "sources/app",
+        /* Whenever comments are emitted to files */
         "removeComments": true,
-        "paths": {
-            "*":["node_modules/*"]
-        }
     },
     "include": [
         "sources/code/*.ts",
