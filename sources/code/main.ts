@@ -73,8 +73,7 @@ const { devel, devFlag } = guessDevel();
 import { checkVersion } from './update';
 import { getUserAgent } from './userAgent';
 import * as getMenu from './menus';
-import { defaultFavicon } from './favicons';
-import { lang, loadTranslations } from './lang';
+import { discordFavicons } from './favicons';
 
 // Removes deprecated config properties (if they exists)
 
@@ -286,10 +285,10 @@ function createWindow(): BrowserWindow {
     win.webContents.once('did-finish-load', () => {
         win.webContents.on('page-favicon-updated', async (event,favicons) => {
             const t = await tray;
-            if(!configData.disableTray && favicons[0]==defaultFavicon)
-                t.setImage(appInfo.trayPing)
-            else
+            if(!configData.disableTray) if(favicons[0] === discordFavicons.default || favicons[0] === discordFavicons.unread)
                 t.setImage(appInfo.trayIcon);
+            else
+                t.setImage(appInfo.trayPing);
         });
     });
 
