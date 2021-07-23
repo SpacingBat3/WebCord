@@ -195,8 +195,8 @@ function createWindow(): BrowserWindow {
     // Preload scripts:
 
     win.webContents.session.setPreloads([
-        app.getAppPath() + "/src/js/renderer/capturer.js",
-        app.getAppPath() + "/src/js/renderer/cosmetic.js"
+        app.getAppPath() + "/sources/app/renderer/capturer.js",
+        app.getAppPath() + "/sources/app/renderer/cosmetic.js"
     ]);
 
     // CSP
