@@ -58,6 +58,7 @@ Electron and how to implement a Discord with it by analyzing his code. Thanks to
 this project could begin on its own.
 
 ## Documentation:
+- [List of WebCord's features](Features.md)
 - [Frequently Asked Questions](FAQ.md)
   - *[Which file I should download?](FAQ.md#1-which-file-i-should-download)*
   - *[Content does not load properly...](FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
