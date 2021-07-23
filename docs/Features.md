@@ -21,11 +21,7 @@ Because WebCord is based on Discord Website and (unlike official client and clie
 | Automatic bug reporting on crash | Asks user if he wants to report a bug and opens the URL to the new GitHub issue in the default browser. | **TODO** |
 | ~~Easter Eggs~~ | You've seen nothing! | N/A?
 
-<sub> 
-
-**NOTE:** Please report bugs for the features listed above. If your issue describes a feature that is not on the list, you may consider opening a **feature request**. If some of the implemented app's features are missing there, feel free to inform me about that in the *Issues* or *Discussions*. If you wish to you could also add them yourself and do a Pull Request.
-
-</sub>
+<sub> **NOTE:** Please report bugs for the features listed above. If your issue describes a feature that is not on the list, you may consider opening a **feature request**. If some of the implemented app's features are missing there, feel free to inform me about that in the *Issues* or *Discussions*. If you wish to you could also add them yourself and do a Pull Request. </sub>
 
 ### State legend:
  - **TODO** – this feature **may** or **may not** be implemented in the future.
