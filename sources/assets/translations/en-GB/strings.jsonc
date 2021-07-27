@@ -138,6 +138,6 @@
 		}
 	},
 	"misc": {
-		"singleInstance": "Switching to existing window..."
+		"singleInstance": "Switching to the existing window..."
 	}
 }
