@@ -110,7 +110,7 @@ This project is redistributed under the **[MIT License](../LICENSE)**:
 ## Want to contribute to my project?
 
 - If you want to improve my code, make a Pull Request and add yourself to the 
-  list of contributors in `main.ts`.
+  list of contributors in `package.json`.
 
 - If you want to translate strings in `lang` folder, please visit
   [TRANSLATE.md](Translate.md).
