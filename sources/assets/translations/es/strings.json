@@ -3,22 +3,21 @@
 		"toggle": "Alternar",
 		"quit": "Salir de Discord"
 	},
-	"context":{
+	"context": {
 		"copy": "Copiar",
 		"paste": "Pegar",
 		"cut": "Cortar",
 		"dictionaryAdd": "Añadir al diccionario local",
-                "copyURL": "Copiar enlace",
+		"copyURL": "Copiar enlace",
 		"copyURLText": "Copiar texto del enlace",
 		"inspectElement": "Inspeccionar"
-
 	},
 	"menubar": {
 		"enabled": "Activado",
 		"file": {
-			"groupName":"Archivo",
-			"quit":"Salir",
-			"relaunch":"Relanzar",
+			"groupName": "Archivo",
+			"quit": "Salir",
+			"relaunch": "Relanzar",
 			"options": {
 				"groupName": "Opciones",
 				"disableTray": "Desactivar bandeja",
@@ -81,7 +80,7 @@
 		"hideMenuBar": "Haz activado esconder barra del menu, no podras acceder a ella despues de reiniciar la app, a no ser que presiones la tecla [ALT] para mostrar la barra del menu de nuevo.",
 		"devel": "Cuando \"El modo desarrollador\" esta activado, tienes acceso a caracteristícas experimentales, pueden estar aun sin acabar o directamente rotas. Además, si no sabes lo son las herramientas para desarrolladores, es posible que no necesite activar esta opción. en cualquier caso, yo (el desarrollador de la aplicación) me hago irresponsable cualquier comando que pegues en la herramienta para desarrolladores o por cualquier fallo producido después de haber activado \"El modo desarrollador\" – puedes activar esta opción bajo tu propio riesgo. ¿Continuar de todas formas?"
 	},
-	"help":{
+	"help": {
 		"groupName": "Ayuda",
 		"about": "Acerca de",
 		"repo": "Repositorio",
