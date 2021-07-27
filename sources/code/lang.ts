@@ -2,6 +2,7 @@
  * TranslatedStrings.ts – everything associated with translating my app
  */
 
+import * as path from "path";
 import * as fs from "fs";
 import * as deepmerge from "deepmerge";
 import { app } from "electron";
@@ -194,8 +195,8 @@ export class TranslatedStrings {
 		let localStrings:Record<string,unknown>;
 		const systemTranslatedStrings:string = app.getLocale();
 	
-		const localizedStrings = app.getAppPath()+"/sources/assets/translations/"+systemTranslatedStrings+"/strings"
-		const fallbackStrings = app.getAppPath()+"/sources/assets/translations/en-GB/strings"
+		const localizedStrings = path.resolve(app.getAppPath(),"./sources/assets/translations/"+systemTranslatedStrings+"/strings")
+		const fallbackStrings = path.resolve(app.getAppPath(),"./sources/assets/translations/en-GB/strings")
 		
 		if(!app.isReady()) console.warn(
 			"[WARN] Electron may fail loading localized strings,\n"+
