@@ -115,11 +115,21 @@ type FsReadFileSyncParams = {
 export const jsonParseWithComments = ( file:FsReadFileSyncParams, rules?: CommentRuleObject[] ): Record<string,unknown> => {
 
 	/* Do not parse JSON files (*.json) as JsonWithComments files (*.jsonc). */
-	let isJson = false;
 	if(typeof(file.path)==='string' && file.path.match('/^.*.json$')!==null)
-		isJson = true
+		return JSON.parse(readFileSync(file.path).toString(file.encoding))
 
-	const data = readFileSync(file.path).toString(file.encoding).split('\n');
+	const dataString = readFileSync(file.path).toString(file.encoding)
+
+	/* Determine correct newline character */
+	let newline:string;
+	if(dataString.includes('\r\n'))
+		newline = '\r\n'
+	else if (dataString.includes('\r'))
+		newline = '\r'
+	else
+		newline = '\n'
+
+	const data = dataString.split(newline)
 	const dataJson: string[] = [];
 
 	const commentRules:CommentRuleObject[] = [
@@ -142,7 +152,7 @@ export const jsonParseWithComments = ( file:FsReadFileSyncParams, rules?: Commen
 
 		let newLine = line;		
 
-		for (const ruleObject of commentRules) if(!isJson) {
+		for (const ruleObject of commentRules) {
 			if(newLine.match(ruleObject.rule) && ruleObject.multiline === 'start') inCommentNext = true;
 			if(newLine.match(ruleObject.rule) && ruleObject.multiline === 'end' && inComment === true)
 				inComment = inCommentNext = false;
@@ -152,6 +162,6 @@ export const jsonParseWithComments = ( file:FsReadFileSyncParams, rules?: Commen
 		if(!inComment) dataJson.push(newLine);
 	}
 
-	const jsonStringified = dataJson.join('\n');
+	const jsonStringified = dataJson.join(newline);
 	return JSON.parse(jsonStringified);
 }
