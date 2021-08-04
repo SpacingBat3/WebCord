@@ -6,9 +6,13 @@
         "tsBuildInfoFile": "sources/app/.build/info.json",
         /* Whenever strict type checking is enabled */
         "strict": true,
+        /* The way of implementing module imports by TypeScript */
         "module": "commonjs",
+        /* The way of resolving module names by TypeScript */
         "moduleResolution": "node",
+        /* Whenever sourcemaps should be made for emitted JavaScript files */
         "sourceMap": true,
+        /* Directory used to resolve non-relative module names */
         "baseUrl": ".",
         /* Directrory in which are placed all emitted files */
         "outDir": "sources/app",
@@ -16,7 +20,9 @@
         "removeComments": true,
     },
     "include": [
+        /* Main process scripts */
         "sources/code/*.ts",
+        /* Renderer process scripts */
         "sources/code/renderer/*.ts"
     ]
 }
