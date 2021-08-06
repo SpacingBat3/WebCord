@@ -69,10 +69,10 @@
 		},
 		"permission": {
 			"request": {
-				"denied": "%s: Prośba o dostęp do elementu '%s' odrzucona."
+				"denied": "%s: Żądanie uprawnień do elementu '%s' odrzucone."
 			},
 			"check": {
-				"denied": "%s: Zapytanie o uprawnienia do elementu '%s' odrzucone."
+				"denied": "%s: Sprawdzenie uprawnień do elementu '%s' odrzucone."
 			}
 		},
 		"buttons": {
