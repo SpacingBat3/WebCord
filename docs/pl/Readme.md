@@ -6,7 +6,7 @@
  -->
 <div align='right'>
 <sub>
-  You know 🇬🇧️? Go <a href='pl/Readme.md'>here</a> instead.
+  You don't speak 🇵🇱️? <a href='../Readme.md'>Go back</a> to 🇬🇧️ docs.
 </sub>
 </div>
 <div align='center'>
@@ -96,7 +96,7 @@ ten projekt mógł w końcu samodzielnie się rozwijać.
 
 ## Licencja
 Ten program upubliczniany jest na warunkach **[licencji MIT](../../LICENSE)**:
-
+	
 	Niniejszym udziela się bezpłatnego dostępu do obrotu kopią tego oprogramowania i
 	powiązantymi z nią plikami dokumentacji (dalej nazywanymi: „Oprogramowaniem”)
 	każdej osobie bez żadnych ograniczeń , włączając w to ograniczenia praw do
@@ -117,10 +117,12 @@ Ten program upubliczniany jest na warunkach **[licencji MIT](../../LICENSE)**:
 
 <div align=right>
 
-<sub> <strong> Uwaga: </strong> jest wyłącznie tłumaczenie fragmentu treści licencji, bez żadnej mocy prawnej. <br> </sub>
-<sub> <a href='../../LICENSE'> Kliknij tutaj </a> aby wyświetlić oryginalną licencję. </sub>
+<sub> To jest wyłącznie tłumaczenie fragmentu licencji, <br>
+które <strong> nie ma żadnej mocy prawnej </strong>. <br>
+<a href='../../LICENSE'> Kliknij tutaj </a> aby wyświetlić oryginalną licencję. </sub>
 
 </div>
+
 
 ## Chcesz pomóc w rozwoju aplikacji?
 
