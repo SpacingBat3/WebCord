@@ -30,7 +30,7 @@
 		         MIT • Electron • Pull Request Welcome • Pi Apps • Debian Repository
 -->
 
-[![MIT license](https://img.shields.io/github/license/SpacingBat3/WebCord?label=License)](COPYING)
+[![MIT license](https://img.shields.io/github/license/SpacingBat3/WebCord?label=License)](../LICENSE)
 [![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg?label=Release)](https://github.com/SpacingBat3/WebCord/tags)
 [![Electron](https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron)](https://www.electronjs.org/)
 [![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Downloads&color=%236586B3)](https://github.com/SpacingBat3/releases)

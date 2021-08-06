@@ -35,7 +35,7 @@
 		       MIT • Electron • Pomoc mile widziana • Pi Apps • Repozytorium Debiana
 -->
 
-[![Licencja MIT](https://img.shields.io/github/license/SpacingBat3/WebCord?label=Licencja)](COPYING)
+[![Licencja MIT](https://img.shields.io/github/license/SpacingBat3/WebCord?label=Licencja)](../../LICENSE)
 [![Wydania GitHub](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg?label=Wydania)](https://github.com/SpacingBat3/WebCord/tags)
 [![Electron](https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron)](https://www.electronjs.org/)
 [![Liczba pobrań](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Pobrania&color=%236586B3)](https://github.com/SpacingBat3/releases)
