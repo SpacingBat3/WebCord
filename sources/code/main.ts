@@ -13,6 +13,21 @@
 import * as srcMap from 'source-map-support';
 srcMap.install();
 
+/**
+ * Handle "crashes".
+ * 
+ * This module should be loaded and initalized before
+ * any other part of the code is executed (to maximize
+ * the chance WebCord errors will be properly handled)
+ * and after source map support (as source map support
+ * is less likely to to crash while offering more usefull
+ * information).
+ */
+
+import crashHandler from './crashHandler';
+
+crashHandler()
+
 // Electron API and other node modules.
 
 import {
