@@ -394,11 +394,10 @@ function main(): void {
 }
 
 if (!singleInstance) {
-    async () => {
-        await app.whenReady()
+    app.on('ready', () => {
         console.log((new TranslatedStrings()).misc.singleInstance)
-    app.quit();
-    }
+        app.quit();
+    });
 } else {
     app.on('second-instance', () => {
         if (mainWindow) {
