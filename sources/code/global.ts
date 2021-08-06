@@ -3,6 +3,7 @@
  */
 
 import { readFileSync, PathLike } from "fs";
+import { resolve } from "path";
 
 /**
  * Outputs a fancy log message in the (DevTools) console.
@@ -10,15 +11,15 @@ import { readFileSync, PathLike } from "fs";
  * @param msg Message to log in the console.
  */
 
-export function wLog (msg:string):void {
-	console.log("%c[WebCord]",'color: #69A9C1',msg);
+export function wLog(msg: string): void {
+	console.log("%c[WebCord]", 'color: #69A9C1', msg);
 }
 
 export type Person = string & {
 	name: string,
 	email?: string,
-	url?: string
-}
+	url?: string;
+};
 
 export interface PackageJsonProperties {
 	/** NodeJS-friendly application name. */
@@ -26,16 +27,65 @@ export interface PackageJsonProperties {
 	/** Application author. */
 	author: Person,
 	/** Array of application code contributors. */
-	contributors: Array<Person>,
+	contributors?: Array<Person>,
 	/** Application homepage (`Readme.md` file). */
 	homepage: string,
 	/** Application repository. */
-	repository: {
+	repository: string & {
 		/** Repository type (e.g. `git`). */
 		type: string,
 		/** Repository URL (e.g `git+https://example.com`) */
-		url: string
+		url: string;
+	};
+}
+
+function isPerson(variable: unknown): variable is Person {
+	// Check #1: Variable is either string or object.
+	if (typeof (variable) !== 'string' && typeof (variable) !== 'object')
+		return false;
+
+	// Check #2: When variable is object, it has 'name' key and optionally 'email' and 'url' keys.
+	if (typeof (variable) === 'object') {
+		if (typeof ((variable as Person).name) !== 'string')
+			return false;
+
+		if ((variable as Person).email !== undefined && typeof ((variable as Person).email) !== 'string')
+			return false;
+
+		if ((variable as Person).url !== undefined && typeof ((variable as Person).url) !== 'string')
+			return false;
 	}
+
+	return true;
+}
+
+function isPackageJsonComplete(object: unknown): object is PackageJsonProperties {
+	// Check #1: 'contributors' is array of 'Person'
+	if (typeof (object as PackageJsonProperties).contributors === "object")
+		for (const key of (object as Record<string, Array<unknown>>).contributors)
+			if (!isPerson(key)) return false;
+
+	// Check #2: 'author' is 'Person'
+	if (!isPerson((object as PackageJsonProperties).author))
+		return false;
+
+	// Check #3: 'name' and 'homepage' are strings.
+	for (const stringKey of ['name', 'homepage'])
+		if (typeof ((object as { [key: string]: string; })[stringKey]) !== 'string')
+			return false;
+
+	// Check #4: 'repository' is either string or object
+	if (typeof (object as PackageJsonProperties).repository !== "string" && typeof (object as PackageJsonProperties).repository !== "object")
+		return false;
+
+	// Check #5: As object, 'repository' has 'type' and 'url' keys of type 'string'
+	for (const stringKey of ['type', 'url']) {
+		const repository = (object as PackageJsonProperties).repository;
+		if (typeof (repository) === "object" && typeof ((repository as { [key: string]: string; })[stringKey]) !== "string")
+			return false;
+	}
+
+	return true;
 }
 
 /**
@@ -46,16 +96,17 @@ export interface PackageJsonProperties {
  * this function has limited number of properties that cannot be exceeded.
  */
 
-function getPackageJsonProperties():PackageJsonProperties {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const packageJSON = require("../../package.json")
+function getPackageJsonProperties(): PackageJsonProperties {
+	const packageJSON: Record<string, unknown> = JSON.parse(readFileSync(resolve(__dirname, "../../package.json")).toString());
+	if (!isPackageJsonComplete(packageJSON))
+		throw new TypeError("File 'package.json' does not contain all required properties or/and some of them are of invalid type!");
 	return {
 		name: packageJSON.name,
 		author: packageJSON.author,
 		contributors: packageJSON.contributors,
 		homepage: packageJSON.homepage,
 		repository: packageJSON.repository
-	}
+	};
 }
 
 /**
@@ -67,7 +118,7 @@ function getPackageJsonProperties():PackageJsonProperties {
 
 export const packageJson = getPackageJsonProperties();
 
-export type CommentRuleObject = { rule: RegExp; multiline?: "start" | "end" }
+export type CommentRuleObject = { rule: RegExp; multiline?: "start" | "end"; };
 
 /** Parameters that can be parsed by `readFileSync` function of `fs` module. */
 type FsReadFileSyncParams = {
@@ -77,7 +128,7 @@ type FsReadFileSyncParams = {
 	 * Encoding to use for convertion of text file data from Buffer to String.
 	 */
 	encoding?: BufferEncoding;
-}
+};
 
 /**
  * A funtion that parses the non-standard JSON file with comments
@@ -112,35 +163,35 @@ type FsReadFileSyncParams = {
  * 
  */
 
-export const jsonParseWithComments = ( file:FsReadFileSyncParams, rules?: CommentRuleObject[] ): Record<string,unknown> => {
+export const jsonParseWithComments = (file: FsReadFileSyncParams, rules?: CommentRuleObject[]): Record<string, unknown> => {
 
 	/* Do not parse JSON files (*.json) as JsonWithComments files (*.jsonc). */
-	if(typeof(file.path)==='string' && file.path.match('/^.*.json$')!==null)
-		return JSON.parse(readFileSync(file.path).toString(file.encoding))
+	if (typeof (file.path) === 'string' && file.path.match('/^.*.json$') !== null)
+		return JSON.parse(readFileSync(file.path).toString(file.encoding));
 
-	const dataString = readFileSync(file.path).toString(file.encoding)
+	const dataString = readFileSync(file.path).toString(file.encoding);
 
 	/* Determine correct newline character */
-	let newline:string;
-	if(dataString.includes('\r\n'))
-		newline = '\r\n'
+	let newline: string;
+	if (dataString.includes('\r\n'))
+		newline = '\r\n';
 	else if (dataString.includes('\r'))
-		newline = '\r'
+		newline = '\r';
 	else
-		newline = '\n'
+		newline = '\n';
 
-	const data = dataString.split(newline)
+	const data = dataString.split(newline);
 	const dataJson: string[] = [];
 
-	const commentRules:CommentRuleObject[] = [
+	const commentRules: CommentRuleObject[] = [
 		{ rule: /\/\/.*/ },                       // C like comments: `// example`
 		{ rule: /\/\*.*\*\//g },                  // C++ like comments: `/* example */`
-		{ rule: /\/\*.*/ , multiline: "start" },  // Start of multiline comments: `/* example`
+		{ rule: /\/\*.*/, multiline: "start" },  // Start of multiline comments: `/* example`
 		{ rule: /.*\*\/$/, multiline: "end" },    // End of multiline comments: `example */`
-	]
-	
+	];
+
 	// Allow for additional comment rules
-	if(rules) commentRules.concat(rules)
+	if (rules) commentRules.concat(rules);
 
 	/** Whenever next line might be in multiline comment */
 	let inCommentNext = false;
@@ -148,20 +199,20 @@ export const jsonParseWithComments = ( file:FsReadFileSyncParams, rules?: Commen
 	for (const line of data) {
 
 		/** Whenever currently tested line might be in multiline comment */
-		let inComment:boolean = inCommentNext
+		let inComment: boolean = inCommentNext;
 
-		let newLine = line;		
+		let newLine = line;
 
 		for (const ruleObject of commentRules) {
-			if(newLine.match(ruleObject.rule) && ruleObject.multiline === 'start') inCommentNext = true;
-			if(newLine.match(ruleObject.rule) && ruleObject.multiline === 'end' && inComment === true)
+			if (newLine.match(ruleObject.rule) && ruleObject.multiline === 'start') inCommentNext = true;
+			if (newLine.match(ruleObject.rule) && ruleObject.multiline === 'end' && inComment === true)
 				inComment = inCommentNext = false;
-			newLine = newLine.replace(ruleObject.rule,'');
+			newLine = newLine.replace(ruleObject.rule, '');
 		}
-		
-		if(!inComment) dataJson.push(newLine);
+
+		if (!inComment) dataJson.push(newLine);
 	}
 
 	const jsonStringified = dataJson.join(newline);
 	return JSON.parse(jsonStringified);
-}
+};
