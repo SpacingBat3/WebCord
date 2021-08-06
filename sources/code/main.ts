@@ -379,11 +379,14 @@ function main(): void {
 }
 
 if (!singleInstance) {
+    async () => {
+        await app.whenReady()
+        console.log((new TranslatedStrings()).misc.singleInstance)
     app.quit();
+    }
 } else {
     app.on('second-instance', () => {
         if (mainWindow) {
-            if (app.isReady()) console.log((new TranslatedStrings()).misc.singleInstance);
             if (!mainWindow.isVisible()) mainWindow.show();
             if (mainWindow.isMinimized()) mainWindow.restore();
             mainWindow.focus();
