@@ -1,6 +1,11 @@
 <!--                 Now featuring: Notepad-friendly comments! <3                      -->
+<div align='right'>
+<sub>
+  Znasz 🇵🇱? Przejdź <a href='pl/Readme.md'>tutaj</a>.
+</sub> <br>
+</div>
 <div align='center'>
-<a href='https://discord.com'> <img src='../sources/assets/icons/app.png' width='192px'> </a> 
+<a href='https://discord.com'> <img src='../sources/assets/icons/app.png' width='192px'> </a>
 <h1>WebCord</h1>
 
 <!--
@@ -25,7 +30,7 @@
 		         MIT • Electron • Pull Request Welcome • Pi Apps • Debian Repository
 -->
 
-[![MIT license](https://img.shields.io/badge/License-MIT-C23939.svg)](COPYING)
+[![MIT license](https://img.shields.io/github/license/SpacingBat3/WebCord?label=License)](COPYING)
 [![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg?label=Release)](https://github.com/SpacingBat3/WebCord/tags)
 [![Electron](https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron)](https://www.electronjs.org/)
 [![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Downloads&color=%236586B3)](https://github.com/SpacingBat3/releases)
@@ -54,7 +59,7 @@ It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord
 but then eventually I had rewritten it as *Electron Discord Web App* project, which is
 currently called *WebCord* (to make that horribly long name a bit shorter 😉). However
 because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about
-Electron and how to implement a Discord with it by analyzing his code. Thanks to his work,
+Electron and how to implement a Discord client with it by analyzing his code. Thanks to his work,
 this project could begin on its own.
 
 ## Documentation:
@@ -100,7 +105,7 @@ This project is redistributed under the **[MIT License](../LICENSE)**:
 
 <div align=right>
 
-<sub> This is <b> not </b> the copyright notice. </sub> <br>
+<sub> This is <strong> not </strong> the copyright notice nor the full license. </sub> <br>
 <sub> <a href='../LICENSE'> Click here </a> to display an actual license. </sub>
 
 </div>
