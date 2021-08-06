@@ -23,7 +23,7 @@ import {
 	appInfo
 } from './mainGlobal';
 
-import { loadNodeAddons, loadChromeAddons } from './mod'
+import { loadNodeAddons, loadChromeAddons } from './mod';
 
 import fetch from 'electron-fetch';
 import * as os from 'os';
@@ -34,7 +34,7 @@ import { TranslatedStrings } from './lang';
 const sideBar = new EventEmitter();
 const { devel } = guessDevel();
 
-sideBar.on('hide', async (contents:WebContents) => {
+sideBar.on('hide', async (contents: WebContents) => {
 	const cssKey = await contents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
 	sideBar.once('show', () => {
 		contents.removeInsertedCSS(cssKey);
@@ -43,49 +43,49 @@ sideBar.on('hide', async (contents:WebContents) => {
 
 let wantQuit = false;
 
-function configSwitch(value:string, command?: () => void):void {
+function configSwitch(value: string, command?: () => void): void {
 	if (appConfig.has(value)) {
-		appConfig.set(value, !appConfig.get(value))
+		appConfig.set(value, !appConfig.get(value));
 	} else {
-		appConfig.set(value, true)
+		appConfig.set(value, true);
 	}
 	if (command) command();
 }
 
-function updateMenuBarItem(id:string, value:boolean):void {
+function updateMenuBarItem(id: string, value: boolean): void {
 	const applicationMenu = Menu.getApplicationMenu();
-	if(applicationMenu!==null) {
+	if (applicationMenu !== null) {
 		const menuitem = applicationMenu.getMenuItemById(id);
-		if(menuitem!==null) menuitem.enabled = value;
+		if (menuitem !== null) menuitem.enabled = value;
 	}
 }
 
 // Contex Menu with spell checker
 
-export function context (windowName: BrowserWindow): void {
+export function context(windowName: BrowserWindow): void {
 	const strings = new TranslatedStrings();
 	windowName.webContents.on('context-menu', (event, params) => {
-		const cmenu:(MenuItemConstructorOptions|MenuItem)[] = [
-			{ type: 'separator'},
+		const cmenu: (MenuItemConstructorOptions | MenuItem)[] = [
+			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut', enabled: params.editFlags.canCut },
 			{ label: strings.context.copy, role: 'copy', enabled: params.editFlags.canCopy },
 			{ label: strings.context.paste, role: 'paste', enabled: params.editFlags.canPaste },
-			{ type: 'separator'}
+			{ type: 'separator' }
 		];
-		let position=0;
+		let position = 0;
 		for (const suggestion of params.dictionarySuggestions) {
-			cmenu.splice(++position,0,{
+			cmenu.splice(++position, 0, {
 				label: suggestion,
 				click: () => windowName.webContents.replaceMisspelling(suggestion)
 			});
 		}
 		if (params.misspelledWord) {
-			cmenu.splice(++position,0,{type:'separator'});
-			cmenu.splice(++position,0,{
+			cmenu.splice(++position, 0, { type: 'separator' });
+			cmenu.splice(++position, 0, {
 				label: strings.context.dictionaryAdd,
 				click: () => windowName.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
 			});
-			cmenu.splice(++position,0,{type:'separator'});
+			cmenu.splice(++position, 0, { type: 'separator' });
 		}
 		if (params.linkURL) {
 			cmenu.push({
@@ -96,26 +96,26 @@ export function context (windowName: BrowserWindow): void {
 				label: strings.context.copyURLText,
 				click: () => clipboard.writeText(params.linkText)
 			});
-			cmenu.push({type:'separator'});
+			cmenu.push({ type: 'separator' });
 		}
 		if (getDevel(devel, configData.devel)) {
 			cmenu.push({
 				label: strings.context.inspectElement,
-				click: () => windowName.webContents.inspectElement(params.x,params.y)
+				click: () => windowName.webContents.inspectElement(params.x, params.y)
 			});
-			cmenu.push({type:'separator'});
+			cmenu.push({ type: 'separator' });
 		}
 		Menu.buildFromTemplate(cmenu).popup({
 			window: windowName,
 			x: params.x,
 			y: params.y
 		});
-	})
+	});
 }
 
 let funMode = 0;
 const today = new Date();
-if(os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.getMonth() == 3)) {
+if (os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.getMonth() == 3)) {
 	funMode = 1; // There's always fun for me ;)
 } else if (os.userInfo().username == 'pi' && today.getDate() == 14 && today.getMonth() == 2) {
 	funMode = 2; // Happy π day!
@@ -123,14 +123,14 @@ if(os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.get
 
 // Tray menu
 
-export async function tray (windowName: BrowserWindow, childCSP: string): Promise<Tray> {
+export async function tray(windowName: BrowserWindow, childCSP: string): Promise<Tray> {
 	const strings = new TranslatedStrings();
 	const tray = new Tray(appInfo.trayIcon);
-	let image:string|nativeImage;
+	let image: string | nativeImage;
 	if (funMode === 2) {
 		image = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
 	} else {
-		image = nativeImage.createFromPath(appInfo.trayIcon).resize({width:16})
+		image = nativeImage.createFromPath(appInfo.trayIcon).resize({ width: 16 });
 	}
 	const contextMenu = Menu.buildFromTemplate([
 		{
@@ -152,7 +152,7 @@ export async function tray (windowName: BrowserWindow, childCSP: string): Promis
 						nodeIntegration: false,
 						contextIsolation: true
 					}
-				})
+				});
 				if (appConfig.get('csp.disabled')) {
 					child.webContents.session.webRequest.onHeadersReceived((details, callback) => {
 						callback({
@@ -177,7 +177,7 @@ export async function tray (windowName: BrowserWindow, childCSP: string): Promis
 		{
 			label: strings.help.about,
 			role: 'about',
-			click: function() { app.showAboutPanel();}
+			click: function () { app.showAboutPanel(); }
 		},
 		{
 			label: strings.help.bugs,
@@ -186,12 +186,13 @@ export async function tray (windowName: BrowserWindow, childCSP: string): Promis
 		{ type: 'separator' },
 		{
 			label: strings.tray.toggle,
-			click: function() { 
+			click: function () {
 				windowName.isVisible() ? windowName.hide() : windowName.show(); 
 			} 
 		},
-		{ label: strings.tray.quit,
-			click: function(){
+		{
+			label: strings.tray.quit,
+			click: function () {
 				wantQuit = true;
 				app.quit();
 			}
@@ -201,7 +202,7 @@ export async function tray (windowName: BrowserWindow, childCSP: string): Promis
 	tray.setToolTip(app.getName());
 	// Exit to the tray
 	windowName.on('close', (event) => {
-		if (!wantQuit){
+		if (!wantQuit) {
 			event.preventDefault();
 			windowName.hide();
 		}
@@ -211,33 +212,33 @@ export async function tray (windowName: BrowserWindow, childCSP: string): Promis
 
 // Menu Bar
 
-export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
+export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 	const strings = new TranslatedStrings();
-	const webLink = repoLink.substring(repoLink.indexOf("+")+1);
+	const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
 	const devMode = getDevel(devel, configData.devel);
 
-	const csp:MenuItem|MenuItemConstructorOptions[] = [];
-	const websitesThirdParty:[string,string][] = [
-		['algolia','Algolia'],
-		['spotify','Spotify'],
-		['hcaptcha','hCaptcha'],
-		['paypal','PayPal'],
-		['gif',strings.menubar.file.options.csp.gifProviders],
-		['youtube','YouTube'],
-		['twitter','Twitter'],
-		['twitch','Twitch'],
-		['streamable','Streamable'],
-		['vimeo','Vimeo'],
-		['funimation','Funimation'],
-		['audius','Audius'],
-		['soundcloud','SoundCloud']
-	]
+	const csp: MenuItem | MenuItemConstructorOptions[] = [];
+	const websitesThirdParty: [string, string][] = [
+		['algolia', 'Algolia'],
+		['spotify', 'Spotify'],
+		['hcaptcha', 'hCaptcha'],
+		['paypal', 'PayPal'],
+		['gif', strings.menubar.file.options.csp.gifProviders],
+		['youtube', 'YouTube'],
+		['twitter', 'Twitter'],
+		['twitch', 'Twitch'],
+		['streamable', 'Streamable'],
+		['vimeo', 'Vimeo'],
+		['funimation', 'Funimation'],
+		['audius', 'Audius'],
+		['soundcloud', 'SoundCloud']
+	];
 	for (const website of websitesThirdParty.sort()) {
 		csp.push({
 			label: website[1],
 			type: 'checkbox',
-			checked: !appConfig.get('csp.thirdparty.'+website[0]),
-			click: function () { return configSwitch('csp.thirdparty.'+website[0]); }
+			checked: !appConfig.get('csp.thirdparty.' + website[0]),
+			click: function () { return configSwitch('csp.thirdparty.' + website[0]); }
 		});
 	}
 
@@ -270,7 +271,8 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 				},
 				{ type: 'separator' },
 				// Content Security Policy
-				{ label: strings.menubar.file.options.csp.groupName, submenu: [
+						{
+							label: strings.menubar.file.options.csp.groupName, submenu: [
 					{
 						label: strings.menubar.enabled,
 						type: 'checkbox',
@@ -285,7 +287,8 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 						enabled: !appConfig.get('csp.disabled'),
 						submenu: csp
 					}
-				]},
+							]
+						},
 				// "Developer mode" switch
 				{
 					label: strings.menubar.file.options.develMode,
@@ -293,7 +296,7 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 					enabled: !devMode,
 					click: () => {
 						if (!appConfig.get('devel')) {
-							const answer:number=dialog.showMessageBoxSync({
+									const answer: number = dialog.showMessageBoxSync({
 								type: "warning",
 								title: strings.dialog.warning,
 								message: strings.dialog.devel,
@@ -303,7 +306,7 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 								],
 								cancelId: 1
 							});
-							if(answer===0) configSwitch('devel', () => {
+									if (answer === 0) configSwitch('devel', () => {
 								updateMenuBarItem('devTools', !devMode);
 							});
 						} else {
@@ -313,28 +316,31 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 						}
 					}
 				}
-			]},
+					]
+				},
 			// Extensions (Work In Progress state)
-			{ label: strings.menubar.file.addon.groupName, visible: devMode, submenu: [
+				{
+					label: strings.menubar.file.addon.groupName, visible: devMode, submenu: [
 				// Node-based extensions
 				{
 					label: strings.menubar.file.addon.loadNode,
 					enabled: devel,
-					click: () => { loadNodeAddons(mainWindow) }
+							click: () => { loadNodeAddons(mainWindow); }
 				},
 				// Chrome/Chromium extensions
 				{
 					label: strings.menubar.file.addon.loadChrome,
 					enabled: devel,
-					click: () => { loadChromeAddons(mainWindow) }
+							click: () => { loadChromeAddons(mainWindow); }
 				}
-			]},
+					]
+				},
 			{ type: 'separator' },
 			// Reset
 			{
 				label: strings.menubar.file.relaunch,
 				click: () => {
-					wantQuit=true;
+						wantQuit = true;
 					app.relaunch();
 					app.quit();
 				}
@@ -344,15 +350,17 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 				label: strings.menubar.file.quit,
 				accelerator: 'CmdOrCtrl+Q',
 				click: () => {
-					wantQuit=true;
+						wantQuit = true;
 					app.quit();
 				}
 			}
-		]},
+			]
+		},
 		// Edit
-		{ role: 'editMenu', label: strings.menubar.edit},
+		{ role: 'editMenu', label: strings.menubar.edit },
 		// View
-		{ label: strings.menubar.view.groupName, submenu: [
+		{
+			label: strings.menubar.view.groupName, submenu: [
 			// Reload
 			{ label: strings.menubar.view.reload, role: 'reload' },
 			// Force reload
@@ -373,9 +381,11 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 			{ type: 'separator' },
 			// Toggle full screen
 			{ label: strings.menubar.view.fullScreen, role: 'togglefullscreen' }
-		]},
+			]
+		},
 		// Window
-		{ label: strings.menubar.window, submenu: [
+		{
+			label: strings.menubar.window, submenu: [
 			// Hide side bar
 			{
 				label: strings.menubar.file.options.mobileMode,
@@ -383,25 +393,28 @@ export function bar (repoLink: string, mainWindow: BrowserWindow): Menu {
 				accelerator: 'CmdOrCtrl+Alt+M',
 				checked: false,
 				click: () => configSwitch('mobileMode', async () => {
-					if ((sideBar.listenerCount('show')+sideBar.listenerCount('hide')) > 1) {
+						if ((sideBar.listenerCount('show') + sideBar.listenerCount('hide')) > 1) {
 						sideBar.emit('show');
 					} else {
 						sideBar.emit('hide', mainWindow.webContents);
 					}
 				})
 			}
-		]},
+			]
+		},
 		// Help
-		{ label: strings.help.groupName, role: 'help', submenu: [
+		{
+			label: strings.help.groupName, role: 'help', submenu: [
 			// About
-			{ label: strings.help.about, role: 'about', click: function() { app.showAboutPanel();}},
+				{ label: strings.help.about, role: 'about', click: function () { app.showAboutPanel(); } },
 			// Repository
-			{ label: strings.help.repo, click: function() { shell.openExternal(webLink);} },
+				{ label: strings.help.repo, click: function () { shell.openExternal(webLink); } },
 			// Documentation
-			{ label: strings.help.docs, click: function() { shell.openExternal(webLink+'#documentation');} },
+				{ label: strings.help.docs, click: function () { shell.openExternal(webLink + '#documentation'); } },
 			// Report a bug
 			{ label: strings.help.bugs, click: createGithubIssue }
-		]}
+			]
+		}
 	]);
 	Menu.setApplicationMenu(menu);
 	return menu;

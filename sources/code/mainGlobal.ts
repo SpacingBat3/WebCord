@@ -16,8 +16,8 @@ import { packageJson, Person } from './global';
  * needs to be improved before releasing. To test these features, you have to run
  * app from the sources with `npm start` command.
  */
-export function guessDevel ():{ devel:boolean, devFlag:string, appIconDir:string } {
-	let devel:boolean, devFlag:string, appIconDir:string;
+export function guessDevel(): { devel: boolean, devFlag: string, appIconDir: string; } {
+	let devel: boolean, devFlag: string, appIconDir: string;
 	if (app.getAppPath().indexOf(".asar") < 0) {
 		devel = true;
 		devFlag = " [DEV]";
@@ -27,13 +27,13 @@ export function guessDevel ():{ devel:boolean, devFlag:string, appIconDir:string
 		devFlag = "";
 		appIconDir = path.join(app.getAppPath(), "..");
 	}
-	return { devel:devel, devFlag:devFlag, appIconDir:appIconDir }
+	return { devel: devel, devFlag: devFlag, appIconDir: appIconDir };
 }
 
-function person2string(person:Person):string {
-	if(person.name)
-		return person.name
-	return person
+function person2string(person: Person) {
+	if (person.name)
+		return person.name;
+	return person;
 }
 
 /** Basic application details. */
@@ -41,7 +41,7 @@ export const appInfo = {
 	/** Application repository details */
     repository: {
 		/** Repository indentifier in format `author/name`. */
-		name: person2string(packageJson.author)+'/'+app.getName(),
+		name: person2string(packageJson.author) + '/' + app.getName(),
 		/** Web service on which app repository is published. */
 		provider: 'github.com'
 	},
@@ -52,30 +52,30 @@ export const appInfo = {
     URL: 'https://watchanimeattheoffice.com/app',
     minWinHeight: 412,
     minWinWidth: 312
-}
+};
 
-function isJson (string:string) {
+function isJson(string: string) {
 	try {
 		JSON.parse(string);
 	} catch {
-		return false
+		return false;
 	}
-	return true
+	return true;
 }
 
 // Check configuration files for errors
 
-const configs:Array<string> = [
-	app.getPath('userData')+"/config.json",
-	app.getPath('userData')+"/windowState.json"
-]
+const configs: Array<string> = [
+	app.getPath('userData') + "/config.json",
+	app.getPath('userData') + "/windowState.json"
+];
 
 for (const file of configs) {
-	if(fs.existsSync(file)) {
-		const stringOfFile = fs.readFileSync(file).toString()
-		if(!isJson(stringOfFile)) {
+	if (fs.existsSync(file)) {
+		const stringOfFile = fs.readFileSync(file).toString();
+		if (!isJson(stringOfFile)) {
 			fs.rmSync(file);
-			console.warn("[WARN] Removed '"+path.basename(file)+"' due to syntax errors.")
+			console.warn("[WARN] Removed '" + path.basename(file) + "' due to syntax errors.");
 		}
 	}
 }
@@ -109,10 +109,10 @@ export const configData = deepmerge({
 			audius: false
 		}
 	}
-}, appConfig.all())
+}, appConfig.all());
 
-export function getDevel(dev:boolean,conf:boolean):boolean {
-	if(dev) {
+export function getDevel(dev: boolean, conf: boolean): boolean {
+	if (dev) {
 		return dev;
 	} else {
 		return conf;

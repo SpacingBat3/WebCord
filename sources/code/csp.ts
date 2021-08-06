@@ -1,5 +1,5 @@
 /* csp.ts – Content Security Policy generation */
- 
+
 import { configData } from "./mainGlobal";
 
 // Default + script
@@ -63,7 +63,7 @@ if (!configData.csp.thirdparty.algolia) {
 csp += "; media-src 'self' blob: https://*.discordapp.net https://*.discord.com https://*.discordapp.com";
 if (!configData.csp.thirdparty.gif) {
     csp += " https://*.gfycat.com https://*.giphy.com https://i.imgur.com"; // GIF providers
-    csp += " https://media.tenor.co https://media.tenor.com https://c.tenor.com"
+    csp += " https://media.tenor.co https://media.tenor.com https://c.tenor.com";
 }
 if (!configData.csp.thirdparty.streamable) {
     csp += " https://streamable.com"; // Streamable
@@ -86,19 +86,19 @@ if (!configData.csp.thirdparty.paypal) {
     csp += " https://checkout.paypal.com"; // PayPal
 }
 if (!configData.csp.thirdparty.vimeo) {
-    csp += " https://player.vimeo.com" // Vimeo
+    csp += " https://player.vimeo.com"; // Vimeo
 }
 if (!configData.csp.thirdparty.youtube) {
-    csp += " https://www.youtube.com/embed/" // YouTube
+    csp += " https://www.youtube.com/embed/"; // YouTube
 }
 if (!configData.csp.thirdparty.soundcloud) {
-    csp += " https://w.soundcloud.com/player/" // Vimeo
+    csp += " https://w.soundcloud.com/player/"; // Vimeo
 }
 if (!configData.csp.thirdparty.audius) {
-    csp += " https://audius.co/embed/" // Vimeo
+    csp += " https://audius.co/embed/"; // Vimeo
 }
 if (!configData.csp.thirdparty.spotify) {
-    csp += " https://open.spotify.com/embed/" // Vimeo
+    csp += " https://open.spotify.com/embed/"; // Vimeo
 }
 
 // Child

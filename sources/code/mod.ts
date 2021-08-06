@@ -4,7 +4,7 @@
 
 import { app, dialog, BrowserWindow } from 'electron';
 import * as fs from 'fs';
-import * as path from 'path'
+import * as path from 'path';
 import { TranslatedStrings } from './lang';
 /**
  * Function used to load Node-based WebCord modification (packaged in ASAR format).
@@ -20,7 +20,7 @@ import { TranslatedStrings } from './lang';
  * 
  * @param window Electron's `BrowserWindow` object.
  */
-export async function loadNodeAddons(window:BrowserWindow):Promise<void>{
+export async function loadNodeAddons(window: BrowserWindow): Promise<void> {
     const strings = new TranslatedStrings();
     const files = dialog.showOpenDialogSync({
         title: strings.menubar.file.addon.loadNode,
@@ -29,32 +29,32 @@ export async function loadNodeAddons(window:BrowserWindow):Promise<void>{
         ]
     });
     console.log(files);
-    if (files===undefined) return;
+    if (files === undefined) return;
     for (const file of files) {
-        const modJson = JSON.parse(fs.readFileSync(file+"/package.json",'utf-8'));
-        if(modJson===undefined) return;
+        const modJson = JSON.parse(fs.readFileSync(file + "/package.json", 'utf-8'));
+        if (modJson === undefined) return;
         const modInfo = {
-            name: modJson.productName||modJson.name||"Modified",
-            icon: path.join(file+'/'+modJson.webcord.icon),
-            css: path.join(file+'/'+modJson.webcord.css),
-            preload: path.join(file+'/'+modJson.webcord.preload)
-        }
-        console.log('CSS: '+fs.existsSync(modInfo.css));
-        console.log('Preload: '+fs.existsSync(modInfo.preload));
+            name: modJson.productName || modJson.name || "Modified",
+            icon: path.join(file + '/' + modJson.webcord.icon),
+            css: path.join(file + '/' + modJson.webcord.css),
+            preload: path.join(file + '/' + modJson.webcord.preload)
+        };
+        console.log('CSS: ' + fs.existsSync(modInfo.css));
+        console.log('Preload: ' + fs.existsSync(modInfo.preload));
         if (!fs.existsSync(modInfo.preload) && !fs.existsSync(modInfo.css)) {
             console.error("Failed on loading extension!");
             return;
         }
-        app.setName(app.getName()+' ('+modInfo.name+')');
+        app.setName(app.getName() + ' (' + modInfo.name + ')');
         if (fs.existsSync(modInfo.icon)) window.setIcon(modInfo.icon);
         if (fs.existsSync(modInfo.css)) {
-            window.webContents.insertCSS(fs.readFileSync(modInfo.css,'utf-8'));
-            fs.readFileSync(modInfo.css,'utf-8');
+            window.webContents.insertCSS(fs.readFileSync(modInfo.css, 'utf-8'));
+            fs.readFileSync(modInfo.css, 'utf-8');
         }
     }
 }
 
-export async function loadChromeAddons(window:BrowserWindow):Promise<void> {
+export async function loadChromeAddons(window: BrowserWindow): Promise<void> {
     const strings = new TranslatedStrings();
     const session = window.webContents.session;
     const files = dialog.showOpenDialogSync({
@@ -63,6 +63,6 @@ export async function loadChromeAddons(window:BrowserWindow):Promise<void> {
             { name: strings.dialog.mod.crx, extensions: ["crx"] }
         ]
     });
-    if (files===undefined) return;
+    if (files === undefined) return;
     for (const file of files) session.loadExtension(file);
 }

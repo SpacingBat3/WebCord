@@ -28,12 +28,12 @@ import {
 /** Whenever `--start-minimized` or `-m` switch is used when running client. */
 let startHidden = false;
 {
-    const { hasSwitch } = app.commandLine
-    if (hasSwitch('version')||hasSwitch('v')) {
+    const { hasSwitch } = app.commandLine;
+    if (hasSwitch('version') || hasSwitch('v')) {
         console.log(app.getName() + ' v' + app.getVersion());
         app.exit();
-    } else if (hasSwitch('start-minimized')||hasSwitch('m')) {
-        startHidden = true
+    } else if (hasSwitch('start-minimized') || hasSwitch('m')) {
+        startHidden = true;
     }
 }
 
@@ -62,7 +62,7 @@ import {
 } from './mainGlobal';
 
 import { packageJson } from './global';
-import { discordContentSecurityPolicy } from './csp'
+import { discordContentSecurityPolicy } from './csp';
 
 // Check if we are using the packaged version:
 
@@ -92,7 +92,7 @@ const chromiumVersion: string = process.versions.chrome;
 
 
 /*
- * Remember to add yourself to the contributors array in the package.json
+ * Remember to add yourself to the 'contributors' array in the package.json
  * if you're improving the code of this application
  */
 
@@ -109,7 +109,8 @@ if (process.platform === "linux") {
 
 }
 
-if (Array.isArray(packageJson.contributors) && packageJson.contributors.length > 0) {
+// Generate contributors list and additionally try to parse if it is defined
+if (packageJson.contributors !== undefined && packageJson.contributors.length > 0) {
     for (let n = 0; n < packageJson.contributors.length; n++) {
         // Guess "person" format:
         if (packageJson.contributors[n].name) {
@@ -127,6 +128,7 @@ if (Array.isArray(packageJson.contributors) && packageJson.contributors.length >
                 appContributors.push(packageJson.contributors[n].name);
             }
         } else {
+            // TODO: Parse contributors string to generate a proper output (hyperlinks for Linux and name for others).
             appContributors.push(packageJson.contributors[n]);
         }
     }
@@ -220,15 +222,15 @@ function createWindow(): BrowserWindow {
         const trustedURLs = [
             appInfo.rootURL,
             'devtools://'
-        ]
+        ];
         win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
-            let websiteURL:string;
-            (webContents!==null&&webContents.getURL()!=="") ? websiteURL = webContents.getURL() : websiteURL = requestingOrigin;
+            let websiteURL: string;
+            (webContents !== null && webContents.getURL() !== "") ? websiteURL = webContents.getURL() : websiteURL = requestingOrigin;
             // In some cases URL might be empty string, it should be denied then for that reason.
-            if(websiteURL==="")
+            if (websiteURL === "")
                 return false;
             const originURL = new URL(websiteURL).origin;
-            for(const secureURL of trustedURLs) {
+            for (const secureURL of trustedURLs) {
                 if (originURL.startsWith(secureURL)) {
                     return true;
                 }
@@ -237,7 +239,7 @@ function createWindow(): BrowserWindow {
             return false;
         });
         win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
-            for(const secureURL of trustedURLs) {
+            for (const secureURL of trustedURLs) {
                 if (webContents.getURL().startsWith(secureURL)) {
                     return callback(true);
                 }
@@ -273,9 +275,9 @@ function createWindow(): BrowserWindow {
             const trustedProtocolArray = [
                 'https://',
                 'mailto:'
-            ]
-            for(const protocol of trustedProtocolArray) {
-                if(details.url.startsWith(protocol)) shell.openExternal(details.url);
+            ];
+            for (const protocol of trustedProtocolArray) {
+                if (details.url.startsWith(protocol)) shell.openExternal(details.url);
             }
             return { action: 'deny' };
         });
@@ -284,9 +286,9 @@ function createWindow(): BrowserWindow {
     // "Red dot" icon feature
 
     win.webContents.once('did-finish-load', () => {
-        win.webContents.on('page-favicon-updated', async (event,favicons) => {
+        win.webContents.on('page-favicon-updated', async (event, favicons) => {
             const t = await tray;
-            if(!configData.disableTray) if(favicons[0] === discordFavicons.default || favicons[0] === discordFavicons.unread)
+            if (!configData.disableTray) if (favicons[0] === discordFavicons.default || favicons[0] === discordFavicons.unread)
                 t.setImage(appInfo.trayIcon);
             else
                 t.setImage(appInfo.trayPing);

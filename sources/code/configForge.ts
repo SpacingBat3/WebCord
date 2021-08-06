@@ -5,37 +5,37 @@
 // Let's import some keys from the package.json:
 
 import { packageJson } from './global';
-import { ForgeConfig, ForgePlatform } from '@electron-forge/shared-types'
+import { ForgeConfig, ForgePlatform } from '@electron-forge/shared-types';
 
 // Global variables in the config:
-const iconFile="sources/assets/icons/app"
-const desktopGeneric = "Internet Messenger"
-const desktopCategories = ["Network","InstantMessaging"]
+const iconFile = "sources/assets/icons/app";
+const desktopGeneric = "Internet Messenger";
+const desktopCategories = ["Network", "InstantMessaging"];
 
 type Redeclare<I, M> = Omit<I, keyof M> & M;
 
-type ForgeConfigFile = Redeclare<ForgeConfig,{
-    plugins?: ForgeConfig["plugins"];
-    pluginInterface?: ForgeConfig["pluginInterface"];
-    electronRebuildConfig?: ForgeConfig["electronRebuildConfig"];
-    makers?: ForgeConfig["makers"] | {
-      name: string;
-      platforms?: ForgePlatform[] | null;
-      config?: Record<string, unknown>;
-    }[]
-}>
+type ForgeConfigFile = Redeclare<ForgeConfig, {
+  plugins?: ForgeConfig["plugins"];
+  pluginInterface?: ForgeConfig["pluginInterface"];
+  electronRebuildConfig?: ForgeConfig["electronRebuildConfig"];
+  makers?: ForgeConfig["makers"] | {
+    name: string;
+    platforms?: ForgePlatform[] | null;
+    config?: Record<string, unknown>;
+  }[];
+}>;
 
-const config:ForgeConfigFile = {
+const config: ForgeConfigFile = {
   packagerConfig: {
     executableName: packageJson.name, // name instead of the productName
     asar: true,
     icon: iconFile, // used in Windows and MacOS binaries
     extraResource: [
       "LICENSE",
-      iconFile+".png"
+      iconFile + ".png"
     ],
     quiet: true,
-    ignore:[
+    ignore: [
       /docs/,
       /build/,
       /extra/,
@@ -56,7 +56,7 @@ const config:ForgeConfigFile = {
       name: "electron-forge-maker-appimage",
       config: {
         options: {
-          icon: iconFile+".png",
+          icon: iconFile + ".png",
           genericName: desktopGeneric,
           categories: desktopCategories,
           compression: "gzip" // "xz" is too slow for the Electron AppImages
@@ -67,7 +67,7 @@ const config:ForgeConfigFile = {
       name: "@electron-forge/maker-deb",
       config: {
         options: {
-          icon: iconFile+".png",
+          icon: iconFile + ".png",
           section: "web",
           genericName: desktopGeneric,
           categories: desktopCategories
@@ -79,7 +79,7 @@ const config:ForgeConfigFile = {
       platforms: [],
       config: {
         options: {
-          icon: iconFile+".png",
+          icon: iconFile + ".png",
           genericName: desktopGeneric,
           categories: desktopCategories
         }
@@ -98,6 +98,6 @@ const config:ForgeConfigFile = {
       }
     }
   ]
-}
+};
 
-module.exports = config
+module.exports = config;
