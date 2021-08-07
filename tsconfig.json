@@ -18,6 +18,8 @@
         "outDir": "sources/app",
         /* Whenever comments are emitted to files */
         "removeComments": true,
+        /* Ignore errors in dependencies. */
+        "skipLibCheck": true
     },
     "include": [
         /* Main process scripts */
