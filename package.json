@@ -1,7 +1,7 @@
 {
   "name": "webcord",
   "productName": "WebCord",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "A Discord Web App made with the Electron API.",
   "main": "sources/app/main.js",
   "scripts": {
