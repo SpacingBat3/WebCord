@@ -8,7 +8,7 @@ export default function crashHandler():void {
         let stack = "", message = "", stackColor = "";
         const name = "UncaughtException: " + app.getName() + " threw '" + error.name + "'.";
         if (error.message !== "")
-            message = "\n\n" + error.message + "\n\n";
+            message = "\n\n" + error.message;
 
 
         if (error.stack !== undefined) {
@@ -20,16 +20,16 @@ export default function crashHandler():void {
             for (const line of stackLines)
                 if (line.match(RegExp("at.*\\(" + app.getAppPath() + ".*\\).*", 'g'))) {
                     stackProcessed.push(line);
-                    stackColorProcessed.push(colors.bgRed(colors.white(line)));
-                } else {
                     stackColorProcessed.push(line);
+                } else {
+                    stackColorProcessed.push(colors.gray(line));
                 }
             stack = stackProcessed.join('\n');
             stackColor = stackColorProcessed.join('\n');
         }
 
         await app.whenReady();
-        console.error('\n' + name + message + stackColor);
+        console.error('\n' + colors.red(colors.bold(name)) + colors.blue(message) + stackColor);
         dialog.showMessageBoxSync({
             title: name,
             message: message + stack,
