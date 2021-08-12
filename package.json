@@ -3,7 +3,7 @@
   "productName": "WebCord",
   "version": "1.6.1",
   "description": "A Discord Web App made with the Electron API.",
-  "main": "sources/app/main.js",
+  "main": "sources/app/main/main.js",
   "scripts": {
     "test": "tsc && eslint --ext .ts .",
     "lint": "eslint --ext .ts .",
