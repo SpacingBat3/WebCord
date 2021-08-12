@@ -1,6 +1,7 @@
 /* csp.ts – Content Security Policy generation */
 
-import { configData } from "./mainGlobal";
+import { AppConfig } from './config';
+const configData = (new AppConfig()).get();
 
 // Default + script
 

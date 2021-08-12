@@ -4,7 +4,7 @@
 
 import { app, shell } from "electron";
 import * as newGithubIssueUrl from "new-github-issue-url";
-import { appInfo } from "./mainGlobal";
+import { appInfo } from "../main/properties";
 import fetch from "electron-fetch";
 
 /**

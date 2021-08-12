@@ -49,6 +49,7 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.59",
     "@electron-forge/maker-zip": "^6.0.0-beta.59",
     "@electron-forge/publisher-github": "^6.0.0-beta.59",
+    "@types/lodash": "^4.14.172",
     "@types/source-map-support": "^0.5.3",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
@@ -63,11 +64,12 @@
     "colors": "^1.4.0",
     "deepmerge": "^4.2.2",
     "electron-fetch": "^1.7.3",
-    "electron-json-config": "^2.0.0-beta",
+    "lodash": "^4.17.21",
     "new-github-issue-url": "^0.2.1",
     "source-map-support": "^0.5.19"
   },
   "config": {
-    "forge": "./sources/app/configForge.js"
-  }
+    "forge": "./sources/app/forge/config.js"
+  },
+  "private": true
 }

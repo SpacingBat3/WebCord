@@ -3,7 +3,7 @@
  */
 
 import { app, Notification, shell, net } from 'electron';
-import { appInfo } from './mainGlobal';
+import { appInfo } from './properties';
 import fetch from 'electron-fetch';
 import { TranslatedStrings } from './lang';
 

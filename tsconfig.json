@@ -23,8 +23,14 @@
     },
     "include": [
         /* Main process scripts */
-        "sources/code/*.ts",
+        "sources/code/main/*.ts",
+        /* Internal modules */
+        "sources/code/internalModules/*.ts",
         /* Renderer process scripts */
-        "sources/code/renderer/*.ts"
+        "sources/code/renderer/*.ts",
+        /* Electron Forge specific scripts */
+        "sources/code/forge/*.ts",
+        /* Global modules and variables */
+        "sources/code/global.ts"
     ]
 }

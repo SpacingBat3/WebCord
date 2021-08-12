@@ -6,7 +6,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as deepmerge from "deepmerge";
 import { app } from "electron";
-import { jsonParseWithComments } from "./global";
+import JSONC from "../internalModules/jsoncParser"
 
 function jsonOrJsonc(fileNoExtension: string): string {
 	if (fs.existsSync(fileNoExtension + '.jsonc'))
@@ -209,9 +209,9 @@ export class TranslatedStrings {
 			"[WARN] In this case, English strings will be used as a fallback.\n"
 		);
 
-		l10nStrings = jsonParseWithComments({ path: jsonOrJsonc(fallbackStrings) });
+		l10nStrings = JSONC.parse({ path: jsonOrJsonc(fallbackStrings) });
 		if (fs.existsSync(jsonOrJsonc(localizedStrings)) && localizedStrings !== fallbackStrings) {
-			localStrings = jsonParseWithComments({ path: jsonOrJsonc(localizedStrings) });
+			localStrings = JSONC.parse({ path: jsonOrJsonc(localizedStrings) });
 			l10nStrings = deepmerge(l10nStrings, localStrings);
 		}
 		if (isJsonTranslatedStrings(l10nStrings)) {

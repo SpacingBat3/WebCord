@@ -24,7 +24,7 @@ srcMap.install();
  * information).
  */
 
-import crashHandler from './crashHandler';
+import crashHandler from '../internalModules/crashHandler';
 
 crashHandler()
 
@@ -35,7 +35,6 @@ import {
     BrowserWindow,
     shell,
     Tray,
-    screen
 } from 'electron';
 
 // Handle command line switches:
@@ -70,13 +69,10 @@ import * as path from 'path';
 
 import {
     appInfo,
-    guessDevel,
-    configData,
-    winStorage,
-    appConfig
-} from './mainGlobal';
+    guessDevel
+} from './properties';
 
-import { packageJson } from './global';
+import { packageJson } from '../global';
 import { discordContentSecurityPolicy } from './csp';
 
 // Check if we are using the packaged version:
@@ -86,15 +82,16 @@ const { devel, devFlag } = guessDevel();
 // Load scripts:
 
 import { checkVersion } from './update';
-import { getUserAgent } from './userAgent';
+import { getUserAgent } from '../internalModules/userAgent';
 import * as getMenu from './menus';
 import { discordFavicons } from './favicons';
 import { TranslatedStrings } from './lang';
+import { WinStateKeeper , AppConfig } from './config';
 
-// Removes deprecated config properties (if they exists)
+// Removes deprecated config properties (TODO)
 
-const deprecated = ["csp.strict", "windowState", "css1Key"];
-appConfig.deleteBulk(deprecated);
+/*const deprecated = ["csp.strict", "windowState", "css1Key"];
+appConfig.deleteBulk(deprecated);*/
 
 
 // "About" information
@@ -153,7 +150,8 @@ if (packageJson.contributors !== undefined && packageJson.contributors.length > 
 
 const stringContributors = appContributors.join(', ');
 const singleInstance = app.requestSingleInstanceLock();
-let mainWindow: BrowserWindow, winHeight: number, winWidth: number;
+const configData = (new AppConfig().get());
+let mainWindow: BrowserWindow;
 let tray: Promise<Tray>, l10nStrings: TranslatedStrings, updateInterval: NodeJS.Timeout | undefined;
 
 // Year format for the copyright
@@ -189,7 +187,7 @@ function createWindow(): BrowserWindow {
 
     // Check the window state
 
-    const mainWindowState = windowStateKeeper('win');
+    const mainWindowState = new WinStateKeeper('mainWindow')
 
     // Browser window
 
@@ -197,11 +195,11 @@ function createWindow(): BrowserWindow {
         title: app.getName(),
         minWidth: appInfo.minWinWidth,
         minHeight: appInfo.minWinHeight,
-        height: mainWindowState.height,
-        width: mainWindowState.width,
-        backgroundColor: "#2F3136",
+        height: mainWindowState.initState.height,
+        width: mainWindowState.initState.width,
+        backgroundColor: "#36393F",
         icon: appInfo.icon,
-        show: !startHidden,
+        show: false,
         webPreferences: {
             enableRemoteModule: false,
             nodeIntegration: false, // Won't work with the true value.
@@ -209,6 +207,9 @@ function createWindow(): BrowserWindow {
             contextIsolation: false // Disabled because of the capturer.
         }
     });
+
+    if(mainWindowState.initState.isMaximized) win.maximize()
+    if(!startHidden) win.show()
 
     // Preload scripts:
 
@@ -266,7 +267,10 @@ function createWindow(): BrowserWindow {
     win.loadURL(appInfo.URL, { userAgent: fakeUserAgent });
     win.setAutoHideMenuBar(configData.hideMenuBar);
     win.setMenuBarVisibility(!configData.hideMenuBar);
-    mainWindowState.track(win);
+
+    // Keep window state
+
+    mainWindowState.watchState(win);
 
     // Load all menus:
 
@@ -328,64 +332,8 @@ function createWindow(): BrowserWindow {
     return win;
 }
 
-// Remember window state
-
-type windowStatus = {
-    width: number;
-    height: number;
-    isMaximized?: boolean;
-}
-
-function windowStateKeeper(windowName: string) {
-
-    let window: BrowserWindow, windowState: windowStatus;
-
-    function setBounds(): windowStatus {
-        let wS: windowStatus | undefined, wState: windowStatus;
-        if (winStorage.has(`${windowName}`)) {
-            wS = winStorage.get(`${windowName}`);
-            if (wS === undefined) {
-                wState = {
-                    width: winWidth,
-                    height: winHeight
-                };
-            } else {
-                wState = wS;
-            }
-        } else {
-            wState = {
-                width: winWidth,
-                height: winHeight
-            };
-        }
-        return wState;
-    }
-
-    function saveState(): void {
-        if (!windowState.isMaximized) {
-            windowState = window.getBounds();
-        }
-        windowState.isMaximized = window.isMaximized();
-        winStorage.set(`${windowName}`, windowState);
-    }
-
-    function track(win: BrowserWindow): void {
-        window = win;
-        win.on('resize', saveState);
-        win.on('close', saveState);
-    }
-    windowState = setBounds();
-    return ({
-        width: windowState.width,
-        height: windowState.height,
-        isMaximized: windowState.isMaximized,
-        track
-    });
-}
 
 function main(): void {
-    winWidth = appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3);
-    winHeight = appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3);
     l10nStrings = new TranslatedStrings();
     checkVersion(l10nStrings, devel, appInfo.icon, updateInterval);
     updateInterval = setInterval(function () { checkVersion(l10nStrings, devel, appInfo.icon, updateInterval); }, 1800000);
