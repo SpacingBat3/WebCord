@@ -136,7 +136,7 @@ const config: Partial<ForgeConfigFile> = {
     }
   ],
   hooks: {
-    packageAfterCopy: async (ForgeConfig, path) => {
+    packageAfterCopy: async (_ForgeConfig, path) => {
       const buildConfig = {
         type: getBuildID(),
         commit: (getBuildID() === "devel") ? getCommit() : undefined,
