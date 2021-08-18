@@ -26,8 +26,7 @@ import { AppConfig } from './config'
 
 const appConfig = new AppConfig()
 
-import { loadNodeAddons, loadChromeAddons } from '../internalModules/addonLoader';
-
+import { loadNodeAddons, loadChromeAddons } from '../main/mod';
 import fetch from 'electron-fetch';
 import * as os from 'os';
 import * as EventEmitter from 'events';
