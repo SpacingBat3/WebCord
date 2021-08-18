@@ -28,7 +28,7 @@ grouped in tables by platforms:
 
 ### Linux
 
-| <div align=center> Distribution </div>      | <div align=center> Recommended package </div>       |
+| <div align=center> Distributions </div>     | <div align=center> Recommended package </div>       |
 | :------------------------------------------ | :-------------------------------------------------- |
 | Debian / Ubuntu 64-bit (AMD or Intel)       | `webcord_{version}_amd64.deb`                       |
 | Debian / Ubuntu 32-bit (AMD or Intel)*      | `webcord_{version}_i386.deb`                        |
@@ -44,19 +44,18 @@ grouped in tables by platforms:
 | Linux ARM 64-bit distributions              | `webcord-{version}-arm64.AppImage`                  |
 | Linux ARM 32-bit distributions              | `webcord-{version}-armv7l.AppImage`                 |
 
-<div align='right'><sup>* Platforms deprecated by Electron. </sup></div>
-</div>
+<div align='right'><sup>* Platforms deprecated by Electron. </sup></div></div>
 
 ### 2. Image/video/content does not load properly, is there anything I can do about it?
 Yes, this is probably an issue due to Content Security Policy header not
-including all URLs that are allowed to load. You can disable it
-[in Settings](./Settings.md) as a workaround.
+including all URLs that are allowed to load. You can disable it [in Settings](./Settings.md)
+as a workaround.
 
 ### 3. How to get a microphone permission for WebCord?
-You can't, as it is aquired automatically when Discord website asks for it.
-In fact, this is rather an issue with your system audio settings – for some reason,
-Electron doesn't seems to get access to microphone when there's no default/fallback
-device set. To fix it, set your microphone as default/fallback in your system's
-audio settings and restart the application – make sure it's properly
+You can't, as it is aquired automatically when Discord website asks for it. In
+fact, this is rather an issue with your system audio settings – for some reason,
+Electron doesn't seems to get access to microphone when there's no default /
+fallback device set. To fix it, set your microphone as default/fallback in your
+system's audio settings and restart the application – make sure it's properly
 closed and there's no icon in tray nor electron/webcord process running in the
 background!
