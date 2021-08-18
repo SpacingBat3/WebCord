@@ -10,7 +10,7 @@ assignees: SpacingBat3
 ### Aknowledgements ###
 
 - [ ] There's no other issue describing the same problem, regardless of its current state (i.e. including both closed and open issues or flagged as fixed).\*
-- [ ] There's no fix for my issue released to `master` branch.\*
+- [ ] There's no fix for my issue released to `master` branch.
 - [ ] This is a bug with the one of the *unstable* features (e.g. Addon support).
 - [ ] This bug has known workaround (write it below).
 
