@@ -1,5 +1,5 @@
 
-import { readFileSync, PathLike } from "fs"
+import { readFileSync, PathLike } from "fs";
 
 type CommentRuleObject = {
     /** A `RegExp` matching commented text. */
@@ -17,28 +17,37 @@ type CommentRuleObject = {
 
 /** Parameters that can be parsed by `readFileSync` function of `fs` module. */
 type FsReadFileSyncParams = {
-	/** Path to file, same as `path` parameter in `readFileSync` function of `fs` module. */
-	path: PathLike;
-	/**
-	 * Encoding to use for convertion of text file data from Buffer to String.
-	 */
-	encoding?: BufferEncoding;
+    /** Path to file, same as `path` parameter in `readFileSync` function of `fs` module. */
+    path: PathLike;
+    /**
+     * Encoding to use for convertion of text file data from Buffer to String.
+     */
+    encoding?: BufferEncoding;
 };
+
+/** JSON with Comments parser module.
+ * 
+ * Allows for management over `*.jsonc` files, right now only by reading it.
+ * 
+ * @todo Creating JSONC files, JSONC templates, parsing JSONC to JSONC template.
+ * (JSONC template = comments + data as JavaScript object)
+ */
 
 const JSONC = {
     /**
-     * A funtion that parses the non-standard JSON file with comments
-     * to regular JavaScript object – currently `JSON.parse()` function
-     * should treat comments as syntax errors, as they are not a part
-     * of JSON standard.
+     * A funtion that parses the non-standard JSON file with comments to regular
+     * JavaScript object. This is achieved by parsing JSONC file to standard
+     * JSON format (by ommiting comments) and parsing it to JavaScript object
+     * using `JSON.parse()` method.
+     * 
+     * **Note**: Currently parsing `*.json` files that includes comments will
+     * cause a syntax error, as comments are not a part of JSON standard.
      * 
      * @param file Object containing `path` to file and optionally its `encoding`.
      * 
      * @param rules Array of `CommentRuleObject` objects that will be included to `commentRules`.
      * 
      * @returns Parsed JavaScript object.
-     * 
-     * @todo Publish JSONC support as separate module for other projects' use.
      * 
      * @example
      * 
@@ -111,6 +120,6 @@ const JSONC = {
         const jsonStringified = dataJson.join(newline);
         return JSON.parse(jsonStringified);
     }
-}
+};
 
 export default JSONC;
