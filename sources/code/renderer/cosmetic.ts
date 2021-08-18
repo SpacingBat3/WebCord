@@ -3,7 +3,8 @@
  */
 
 import { wLog } from '../global';
-{
+
+export default function preloadCosmetic():void {
   const removeUnneded = () => {
     // If user is at login/register website, do not apply any cosmetic changes
     if (document.URL.includes('login')||document.URL.includes('register')) return;
@@ -21,5 +22,5 @@ import { wLog } from '../global';
       setTimeout(removeUnneded, 500);
     }
   }
-  window.onload = removeUnneded;
+  window.addEventListener('load', removeUnneded);
 }

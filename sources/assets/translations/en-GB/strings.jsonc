@@ -29,18 +29,6 @@
 			 * Old options object
 			 * @deprecated
 			 */
-			"options": {
-				"groupName": "Settings",
-				"disableTray": "Disable tray",
-				"hideMenuBar": "Hide menu bar",
-				"mobileMode": "Hide side bar",
-				"csp": {
-					"groupName": "Content Security Policy",
-					"thirdparty": "Third-party websites",
-					"gifProviders": "GIF Providers"
-				},
-				"develMode": "Developer mode"
-			},
 			"addon": {
 				"groupName": "Extensions",
 				"loadNode": "Load node extension",
@@ -90,8 +78,7 @@
 			"nodeExt": "WebCord Node.js Addon",
 			"crx": "Chrome/Chromium Extension"
 		},
-		"hideMenuBar": "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to temporarily unhide menu bar.",
-		"devel": "When \"Developer mode\" is enabled, you have an access to experimental features, which may not work or be finished yet. This setting is for people with at least basic JavaScript or IT knowledge (which should at least know how to use the \"DevTools\"). Be aware you may even harm your operating system once you have enabled this setting. Proceed anyway?"
+		"hideMenuBar": "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to temporarily unhide menu bar."
 	},
 	/* Help menu (in menubar and partialy in tray context menu) */
 	"help":{
@@ -104,6 +91,7 @@
 		"credits": "Thanks to GyozaGuy for his Electron Discord app – it was a good source to learn about the Electron API and how make with it a Discord web app."
 	},
 	"settings": {
+		"title": "Settings",
 		"basic": {
 			"name": "Basic",
 			"group": {
@@ -122,6 +110,11 @@
 		"advanced": {
 			"name": "Advanced",
 			"group": {
+				"devel": {
+					"name": "Developer mode",
+					"description": "Enables the access to tools and unfinished options that might be dangerous in wrong hands. Disclaimer: If you break something after you switched this option on, don't expect from the app maintainers or anyone else to fix that!",
+					"label": "Enable developer mode"
+				},
 				"csp": {
 					"name": "Content Security Policy",
 					"description": "Sets a list of the websites from which Discord is allowed to display content (images, videos, iframes etc.) or connect to.",

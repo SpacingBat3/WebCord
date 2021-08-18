@@ -27,7 +27,6 @@ function isJsonTranslatedStrings(object: unknown): object is TranslatedStrings {
 		isTopObject = false;
 	return (
 		isTopObject &&
-		typeof ((object as TranslatedStrings).menubar.file.options.csp) === 'object' &&
 		typeof ((object as TranslatedStrings).menubar.file.addon.groupName) === 'string' &&
 		typeof ((object as TranslatedStrings).menubar.view) === 'object' &&
 		typeof ((object as TranslatedStrings).menubar.window) === 'string' &&
@@ -38,6 +37,7 @@ function isJsonTranslatedStrings(object: unknown): object is TranslatedStrings {
 		typeof ((object as TranslatedStrings).dialog.ver) === 'object' &&
 		typeof ((object as TranslatedStrings).settings.basic.group.menuBar) === 'object' &&
 		typeof ((object as TranslatedStrings).settings.basic.group.tray) === 'object' &&
+		typeof ((object as TranslatedStrings).settings.advanced.group.devel) === 'object' &&
 		typeof ((object as TranslatedStrings).settings.advanced.group.csp.group.thirdparty.list.gifProviders) === 'string'
 	);
 }
@@ -55,7 +55,7 @@ function isJsonTranslatedStrings(object: unknown): object is TranslatedStrings {
  * In other situations, there should be displayed `TypeError` and the application would eventually crash.
  */
 
-export class TranslatedStrings {
+class TranslatedStrings {
 	tray: {
 		toggle: string;
 		quit: string;
@@ -75,18 +75,6 @@ export class TranslatedStrings {
 			groupName: string;
 			quit: string;
 			relaunch: string;
-			options: {
-				groupName: string;
-				disableTray: string;
-				hideMenuBar: string;
-				mobileMode: string;
-				csp: {
-					groupName: string;
-					thirdparty: string;
-					gifProviders: string;
-				};
-				develMode: string;
-			};
 			addon: {
 				groupName: string;
 				loadNode: string;
@@ -134,8 +122,6 @@ export class TranslatedStrings {
 			nodeExt: string;
 			crx: string;
 		};
-		hideMenuBar: string;
-		devel: string;
 	};
 	help: {
 		groupName: string;
@@ -147,6 +133,7 @@ export class TranslatedStrings {
 		credits: string;
 	};
 	settings: {
+		title: string;
 		basic: {
 			name: string;
 			group: {
@@ -165,6 +152,11 @@ export class TranslatedStrings {
 		advanced: {
 			name: string;
 			group: {
+				devel: {
+					name: string;
+					description: string;
+					label: string;
+				}
 				csp: {
 					name: string;
 					description: string;
@@ -228,3 +220,5 @@ export class TranslatedStrings {
 		}
 	}
 }
+
+export default TranslatedStrings

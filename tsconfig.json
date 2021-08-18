@@ -19,7 +19,9 @@
         /* Whenever comments are emitted to files */
         "removeComments": true,
         /* Ignore errors in dependencies. */
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        /* ECMAScript supported standard */
+        "target": "ES2021"
     },
     "include": [
         /* Main process scripts */
@@ -28,6 +30,8 @@
         "sources/code/internalModules/*.ts",
         /* Renderer process scripts */
         "sources/code/renderer/*.ts",
+        /* Preload scripts */
+        "sources/code/renderer/preload/*",
         /* Electron Forge specific scripts */
         "sources/code/forge/*.ts",
         /* Global modules and variables */

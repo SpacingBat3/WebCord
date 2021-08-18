@@ -3,10 +3,8 @@ import * as deepmerge from "deepmerge";
 import { app, BrowserWindow, screen } from "electron";
 import { resolve } from "path"
 import { appInfo } from "./properties";
-import * as _ from "lodash";
-//import { TranslatedStrings } from "./lang"
 
- function isJsonSyntaxCorrect(string: string) {
+function isJsonSyntaxCorrect(string: string) {
 	try {
 		JSON.parse(string);
 	} catch {
@@ -32,18 +30,19 @@ export class AppConfig {
         csp: {
             disabled: false,
             thirdparty: {
-                spotify: false,
-                gif: false,
-                hcaptcha: false,
-                youtube: false,
-                twitter: false,
-                twitch: false,
-                streamable: false,
-                vimeo: false,
-                soundcloud: false,
-                paypal: false,
-                audius: false,
-                algolia: false,
+                spotify: true,
+                gif: true,
+                hcaptcha: true,
+                youtube: true,
+                twitter: true,
+                twitch: true,
+                streamable: true,
+                vimeo: true,
+                soundcloud: true,
+                paypal: true,
+                audius: true,
+                algolia: true,
+                funimation: true
             }
         }
     };
@@ -65,59 +64,6 @@ export class AppConfig {
         const oldObject = JSON.parse(fs.readFileSync(this.path).toString());
         const newObject = deepmerge(oldObject, object);
         this.write(newObject);
-    }
-    /**
-     * Gets the value from the configuration file of one of it's `keys`.
-     * Implemented for compatibility with old WebCord's settings GUI.
-     * 
-     * @param key A string representing one of the configuration keys in dot notation.
-     * @returns An value of the `unkown` type from the picked  `key`.
-     * 
-     * @example
-     * // Initializes the config methods / properties.
-     * const conf = new AppConfig();
-     * // Logs true or false
-     * console.log(conf.getProperty('csp.disabled'))
-     * // Cases the TypeError due to missing property
-     * console.log(conf.getProperty('dev.random'))
-     * 
-     * @deprecated Use `AppConfig.get()[key]` instead.
-     */
-    public getProperty(key: string): unknown {
-        const object = this.get();
-        return key
-            .split('.')
-            .reduce((partObject: unknown, property) => {
-                if (property in (partObject as Record<string, unknown>))
-                    return (partObject as Record<string, unknown>)[property];
-                else
-                    return undefined
-            }, object);
-    }
-    /** Checks if there's a property (in dot notation) set in config.
-     * 
-     * @deprecated
-     * - Class type strictly defines which properties exists or does not exist.
-     * - In the future, a TypeGuard will be made as a class method to check if
-     * JSON config type is correct when running the application and overwrite it
-     * if it is not.
-     */
-    public hasProperty(key: string): boolean {
-        return (this.getProperty(key) !== undefined)
-    }
-    /** 
-     * Overwrites single key with the value.
-     * Made for compatibility reasons with old WebCord's settings GUI.
-     * 
-     * @deprecated Use `AppConfig.set()` instead.
-     */
-    public setProperty(key: string, value: boolean): void {
-        const object = this.get();
-        /* 
-         * In the future I will remove the dependency on lodash.
-         */
-        _.set(object, key, value);
-        this.write(object);
     }
     /** Returns the entire parsed configuration file in form of the JavaScript object. */
     public get(): AppConfig["defaultConfig"] {

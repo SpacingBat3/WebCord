@@ -7,7 +7,6 @@ import {
 	BrowserWindow,
 	MenuItem,
 	Tray,
-	dialog,
 	shell,
 	nativeImage,
 	MenuItemConstructorOptions,
@@ -29,9 +28,11 @@ const appConfig = new AppConfig()
 import { loadNodeAddons, loadChromeAddons } from '../main/mod';
 import fetch from 'electron-fetch';
 import * as os from 'os';
-import * as EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import { createGithubIssue } from '../internalModules/bugReporter';
-import { TranslatedStrings } from './lang';
+import TranslatedStrings from './lang';
+import { HTMLSettingsGroup } from '../global';
+import deepmerge = require('deepmerge');
 
 const sideBar = new EventEmitter();
 const { devel } = guessDevel();
@@ -44,26 +45,6 @@ sideBar.on('hide', async (contents: WebContents) => {
 });
 
 let wantQuit = false;
-
-function configSwitch(value: string, command?: (newValue?: boolean) => void): void {
-	let newValue:boolean;
-	if (appConfig.hasProperty(value)) {
-		appConfig.setProperty(value, !appConfig.getProperty(value));
-		newValue = !appConfig.getProperty(value);
-	} else {
-		appConfig.setProperty(value, true);
-		newValue = true
-	}
-	if (command) command(newValue);
-}
-
-function updateMenuBarItem(id: string, value: boolean): void {
-	const applicationMenu = Menu.getApplicationMenu();
-	if (applicationMenu !== null) {
-		const menuitem = applicationMenu.getMenuItemById(id);
-		if (menuitem !== null) menuitem.enabled = value;
-	}
-}
 
 // Contex Menu with spell checker
 
@@ -143,6 +124,7 @@ export async function tray(windowName: BrowserWindow, childCSP: string): Promise
 			enabled: (funMode === 1),
 			icon: image,
 			click: () => {
+				windowName.show();
 				const child = new BrowserWindow({
 					parent: windowName,
 					title: "Top Secret Control Panel",
@@ -215,20 +197,15 @@ export async function tray(windowName: BrowserWindow, childCSP: string): Promise
 	return tray;
 }
 
-// Menu Bar
-
-export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
+function conf2html (config:AppConfig) {
 	const strings = new TranslatedStrings();
-	const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
-	const devMode = getDevel(devel, appConfig.get().devel);
-
-	const csp: MenuItem | MenuItemConstructorOptions[] = [];
+	const lang = strings.settings;
 	const websitesThirdParty: [string, string][] = [
 		['algolia', 'Algolia'],
 		['spotify', 'Spotify'],
 		['hcaptcha', 'hCaptcha'],
 		['paypal', 'PayPal'],
-		['gif', strings.menubar.file.options.csp.gifProviders],
+		['gif', strings.settings.advanced.group.csp.group.thirdparty.list.gifProviders],
 		['youtube', 'YouTube'],
 		['twitter', 'Twitter'],
 		['twitch', 'Twitch'],
@@ -238,99 +215,113 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 		['audius', 'Audius'],
 		['soundcloud', 'SoundCloud']
 	];
-	for (const website of websitesThirdParty.sort()) {
-		csp.push({
-			label: website[1],
-			type: 'checkbox',
-			checked: !appConfig.getProperty('csp.thirdparty.' + website[0]),
-			click: function () { return configSwitch('csp.thirdparty.' + website[0]); }
-		});
+	const cspChecklist: HTMLSettingsGroup["options"][0]["checklists"] = []
+	for (const stringGroup of websitesThirdParty) {
+		cspChecklist.push({
+			label: stringGroup[1],
+			id: "csp-thirdparty."+stringGroup[0],
+			isChecked: (appConfig.get().csp.thirdparty as Record<string, boolean>)[stringGroup[0]]
+		})
 	}
+	const csp: HTMLSettingsGroup = {
+		title: strings.settings.advanced.name,
+		options: [
+			{
+				name: strings.settings.advanced.group.csp.name,
+				description: strings.settings.advanced.group.csp.description,
+				checklists: cspChecklist
+			}
+		]
+	}
+	const general:HTMLSettingsGroup = {
+		title: lang.basic.name,
+		options: [
+			{
+				name: lang.basic.group.menuBar.name,
+				description: lang.basic.group.menuBar.description,
+				checklists: [
+					{
+						label: lang.basic.group.menuBar.label,
+						isChecked: config.get().hideMenuBar,
+						id: 'hideMenuBar'
+					}
+				]
+			},
+			{
+				name: lang.basic.group.tray.name,
+				description: lang.basic.group.tray.description,
+				checklists: [
+					{
+						label: lang.basic.group.tray.label,
+						isChecked: config.get().disableTray,
+						id: 'disableTray'
+					}
+				]
+			}
+		]
+	}
+	const advanced:HTMLSettingsGroup = deepmerge(csp, {
+		title: lang.advanced.name,
+		options: [
+			{
+				name: lang.advanced.group.devel.name,
+				description: lang.advanced.group.devel.description,
+				checklists: [
+					{
+						label: lang.advanced.group.devel.label,
+						id: 'devel',
+						isChecked: config.get().devel
+					}
+				],
+			}
+		]
+	});
+	return [general, advanced];
+}
 
+function loadSettingsWindow(parent:BrowserWindow) {
+	const strings = (new TranslatedStrings());
+	const configWithStrings = conf2html(appConfig);
+	const settingsView = new BrowserWindow({
+		title: app.getName()+" – "+strings.settings.title,
+		icon: appInfo.icon,
+		show: false,
+		backgroundColor: "#36393F",
+		parent: parent,
+		webPreferences: {
+			preload: app.getAppPath()+"/sources/app/renderer/preload/settings.js"
+		}
+	});
+	settingsView.removeMenu();
+	settingsView.webContents.loadFile('sources/assets/web/html/settings.html');
+	ipcMain.once('settings-generate-html', (event, message:string) => { 
+		if(message === "ready-to-render") {
+			settingsView.show();
+			event.reply('settings-generate-html', configWithStrings)
+		} else {
+			console.error("Renderer process send message: '%s', that is not understood by main process.", message)
+		}
+	})
+}
+
+ipcMain.on('settings-config-modified', (_event, config:AppConfig["defaultConfig"])=> {
+	appConfig.set(config);
+})
+
+// Menu Bar
+
+export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
+	const strings = new TranslatedStrings();
+	const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
+	const devMode = getDevel(devel, appConfig.get().devel);
 	const menu = Menu.buildFromTemplate([
 		// File
 		{
 			label: strings.menubar.file.groupName, submenu: [
-				// Settings (new)
+				// Settings
 				{
-					label: strings.menubar.file.options.groupName + " (new)",
-					click: () => {
-						ipcMain.emit("settings");
-					}
-				},
-				// Settings (old)
-				{
-					label: strings.menubar.file.options.groupName + " (deprecated)", submenu: [
-						// Menu Bar visibility
-						{
-							label: strings.menubar.file.options.hideMenuBar,
-							type: 'checkbox',
-							checked: appConfig.get().hideMenuBar,
-							click: () => configSwitch('hideMenuBar', () => {
-								if (appConfig.get().hideMenuBar) {
-									dialog.showMessageBoxSync({
-										type: "warning",
-										title: strings.dialog.warning,
-										message: strings.dialog.hideMenuBar,
-										buttons: [strings.dialog.buttons.continue]
-									});
-								}
-							})
-						},
-						// Tray feature
-						{
-							label: strings.menubar.file.options.disableTray,
-							type: 'checkbox', checked: appConfig.get().disableTray,
-							click: () => configSwitch('disableTray')
-						},
-						{ type: 'separator' },
-						// Content Security Policy
-						{
-							label: strings.menubar.file.options.csp.groupName, submenu: [
-								{
-									label: strings.menubar.enabled,
-									type: 'checkbox',
-									checked: !appConfig.get().csp.disabled,
-									click: () => configSwitch('csp.disabled', () => {
-										updateMenuBarItem('csp-thirdparty', !appConfig.get().csp.disabled);
-									})
-								},
-								{
-									label: strings.menubar.file.options.csp.thirdparty,
-									id: 'csp-thirdparty',
-									enabled: !appConfig.get().csp.disabled,
-									submenu: csp
-								}
-							]
-						},
-						// "Developer mode" switch
-						{
-							label: strings.menubar.file.options.develMode,
-							type: 'checkbox', checked: devMode,
-							enabled: !devMode,
-							click: () => {
-								if (!appConfig.get().devel) {
-									const answer: number = dialog.showMessageBoxSync({
-										type: "warning",
-										title: strings.dialog.warning,
-										message: strings.dialog.devel,
-										buttons: [
-											strings.dialog.buttons.yes,
-											strings.dialog.buttons.no
-										],
-										cancelId: 1
-									});
-									if (answer === 0) configSwitch('devel', () => {
-										updateMenuBarItem('devTools', !devMode);
-									});
-								} else {
-									configSwitch('devel', () => {
-										updateMenuBarItem('devTools', !devMode);
-									});
-								}
-							}
-						}
-					]
+					label: strings.settings.title,
+					click: () => loadSettingsWindow(mainWindow)
 				},
 				// Extensions (Work In Progress state)
 				{
@@ -339,13 +330,13 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 						{
 							label: strings.menubar.file.addon.loadNode,
 							enabled: devel,
-							click: () => { loadNodeAddons(mainWindow); }
+							click: () => loadNodeAddons(mainWindow)
 						},
 						// Chrome/Chromium extensions
 						{
 							label: strings.menubar.file.addon.loadChrome,
 							enabled: devel,
-							click: () => { loadChromeAddons(mainWindow); }
+							click: () => loadChromeAddons(mainWindow)
 						}
 					]
 				},
@@ -353,6 +344,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 				// Reset
 				{
 					label: strings.menubar.file.relaunch,
+					accelerator: 'CmdOrCtrl+Alt+R',
 					click: () => {
 						wantQuit = true;
 						app.relaunch();
@@ -397,34 +389,15 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 				{ label: strings.menubar.view.fullScreen, role: 'togglefullscreen' }
 			]
 		},
-		// Window
-		{
-			label: strings.menubar.window, submenu: [
-				// Hide side bar
-				{
-					label: strings.menubar.file.options.mobileMode,
-					type: 'checkbox',
-					accelerator: 'CmdOrCtrl+Alt+M',
-					checked: false,
-					click: () => configSwitch('mobileMode', async () => {
-						if ((sideBar.listenerCount('show') + sideBar.listenerCount('hide')) > 1) {
-							sideBar.emit('show');
-						} else {
-							sideBar.emit('hide', mainWindow.webContents);
-						}
-					})
-				}
-			]
-		},
 		// Help
 		{
 			label: strings.help.groupName, role: 'help', submenu: [
 				// About
-				{ label: strings.help.about, role: 'about', click: function () { app.showAboutPanel(); } },
+				{ label: strings.help.about, role: 'about', click: () => app.showAboutPanel() },
 				// Repository
-				{ label: strings.help.repo, click: function () { shell.openExternal(webLink); } },
+				{ label: strings.help.repo, click: () => shell.openExternal(webLink) },
 				// Documentation
-				{ label: strings.help.docs, click: function () { shell.openExternal(webLink + '#documentation'); } },
+				{ label: strings.help.docs, click: () => shell.openExternal(webLink + '#documentation') },
 				// Report a bug
 				{ label: strings.help.bugs, click: createGithubIssue }
 			]

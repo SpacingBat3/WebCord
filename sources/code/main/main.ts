@@ -85,7 +85,7 @@ import { checkVersion } from './update';
 import { getUserAgent } from '../internalModules/userAgent';
 import * as getMenu from './menus';
 import { discordFavicons } from './favicons';
-import { TranslatedStrings } from './lang';
+import TranslatedStrings from './lang';
 import { WinStateKeeper , AppConfig } from './config';
 
 // Removes deprecated config properties (TODO)
@@ -202,6 +202,7 @@ function createWindow(): BrowserWindow {
         show: false,
         webPreferences: {
             enableRemoteModule: false,
+            preload: app.getAppPath() + "/sources/app/renderer/preload/mainWindow.js",
             nodeIntegration: false, // Won't work with the true value.
             devTools: true, // Too usefull to be blocked.
             contextIsolation: false // Disabled because of the capturer.
@@ -210,13 +211,6 @@ function createWindow(): BrowserWindow {
 
     if(mainWindowState.initState.isMaximized) win.maximize()
     if(!startHidden) win.show()
-
-    // Preload scripts:
-
-    win.webContents.session.setPreloads([
-        app.getAppPath() + "/sources/app/renderer/capturer.js",
-        app.getAppPath() + "/sources/app/renderer/cosmetic.js"
-    ]);
 
     // CSP
 

@@ -24,18 +24,6 @@
 			"groupName":"Plik",
 			"quit":"Zakończ",
 			"relaunch":"Uruchom ponownie",
-			"options":{
-				"groupName": "Ustawienia",
-				"disableTray": "Wyłącz zasobnik",
-				"hideMenuBar": "Ukryj pasek menu",
-				"mobileMode": "Ukryj pasek boczny",
-				"csp": {
-					"groupName": "Nagłówek CSP",
-					"thirdparty": "Witryny firm trzecich",
-					"gifProviders": "Dostawcy GIF-ów"
-				},
-				"develMode": "Tryb programisty"
-			},
 			"addon": {
 				"groupName": "Rozszerzenia",
 				"loadNode": "Załaduj dodatek Node.js",
@@ -82,8 +70,7 @@
 			"nodeExt": "Dodatek Node.js WebCorda",
 			"crx": "Rozszerzenie Chrome/Chromium"
 		},
-		"hideMenuBar": "Ponieważ włączyłeś blokadę paska menu, przy następnym uruchomieniu aplikacji nie będziesz miał do niego dostępu – chyba, że naciśniesz klawisz [ALT], aby przełączyć tymczasowo jego ukrycie.",
-		"devel": "Gdy „Tryb programisty” jest włączony, dostępne są eksperymentalne funkcje programu, które wciąż mogą być niestabilne i niedokończone. Z tego powodu, to ustawienie jest dla osób, które znają podstawy JavaScript bądź informatyki (co najmniej umią korzystać z „narzędzi deweloperskich”). Włączając to ustawienie, możesz nawet uszkodzić swój system operacyjny bądź sprzęt, jeżeli będziesz korzystać z tych funkcji w sposób nierozważny. Kontynuować?"
+		"hideMenuBar": "Ponieważ włączyłeś blokadę paska menu, przy następnym uruchomieniu aplikacji nie będziesz miał do niego dostępu – chyba, że naciśniesz klawisz [ALT], aby przełączyć tymczasowo jego ukrycie."
 	},
 	/* Menu pomocy (na pasku menu i częściowo w menu ikony zasobnika systemowego). */
 	"help":{
@@ -96,6 +83,7 @@
 		"credits": "Podziękowania dla GyozaGuy za jego aplikację webową dla Discorda – była dobrym źródłem do dokształcenia się z Elektrona i z jego powiązań z Discordem."
 	},
 	"settings": {
+		"title": "Ustawienia",
 		"basic": {
 			"name": "Podstawowe",
 			"group": {

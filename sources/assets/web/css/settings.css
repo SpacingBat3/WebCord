@@ -1,0 +1,92 @@
+:root {
+    --color-accient: #5865F2;
+    --color-bg-primary: #36393F;
+    --color-bg-secondary: #2F3136;
+    --color-font-primary: #8e9297;
+    --color-font-header: #fff;
+    --color-input-bg: #484C52;
+    --font-primary: Whitney,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    --font-display: Ginto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    --font-code: Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+}
+
+html {
+    margin: 0 10px;
+    user-select: none;
+    font-family: var(--font-primary);
+    background-color: var(--color-bg-primary); /* ; */ /*  */
+    color: var(--color-font-primary);
+}
+
+h1, h2 {
+    font-family: var(--font-display);
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+h1 {
+    font-size: 1.6em;
+    color: var(--color-font-header);
+}
+
+h2 {
+    margin-left: 15px;
+    font-size: 0.75em;
+    text-transform: uppercase;
+
+}
+
+p.description {
+    font-size: 0.75em;
+    margin: 0 0 1em 15px;
+}
+
+div.settingsContainer {
+    display: flex;
+    flex-direction: column;
+    margin: 0 40px;
+    padding: 10px 15px;
+    background-color: var(--color-bg-secondary);
+    font-size: 0.8em;
+    border-radius: 5px;
+}
+
+div.containerElement {
+    margin: 0.5em 0px;
+}
+
+label {
+    font-size: 1em;
+    color: var(--color-font-header)
+}
+
+input[type="checkbox"] {
+    margin: -0.25rem 1em;
+    height: 1.5em;
+    width: 1.5em;
+    border-radius: 5px;
+    appearance: none;
+    cursor: pointer;
+    background-color: var(--color-input-bg);
+    border-color: var(--color-input-bg);
+    transition: background-color 0.2s ease;
+    border: solid #0000 4px;
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--color-accient);
+    background-image: url(../../icons/symbols/checkmark.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2E3338;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #202225;
+    border-radius: 25px;
+}

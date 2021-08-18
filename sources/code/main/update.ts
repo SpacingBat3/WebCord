@@ -5,7 +5,7 @@
 import { app, Notification, shell, net } from 'electron';
 import { appInfo } from './properties';
 import fetch from 'electron-fetch';
-import { TranslatedStrings } from './lang';
+import TranslatedStrings from './lang';
 
 /**
  * Checks and notifies users about the updates.
