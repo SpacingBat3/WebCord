@@ -67,6 +67,7 @@ this project could begin on its own.
 - [Frequently Asked Questions](FAQ.md)
   - *[Which file I should download?](FAQ.md#1-which-file-i-should-download)*
   - *[Content does not load properly...](FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
+  - *[How to grant permission to microphone?](FAQ.md#3-how-to-get-a-microphone-permission-for-webcord)*
 - [Configuring the application](Settings.md)
   - [Automatically hide menu bar](Settings.md#auto-hide-menu-bar)
   - [Disable tray functionality](Settings.md#disable-tray)

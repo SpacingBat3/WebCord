@@ -79,6 +79,7 @@ ten projekt mógł w końcu samodzielnie się rozwijać.
 - [Często zadawane pytania](../FAQ.md)
   - *[Który plik powinienem ściągnąć?](../FAQ.md#1-which-file-i-should-download)*
   - *[Treść nie wczytuje się prawidłowo...](../FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
+  - *[Jak zezwolić na dostęp do mikrofonu?](../FAQ.md#3-how-to-get-a-microphone-permission-for-webcord)*
 - [Konfiguracja aplikacji](../Settings.md)
   - [Automatyczne ukrywanie paska menu](../Settings.md#auto-hide-menu-bar)
   - [Wyłączanie funkcji ukrywania aplikacji do zasobnika systemowego](../Settings.md#disable-tray)
