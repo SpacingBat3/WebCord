@@ -32,9 +32,7 @@ crashHandler()
 
 import {
     app,
-    BrowserWindow,
-    shell,
-    Tray,
+    BrowserWindow
 } from 'electron';
 
 // Handle command line switches:
@@ -72,267 +70,40 @@ import {
     guessDevel
 } from './properties';
 
-import { packageJson } from '../global';
-import { discordContentSecurityPolicy } from './csp';
 
 // Check if we are using the packaged version:
 
-const { devel, devFlag } = guessDevel();
+const { devel } = guessDevel();
 
 // Load scripts:
 
 import { checkVersion } from './update';
-import { getUserAgent } from '../internalModules/userAgent';
-import * as getMenu from './menus';
-import { discordFavicons } from './favicons';
 import TranslatedStrings from './lang';
-import { WinStateKeeper , AppConfig } from './config';
 
 // Removes deprecated config properties (TODO)
 
 /*const deprecated = ["csp.strict", "windowState", "css1Key"];
 appConfig.deleteBulk(deprecated);*/
 
+// Import windows declarations
 
-// "About" information
-const appVersion: string = app.getVersion();
-const appAuthor: string = packageJson.author.name;
-const appYear = '2020'; // the year since this app exists
-const updateYear = '2021'; // the year when the last update got released
-const appRepo: string = packageJson.homepage;
-const chromiumVersion: string = process.versions.chrome;
+import createMainWindow from "./windows/mainWindow"
+import setAboutPanel from "./windows/aboutPanel"
 
-
-/*
- * Remember to add yourself to the 'contributors' array in the package.json
- * if you're improving the code of this application
- */
-
-let appContributors: Array<string> = [appAuthor];
-
-// Hence GTK allows for tags there on Linux, generate links to website/email
-if (process.platform === "linux") {
-
-    if (packageJson.author.url)
-        appContributors = ['<a href="' + packageJson.author.url + '">' + appAuthor + '</a>'];
-
-    else if (packageJson.author.email)
-        appContributors = ['<a href="mailto:' + packageJson.author.email + '">' + appAuthor + '</a>'];
-
-}
-
-// Generate contributors list and additionally try to parse if it is defined
-if (packageJson.contributors !== undefined && packageJson.contributors.length > 0) {
-    for (let n = 0; n < packageJson.contributors.length; n++) {
-        // Guess "person" format:
-        if (packageJson.contributors[n].name) {
-            if (process.platform == "linux") {
-                const { name, email, url } = packageJson.contributors[n];
-                let linkTag = "", linkTagClose = "";
-                if (url) {
-                    linkTag = '<a href="' + url + '">';
-                } else if (email) {
-                    linkTag = '<a href="mailto:' + email + '">';
-                }
-                if (linkTag !== "") linkTagClose = "</a>";
-                appContributors.push(linkTag + name + linkTagClose);
-            } else {
-                appContributors.push(packageJson.contributors[n].name);
-            }
-        } else {
-            // TODO: Parse contributors string to generate a proper output (hyperlinks for Linux and name for others).
-            appContributors.push(packageJson.contributors[n]);
-        }
-    }
-}
 
 // "Dynamic" variables that shouldn't be changed:
 
-const stringContributors = appContributors.join(', ');
+
 const singleInstance = app.requestSingleInstanceLock();
-const configData = (new AppConfig().get());
 let mainWindow: BrowserWindow;
-let tray: Promise<Tray>, l10nStrings: TranslatedStrings, updateInterval: NodeJS.Timeout | undefined;
-
-// Year format for the copyright
-
-const copyYear = appYear + '-' + updateYear;
-
-// Fake Chromium User Agent:
-
-const fakeUserAgent = getUserAgent(chromiumVersion);
-
-// "About" Panel:
-
-function aboutPanel(): void {
-    let iconPath: string;
-    if (fs.existsSync(appInfo.icon)) {
-        iconPath = appInfo.icon;
-    } else {
-        iconPath = '/usr/share/icons/hicolor/512x512/apps/' + packageJson.name + '.png';
-    }
-    const aboutVersions = "Electron: " + process.versions.electron + "    Node: " + process.versions.node + "    Chromium: " + process.versions.chrome;
-    app.setAboutPanelOptions({
-        applicationName: app.getName(),
-        applicationVersion: `v${appVersion}${devFlag}`,
-        authors: appContributors,
-        website: appRepo,
-        credits: `${l10nStrings.help.contributors} ${stringContributors}`,
-        copyright: `Copyright © ${copyYear} ${appAuthor}\n\n${l10nStrings.help.credits}\n\n${aboutVersions}`,
-        iconPath: iconPath
-    });
-}
-
-function createWindow(): BrowserWindow {
-
-    // Check the window state
-
-    const mainWindowState = new WinStateKeeper('mainWindow')
-
-    // Browser window
-
-    const win = new BrowserWindow({
-        title: app.getName(),
-        minWidth: appInfo.minWinWidth,
-        minHeight: appInfo.minWinHeight,
-        height: mainWindowState.initState.height,
-        width: mainWindowState.initState.width,
-        backgroundColor: "#36393F",
-        icon: appInfo.icon,
-        show: false,
-        webPreferences: {
-            enableRemoteModule: false,
-            preload: app.getAppPath() + "/sources/app/renderer/preload/mainWindow.js",
-            nodeIntegration: false, // Won't work with the true value.
-            devTools: true, // Too usefull to be blocked.
-            contextIsolation: false // Disabled because of the capturer.
-        }
-    });
-
-    if(mainWindowState.initState.isMaximized) win.maximize()
-    if(!startHidden) win.show()
-
-    // CSP
-
-    if (!configData.csp.disabled) {
-        win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-            callback({
-                responseHeaders: {
-                    ...details.responseHeaders,
-                    'Content-Security-Policy': [discordContentSecurityPolicy]
-                }
-            });
-        });
-    }
-    const childCsp = "default-src 'self' blob:";
-
-    // Permissions:
-    {
-        /** List of domains, urls or protocols accepted by permission handlers. */
-        const trustedURLs = [
-            appInfo.rootURL,
-            'devtools://'
-        ];
-        win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
-            let websiteURL: string;
-            (webContents !== null && webContents.getURL() !== "") ? websiteURL = webContents.getURL() : websiteURL = requestingOrigin;
-            // In some cases URL might be empty string, it should be denied then for that reason.
-            if (websiteURL === "")
-                return false;
-            const originURL = new URL(websiteURL).origin;
-            for (const secureURL of trustedURLs) {
-                if (originURL.startsWith(secureURL)) {
-                    return true;
-                }
-            }
-            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, originURL, permission);
-            return false;
-        });
-        win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
-            for (const secureURL of trustedURLs) {
-                if (webContents.getURL().startsWith(secureURL)) {
-                    return callback(true);
-                }
-            }
-            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
-            return callback(false);
-        });
-    }
-    win.loadURL(appInfo.URL, { userAgent: fakeUserAgent });
-    win.setAutoHideMenuBar(configData.hideMenuBar);
-    win.setMenuBarVisibility(!configData.hideMenuBar);
-
-    // Keep window state
-
-    mainWindowState.watchState(win);
-
-    // Load all menus:
-
-    getMenu.context(win);
-    if (!configData.disableTray) tray = getMenu.tray(win, childCsp);
-    getMenu.bar(packageJson.repository.url, win);
-
-    // Open external URLs in default browser
-    {
-        win.webContents.setWindowOpenHandler((details) => {
-            /**
-             * Allowed protocol list.
-             * 
-             * For security reasons, `shell.openExternal()` should not be used for any type
-             * of the link, as this may allow potential attackers to compromise host or even
-             * execute arbitary commands.
-             * 
-             * See:
-             * https://www.electronjs.org/docs/tutorial/security#14-do-not-use-openexternal-with-untrusted-content
-             */
-            const trustedProtocolArray = [
-                'https://',
-                'mailto:'
-            ];
-            for (const protocol of trustedProtocolArray) {
-                if (details.url.startsWith(protocol)) shell.openExternal(details.url);
-            }
-            return { action: 'deny' };
-        });
-    }
-
-    // "Red dot" icon feature
-
-    win.webContents.once('did-finish-load', () => {
-        win.webContents.on('page-favicon-updated', async (event, favicons) => {
-            const t = await tray;
-            if (!configData.disableTray) if (favicons[0] === discordFavicons.default || favicons[0] === discordFavicons.unread)
-                t.setImage(appInfo.trayIcon);
-            else
-                t.setImage(appInfo.trayPing);
-        });
-    });
-
-    // Window Title
-
-    win.on('page-title-updated', (event: Event, title: string) => {
-        if (title == "Discord") {
-            event.preventDefault();
-            win.setTitle(app.getName());
-        }
-    });
-
-    // Animate menu
-
-    win.webContents.on('did-finish-load', () => {
-        win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s; transition-timing-function: linear;}");
-    });
-
-    return win;
-}
-
+let l10nStrings: TranslatedStrings, updateInterval: NodeJS.Timeout | undefined;
 
 function main(): void {
     l10nStrings = new TranslatedStrings();
     checkVersion(l10nStrings, devel, appInfo.icon, updateInterval);
     updateInterval = setInterval(function () { checkVersion(l10nStrings, devel, appInfo.icon, updateInterval); }, 1800000);
-    mainWindow = createWindow();
-    aboutPanel();
+    mainWindow = createMainWindow(startHidden,l10nStrings);
+    setAboutPanel(l10nStrings);
 }
 
 if (!singleInstance) {

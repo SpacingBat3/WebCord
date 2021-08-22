@@ -135,3 +135,10 @@ export interface HTMLSettingsGroup {
             }[]
     }[]
 }
+
+// SHA1 hashes of Discord favicons
+
+export const discordFavicons = {
+    default: '4986b21efbd3d7d6271d928d7c7ee7b17e35584f',
+    unread: '41c207d90d2c56ca2511434994fbd00d4ef7dfbb'
+};
