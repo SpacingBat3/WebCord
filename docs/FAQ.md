@@ -35,8 +35,8 @@ grouped in tables by platforms:
 | Debian / Ubuntu ARM 64-bit                  | `webcord_{version}_arm64.deb`                       |
 | Debian / Ubuntu ARM 32-bit                  | `webcord_{version}_armhf.deb`                       |
 | Arch Linux / Manjaro (any architecture)     | [Arch User Repository (Official)](https://aur.archlinux.org/packages/webcord-git/) |
-| Fedora / Red Hat Linux 64-bit (Intel / AMD)*| `webcord-{version}.x86_64.rpm`                      |
-| Fedora / Red Hat Linux 32-bit (Intel / AMD) | `webcord-{version}.i386.rpm`                        |
+| Fedora / Red Hat Linux 64-bit (Intel / AMD) | `webcord-{version}.x86_64.rpm`                      |
+| Fedora / Red Hat Linux 32-bit (Intel / AMD)*| `webcord-{version}.i386.rpm`                        |
 | Fedora / Red Hat Linux ARM 64-bit           | `webcord-{version}.arm64.rpm`                       |
 | Fedora / Red Hat Linux ARM 32-bit           | `webcord-{version}.armv7hl.rpm`                     |
 | Linux 64-bit (Intel / AMD) distributions    | `webcord-{version}-x64.AppImage`                    |

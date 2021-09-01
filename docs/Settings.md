@@ -52,7 +52,7 @@ WebCord is capable of parsing some Chromium flags and following
 application-specific flags:
 
 - **`--start-minimized` or `-m`** – start WebCord minimized in tray;
-usefull when running WebCord at boot/login process;
+  usefull when running WebCord at system start;
 
 - **`--version` or `-v`** – display application version and exit even before
-*app is ready*.
+  *app is ready*.

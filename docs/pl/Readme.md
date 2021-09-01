@@ -10,7 +10,7 @@
 </sub>
 </div>
 <div align='center'>
-<a href='https://discord.com'> <img src='../../sources/assets/icons/app.png' width='192px'> </a> 
+<a href='https://github.com/SpacingBat3/WebCord'> <img src='../../sources/assets/icons/app.png' width='192px'> </a> 
 <h1>WebCord</h1>
 
 <!--
@@ -50,7 +50,7 @@
 
 Internetowy klient Discord'a, oparty o [Electron API](https://github.com/electron/electron) i
 rozwijany dzięki [Electron Forge](https://github.com/electron-userland/electron-forge).
-W większości (jeżeli nie w pełni) wyprodukowany w Polsce 🇵🇱️.
+W większości (jeżeli nie w pełni) *wyprodukowany w Polsce* 🇵🇱️.
 
 WebCord stara się poprawiać (w stosunku do oficjalnego klienta) prywatność i bezpieczeństwo użytkownika poprzez
 zezwolenie użytkownikowi na blokowanie dowolnych stron (posiadających integracje w Discord'dzie)
@@ -131,3 +131,5 @@ które <strong> nie ma żadnej mocy prawnej </strong>. <br>
 do listy osób wnoszących wkład w `package.json` (klucz `contributors`).
 
 - Jeżeli chcesz stworzyć tłumaczenie dla aplikacji, polecam zapoznać się z dokumentem [Translate.md](../Translate.md).
+
+Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Sprawdź [tą (anglojęzyczną) stronę](https://makeapullrequest.com/).

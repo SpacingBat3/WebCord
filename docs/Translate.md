@@ -30,12 +30,14 @@ As of the translation format, WebCord is capable of understanding the two file f
 JSONC parser supports following comment styles:
 
 - C-like end-of-line comments:
+
 ```jsonc
 // Example of end-of-line comment
 ```
 
 - C++-like block comments (both single-line and multi-line):
-```ts
+
+```jsonc
 /* Single-line comment */
 
 /**

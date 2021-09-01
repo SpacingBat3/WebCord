@@ -5,7 +5,7 @@
 </sub> <br>
 </div>
 <div align='center'>
-<a href='https://discord.com'> <img src='../sources/assets/icons/app.png' width='192px'> </a>
+<a href='https://github.com/SpacingBat3/WebCord'> <img src='../sources/assets/icons/app.png' width='192px'> </a>
 <h1>WebCord</h1>
 
 <!--
@@ -119,4 +119,4 @@ This project is redistributed under the **[MIT License](../LICENSE)**:
 - If you want to translate strings in `lang` folder, please visit
   [TRANSLATE.md](Translate.md).
 
-Never made a pull request before? Please refer to [this website](http://makeapullrequest.com).
+Never made a pull request before? Please refer to [this website](https://makeapullrequest.com/).

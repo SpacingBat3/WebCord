@@ -12,7 +12,7 @@ following list of the features:
 | Tray icon | Hiding aplication in the tray. | ✔️ Done |
 | Red badge (tray) | Display indicator at DM or mentions on tray icon. | ✔️ Done |
 | Custom CSP | Allow users to modify CSP to block unnecesarry websites. | ✔️ Done |
-| Translations | WebCord's localization support for multiple languages. | ✔️ Done |
+| Translations | WebCord's localization support for multiple languages. | 🚧️ ***Under construction*** |
 | Hiding the Discord's side bar | Switching the visibility state of side bar containing channel list. This makes WebCord working on the devices with the smaller screens, like e.g. PinePhone smartphones. | ⛔️ Broken (since v2.0.0-beta1) |
 | Node.js-based WebCord extensions support | WebCord-specific addon implementation that allows for using Node dependencies. | ⚠️ ***Alpha*** (works for *developers*) |
 | Chromium-based extensions support | Chromium browser addon support. | ⚠️ ***Alpha*** (does not work) |
@@ -24,7 +24,7 @@ following list of the features:
 | WebCord update notifications | Notifies the user whenever new WebCord version is out | ✔️ Done |
 | Bug report generation | Automatically generates bug report based on the OS configuration | ✔️ Done |
 | Automatic bug reporting on crash | Asks user if he wants to report a bug and opens the URL to the new GitHub issue in the default browser. | ❌️ **TODO** |
-| In app documentation browser | Built-in Markdown reader for documentation files. | ⚠️ **Will Do** |
+| In-app documentation browser | Built-in Markdown reader for offline documentation files. | ✔️ Done |
 | ~~Easter Eggs~~ | You've seen nothing! | N/A?
 
 
@@ -46,12 +46,15 @@ you wish to you could also add them yourself and do a Pull Request. </sub>
    it's still far from being finished.
  
  - ⚠️ ***Beta*** – this feature has been mostly implemented and minior fixes are
-   needed to be made before pushing it to the releases. 
+   needed to be made before pushing it to the releases.
  
  - ✔️ **Done** – this feature has been fully implemented.
  
  - ⛔️ **Broken** – this feature has been working, but it recently stopped
    working either due to some Discord and/or WebCord updates.
+
+ - 🚧️ ***Under construction*** – A major rewrite around this feature is in
+   progress to improve it.
  
  - **N/A** – either there's not known state for this feature or its state cannot
    be described with phrases listed above.
