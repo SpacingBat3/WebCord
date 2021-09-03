@@ -3,3 +3,6 @@ contact_links:
   - name: Questions
     url: https://github.com/SpacingBat3/WebCord/discussions
     about: Please ask questions in GitHub Discussions
+  - name: Email
+    url: mailto:git@spacingbat3.anonaddy.com
+    about: Contact me via e-mail.
