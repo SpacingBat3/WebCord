@@ -4,16 +4,16 @@
 
 import { wLog } from '../global';
 
-export default function preloadCosmetic():void {
+export default function preloadCosmetic(localStorage:Storage):void {
+  localStorage.setItem('hideNag','true');
   const removeUnneded = () => {
     // If user is at login/register website, do not apply any cosmetic changes
-    if (document.URL.includes('login')||document.URL.includes('register')) return;
-
-    const orangePopup = document.querySelector('.notice-3bPHh-');
+    if (document.URL.includes('login')||document.URL.includes('register')) {
+      window.addEventListener('popstate', removeUnneded, false);
+      return
+    }
     const sideBarList = document.querySelectorAll('.listItem-GuPuDH');
-
-    if (orangePopup!==null) orangePopup.remove(); // Remove popup that appears when using Discord's web version
-    if (sideBarList.length!==0) {
+    if (sideBarList.length !== 0) {
       sideBarList[sideBarList.length-1].remove(); // Remove "app download" button
       sideBarList[sideBarList.length-2].remove(); // Remove separator
       wLog("Successfully removed unnecesarry elements on website.");

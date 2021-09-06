@@ -75,9 +75,6 @@ this project could begin on its own.
   - [About CSP settings](Settings.md#content-security-policy-settings)
   - [Command line flags](Settings.md#cli-flags)
 - [Contributing](Contributing.md)
-  - [Run from the sources](Contributing.md#run)
-  - [Creating the distributables](Contributing.md#creating-distributables)
-  - [Packaging the application](Contributing.md#packaging)
 - [Translations](Translate.md)
 - [Supported platforms](Support.md)
 - [License](../LICENSE)
@@ -114,7 +111,7 @@ This project is redistributed under the **[MIT License](../LICENSE)**:
 ## Want to contribute to my project?
 
 - If you want to improve my code, make a Pull Request and add yourself to the 
-  list of contributors in `main.ts`.
+  [`contributors` array in `package.json`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors).
 
 - If you want to translate strings in `lang` folder, please visit
   [TRANSLATE.md](Translate.md).

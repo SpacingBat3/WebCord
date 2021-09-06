@@ -3,8 +3,8 @@ import * as colors from "colors/safe";
 
 /* Handles uncaughtException errors */
 
-export default function crashHandler(): void {
-    process.on('uncaughtException', async (error) => {
+export default function uncaughtExceptionHandler(): void {
+    process.on('uncaughtException', async (error:Error&NodeJS.ErrnoException) => {
         let stack = "", message = "", stackColor = "";
         const name = "UncaughtException: " + app.getName() + " threw '" + error.name + "'.";
         if (error.message !== "")
@@ -48,15 +48,36 @@ export default function crashHandler(): void {
         let errCode: number;
         switch (error.name) {
             case "Error":
-                errCode = 101;
+                if (error.errno||error.code||error.syscall||error.path)
+                    errCode = 99;
+                else
+                    errCode = 101;
                 break;
             case "TypeError":
                 errCode = 102;
                 break;
+            case "SyntaxError":
+                errCode = 103;
+                break;
+            case "RangeError":
+                errCode = 104;
+                break;
+            case "EvalError":
+                errCode = 105;
+                break;
+            case "RefferenceError":
+                errCode = 106;
+                break;
+            case "URIError":
+                errCode = 107;
+                break;
+            case "AggregateError":
+                errCode = 108;
+                break;
             default:
                 errCode = 100;
         }
-        console.error("\nApplication crashed (Error code: " + errCode + ")\n");
+        console.error("\nApplication crashed (Error code: " + errCode + (error.errno ? ", ERRNO: " + error.errno : "") + ")\n");
         app.exit(errCode);
     });
 }

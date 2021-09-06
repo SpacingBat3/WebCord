@@ -7,7 +7,7 @@
         /* Whenever strict type checking is enabled */
         "strict": true,
         /* The way of implementing module imports by TypeScript */
-        "module": "commonjs",
+        "module": "CommonJS",
         /* The way of resolving module names by TypeScript */
         "moduleResolution": "node",
         /* Whenever sourcemaps should be made for emitted JavaScript files */
@@ -24,17 +24,6 @@
         "target": "ES2021"
     },
     "include": [
-        /* Main process scripts */
-        "sources/code/main/*.ts",
-        /* Internal modules */
-        "sources/code/internalModules/*.ts",
-        /* Renderer process scripts */
-        "sources/code/renderer/*.ts",
-        /* Preload scripts */
-        "sources/code/renderer/preload/*",
-        /* Electron Forge specific scripts */
-        "sources/code/forge/*.ts",
-        /* Global modules and variables */
-        "sources/code/global.ts"
+        "sources/code/**/*.ts"
     ]
 }

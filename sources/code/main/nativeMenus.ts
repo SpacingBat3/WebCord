@@ -1,5 +1,5 @@
 /*
- * Menu Objects (menus.ts)
+ * nativeMenus – OS native menus (tray menu, context menu, menu bar etc.)
  */
 import {
 	app,
@@ -11,26 +11,28 @@ import {
 	nativeImage,
 	MenuItemConstructorOptions,
 	clipboard,
-	WebContents
+	WebContents,
+	session
 } from 'electron';
 
 import {
 	getDevel,
 	guessDevel,
 	appInfo
-} from './properties';
+} from './clientProperties';
 
-import { AppConfig } from './config'
+import { AppConfig } from './configManager';
 
 const appConfig = new AppConfig()
 
-import { loadNodeAddons, loadChromeAddons } from '../main/mod';
+import { loadNodeAddons, loadChromeAddons } from './addonsLoader';
 import fetch from 'electron-fetch';
 import * as os from 'os';
 import { EventEmitter } from 'events';
 import { createGithubIssue } from '../internalModules/bugReporter';
-import TranslatedStrings from './lang';
-import loadSettingsWindow from './windows/settingsWindow'
+import l10n from './l10nSupport';
+import loadSettingsWindow from './windows/settingsWindow';
+import loadDocsWindow from './windows/docsViewer';
 
 const sideBar = new EventEmitter();
 const { devel } = guessDevel();
@@ -47,7 +49,7 @@ let wantQuit = false;
 // Contex Menu with spell checker
 
 export function context(windowName: BrowserWindow): void {
-	const strings = new TranslatedStrings();
+	const strings = (new l10n()).strings;
 	windowName.webContents.on('context-menu', (event, params) => {
 		const cmenu: (MenuItemConstructorOptions | MenuItem)[] = [
 			{ type: 'separator' },
@@ -108,7 +110,7 @@ if (os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.ge
 // Tray menu
 
 export async function tray(windowName: BrowserWindow, childCSP: string): Promise<Tray> {
-	const strings = new TranslatedStrings();
+	const strings = (new l10n()).strings;
 	const tray = new Tray(appInfo.trayIcon);
 	let image: string | nativeImage;
 	if (funMode === 2) {
@@ -133,9 +135,7 @@ export async function tray(windowName: BrowserWindow, childCSP: string): Promise
 					backgroundColor: "#000",
 					icon: image,
 					webPreferences: {
-						enableRemoteModule: false,
-						nodeIntegration: false,
-						contextIsolation: true
+						session: session.fromPartition("temp:virus")
 					}
 				});
 				if (appConfig.get().csp.disabled) {
@@ -198,7 +198,7 @@ export async function tray(windowName: BrowserWindow, childCSP: string): Promise
 // Menu Bar
 
 export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
-	const strings = new TranslatedStrings();
+	const strings = (new l10n()).strings;
 	const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
 	const devMode = getDevel(devel, appConfig.get().devel);
 	const menu = Menu.buildFromTemplate([
@@ -276,6 +276,25 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 				{ label: strings.menubar.view.fullScreen, role: 'togglefullscreen' }
 			]
 		},
+		// Window
+		{
+			label: strings.menubar.window.groupName, submenu: [
+			// Hide side bar
+			{
+				label: strings.menubar.window.mobileMode,
+				type: 'checkbox',
+				accelerator: 'CmdOrCtrl+Alt+M',
+				checked: false,
+				click: async () => {
+					if ((sideBar.listenerCount('show') + sideBar.listenerCount('hide')) > 1) {
+						sideBar.emit('show');
+					} else {
+						sideBar.emit('hide', mainWindow.webContents);
+					}
+				}
+			}
+			]
+		},
 		// Help
 		{
 			label: strings.help.groupName, role: 'help', submenu: [
@@ -284,7 +303,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 				// Repository
 				{ label: strings.help.repo, click: () => shell.openExternal(webLink) },
 				// Documentation
-				{ label: strings.help.docs, click: () => shell.openExternal(webLink + '#documentation') },
+				{ label: strings.help.docs, click: () => loadDocsWindow(mainWindow) },
 				// Report a bug
 				{ label: strings.help.bugs, click: createGithubIssue }
 			]

@@ -1,17 +1,18 @@
-import { appInfo } from "../properties";
-import { AppConfig, WinStateKeeper } from "../config";
-import { app, BrowserWindow, shell, Tray } from "electron";
-import * as getMenu from '../menus';
+import { appInfo } from "../clientProperties";
+import { AppConfig, WinStateKeeper } from "../configManager";
+import { app, BrowserWindow, shell, Tray, net, nativeImage } from "electron";
+import * as getMenu from '../nativeMenus';
 import { packageJson, discordFavicons } from '../../global';
-import { discordContentSecurityPolicy } from '../csp';
-import TranslatedStrings from "../lang";
+import { discordContentSecurityPolicy } from '../cspTweaker';
+import l10n from "../l10nSupport";
 import { getUserAgent } from '../../internalModules/userAgent';
 import { createHash } from 'crypto';
+import { resolve } from "path";
 
 
 const configData = (new AppConfig().get());
 
-export default function createMainWindow(startHidden: boolean, l10nStrings: TranslatedStrings): BrowserWindow {
+export default function createMainWindow(startHidden: boolean, l10nStrings: l10n["strings"]): BrowserWindow {
 
     // Some variable declarations
 
@@ -19,7 +20,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: Tran
 
     // Check the window state
 
-    const mainWindowState = new WinStateKeeper('mainWindow')
+    const mainWindowState = new WinStateKeeper('mainWindow');
 
     // Browser window
 
@@ -33,16 +34,24 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: Tran
         icon: appInfo.icon,
         show: false,
         webPreferences: {
-            enableRemoteModule: false,
             preload: app.getAppPath() + "/sources/app/renderer/preload/mainWindow.js",
             nodeIntegration: false, // Won't work with the true value.
             devTools: true, // Too usefull to be blocked.
-            contextIsolation: false // Disabled because of the capturer.
+            contextIsolation: false, // Disabled because of the capturer.
+            nativeWindowOpen: true
         }
     });
-
-    if(mainWindowState.initState.isMaximized) win.maximize()
-    if(!startHidden) win.show()
+    win.webContents.on('did-fail-load', () => {
+        win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
+        const retry = setInterval(() => {
+            if (retry && net.isOnline()) {
+                clearTimeout(retry);
+                win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) });
+            }
+        }, 1000);
+    });
+    if (mainWindowState.initState.isMaximized) win.maximize();
+    if (!startHidden) win.show();
 
     // CSP
 
@@ -129,24 +138,28 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: Tran
     }
 
     // "Red dot" icon feature
-
+    let setFavicon:string|undefined;
     win.webContents.once('did-finish-load', () => {
-        win.webContents.on('page-favicon-updated', async (event, favicons) => {
+        win.webContents.on('page-favicon-updated', async (_event, favicons) => {
             const t = await tray;
-
+            // Convert from DataURL to RAW.
+            const faviconRaw = nativeImage.createFromDataURL(favicons[0]).toBitmap();
             // Hash discord favicon.
-            const faviconHash = createHash('sha1');
-            faviconHash.update(favicons[0]);
-            
+            const faviconHash = createHash('sha1').update(faviconRaw).digest('hex');
+            // Stop execution when icon is same as the one set.
+            if(faviconHash === setFavicon) return
+
             // Compare hashes.
-            if (!configData.disableTray) switch (faviconHash.digest('hex')) {
+            if (!configData.disableTray) switch (faviconHash) {
                 case discordFavicons.default:
                 case discordFavicons.unread:
+                    setFavicon = faviconHash;
                     t.setImage(appInfo.trayIcon);
-                break;
+                    break;
                 default:
+                    setFavicon = faviconHash;
                     t.setImage(appInfo.trayPing);
-            }   
+            }
         });
     });
 

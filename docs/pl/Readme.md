@@ -87,9 +87,6 @@ ten projekt mógł w końcu samodzielnie się rozwijać.
   - [O ustawieniach CSP](../Settings.md#content-security-policy-settings)
   - [Przełączniki CLI](../Settings.md#cli-flags)
 - [Udział w kodzie](../Contributing.md)
-  - [Uruchamianie z kodu źródłowego](../Contributing.md#run)
-  - [Tworzenie plików dystrybucyjnych](../Contributing.md#creating-distributables)
-  - [Pakowanie aplikacji](../Contributing.md#packaging)
 - [Tłumaczenie](../Translate.md)
 - [Wspierane platformy](../Support.md)
 - [Licencja](../../LICENSE)
@@ -128,8 +125,10 @@ które <strong> nie ma żadnej mocy prawnej </strong>. <br>
 ## Chcesz pomóc w rozwoju aplikacji?
 
 - Jeżeli chesz pomóc w usprawnieniach dotyczących kodu aplikacji, stwórz tzw. *Pull Request* i dodaj siebie
-do listy osób wnoszących wkład w `package.json` (klucz `contributors`).
+  do tablicy [`contributors`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors)
+  w pliku `package.json`.
 
-- Jeżeli chcesz stworzyć tłumaczenie dla aplikacji, polecam zapoznać się z dokumentem [Translate.md](../Translate.md).
+- Jeżeli chcesz stworzyć tłumaczenie dla aplikacji, polecam zapoznać się z
+  dokumentem [Translate.md](../Translate.md).
 
 Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Sprawdź [tą (anglojęzyczną) stronę](https://makeapullrequest.com/).

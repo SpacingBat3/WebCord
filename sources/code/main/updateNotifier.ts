@@ -1,11 +1,11 @@
 /*
- * Update checker (update.ts)
+ * updateNotifier – notifications about the updates
  */
 
 import { app, Notification, shell, net } from 'electron';
-import { appInfo } from './properties';
+import { appInfo } from './clientProperties';
 import fetch from 'electron-fetch';
-import TranslatedStrings from './lang';
+import l10n from './l10nSupport';
 
 /**
  * Checks and notifies users about the updates.
@@ -15,7 +15,7 @@ import TranslatedStrings from './lang';
  * @param appIcon Path to application icon.
  * @param updateInterval Object that indentifies currently running interval.
  */
-export async function checkVersion(strings: TranslatedStrings, devel: boolean, appIcon: string, updateInterval: NodeJS.Timeout | undefined): Promise<void> {
+export async function checkVersion(strings: l10n["strings"], devel: boolean, updateInterval: NodeJS.Timeout | undefined): Promise<void> {
     if (!net.isOnline()) return;
     const repoName = appInfo.repository.name;
     const remoteJson = await (await fetch('https://raw.githubusercontent.com/' + repoName + '/master/package.json')).json();
@@ -56,7 +56,7 @@ export async function checkVersion(strings: TranslatedStrings, devel: boolean, a
 
     const updatePopup = {
         title: app.getName() + ": " + strings.dialog.ver.updateTitle,
-        icon: appIcon,
+        icon: appInfo.icon,
         body: updateMsg
     };
     if (showGui) {

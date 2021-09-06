@@ -41,7 +41,10 @@
 			"zoomOut": "Pomniejsz",
 			"fullScreen": "Przełącz pełny ekran"
 		},
-		"window": "Okno"
+		"window": {
+			"groupName": "Okno",
+			"mobileMode": "Ukryj pasek boczny"
+		}
 	},
 	/* Tłumaczenie dialogów (błędy, ostrzeżenia, aktualizacje itp.) */
 	"dialog": {

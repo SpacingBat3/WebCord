@@ -2,10 +2,10 @@ const copyYear = "2020-2021"
 
 import { packageJson } from '../../global';
 import { existsSync } from 'fs';
-import { appInfo, guessDevel } from '../properties';
+import { appInfo, guessDevel } from '../clientProperties';
 
 import { app } from 'electron';
-import TranslatedStrings from '../lang';
+import l10n from '../l10nSupport';
 
 const { devFlag } = guessDevel();
 
@@ -58,7 +58,7 @@ const stringContributors = appContributors.join(', ');
 
 // "About" Panel:
 
-export default function setAboutPanel(l10nStrings:TranslatedStrings): void {
+export default function setAboutPanel(l10nStrings:l10n["strings"]): void {
     let iconPath: string;
     if (existsSync(appInfo.icon)) {
         iconPath = appInfo.icon;
@@ -72,7 +72,7 @@ export default function setAboutPanel(l10nStrings:TranslatedStrings): void {
         authors: appContributors,
         website: appInfo.URL,
         credits: l10nStrings.help.contributors + ' ' + stringContributors,
-        copyright: 'Copyright © ' + copyYear + packageJson.author.name + '\n\n' + l10nStrings.help.credits + '\n\n' + aboutVersions,
+        copyright: 'MIT License\n' + 'Copyright © ' + copyYear + ' ' + packageJson.author.name + '\n\n' + l10nStrings.help.credits + '\n\n' + aboutVersions,
         iconPath: iconPath
     });
 }

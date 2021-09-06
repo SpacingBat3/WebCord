@@ -1,14 +1,14 @@
-import { app, ipcMain, BrowserWindow } from "electron";
-import { AppConfig } from '../config';
+import { app, ipcMain, BrowserWindow, session } from "electron";
+import { AppConfig } from '../configManager';
 import { HTMLSettingsGroup } from '../../global';
-import { appInfo } from '../properties';
-import TranslatedStrings from '../lang';
+import { appInfo } from '../clientProperties';
+import l10n from '../l10nSupport';
 import * as deepmerge from 'deepmerge';
 
 const appConfig = new AppConfig();
 
 function conf2html (config:AppConfig) {
-	const strings = new TranslatedStrings();
+	const strings = (new l10n()).strings;
 	const lang = strings.settings;
 	const websitesThirdParty: [string, string][] = [
 		['algolia', 'Algolia'],
@@ -90,29 +90,28 @@ function conf2html (config:AppConfig) {
 }
 
 export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
-	const strings = (new TranslatedStrings());
+	const strings = (new l10n().strings);
 	const configWithStrings = conf2html(appConfig);
-	const settingsView = new BrowserWindow({
+	const settingsWindow = new BrowserWindow({
 		title: app.getName()+" – "+strings.settings.title,
 		icon: appInfo.icon,
 		show: false,
 		backgroundColor: "#36393F",
 		parent: parent,
 		webPreferences: {
+			session: session.fromPartition("temp:settings"),
 			preload: app.getAppPath()+"/sources/app/renderer/preload/settings.js"
 		}
 	});
-	settingsView.removeMenu();
-	settingsView.webContents.loadFile('sources/assets/web/html/settings.html');
-	ipcMain.once('settings-generate-html', (event, message:string) => { 
-		if(message === "ready-to-render") {
-			settingsView.show();
-			event.reply('settings-generate-html', configWithStrings)
-		} else {
-			console.error("Renderer process send message: '%s', that is not understood by main process.", message)
-		}
+	if(settingsWindow.webContents.session === parent.webContents.session)
+        throw new Error("Child took session from parent!")
+	settingsWindow.removeMenu();
+	settingsWindow.webContents.loadFile('sources/assets/web/html/settings.html');
+	ipcMain.on('settings-generate-html', (event) => { 
+		if(!settingsWindow.isDestroyed()) settingsWindow.show();
+		event.reply('settings-generate-html', configWithStrings)
 	})
-    return settingsView;
+    return settingsWindow;
 }
 
 ipcMain.on('settings-config-modified', (_event, config:AppConfig["defaultConfig"])=> {

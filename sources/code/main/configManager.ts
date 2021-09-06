@@ -1,8 +1,13 @@
+/**
+ * configManager
+ */
+
 import * as fs from "fs";
 import * as deepmerge from "deepmerge";
 import { app, BrowserWindow, screen } from "electron";
 import { resolve } from "path"
-import { appInfo } from "./properties";
+import { appInfo } from "./clientProperties";
+import { objectsAreSameType } from "../global";
 
 function isJsonSyntaxCorrect(string: string) {
 	try {
@@ -24,7 +29,6 @@ export class AppConfig {
     /** A configuration template that is used for generating the config with the default values. */
     private defaultConfig = {
         hideMenuBar: false,
-        mobileMode: false,
         disableTray: false,
         devel: false,
         csp: {
@@ -68,7 +72,10 @@ export class AppConfig {
     /** Returns the entire parsed configuration file in form of the JavaScript object. */
     public get(): AppConfig["defaultConfig"] {
         const parsedConfig = JSON.parse(fs.readFileSync(this.path).toString());
-        return parsedConfig;
+        if(objectsAreSameType(parsedConfig, this.defaultConfig))
+            return parsedConfig;
+        else
+            return this.defaultConfig;
     }
     /**
      * Initializes the main application configuration and provides the way of controling it,
@@ -126,7 +133,10 @@ export class WinStateKeeper {
     }
     private get(): WinStateKeeper["defaultConfig"] {
         const parsedConfig = JSON.parse(fs.readFileSync(this.file).toString());
-        return parsedConfig;
+        if(objectsAreSameType(parsedConfig, this.defaultConfig))
+            return parsedConfig;
+        else
+            return this.defaultConfig;
     }
     private setState(window: BrowserWindow) { 
         if(window.isMaximized()) {
@@ -145,7 +155,6 @@ export class WinStateKeeper {
                     isMaximized: false
                 }
             });
-            console.log(window.getNormalBounds().width, window.isMaximized())
         }
     }
 

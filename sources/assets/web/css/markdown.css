@@ -1,0 +1,89 @@
+@import "./global.css";
+
+:root {
+    --header-height: 36px;
+}
+
+h1, h2 {
+    border-bottom: 2px solid var(--color-input-bg);
+    padding-bottom: 5px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-font-header);
+    font-family: var(--font-display);
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    scroll-margin-top: 0.5em;
+}
+
+#markdown-body > h1:first-child,
+#markdown-body > h2:first-child,
+#markdown-body > h3:first-child,
+#markdown-body > h4:first-child,
+#markdown-body > h5:first-child,
+#markdown-body > h6:first-child {
+    margin-top: 0.5em;
+}
+
+html {
+    width: 100vw;
+    height: 100vh;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+}
+
+html, body {
+    margin: 0px;
+}
+
+article {
+    width: 100vw;
+    margin: 0px;
+    overflow: auto;
+    position: absolute;
+    top: var(--header-height);
+    bottom: 0;
+}
+
+#markdown-body {
+    margin: 0px 16px;
+    padding-top: 1em;
+}
+
+#markdown-header {
+    padding-right: 24px;
+    background-color: var(--color-bg-primary);
+    border-bottom: 2px solid var(--color-bg-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    height: var(--header-height);
+}
+
+#menu-hamburger {
+    margin: 0px 5px;
+    padding: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    transition: background-color 0.5s ease-in-out;
+}
+
+#markdown-header p {
+    font-family: var(--font-primary);
+    color: var(--color-font-header);
+    font-size: 18pt;
+    font-weight: bold;
+}
+
+#menu-hamburger:hover {
+    cursor: pointer;
+    background-color: #fff3;
+    transition: background-color 0.5s ease-in-out;
+}

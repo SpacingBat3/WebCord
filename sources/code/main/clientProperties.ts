@@ -1,5 +1,5 @@
 /*
- * Declarations used in multiple files (main scripts only)
+ * Declarations used between multiple files (main scripts only)
  */
 
 import { app } from 'electron';

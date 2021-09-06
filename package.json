@@ -1,9 +1,9 @@
 {
   "name": "webcord",
   "productName": "WebCord",
-  "version": "2.0.0-beta1",
+  "version": "2.0.0-beta2",
   "description": "A Discord Web App made with the Electron API.",
-  "main": "sources/app/main/main.js",
+  "main": "sources/app/main/mainScript.js",
   "scripts": {
     "test": "tsc && eslint --ext .ts .",
     "lint": "eslint --ext .ts .",
@@ -34,13 +34,14 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.59",
     "@electron-forge/maker-zip": "^6.0.0-beta.59",
     "@electron-forge/publisher-github": "^6.0.0-beta.59",
-    "@types/lodash": "^4.14.172",
+    "@types/dompurify": "^2.2.3",
+    "@types/marked": "^2.0.4",
     "@types/source-map-support": "^0.5.3",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
-    "electron": "^13.1.2",
+    "electron": "^14.0.0",
     "electron-forge-maker-appimage": "github:SpacingBat3/electron-forge-maker-appimage",
-    "eslint": "^7.28.0",
+    "eslint": "^7.32.0",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "^2.23.4",
     "typescript": "^4.3.4"
@@ -48,13 +49,15 @@
   "dependencies": {
     "colors": "^1.4.0",
     "deepmerge": "^4.2.2",
+    "dompurify": "^2.3.1",
     "electron-fetch": "^1.7.3",
+    "highlight.js": "^11.2.0",
     "marked": "^2.1.3",
     "new-github-issue-url": "^0.2.1",
     "source-map-support": "^0.5.19"
   },
   "config": {
-    "forge": "./sources/app/forge/config.js"
+    "forge": "./sources/app/buildConfig/forge.js"
   },
   "private": true
 }

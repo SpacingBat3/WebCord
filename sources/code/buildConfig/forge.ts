@@ -5,14 +5,15 @@
 // Let's import some keys from the package.json:
 
 import { packageJson } from '../global';
-import { ForgeConfig, ForgePlatform } from '@electron-forge/shared-types';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path'
+import { ForgeConfigFile } from './forge.d';
+
 
 // Global variables in the config:
 const iconFile = "sources/assets/icons/app";
 const desktopGeneric = "Internet Messenger";
-const desktopCategories = ["Network", "InstantMessaging"];
+const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Network"]);
 
 // Some custom functions
 
@@ -25,42 +26,21 @@ function getCommit():string {
   return readFileSync(resolve(projectPath, '.git', refsPath)).toString().trim();
 }
 
-/*function resourcesPath(path: string) {
-  if(existsSync(resolve(path, 'Contents/Resources/')))
-    return resolve(path, 'Contents/Resources/');
-  else
-    return resolve(path, 'resources/')
-}*/
-
 function getBuildID() {
   switch(process.env.WEBCORD_BUILD?.toLocaleLowerCase()) {
     case "release":
     case "stable":
-      return "release"
-    break;
+      return "release";
     default:
-      return "devel"
+      return "devel";
   }
 }
 
-type Redeclare<I, M> = Omit<I, keyof M> & M;
-
-type ForgeConfigFile = Redeclare<ForgeConfig, {
-  plugins?: ForgeConfig["plugins"];
-  pluginInterface?: ForgeConfig["pluginInterface"];
-  electronRebuildConfig?: ForgeConfig["electronRebuildConfig"];
-  makers: ForgeConfig["makers"] | {
-    name: string;
-    platforms?: ForgePlatform[] | null;
-    config?: Record<string, unknown>;
-  }[];
-}>;
-
-const config: Partial<ForgeConfigFile> = {
+const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
   packagerConfig: {
     executableName: packageJson.name, // name instead of the productName
-    asar: true,
+    asar: (process.env.WEBCORD_ASAR ? true : false),
     icon: iconFile, // used in Windows and MacOS binaries
     extraResource: [
       "LICENSE",
@@ -68,15 +48,15 @@ const config: Partial<ForgeConfigFile> = {
     ],
     quiet: true,
     ignore: [
-      /out/,
-      /docs/,
-      /build/,
-      /extra/,
+      // Directories:
+      /sources\/app\/.build/,
+      // Files:
       /\.eslintrc\.json/,
       /tsconfig\.json/,
       /sources\/app\/forge\/config\..*/,
       /sources\/code\/.*/,
       /sources\/assets\/icons\/app\..*/,
+      // Hidden (for *nix OSes) files:
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
     ]
@@ -121,12 +101,13 @@ const config: Partial<ForgeConfigFile> = {
           categories: desktopCategories
         }
       }
-    }
+    },
   ],
   publishers: [
     {
       name: "@electron-forge/publisher-github",
       config: {
+        prerelease: (getBuildID() === "devel"),
         repository: {
           owner: packageJson.author.name,
           name: "WebCord"

@@ -1,0 +1,116 @@
+:root {
+    --color-accient: #5865F2;
+    --color-bg-primary: #36393F;
+    --color-bg-secondary: #2F3136;
+    --color-font-settings: #8e9297;
+    --color-font-normal: #dcddde;
+    --color-font-header: #fff;
+    --color-link: #00A3E3;
+    --color-input-bg: #484C52;
+    --font-primary: Whitney,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    --font-display: Ginto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    --font-code: Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+}
+
+html {
+    margin: 0 10px;
+    user-select: none;
+    font-family: var(--font-display);
+    background-color: var(--color-bg-primary);
+    color: var(--color-font-normal);
+    line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-font-header);
+    font-family: var(--font-display);
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-bg-secondary);
+    border-radius: 25px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #202225;
+    border-radius: 25px;
+}
+
+a {
+    color: var(--color-link);
+    text-decoration: unset;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 1em;
+}
+
+td, th {
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: var(--color-bg-secondary);
+}
+
+th {
+    color: var(--color-font-header);
+    background-color: var(--color-accient);
+}
+
+html :not(pre) > code {
+    font-size: 0.8em;
+    padding: 4px;
+    margin-top: 0px;
+    background-color: var(--color-bg-secondary);
+    border-radius: 5px;
+}
+
+code {
+    font-family: var(--font-code);
+    font-size: 1em;
+}
+
+pre {
+    display: block;
+    padding: 16px 12px;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-font-settings);
+    font-family: var(--font-code);
+    overflow: auto;
+    border-radius: 15px;
+    font-size: 10pt;
+}
+
+li {
+    margin: 0.5em 0em;
+}
+
+a, img {
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+}
+
+blockquote {
+    margin-inline-start: 30px;
+    padding-left: 10px;
+    border-left: 4px solid var(--color-input-bg);
+    color: var(--color-font-settings);
+}
+
+hr {
+    color: var(--color-input-bg);
+    background-color: var(--color-input-bg);
+    border: solid 2px var(--color-input-bg);
+}
