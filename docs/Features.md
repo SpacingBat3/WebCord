@@ -13,7 +13,7 @@ following list of the features:
 | Red badge (tray) | Display indicator at DM or mentions on tray icon. | ✔️ Done |
 | Custom CSP | Allow users to modify CSP to block unnecesarry websites. | ✔️ Done |
 | Translations | WebCord's localization support for multiple languages. | 🚧️ ***Under construction*** |
-| Hiding the Discord's side bar | Switching the visibility state of side bar containing channel list. This makes WebCord working on the devices with the smaller screens, like e.g. PinePhone smartphones. | ⛔️ Broken (since v2.0.0-beta1) |
+| Hiding the Discord's side bar | Switching the visibility state of side bar containing channel list. This makes WebCord working on the devices with the smaller screens, like e.g. PinePhone smartphones. | ✔️ Done |
 | Node.js-based WebCord extensions support | WebCord-specific addon implementation that allows for using Node dependencies. | ⚠️ ***Alpha*** (works for *developers*) |
 | Chromium-based extensions support | Chromium browser addon support. | ⚠️ ***Alpha*** (does not work) |
 | Addon permisions management | Limits the permissions of the extensions for the security reasons. | ❌️ **TODO** |

@@ -89,8 +89,8 @@ in following folders:
      future, I will host them on the Node.js registry to allow others using them
      in their own software as modules.
 
-  - `forge` – an Electron Forge specific files; as of now, it contains
-     only the configuration files.
+  - `buildConfig` – folder that includes scripts associated with the build
+    configuration; currently it is used for the Electron Forge only (`forge.ts`).
 
 - `assets` – contains all assets being part of the WebCord as a software. Assets
   in this folder are grouped in the following subfolders:
