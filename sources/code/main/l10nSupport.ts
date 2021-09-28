@@ -1,10 +1,10 @@
 /* l10nSupport – app localization implementation */
 
+import JSONC from "@spacingbat3/jsonc-parser"
 import * as path from "path";
 import * as fs from "fs";
 import * as deepmerge from "deepmerge";
 import { app, dialog } from "electron";
-import JSONC from "../internalModules/jsoncParser"
 import { jsonOrJsonc, objectsAreSameType } from "../global";
 import { EventEmitter } from "events";
 

@@ -175,10 +175,6 @@ In more detailed description, the following files has the roles described below:
   - `internalModules/bugReporter.ts` – a module which generates an URL to the new
     GitHub issue, which is an URL to a `bug` template pre-filled with some OS
     details that are available to the Electron. Current (as of WebCord ) implementation
-    
-  - `internalModules/jsoncParser.ts` – contains the definition for WebCord's
-    minimalist JSONC parser implementation, used for JSONC support in
-    client translation files.
 
   - `internalModules/errorHandler.ts` – handles `uncaughtException`s, allowing
     for prettier output in some cases as well as `dialog` GUI window displaying
