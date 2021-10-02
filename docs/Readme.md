@@ -111,7 +111,8 @@ This project is redistributed under the **[MIT License](../LICENSE)**:
 ## Want to contribute to my project?
 
 - If you want to improve my code, make a Pull Request and add yourself to the 
-  [`contributors` array in `package.json`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors).
+  [`contributors`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors)
+  array in `package.json`.
 
 - If you want to translate strings in `lang` folder, please visit
   [TRANSLATE.md](Translate.md).
