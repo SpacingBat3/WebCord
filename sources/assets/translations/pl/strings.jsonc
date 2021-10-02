@@ -105,15 +105,24 @@
 		"advanced": {
 			"name": "Zaawansowane",
 			"group": {
+				"devel": {
+					"name": "Tryb programisty",
+					"description": "Zezwala na dostęp do narzędzi programisty i niedokończonych opcji. Uwaga: jeżeli po włączeniu tej aplikacji będą występować błędy, proszę aby ich nie zgłaszać autorom/-wi aplikacji!",
+					"label": "Włącz tryb programisty"
+				},
 				"csp": {
 					"name": "Polityka bezpieczeństwa treści",
-					"description": "Ustala listę witryn uprawnionych do wczytywania treści na stronie internetowej.",
-					"group": {
+					"extends": {
 						"thirdparty": {
 							"name":"Witryny firm trzecich",
+							"description": "Ustala listę witryn firm trzecich dopuszczonych do wczytywania treści na stronie internetowej.",
 							"list": {
 								"gifProviders": "Dostawcy GIF–ów"
 							}
+						},
+						"enable": {
+							"description": "Zmienia, czy aplikacja powinna zastosować się do własnej Polityki Bezpieczeństwa Treści, czy korzystać z nagłówka Discord'a.",
+							"label": "Korzystaj z nagłówka CSP aplikacji"
 						}
 					}
 				}

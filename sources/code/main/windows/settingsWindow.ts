@@ -1,21 +1,20 @@
 import { app, ipcMain, BrowserWindow, session } from "electron";
 import { AppConfig } from '../configManager';
 import { HTMLSettingsGroup } from '../../global';
-import { appInfo } from '../clientProperties';
+import { appInfo, getBuildInfo } from '../clientProperties';
 import l10n from '../l10nSupport';
-import * as deepmerge from 'deepmerge';
+import { deepmerge } from 'deepmerge-ts';
 
 const appConfig = new AppConfig();
 
 function conf2html (config:AppConfig) {
-	const strings = (new l10n()).strings;
-	const lang = strings.settings;
+	const lang = (new l10n()).strings.settings;
 	const websitesThirdParty: [string, string][] = [
 		['algolia', 'Algolia'],
 		['spotify', 'Spotify'],
 		['hcaptcha', 'hCaptcha'],
 		['paypal', 'PayPal'],
-		['gif', strings.settings.advanced.group.csp.group.thirdparty.list.gifProviders],
+		['gif', lang.advanced.group.csp.extends.thirdparty.list.gifProviders],
 		['youtube', 'YouTube'],
 		['twitter', 'Twitter'],
 		['twitch', 'Twitch'],
@@ -34,19 +33,21 @@ function conf2html (config:AppConfig) {
 		})
 	}
 	const csp: HTMLSettingsGroup = {
-		title: strings.settings.advanced.name,
+		title: lang.advanced.name,
 		options: [
 			{
-				name: strings.settings.advanced.group.csp.name,
-				description: strings.settings.advanced.group.csp.description,
+				name: lang.advanced.group.csp.name+' – '+lang.advanced.group.csp.extends.thirdparty.name,
+				description: lang.advanced.group.csp.extends.thirdparty.description,
 				checklists: cspChecklist
 			}
 		]
 	}
+	// Basic / general
 	const general:HTMLSettingsGroup = {
 		title: lang.basic.name,
 		options: [
 			{
+				// Hide menu bar
 				name: lang.basic.group.menuBar.name,
 				description: lang.basic.group.menuBar.description,
 				checklists: [
@@ -58,6 +59,7 @@ function conf2html (config:AppConfig) {
 				]
 			},
 			{
+				// Disable tray
 				name: lang.basic.group.tray.name,
 				description: lang.basic.group.tray.description,
 				checklists: [
@@ -70,12 +72,31 @@ function conf2html (config:AppConfig) {
 			}
 		]
 	}
-	const advanced:HTMLSettingsGroup = deepmerge(csp, {
+	// Advanced
+	const advanced:HTMLSettingsGroup = deepmerge({
 		title: lang.advanced.name,
 		options: [
 			{
+				// Enable CSP
+				name: lang.advanced.group.csp.name,
+				description: lang.advanced.group.csp.extends.enable.description,
+				checklists: [
+					{
+						label: lang.advanced.group.csp.extends.enable.label,
+						id: 'csp.enabled',
+						isChecked: config.get().csp.enabled
+					}
+				],
+			}
+		]
+	}, csp, {
+		title: lang.advanced.name,
+		options: [
+			{
+				// Developer mode
 				name: lang.advanced.group.devel.name,
 				description: lang.advanced.group.devel.description,
+				hidden: getBuildInfo().type === "devel",
 				checklists: [
 					{
 						label: lang.advanced.group.devel.label,
@@ -85,7 +106,8 @@ function conf2html (config:AppConfig) {
 				],
 			}
 		]
-	});
+	})
+	console.dir(advanced)
 	return [general, advanced];
 }
 
@@ -98,6 +120,8 @@ export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
 		show: false,
 		backgroundColor: "#36393F",
 		parent: parent,
+		minWidth: appInfo.minWinWidth,
+		minHeight: appInfo.minWinHeight,
 		webPreferences: {
 			session: session.fromPartition("temp:settings"),
 			preload: app.getAppPath()+"/sources/app/renderer/preload/settings.js"
@@ -109,8 +133,10 @@ export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
 	settingsWindow.webContents.loadFile('sources/assets/web/html/settings.html');
 	ipcMain.on('settings-generate-html', (event) => { 
 		if(!settingsWindow.isDestroyed()) settingsWindow.show();
+		console.dir(configWithStrings[1].options)
 		event.reply('settings-generate-html', configWithStrings)
 	})
+	settingsWindow.webContents.openDevTools();
     return settingsWindow;
 }
 

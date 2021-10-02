@@ -2,8 +2,9 @@
  * updateNotifier – notifications about the updates
  */
 
+import { isPackageJsonComplete } from '../global'
 import { app, Notification, shell, net } from 'electron';
-import { appInfo } from './clientProperties';
+import { appInfo, getBuildInfo } from './clientProperties';
 import fetch from 'electron-fetch';
 import l10n from './l10nSupport';
 
@@ -15,18 +16,25 @@ import l10n from './l10nSupport';
  * @param appIcon Path to application icon.
  * @param updateInterval Object that indentifies currently running interval.
  */
-export async function checkVersion(strings: l10n["strings"], devel: boolean, updateInterval: NodeJS.Timeout | undefined): Promise<void> {
+export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): Promise<void> {
+    // Do not execute when offline.
     if (!net.isOnline()) return;
+    // When app is not ready, wait until it is ready.
+    if (!app.isReady()) await app.whenReady();
+    // Initialize app translation.
+    const strings = new l10n().strings;
+    // An alias to app's repository name.
     const repoName = appInfo.repository.name;
-    const remoteJson = await (await fetch('https://raw.githubusercontent.com/' + repoName + '/master/package.json')).json();
-    const githubApi = await (await fetch('https://api.github.com/repos/' + repoName + '/releases/latest')).json();
     let remoteTag: string, updateMsg: string, updateURL: string, remoteHeader: string;
     let showGui = false;
-    if (devel) {
+    if (getBuildInfo().type === 'devel') {
+        const remoteJson = await (await fetch('https://raw.githubusercontent.com/' + repoName + '/master/package.json')).json();
+        if(!isPackageJsonComplete(remoteJson)) return
         remoteTag = remoteJson.version;
         remoteHeader = 'v';
         updateURL = 'https://github.com/' + repoName + '/commit/master';
     } else {
+        const githubApi = await (await fetch('https://api.github.com/repos/' + repoName + '/releases/latest')).json();
         if (githubApi.tag_name.includes('v')) {
             remoteTag = githubApi.tag_name.substring(1);
             remoteHeader = 'v';

@@ -11,8 +11,7 @@
  * it will load before Electron will print any error.
  */
 
-import * as srcMap from 'source-map-support';
-srcMap.install();
+import('source-map-support').then(sMap => sMap.install());
 
 /**
  * Handle "crashes".
@@ -25,14 +24,11 @@ srcMap.install();
  * information).
  */
 
-import uncaughtExceptionHandler from '../internalModules/errorHandler';
-
-uncaughtExceptionHandler();
+import('../modules/errorHandler').then(eHand => eHand.default());
 
 import { app, BrowserWindow } from 'electron';
 import { writeFile } from 'fs';
 
-import { guessDevel } from './clientProperties';
 import { checkVersion } from './updateNotifier';
 import l10n from './l10nSupport';
 import createMainWindow from "./windows/mainWindow"
@@ -76,7 +72,6 @@ let overwriteMain: (()=>void|unknown) | undefined;
 
 // Some variable declarations
 
-const { devel } = guessDevel();
 const singleInstance = app.requestSingleInstanceLock();
 let mainWindow: BrowserWindow;
 let l10nStrings: l10n["strings"], updateInterval: NodeJS.Timeout | undefined;
@@ -88,8 +83,8 @@ function main(): void {
     } else {
         // Run app normally
         l10nStrings = (new l10n()).strings;
-        checkVersion(l10nStrings, devel, updateInterval);
-        updateInterval = setInterval(function () { checkVersion(l10nStrings, devel, updateInterval); }, 1800000);
+        checkVersion(updateInterval);
+        updateInterval = setInterval(function () { checkVersion(updateInterval); }, 1800000);
         mainWindow = createMainWindow(startHidden,l10nStrings);
         setAboutPanel(l10nStrings);
     }

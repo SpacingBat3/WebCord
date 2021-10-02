@@ -8,7 +8,8 @@ import {
 	MenuItem,
 	Tray,
 	shell,
-	nativeImage,
+	nativeImage, // Static methods, that initializes class (NativeImage).
+	NativeImage, // Class, used after initialization and for types.
 	MenuItemConstructorOptions,
 	clipboard,
 	WebContents,
@@ -17,7 +18,7 @@ import {
 
 import {
 	getDevel,
-	guessDevel,
+	getBuildInfo,
 	appInfo
 } from './clientProperties';
 
@@ -29,13 +30,13 @@ import { loadNodeAddons, loadChromeAddons } from './addonsLoader';
 import fetch from 'electron-fetch';
 import * as os from 'os';
 import { EventEmitter } from 'events';
-import { createGithubIssue } from '../internalModules/bugReporter';
+import { createGithubIssue } from '../modules/bugReporter';
 import l10n from './l10nSupport';
 import loadSettingsWindow from './windows/settingsWindow';
 import loadDocsWindow from './windows/docsViewer';
 
 const sideBar = new EventEmitter();
-const { devel } = guessDevel();
+const devel = getBuildInfo().type === 'devel';
 
 sideBar.on('hide', async (contents: WebContents) => {
 	const cssKey = await contents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
@@ -112,7 +113,7 @@ if (os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.ge
 export async function tray(windowName: BrowserWindow, childCSP: string): Promise<Tray> {
 	const strings = (new l10n()).strings;
 	const tray = new Tray(appInfo.trayIcon);
-	let image: string | nativeImage;
+	let image: string | NativeImage;
 	if (funMode === 2) {
 		image = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
 	} else {
@@ -138,16 +139,14 @@ export async function tray(windowName: BrowserWindow, childCSP: string): Promise
 						session: session.fromPartition("temp:virus")
 					}
 				});
-				if (appConfig.get().csp.disabled) {
-					child.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-						callback({
-							responseHeaders: {
-								...details.responseHeaders,
-								'Content-Security-Policy': [childCSP]
-							}
-						});
+				child.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+					callback({
+						responseHeaders: {
+							...details.responseHeaders,
+							'Content-Security-Policy': [childCSP]
+						}
 					});
-				}
+				});
 				// Let's load a virus! Surely, nothing wrong will happen:
 				child.loadURL('http://www.5z8.info/worm.exe_i0b8xn_snufffilms');
 				child.on('page-title-updated', (event) => {

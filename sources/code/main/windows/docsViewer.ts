@@ -3,6 +3,7 @@ import { app, BrowserWindow, ipcMain, session } from 'electron';
 //import { packageJson } from '../../global';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
+import { appInfo } from '../clientProperties';
 
 import l10n from '../l10nSupport';
 
@@ -28,6 +29,8 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
         title: app.getName() + ' – ' + strings.help.docs,
         show: false,
         parent: parent,
+        minWidth: appInfo.minWinWidth,
+		minHeight: appInfo.minWinHeight,
         webPreferences: {
             session: session.fromPartition("temp:docs"),
             preload: resolve(app.getAppPath(), 'sources/app/renderer/preload/docs.js')

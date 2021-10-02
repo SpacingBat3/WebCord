@@ -5,7 +5,7 @@
  */
 import { ipcRenderer } from "electron";
 import { HTMLSettingsGroup, wLog } from "../../global";
-import * as deepmerge from "deepmerge";
+import { deepmerge } from "deepmerge-ts";
 
 function fetchFromWebsite() {
     const AllInputs = document.getElementsByTagName('input');
@@ -14,11 +14,13 @@ function fetchFromWebsite() {
         let configString: string;
         if (input.id.includes('csp-thirdparty.'))
             configString = '{"csp": {"thirdparty": {"' + input.id.split('.')[1] + '":' + input.checked + '} } }';
+        else if (input.id.includes('.'))
+            configString = '{"'+input.id.split('.')[0]+'": {"' + input.id.split('.')[1] + '":' + input.checked + '} }'
         else
             configString = '{"' + input.id + '": ' + input.checked + '}';
         array.push(JSON.parse(configString));
     }
-    const config = deepmerge.all(array);
+    const config = deepmerge(...array);
     ipcRenderer.send('settings-config-modified', config);
 
 }
@@ -46,6 +48,13 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
             pDesc.innerHTML = option.description;
             checklistContainer.className = "settingsContainer";
 
+            // Hide all elements when option is set as hidden
+            if(option.hidden === true) {
+                h2.style.display = 'none';
+                pDesc.style.display = 'none';
+                checklistContainer.style.display = 'none';
+            }
+
             // A list of check boxes for a single opiton.
             for (const checklist of option.checklists) {
                 const inputContainer = document.createElement('div');
@@ -55,6 +64,7 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
                 inputContainer.className = "containerElement";
                 inputTag.type = "checkbox";
                 inputTag.id = checklist.id;
+                inputTag.classList.add('checkbox');
                 inputTag.checked = checklist.isChecked;
                 inputLabel.innerHTML = checklist.label;
 

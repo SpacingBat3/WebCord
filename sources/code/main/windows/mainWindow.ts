@@ -5,7 +5,7 @@ import * as getMenu from '../nativeMenus';
 import { packageJson, discordFavicons } from '../../global';
 import { discordContentSecurityPolicy } from '../cspTweaker';
 import l10n from "../l10nSupport";
-import { getUserAgent } from '../../internalModules/userAgent';
+import { getUserAgent } from '../../modules/userAgent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
 
@@ -55,7 +55,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // CSP
 
-    if (!configData.csp.disabled) {
+    if (configData.csp.enabled) {
         win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
             callback({
                 responseHeaders: {
@@ -138,7 +138,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     }
 
     // "Red dot" icon feature
-    let setFavicon:string|undefined;
+    let setFavicon: string | undefined;
     win.webContents.once('did-finish-load', () => {
         win.webContents.on('page-favicon-updated', async (_event, favicons) => {
             const t = await tray;
@@ -147,7 +147,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             // Hash discord favicon.
             const faviconHash = createHash('sha1').update(faviconRaw).digest('hex');
             // Stop execution when icon is same as the one set.
-            if(faviconHash === setFavicon) return
+            if (faviconHash === setFavicon) return;
 
             // Compare hashes.
             if (!configData.disableTray) switch (faviconHash) {
@@ -155,10 +155,12 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 case discordFavicons.unread:
                     setFavicon = faviconHash;
                     t.setImage(appInfo.trayIcon);
+                    win.flashFrame(false);
                     break;
                 default:
                     setFavicon = faviconHash;
                     t.setImage(appInfo.trayPing);
+                    win.flashFrame(true);
             }
         });
     });
@@ -166,7 +168,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Window Title
 
     win.on('page-title-updated', (event: Event, title: string) => {
-        if (title == "Discord") {
+        if (title === "Discord") {
             event.preventDefault();
             win.setTitle(app.getName());
         }

@@ -5,26 +5,42 @@
 import { app } from 'electron';
 import { resolve } from 'path';
 import { packageJson, Person } from '../global';
+import { readFileSync } from 'fs';
 
-/**
- * Guesses whenever application is packaged (in *ASAR* format).
- * 
- * This function is used to block some broken or untested features that
- * needs to be improved before releasing. To test these features, you have to run
- * app from the sources with `npm start` command.
- */
-export function guessDevel(): { devel: boolean, devFlag: string, appIconDir: string; } {
-	let devel: boolean, devFlag: string, appIconDir: string;
-	if (app.getAppPath().indexOf(".asar") < 0) {
-		devel = true;
-		devFlag = " [DEV]";
-		appIconDir = app.getAppPath() + "/sources/assets/icons";
-	} else {
-		devel = false;
-		devFlag = "";
-		appIconDir = resolve(app.getAppPath(), "..");
+
+interface buildInfo {
+	type: 'release' | 'devel',
+	commit?: string;
+}
+
+export function isBuildInfo(object: unknown): object is buildInfo {
+	if (!(object instanceof Object))
+		return false;
+	if (!Object.prototype.hasOwnProperty.call(object, 'type')) return false;
+	switch ((object as buildInfo).type) {
+		case 'release':
+		case 'devel':
+			break;
+		default:
+			return false;
 	}
-	return { devel: devel, devFlag: devFlag, appIconDir: appIconDir };
+	if (Object.prototype.hasOwnProperty.call(object, 'commit'))
+		if (!(typeof (object as buildInfo).commit === 'string'))
+			return false;
+	return true;
+}
+
+export function getBuildInfo(): buildInfo {
+	try {
+		const data = readFileSync(resolve(app.getAppPath(), 'buildInfo.json'));
+		const buildInfo = JSON.parse(data.toString());
+		if (isBuildInfo(buildInfo))
+			return buildInfo
+		else
+			return { type: 'devel' }
+	} catch {
+		return { type: 'devel' }
+	}
 }
 
 function person2string(person: Person) {
@@ -42,9 +58,9 @@ export const appInfo = {
 		/** Web service on which app repository is published. */
 		provider: 'github.com'
 	},
-	icon: guessDevel().appIconDir + "/app.png",
-	trayIcon: app.getAppPath() + "/sources/assets/icons/tray.png",
-	trayPing: app.getAppPath() + "/sources/assets/icons/tray-ping.png",
+	icon: resolve(app.getAppPath(), "sources/assets/icons/app.png"),
+	trayIcon: resolve(app.getAppPath(), "sources/assets/icons/tray.png"),
+	trayPing: resolve(app.getAppPath(), "sources/assets/icons/tray-ping.png"),
 	rootURL: 'https://discord.com',
 	URL: 'https://watchanimeattheoffice.com/app',
 	minWinHeight: 412,

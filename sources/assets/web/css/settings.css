@@ -13,14 +13,15 @@ h2 {
 
 p.description {
     font-size: 0.75em;
-    margin: 0 0 1em 15px;
+    margin: 0 15px 1em 15px;
     color: var(--color-font-settings);
 }
 
 div.settingsContainer {
     display: flex;
+    overflow-x: hidden;
     flex-direction: column;
-    margin: 0 40px;
+    margin: 0 40px 2em 40px;
     padding: 10px 15px;
     background-color: var(--color-bg-secondary);
     font-size: 0.8em;
@@ -28,15 +29,18 @@ div.settingsContainer {
 }
 
 div.containerElement {
+    display: flex;
     margin: 0.5em 0px;
 }
 
 label {
+    margin-top: 0.15em;
     font-size: 1em;
 }
 
-input[type="checkbox"] {
-    margin: -0.25rem 1em;
+input.checkbox {
+    flex-shrink: 0;
+    margin: 0 1em;
     height: 1.5em;
     width: 1.5em;
     border-radius: 5px;
@@ -48,7 +52,7 @@ input[type="checkbox"] {
     border: solid #0000 4px;
 }
 
-input[type="checkbox"]:checked {
+input.checkbox:checked {
     background-color: var(--color-accient);
     background-image: url(../../icons/symbols/checkmark.svg);
     background-repeat: no-repeat;

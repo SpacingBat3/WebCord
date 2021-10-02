@@ -2,13 +2,9 @@ const copyYear = "2020-2021"
 
 import { packageJson } from '../../global';
 import { existsSync } from 'fs';
-import { appInfo, guessDevel } from '../clientProperties';
-
+import { appInfo, getBuildInfo } from '../clientProperties';
 import { app } from 'electron';
 import l10n from '../l10nSupport';
-
-const { devFlag } = guessDevel();
-
 
 /*
  * Remember to add yourself to the 'contributors' array in the package.json
@@ -59,16 +55,16 @@ const stringContributors = appContributors.join(', ');
 // "About" Panel:
 
 export default function setAboutPanel(l10nStrings:l10n["strings"]): void {
-    let iconPath: string;
-    if (existsSync(appInfo.icon)) {
-        iconPath = appInfo.icon;
-    } else {
+    let iconPath = appInfo.icon.replace(/\.asar(\\|\/)/, '.asar.unpacked$1');
+    let commit = getBuildInfo().commit?.substring(0,7) ?? '';
+    if(commit !== '') commit = '-'+commit
+    if (process.platform === 'linux' && !existsSync(appInfo.icon)) {
         iconPath = '/usr/share/icons/hicolor/512x512/apps/' + packageJson.name + '.png';
     }
     const aboutVersions = "Electron: " + process.versions.electron + "    Node: " + process.versions.node + "    Chromium: " + process.versions.chrome;
     app.setAboutPanelOptions({
         applicationName: app.getName(),
-        applicationVersion: 'v' + app.getVersion() + devFlag,
+        applicationVersion: 'v' + app.getVersion() + commit + ' (' + getBuildInfo().type + ')',
         authors: appContributors,
         website: appInfo.URL,
         credits: l10nStrings.help.contributors + ' ' + stringContributors,

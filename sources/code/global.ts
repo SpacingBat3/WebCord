@@ -4,6 +4,7 @@
 
 import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
+import { parse } from "semver";
 
 /**
  * Outputs a fancy log message in the (DevTools) console.
@@ -16,14 +17,19 @@ export function wLog(msg: string): void {
 }
 
 export type Person = string & {
+	/** Person name (can be either a nickname or full name). */
 	name: string,
+	/** Valid email of the person, e.g. `person@example.com`. */
 	email?: string,
+	/** An URL to the person's webpage, e.g. `https://example.com/person` */
 	url?: string;
 };
 
 export interface PackageJsonProperties {
 	/** Node.js-friendly application name. */
 	name: string,
+	/** Application version. */
+	version: string,
 	/** Application author. */
 	author: Person,
 	/** Array of application code contributors. */
@@ -39,27 +45,52 @@ export interface PackageJsonProperties {
 	};
 }
 
+function isEmail(email: string|undefined): boolean {
+	return (email?.match(/^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*@[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*\.[a-z]+$/) !== null)
+}
+
 function isPerson(variable: unknown): variable is Person {
 	// Check #1: Variable is either string or object.
-	if (typeof (variable) !== 'string' && typeof (variable) !== 'object')
+	if (typeof variable !== 'string' && typeof variable !== 'object')
 		return false;
 
 	// Check #2: When variable is object, it has 'name' key and optionally 'email' and 'url' keys.
-	if (typeof (variable) === 'object') {
-		if (typeof ((variable as Person).name) !== 'string')
+	if (typeof variable === 'object') {
+		if (typeof (variable as Person).name !== 'string')
 			return false;
 
-		if ((variable as Person).email !== undefined && typeof ((variable as Person).email) !== 'string')
-			return false;
+		if ((variable as Person).email !== undefined && typeof (variable as Person).email !== 'string')
+			return false
+		// Validate Emails if present
+		else if(typeof (variable as Person).email === 'string' && !isEmail((variable as Person).email))
+			return false
 
-		if ((variable as Person).url !== undefined && typeof ((variable as Person).url) !== 'string')
+
+		if ((variable as Person).url !== undefined && typeof (variable as Person).url !== 'string')
 			return false;
 	}
 
+	// Check #3: When Person is string, it shall be in `name <email> [url]` format.
+	if (typeof variable === 'string'){
+		return (
+			variable.split(/\[.*\]|<.*>/).length < 2 ||
+			(
+				variable.split(/\[.*\]|<.*>/).length == 2 &&
+				variable.split(/\[.*\]|<.*>/)[1] === ''
+			)
+		)
+	}
 	return true;
 }
 
-function isPackageJsonComplete(object: unknown): object is PackageJsonProperties {
+/**
+ * A typeguard that verifies if the `package.json` is in the correct format.
+ * 
+ * **Warning**: These checks includes even the syntax of some strings like
+ * for the `[Person].email` or the `name` top-level property.
+ */
+
+export function isPackageJsonComplete(object: unknown): object is PackageJsonProperties {
 	// Check #1: 'contributors' is array of 'Person'
 	if (typeof (object as PackageJsonProperties).contributors === "object")
 		for (const key of (object as Record<string, Array<unknown>>).contributors)
@@ -85,6 +116,16 @@ function isPackageJsonComplete(object: unknown): object is PackageJsonProperties
 			return false;
 	}
 
+	// Check #6: `name` field has a valid patern.
+	if((object as PackageJsonProperties).name.match(/^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/) === null)
+		return false
+
+	// Check #7: `name` is a `semver`-parsable string
+	if(typeof (object as PackageJsonProperties).version === 'string')
+		if (parse((object as PackageJsonProperties).version) === null)
+			return false
+
+	// All checks passed, return `true`!
 	return true;
 }
 
@@ -96,7 +137,7 @@ function isPackageJsonComplete(object: unknown): object is PackageJsonProperties
  * this function has limited number of properties that cannot be exceeded.
  */
 
-function getPackageJsonProperties(): PackageJsonProperties {
+function getPackageJsonProperties(): Omit<PackageJsonProperties, 'version'> {
 	const packageJSON: Record<string, unknown> = JSON.parse(readFileSync(resolve(__dirname, "../../package.json")).toString());
 	if (!isPackageJsonComplete(packageJSON))
 		throw new TypeError("File 'package.json' does not contain all required properties or/and some of them are of invalid type!");
@@ -124,13 +165,26 @@ export const packageJson = getPackageJsonProperties();
  */
 
 export interface HTMLSettingsGroup {
+	/** Title of the settings section. (General, Advanced etc.) */
     title: string;
+	/** Array of the settings groups in the section. */
     options: {
+			/** Name of the specific configuration entry (e.g. Tray icon). */
             name: string;
+			/** Long description of the configuration entry (e.g. Controls the tray apperance) */
             description: string;
+			/** Whenever checkbox is visible. */
+			hidden?: boolean;
+			/** An array of checkboxes and its labels. */
             checklists: {
+				/** A label describing the single checkbox. */
                 label: string;
+				/**
+				 * An element id used for the indentification of the settings
+				 * entries to get / update its values.
+				 */
                 id: string;
+				/** Whenever checkbox is in *checked* state. */
                 isChecked: boolean;
             }[]
     }[]
@@ -146,7 +200,11 @@ export const discordFavicons = {
 
 /**
  * A generic TypeGuard, used to deeply check if `object` has same type as another
- * object (useful when one of the objects has known type that is non-primitive).
+ * `object` (useful when one of the objects has known type that is non-primitive).
+ * 
+ * @param object1 An object to check the type of.
+ * 
+ * @param object2 An object used for the type comparasion.
  */
  export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
 
@@ -179,7 +237,7 @@ export const discordFavicons = {
 				return false;
 			}
 	}
-	// If still executes, it means that passed all tests
+	// If that still executes, it means that passed all tests.
 	return true;
 }
 

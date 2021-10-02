@@ -3,31 +3,28 @@
  */
 
 import { desktopCapturer } from 'electron';
-import { wLog } from '../global';
+import { wLog } from '../../global';
 
-/* This was a pain to type, but I've succeed. */
-
-interface MediaDevices {
-    getDisplayMedia?: () => Promise<unknown>;
-    getUserMedia: (constrains?: MediaStreamConstraints) => Promise<MediaStream>;
+interface EMediaDevices {
+    getDisplayMedia?: () => Promise<MediaStream>;
+    getUserMedia: (constrains?: EMediaStreamConstraints) => Promise<MediaStream>;
 }
 
-interface MediaStreamConstraints extends globalThis.MediaStreamConstraints {
-    audio?: boolean | MediaTrackConstraints;
-    video?: boolean | MediaTrackConstraints;
+interface EMediaStreamConstraints extends MediaStreamConstraints {
+    audio?: boolean | EMediaTrackConstraints;
+    video?: boolean | EMediaTrackConstraints;
 }
 
-interface MediaTrackConstraints extends globalThis.MediaTrackConstraints {
+interface EMediaTrackConstraints extends MediaTrackConstraints {
     mandatory: {
         chromeMediaSource: string;
         chromeMediaSourceId: string;
     };
 }
-
-interface Navigator extends globalThis.Navigator {
-    mediaDevices: globalThis.MediaDevices & MediaDevices;
+/** ElectronJS Navigator API with the custom `getDisplayMedia` API set. */
+interface ENavigator extends Navigator {
+    mediaDevices: EMediaDevices & MediaDevices;
 }
-const navigator: Navigator = globalThis.navigator;
 
 export default function preloadCapturer ():void {
     navigator.mediaDevices.getDisplayMedia = async () => {
@@ -142,7 +139,7 @@ export default function preloadCapturer ():void {
                             if (!source) {
                                 throw new Error('Source with id: "' + id + '" does not exist!');
                             }
-                            const stream = await navigator.mediaDevices.getUserMedia({
+                            const stream = await (navigator as ENavigator).mediaDevices.getUserMedia({
                                 audio: false,
                                 video: {
                                     mandatory: {

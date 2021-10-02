@@ -3,7 +3,7 @@
 import JSONC from "@spacingbat3/jsonc-parser"
 import * as path from "path";
 import * as fs from "fs";
-import * as deepmerge from "deepmerge";
+import { deepmerge } from "deepmerge-ts";
 import { app, dialog } from "electron";
 import { jsonOrJsonc, objectsAreSameType } from "../global";
 import { EventEmitter } from "events";
@@ -132,19 +132,23 @@ const fallbackStrings = {
 			group: {
 				devel: {
 					name: "Developer mode",
-					description: "Enables the access to tools and unfinished options that might be dangerous in wrong hands. Disclaimer: If you break something after you switched this option on, don't expect from the app maintainers or anyone else to fix that!",
+					description: "Enables the access to tools and unfinished options that are potentially considered as a dangerous. Disclaimer: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
 					label: "Enable developer mode"
 				},
 				csp: {
 					name: "Content Security Policy",
-					description: "Sets a list of the websites from which Discord is allowed to display content (images, videos, iframes etc.) or connect to.",
-					group: {
+					extends: {
 						thirdparty: {
 							name:"Third party websites",
+							description: "Sets a list of the third-party websites allowed to connect or display content.",
 							list: {
 								gifProviders: "GIF Providers"
 							}
-						}
+						},
+						enable: {
+							description: "Switches whenever application should ignore Discord's Content Security Policy headers and let client set its own CSP for privacy and security concerns.",
+							label: "Use in-app Content Security Policy"
+						},
 					}
 				}
 			}

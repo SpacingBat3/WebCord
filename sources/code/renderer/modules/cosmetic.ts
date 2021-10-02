@@ -2,8 +2,7 @@
  * Cosmetic.ts – Website improvements for better integration within client
  */
 
-import { wLog } from '../global';
-
+import { wLog } from '../../global';
 export default function preloadCosmetic(localStorage:Storage):void {
   localStorage.setItem('hideNag','true');
   const removeUnneded = () => {

@@ -3,11 +3,11 @@
  */
 
 import * as fs from "fs";
-import * as deepmerge from "deepmerge";
 import { app, BrowserWindow, screen } from "electron";
 import { resolve } from "path"
 import { appInfo } from "./clientProperties";
 import { objectsAreSameType } from "../global";
+import { deepmerge } from 'deepmerge-ts';
 
 function isJsonSyntaxCorrect(string: string) {
 	try {
@@ -32,7 +32,7 @@ export class AppConfig {
         disableTray: false,
         devel: false,
         csp: {
-            disabled: false,
+            enabled: true,
             thirdparty: {
                 spotify: true,
                 gif: true,
@@ -65,13 +65,13 @@ export class AppConfig {
      */
 
     public set(object: Partial<AppConfig["defaultConfig"]>): void {
-        const oldObject = JSON.parse(fs.readFileSync(this.path).toString());
+        const oldObject = this.get();
         const newObject = deepmerge(oldObject, object);
-        this.write(newObject);
+        if(objectsAreSameType(newObject, oldObject)) this.write(newObject);
     }
     /** Returns the entire parsed configuration file in form of the JavaScript object. */
     public get(): AppConfig["defaultConfig"] {
-        const parsedConfig = JSON.parse(fs.readFileSync(this.path).toString());
+        const parsedConfig:unknown = JSON.parse(fs.readFileSync(this.path).toString());
         if(objectsAreSameType(parsedConfig, this.defaultConfig))
             return parsedConfig;
         else
@@ -96,7 +96,7 @@ export class AppConfig {
         if (!fs.existsSync(this.path))
             this.write(this.defaultConfig);
         else
-            this.write(deepmerge(this.defaultConfig, this.get()))
+            this.write({...this.defaultConfig, ...this.get()})
     }
 }
 
@@ -127,9 +127,9 @@ export class WinStateKeeper {
         fs.writeFileSync(this.file, JSON.stringify(object, null, this.spaces));
     }
     private set(object: Partial<WinStateKeeper["defaultConfig"]>): void {
-        const oldObject = JSON.parse(fs.readFileSync(this.file).toString());
+        const oldObject = this.get();
         const newObject = deepmerge(oldObject, object);
-        this.write(newObject);
+        if(objectsAreSameType(newObject, oldObject)) this.write(newObject);
     }
     private get(): WinStateKeeper["defaultConfig"] {
         const parsedConfig = JSON.parse(fs.readFileSync(this.file).toString());
