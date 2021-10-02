@@ -58,7 +58,7 @@
     "source-map-support": "^0.5.19"
   },
   "config": {
-    "forge": "./sources/app/buildConfig/forge.js"
+    "forge": "./sources/app/build/forge.js"
   },
   "private": true
 }

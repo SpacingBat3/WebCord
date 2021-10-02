@@ -1,4 +1,4 @@
-{ 
+{
     "compilerOptions": {
         /* Whenever incremental compilation is enabled */
         "incremental": true,

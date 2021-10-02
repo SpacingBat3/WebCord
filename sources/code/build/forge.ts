@@ -40,22 +40,24 @@ const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
   packagerConfig: {
     executableName: packageJson.name, // name instead of the productName
-    asar: (process.env.WEBCORD_ASAR ? true : false),
+    asar: (process.env.WEBCORD_ASAR === "false" ? false : {
+      unpack: "**/" + iconFile + ".png"
+    }),
     icon: iconFile, // used in Windows and MacOS binaries
     extraResource: [
-      "LICENSE",
-      iconFile + ".png"
+      "LICENSE"
     ],
     quiet: true,
     ignore: [
       // Directories:
       /sources\/app\/.build/,
+      /out\//,
       // Files:
       /\.eslintrc\.json/,
       /tsconfig\.json/,
       /sources\/app\/forge\/config\..*/,
       /sources\/code\/.*/,
-      /sources\/assets\/icons\/app\..*/,
+      /sources\/assets\/icons\/app\.(ico|icns)/,
       // Hidden (for *nix OSes) files:
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
@@ -107,12 +109,12 @@ const config: ForgeConfigFile = {
     {
       name: "@electron-forge/publisher-github",
       config: {
-        prerelease: (getBuildID() === "devel"),
+        prerelease: getBuildID() === "devel",
         repository: {
           owner: packageJson.author.name,
           name: "WebCord"
         },
-        draft: true
+        draft: getBuildID() === "release"
       }
     }
   ],
@@ -120,11 +122,10 @@ const config: ForgeConfigFile = {
     packageAfterCopy: async (_ForgeConfig, path) => {
       const buildConfig = {
         type: getBuildID(),
-        commit: (getBuildID() === "devel") ? getCommit() : undefined,
+        commit: getBuildID() === "devel" ? getCommit() : undefined,
       }
       writeFileSync(resolve(path, 'buildInfo.json'), JSON.stringify(buildConfig, null, 2))
     }
   }
 };
-
 module.exports = config;
