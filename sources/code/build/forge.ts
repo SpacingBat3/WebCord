@@ -95,7 +95,6 @@ const config: ForgeConfigFile = {
     },
     {
       name: "@electron-forge/maker-rpm",
-      platforms: [],
       config: {
         options: {
           icon: iconFile + ".png",
