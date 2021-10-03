@@ -17,13 +17,13 @@ const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Netwo
 
 // Some custom functions
 
-function getCommit():string {
+function getCommit():string | undefined {
   const projectPath = resolve(__dirname, '../../..')
   const refsPath = readFileSync(resolve(projectPath, '.git/HEAD'))
     .toString()
     .split(': ')[1]
-    .trim();
-  return readFileSync(resolve(projectPath, '.git', refsPath)).toString().trim();
+    ?.trim();
+  if(refsPath) return readFileSync(resolve(projectPath, '.git', refsPath)).toString().trim();
 }
 
 function getBuildID() {
