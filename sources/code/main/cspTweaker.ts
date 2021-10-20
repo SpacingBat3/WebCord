@@ -58,7 +58,9 @@ if (configData.csp.thirdparty.twitch) {
 if (configData.csp.thirdparty.algolia) {
     csp += " https://*.algolianet.com https://*.algolia.net"; // Algolia
 }
-
+if (configData.csp.thirdparty.youtube) {
+    csp += " https://*.googlevideo.com"; // Youtube
+}
 // Media
 
 csp += "; media-src 'self' blob: https://*.discordapp.net https://*.discord.com https://*.discordapp.com";
