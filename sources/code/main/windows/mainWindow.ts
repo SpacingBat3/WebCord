@@ -1,6 +1,6 @@
 import { appInfo } from "../clientProperties";
 import { AppConfig, WinStateKeeper } from "../configManager";
-import { app, BrowserWindow, shell, Tray, net, nativeImage } from "electron";
+import { app, BrowserWindow, Tray, net, nativeImage, ipcMain } from "electron";
 import * as getMenu from '../nativeMenus';
 import { packageJson, discordFavicons } from '../../global';
 import { discordContentSecurityPolicy } from '../cspTweaker';
@@ -35,10 +35,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         show: false,
         webPreferences: {
             preload: app.getAppPath() + "/sources/app/renderer/preload/mainWindow.js",
-            nodeIntegration: false, // Won't work with the true value.
+            nodeIntegration: false,
             devTools: true, // Too usefull to be blocked.
-            contextIsolation: false, // Disabled because of the capturer.
-            nativeWindowOpen: true
         }
     });
     win.webContents.on('did-fail-load', () => {
@@ -65,9 +63,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             });
         });
     }
-    const childCsp = "default-src 'self' blob:";
 
-    // Permissions:
+    // (Device) permissions check/request handlers:
     {
         /** List of domains, urls or protocols accepted by permission handlers. */
         const trustedURLs = [
@@ -76,6 +73,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         ];
         win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
             let websiteURL: string;
+            switch (permission) {
+                case "display-capture":
+                case "notifications":
+                case "media":
+                    break;
+                default:
+                    return false;
+            }
             (webContents !== null && webContents.getURL() !== "") ? websiteURL = webContents.getURL() : websiteURL = requestingOrigin;
             // In some cases URL might be empty string, it should be denied then for that reason.
             if (websiteURL === "")
@@ -86,18 +91,27 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     return true;
                 }
             }
-            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, originURL, permission);
+            console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, originURL, permission);
             return false;
         });
         win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
             for (const secureURL of trustedURLs) {
+                switch (permission) {
+                    case "display-capture":
+                    case "notifications":
+                    case "media":
+                        break;
+                    default:
+                        return callback(false);
+                }
                 if (webContents.getURL().startsWith(secureURL)) {
                     return callback(true);
                 }
             }
-            console.warn(`[${l10nStrings.dialog.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
+            console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
             return callback(false);
         });
+        win.webContents.session.setDevicePermissionHandler(() => false);
     }
     win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) });
     win.setAutoHideMenuBar(configData.hideMenuBar);
@@ -110,32 +124,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Load all menus:
 
     getMenu.context(win);
-    if (!configData.disableTray) tray = getMenu.tray(win, childCsp);
+    if (!configData.disableTray) tray = getMenu.tray(win);
     getMenu.bar(packageJson.repository.url, win);
-
-    // Open external URLs in default browser
-    {
-        win.webContents.setWindowOpenHandler((details) => {
-            /**
-             * Allowed protocol list.
-             * 
-             * For security reasons, `shell.openExternal()` should not be used for any type
-             * of the link, as this may allow potential attackers to compromise host or even
-             * execute arbitary commands.
-             * 
-             * See:
-             * https://www.electronjs.org/docs/tutorial/security#14-do-not-use-openexternal-with-untrusted-content
-             */
-            const trustedProtocolArray = [
-                'https://',
-                'mailto:'
-            ];
-            for (const protocol of trustedProtocolArray) {
-                if (details.url.startsWith(protocol)) shell.openExternal(details.url);
-            }
-            return { action: 'deny' };
-        });
-    }
 
     // "Red dot" icon feature
     let setFavicon: string | undefined;
@@ -178,6 +168,16 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     win.webContents.on('did-finish-load', () => {
         win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s; transition-timing-function: linear;}");
+    });
+
+    // Inject desktop capturer
+    ipcMain.on('desktop-capturer-inject', (event, api) => {
+        const functionString = `
+            navigator.mediaDevices.getDisplayMedia = async () => {
+                return navigator.mediaDevices.getUserMedia(await window['${api}'].desktopCapturerPicker())
+            }
+        `;
+        win.webContents.executeJavaScript(functionString+';0');
     });
 
     return win;

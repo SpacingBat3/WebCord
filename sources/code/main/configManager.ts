@@ -48,7 +48,8 @@ export class AppConfig {
                 algolia: true,
                 funimation: true
             }
-        }
+        },
+        permissionsBlocked: ([] as string[])
     };
     private path: fs.PathLike = resolve(app.getPath('userData'), 'config.json');
     private spaces: number;

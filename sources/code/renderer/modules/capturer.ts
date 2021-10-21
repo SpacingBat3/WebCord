@@ -3,12 +3,8 @@
  */
 
 import { desktopCapturer } from 'electron';
-import { wLog } from '../../global';
-
-interface EMediaDevices {
-    getDisplayMedia?: () => Promise<MediaStream>;
-    getUserMedia: (constrains?: EMediaStreamConstraints) => Promise<MediaStream>;
-}
+import { readFileSync } from 'fs';
+import * as path from 'path';
 
 interface EMediaStreamConstraints extends MediaStreamConstraints {
     audio?: boolean | EMediaTrackConstraints;
@@ -21,152 +17,117 @@ interface EMediaTrackConstraints extends MediaTrackConstraints {
         chromeMediaSourceId: string;
     };
 }
-/** ElectronJS Navigator API with the custom `getDisplayMedia` API set. */
-interface ENavigator extends Navigator {
-    mediaDevices: EMediaDevices & MediaDevices;
+
+function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
+    // Container
+    const container = document.createElement('div');
+    container.setAttribute('class', 'capturer-selection');
+
+    // Style
+    const style = document.createElement('style');
+    style.innerHTML = readFileSync(
+        path.resolve(__dirname, '../../../assets/web/css/capturer.css')
+    ).toString();
+    container.appendChild(style);
+
+    // Scroller
+    const scroller = document.createElement('div');
+    scroller.className = "capturer-scroller";
+
+    // Selection list
+    const list = document.createElement('ul');
+    list.className = "capturer-list";
+
+    // Selection items
+    for (const source of sources) {
+
+        // Item
+        const item = document.createElement('li');
+        item.className = "capturer-item";
+
+        // Button
+        const button = document.createElement('button');
+        button.className = "capturer-button";
+        button.setAttribute('data-id', source.id);
+        button.setAttribute('title', source.name);
+
+        // Thumbnail
+        const thumbnail = document.createElement('img');
+        thumbnail.className = "capturer-thumbnail";
+        thumbnail.src = source.thumbnail.toDataURL();
+        button.appendChild(thumbnail);
+
+        // A container for icon and label
+        const labelContainer = document.createElement('div')
+        labelContainer.className = "capturer-label-container"
+
+        // Icon
+        if (source.appIcon) {
+            const icon = document.createElement('img');
+            icon.className = "capturer-label-icon";
+            icon.src = source.appIcon.toDataURL();
+            labelContainer.appendChild(icon);
+        }
+
+        // Label
+        const label = document.createElement('span');
+        label.className = "capturer-label";
+        label.innerText = source.name;
+        labelContainer.appendChild(label);
+
+        button.appendChild(labelContainer);
+        item.appendChild(button);
+        list.appendChild(item);
+    }
+    scroller.appendChild(list);
+
+    // Close button
+    const buttonClose = document.createElement('button');
+    buttonClose.className = "capturer-close";
+    buttonClose.innerText = "✕";
+
+    scroller.appendChild(buttonClose);
+    container.appendChild(scroller);
+    document.body.appendChild(container);
+    return container;
 }
 
-export default function preloadCapturer ():void {
-    navigator.mediaDevices.getDisplayMedia = async () => {
-        // eslint-disable-next-line no-async-promise-executor
-        return new Promise(async(resolve, reject) => {
-            try {
-                const sources = await desktopCapturer.getSources({ types: ['screen', 'window'] });
-                const selectionElem = document.createElement('div');
-                selectionElem.setAttribute('class', 'desktop-capturer-selection');
-                selectionElem.innerHTML = `
-                <style>
-                        .desktop-capturer-selection {
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100vh;
-                            background: rgba(30,30,30,.75);
-                            color: #fff;
-                            z-index: 10000000;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                    }
-                        .desktop-capturer-selection__scroller {
-                            width: 100%;
-                            max-height: 100vh;
-                            overflow-y: auto;
-                    }
-                    .desktop-capturer-selection__list {
-                        max-width: calc(100% - 100px);
-                        margin: 50px;
-                        padding: 0;
-                        display: flex;
-                        flex-wrap: wrap;
-                        list-style: none;
-                        overflow: hidden;
-                        justify-content: center;
-                    }
-                    .desktop-capturer-selection__item {
-                        display: flex;
-                        margin: 4px;
-                    }
-                    .desktop-capturer-selection__btn {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: stretch;
-                        width: 145px;
-                        margin: 0;
-                        border: 0;
-                        border-radius: 3px;
-                        padding: 4px;
-                        color: #FFFFFF;
-                        background: #36393F;
-                        text-align: left;
-                        transition: background-color .15s, box-shadow .15s;
-                    }
-                    .desktop-capturer-selection__btn:hover,
-                    .desktop-capturer-selection__btn:focus {
-                        background: #7289DA;
-                    }
-                    .desktop-capturer-selection__thumbnail {
-                        width: 100%;
-                        height: 81px;
-                        object-fit: cover;
-                    }
-                    .desktop-capturer-selection__name {
-                        margin: 6px 0 6px;
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                    }
-                    .desktop-capturer-close {
-                        background-color: #36393F;
-                        position: fixed;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        right: 15px;
-                        padding-top: 5px;
-                        transition: background-color .15s;
-                    }
-                    .desktop-capturer-close:hover {
-                        background-color: #823A3A;
-                    }
-                    </style>
-                    <div class="desktop-capturer-selection__scroller">
-                        <ul class="desktop-capturer-selection__list">
-                    ` + sources.map(({ id, name, thumbnail }) => `
-                            <li class="desktop-capturer-selection__item">
-                            <button class="desktop-capturer-selection__btn" data-id="${id}" title="${name}">
-                                <img class="desktop-capturer-selection__thumbnail" src="${thumbnail.toDataURL()}" />
-                                <span class="desktop-capturer-selection__name">${name}</span>
-                            </button>
-                            </li>
-                        `).join('') + `
-                        </ul>
-                        <button class="desktop-capturer-close">
-                        <svg viewBox="0 0 10 10" height=20px>
-                            <line x1="0" y1="10" x2="10" y2="0" stroke="white" />
-                            <line x1="0" y1="0" x2="10" y2="10" stroke="white" />
-                        </svg>
-                        </button>
-                    </div>
-                `;
-                document.body.appendChild(selectionElem);
+export default function desktopCapturerPicker(): Promise<EMediaStreamConstraints> {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
+        try {
+            const sources = await desktopCapturer.getSources({ types: ['screen', 'window'], fetchWindowIcons: true });
+            const container = renderCapturerContainer(sources);
 
-                document.querySelectorAll('.desktop-capturer-selection__btn').forEach(button => {
-                    button.addEventListener('click', async () => {
-                        try {
-                            const id = button.getAttribute('data-id');
-                            const source = sources.find(source => source.id === id);
-                            if (!source) {
-                                throw new Error('Source with id: "' + id + '" does not exist!');
-                            }
-                            const stream = await (navigator as ENavigator).mediaDevices.getUserMedia({
-                                audio: false,
-                                video: {
-                                    mandatory: {
-                                        chromeMediaSource: 'desktop',
-                                        chromeMediaSourceId: source.id
-                                    }
-                                }
-                            });
-                            resolve(stream);
-                            selectionElem.remove();
-                        } catch (err) {
-                            console.error('[ERROR] Failed to select desktop capture source: "' + err + '"!');
-                            reject(err);
+            for (const button of document.querySelectorAll('.capturer-button'))
+                button.addEventListener('click', () => {
+                    try {
+                        const id = button.getAttribute('data-id');
+                        const source = sources.find(source => source.id === id);
+                        if (!source) {
+                            throw new Error('Source with id: "' + id + '" does not exist!');
                         }
-                    });
+                        const constrains: EMediaStreamConstraints = {
+                            audio: false,
+                            video: {
+                                mandatory: {
+                                    chromeMediaSource: 'desktop',
+                                    chromeMediaSourceId: source.id
+                                }
+                            }
+                        };
+                        resolve(constrains);
+                        container.remove();
+                    } catch (err) {
+                        console.error('[ERROR] Failed to select desktop capture source: "' + err + '"!');
+                        reject(err);
+                    }
                 });
-                document.querySelectorAll('.desktop-capturer-close')
-                    .forEach(button => {
-                        button.addEventListener('click', () => {
-                            selectionElem.remove();
-                        });
-                    });
-            } catch (err) {
-                console.error('[ERROR] Failed to display desktop capture sources: "' + err + '"!');
-                reject(err);
-            }
-        });
-    }
-    wLog("Desktop capturer has been preloaded! 🎉️");
+            document.querySelector('.capturer-close')
+                ?.addEventListener('click', () => container.remove());
+        } catch (err) {
+            console.error('[ERROR] Failed to display desktop capture sources: "' + err + '"!');
+            reject(err);
+        }
+    });
 }

@@ -26,9 +26,9 @@ import('source-map-support').then(sMap => sMap.install());
 
 import('../modules/errorHandler').then(eHand => eHand.default());
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, dialog, shell } from 'electron';
 import { writeFile } from 'fs';
-
+import { trustedProtocolArray } from '../global';
 import { checkVersion } from './updateNotifier';
 import l10n from './l10nSupport';
 import createMainWindow from "./windows/mainWindow"
@@ -53,7 +53,7 @@ let overwriteMain: (()=>void|unknown) | undefined;
             const file = getSwitchValue('export-strings');
             writeFile(file,JSON.stringify(locale.strings, null, 2), (err) => {
                 if(err)
-                    // An approach to make errors more user-friendly.
+                    // An approach to make errors look more user-friendly.
                     console.error(
                         '\n⛔️ '+(err.code||err.name)+' '+err.syscall+': '+file+': '+
                         err.message.replace(err.code+': ','')
@@ -113,4 +113,58 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
+});
+
+// Global `webContents` defaults for hardened security
+app.on('web-contents-created', (_event, webContents) => {
+
+    // Block navigation to the different origin.
+    webContents.on('will-navigate', (event, url) => {
+        const originUrl = webContents.getURL();
+        if ((new URL(originUrl)).origin !== (new URL(url)).origin)
+            event.preventDefault();
+    });
+
+    // Securely open some urls in external software.
+    webContents.setWindowOpenHandler((details) => {
+        if(!app.isReady()) return { action: 'deny' };
+        const openUrl = new URL(details.url);
+        const sameOrigin = new URL(webContents.getURL()).origin === openUrl.origin;
+        let allowedProtocol = false;
+
+        // Check if protocol of `openUrl` is secure.
+        for (const protocol of trustedProtocolArray)
+            if (openUrl.protocol === protocol)
+                allowedProtocol = true;
+        
+        /* 
+         * If origins of `openUrl` and current webContents URL are different,
+         * ask the end user to confirm if the URL is safe enough for him.
+         */
+        if(allowedProtocol === true && sameOrigin === false) {
+            const window = BrowserWindow.fromWebContents(webContents);
+            const strings = (new l10n).strings.dialog;
+            const options:Electron.MessageBoxSyncOptions = {
+                type: 'warning',
+                title: strings.common.warning+': '+strings.externalApp.title,
+                message: strings.externalApp.message,
+                buttons: [strings.common.yes, strings.common.no],
+                defaultId: 1,
+                cancelId: 1,
+                detail: strings.common.source+':\n'+details.url,
+                textWidth:320,
+                normalizeAccessKeys: true
+            }
+            let result:number;
+
+            if(window)
+                result = dialog.showMessageBoxSync(window,options);
+            else
+                result = dialog.showMessageBoxSync(options);
+            
+            if(result === 1) return { action: 'deny' };
+        }
+        if(allowedProtocol) shell.openExternal(details.url);
+        return { action: 'deny' };
+    });
 });

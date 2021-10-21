@@ -1,6 +1,14 @@
+import { contextBridge, ipcRenderer } from "electron";
+import { randomBytes } from "crypto";
 import { wLog } from "../../global";
-import preloadCapturer from "../modules/capturer";
+import desktopCapturerPicker from "../modules/capturer";
 import preloadCosmetic from "../modules/cosmetic";
+
+/**
+ * WebCord API key used as the object name of the exposed content
+ * by the Context Bridge.
+ */
+ const contextBridgeApiKey = "__"+randomBytes(32).toString('base64')+"__"
 
 /* 
  * Hence Discord removes localStorage, expose it for the preloads
@@ -12,7 +20,15 @@ import preloadCosmetic from "../modules/cosmetic";
  */
 const localStorage = window.localStorage
 
-preloadCapturer();
 preloadCosmetic(localStorage);
+
+contextBridge.exposeInMainWorld(
+    contextBridgeApiKey,
+    {
+        desktopCapturerPicker: desktopCapturerPicker
+    }
+)
+
+ipcRenderer.send('desktop-capturer-inject', contextBridgeApiKey)
 
 wLog("Everything has been preloaded successfully!");

@@ -68,8 +68,14 @@ const fallbackStrings = {
 	},
 	/** GTK / Terminal dialogs, warnings, errors etc. */
 	dialog: {
-		error: "Error",
-		warning: "Warning",
+		common: {
+			error: "Error",
+			warning: "Warning",
+			continue: "&Continue",
+			yes: "&Yes",
+			no: "&No",
+			source: "Source"
+		},
 		ver: {
 			update: "New app version is available!",
 			updateBadge: "[UPDATE]",
@@ -86,15 +92,14 @@ const fallbackStrings = {
 				denied: "%s: Permission check to %s denied."
 			}
 		},
-		buttons: {
-			continue: "Continue",
-			yes: "Yes",
-			no: "No"
-		},
 		/** WebCord's extension format names (in file picker). */
 		mod: {
 			nodeExt: "WebCord Node.js Addon",
 			crx: "Chrome/Chromium Extension"
+		},
+		externalApp: {
+			title: "Opening link in external app.",
+			message: "A website tries to redirect link with the different origin to the external application. Continue anyway?",
 		},
 		hideMenuBar: "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to temporarily unhide menu bar."
 	},

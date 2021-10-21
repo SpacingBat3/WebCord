@@ -48,6 +48,11 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
         console.log(path);
         event.reply('documentation-reload', href, readFileSync(path).toString())
     })
+    docsWindow.webContents.session.setPermissionCheckHandler(() => false);
+    docsWindow.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => {
+        callback(false);
+    });
+    docsWindow.webContents.session.setDevicePermissionHandler(()=> false);
     docsWindow.removeMenu();
     return docsWindow
 }

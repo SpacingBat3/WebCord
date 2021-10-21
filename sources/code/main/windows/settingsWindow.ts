@@ -136,7 +136,11 @@ export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
 		console.dir(configWithStrings[1].options)
 		event.reply('settings-generate-html', configWithStrings)
 	})
-	settingsWindow.webContents.openDevTools();
+	settingsWindow.webContents.session.setPermissionCheckHandler(() => false);
+	settingsWindow.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => {
+        return callback(false);
+    });
+	settingsWindow.webContents.session.setDevicePermissionHandler(()=> false);
     return settingsWindow;
 }
 

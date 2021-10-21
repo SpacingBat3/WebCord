@@ -195,7 +195,7 @@ export const discordFavicons = {
 	/** Default favicon (without *blue dot* indicator). */
     default: '25522cef7e234ab001bbbc85c7a3f477b996e20b',
 	/** Favicon indicating unread messages (not pings!). */
-    unread:  '225ffd129fbe59058e0a8fddc1324def40724591'
+    unread:  '44fe71afc7ab5e7f87ccbdac52c86618d6d19240'
 };
 
 /**
@@ -251,3 +251,23 @@ export const discordFavicons = {
 	else
 		return fileNoExtension + '.json';
 }
+
+/**
+ * Allowed protocol list.
+ * 
+ * For security reasons, `shell.openExternal()` should not be used for any type
+ * of the link, as this may allow potential attackers to compromise host or even
+ * execute arbitary commands.
+ * 
+ * This way, we can also force the usage of the secure links variants where
+ * applicable and block *insecure* and unencrypted protocols.
+ * 
+ * See:
+ * https://www.electronjs.org/docs/tutorial/security#14-do-not-use-openexternal-with-untrusted-content
+ */
+export const trustedProtocolArray = [
+	'https:',   // most links to the content viewable by the browsers.
+	'sftp:',    // servers focused on file share, e.g. clouds.
+	'mailto:',  // redirects email adresses.
+	'tel:'      // redirects phone numbers.
+];

@@ -110,7 +110,7 @@ if (os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.ge
 
 // Tray menu
 
-export async function tray(windowName: BrowserWindow, childCSP: string): Promise<Tray> {
+export async function tray(windowName: BrowserWindow): Promise<Tray> {
 	const strings = (new l10n()).strings;
 	const tray = new Tray(appInfo.trayIcon);
 	let image: string | NativeImage;
@@ -136,24 +136,33 @@ export async function tray(windowName: BrowserWindow, childCSP: string): Promise
 					backgroundColor: "#000",
 					icon: image,
 					webPreferences: {
-						session: session.fromPartition("temp:virus")
+						session: session.fromPartition("temp:fun"),
+						disableBlinkFeatures: "AuxClick"
 					}
 				});
 				child.webContents.session.webRequest.onHeadersReceived((details, callback) => {
 					callback({
 						responseHeaders: {
 							...details.responseHeaders,
-							'Content-Security-Policy': [childCSP]
+							'Content-Security-Policy': [
+								"default-src 'self' blob:;"+
+								" style-src 'sha256-n8V3/om6O5hiSDvdAJRQZROksW9j13D3/OdUsUXCN6E=';"+
+								" script-src 'unsafe-inline'"+
+								" https://jcw87.github.io"
+							]
 						}
 					});
 				});
-				// Let's load a virus! Surely, nothing wrong will happen:
-				child.loadURL('http://www.5z8.info/worm.exe_i0b8xn_snufffilms');
+				child.loadURL('https://jcw87.github.io/c2-sans-fight/');
 				child.on('page-title-updated', (event) => {
 					event.preventDefault();
 				});
 				child.setAutoHideMenuBar(true);
 				child.setMenuBarVisibility(false);
+				child.webContents.session.setPermissionCheckHandler(() => false);
+				child.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => {
+					callback(false);
+				});
 				child.removeMenu();
 			}
 		},

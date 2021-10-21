@@ -34,7 +34,7 @@ export async function loadNodeAddons(window: BrowserWindow): Promise<void> {
         const modJson = JSON.parse(fs.readFileSync(file + "/package.json", 'utf-8'));
         if (modJson === undefined) return;
         const modInfo = {
-            name: modJson.productName || modJson.name || "Modified",
+            name: modJson.productName || modJson.name,
             icon: path.join(file + '/' + modJson.webcord.icon),
             css: path.join(file + '/' + modJson.webcord.css),
             preload: path.join(file + '/' + modJson.webcord.preload)
@@ -45,6 +45,7 @@ export async function loadNodeAddons(window: BrowserWindow): Promise<void> {
             console.error("Failed on loading extension!");
             return;
         }
+        if(modInfo.name)
         app.setName(app.getName() + ' (' + modInfo.name + ')');
         if (fs.existsSync(modInfo.icon)) window.setIcon(modInfo.icon);
         if (fs.existsSync(modInfo.css)) {

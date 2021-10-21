@@ -1,6 +1,6 @@
 import * as marked from "marked"
 import { sanitize } from "dompurify";
-import { ipcRenderer, shell } from "electron";
+import { ipcRenderer } from "electron";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 
@@ -83,11 +83,9 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
                     const element = document.getElementById(id)
                     if(element) element.scrollIntoView({behavior: "smooth"});
                 }
-            // Handle 'https:' and 'mailto:' links
-            } else if (link.href.startsWith("https:")||link.href.startsWith("mailto:")) {
-                shell.openExternal(link.href);
+            // Handle links with the whitelisted protocols
             } else {
-                console.error("Cannot handle URL: "+link.href);
+                open(link.href)
             }
             return false;
         }
