@@ -1,78 +1,56 @@
-<!--
-  Jeżeli jesteś wstanie to przeczytać, to pewnie jedyne co tu zobaczysz poniżej, to jakaś
-  niezrozumiała mieszanina tekstu i HTML. Dlatego dodałem do tego nieco "komentarzy",
-  aby urozmaicić Ci czytanie tego w Notepadzie. Teraz jest to niezrozumiała mieszanina tekstu,
-  HTML i irytujących komentarzy HTML ;).
- -->
 <div align='right'>
 <sub>
   You don't speak 🇵🇱️? <a href='../Readme.md'>Go back</a> to 🇬🇧️ docs.
 </sub>
 </div>
 <div align='center'>
-<a href='https://github.com/SpacingBat3/WebCord'> <img src='../../sources/assets/icons/app.png' width='192px'> </a> 
-<h1>WebCord</h1>
+<a href='https://github.com/SpacingBat3/WebCord' title="WebCord's GitHub Repository">
+  <picture>
+    <source srcset='https://raw.githubusercontent.com/SpacingBat3/WebCord/master/sources/assets/icons/app.png'>
+    <img src='../../sources/assets/icons/app.png' height='192' alt="WebCord Logo">
+  </picture>
+</a>
 
-<!--
-                                 ______________________
-                                /                      \ Ikonka stworzona przeze mnie
-                                |                      | (NIE JEST KRADZIONA! :P)
-                                |                      |
-                                |     /--\____/--\     |
-                                |    /   _    _   \    |
-                                |   /   (_)  (_)   \   |
-                                |  |     ______     |  |
-                                |   \___/      \___/   |
-                                |                      |
-                                |                 \    |
-                                \__________________\   |
-                                                    \  |
-                                                      \|
-                                                        
-						     
-————————————————————————————————————— W e b C o r d —————————————————————————————————————
+# WebCord
 
-		       MIT • Electron • Pomoc mile widziana • Pi Apps • Repozytorium Debiana
--->
-
-[![Licencja MIT](https://img.shields.io/github/license/SpacingBat3/WebCord?label=Licencja)](../../LICENSE)
-[![Wydania GitHub](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg?label=Wydania)](https://github.com/SpacingBat3/WebCord/tags)
-[![Electron](https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron)](https://www.electronjs.org/)
-[![Liczba pobrań](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Pobrania&color=%236586B3)](https://github.com/SpacingBat3/releases)
-[![Status budowania](https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Budowanie&logo=github)](../../../actions/workflows/build.yml)
-[![Pomoc mile widziana](https://img.shields.io/badge/Pomoc-mile%20widziana-brightgreen.svg)](#want-to-contribute-to-my-project)
-[![Pi-Apps](https://badgen.net/badge/W%20Pi-Apps%3F/Tak!/c51a4a?icon=https://raw.githubusercontent.com/Botspot/pi-apps/master/icons/vector/logo.svg)](https://github.com/Botspot/pi-apps)
-[![Nieoficjalne repozytorium Debiana](https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster&label=Nieoficjalne)](https://itai-nelken.github.io/Webcord_debian-repo/)
+[![Electron][badge1]][electron]
+[![Liczba pobrań][badge2]](https://github.com/SpacingBat3/Webcord/releases "Wydania")
+[![Status][badge3]](https://github.com/SpacingBat3/Webcord/actions/workflows/build.yml "Status budowania")
+[![Pi-Apps][badge4]](https://github.com/Botspot/pi-apps "Centrum aplikacji otwartoźródłowych dla Raspberry Pi OS.")
+[![Nieoficjalne repozytorium Debiana][badge5]](https://itai-nelken.github.io/Webcord_debian-repo/ "Nieoficjalne repozytorium WebCord dla Debian'a.")
 
 </div>
 
-<!-- ———————————————————————————————————————————————————————————————————————————————— -->
+Internetowy klient Discord'a, oparty o [Electron API][electron] i rozwijany
+dzięki [Electron Forge][electron-forge]. W większości (jeżeli nie w pełni)
+*wyprodukowany w Polsce* 🇵🇱️.
 
-Internetowy klient Discord'a, oparty o [Electron API](https://github.com/electron/electron) i
-rozwijany dzięki [Electron Forge](https://github.com/electron-userland/electron-forge).
-W większości (jeżeli nie w pełni) *wyprodukowany w Polsce* 🇵🇱️.
+WebCord stara się poprawiać (w stosunku do oficjalnego klienta) prywatność i
+bezpieczeństwo użytkownika poprzez zezwolenie użytkownikowi na blokowanie
+dowolnych stron (posiadających integracje w Discord'dzie) firm trzecich poprzez
+nadpisywanie nagłówka na taki, jaki został skonfigurowany poprzez ustawienia
+aplikacji. WebCord blokuje również niektóre niepotrzebnie działające usługi,
+takie jak [Sentry](https://sentry.io).
 
-WebCord stara się poprawiać (w stosunku do oficjalnego klienta) prywatność i bezpieczeństwo użytkownika poprzez
-zezwolenie użytkownikowi na blokowanie dowolnych stron (posiadających integracje w Discord'dzie)
-firm trzecich poprzez nadpisywanie nagłówka na taki, jaki został skonfigurowany poprzez ustawienia
-aplikacji. WebCord blokuje również niektóre niepotrzebnie działające usługi, takie jak [Sentry](https://sentry.io).
+Implementacja WebCorda znacznie różni się od wielu innych klientów stworzonych
+przez społeczność, ponieważ nie jest to ani modyfikacja oficjalnego klienta, ani
+klient oparty o API Dicord'a (które w domyśle jest wyłącznie do użytku przez
+boty) – zamiast tego wykorzystuje stronę internetową Discorda, co w mojej opinii
+jest obecnie najbardziej sprawdzonym rozwiązaniem względem bezpieczeństwa konta
+przed zablokowaniem. Dodatkowo WebCord podszywa się pod zwykłą przeglądarkę
+Chrome/Chromium dzięki stosowaniu fałszywego *user agent*'a, co znacznie
+utrudnia odróżnienie użytkowników od tych łączących się z Discord'em przez
+Chromium i zablokowaniem ich do dostępu do usługi (niestety, polityka Discord'a
+sprawia, że ciężko jest stworzyć własny klient dla tej usługi, z uwagi na
+zagrożenie związane z blokadą dostępu do konta przy wykorzystaniu API Discord'a).
 
-Implementacja WebCorda znacznie różni się od wielu innych klientów stworzonych przez społeczność,
-ponieważ nie jest to ani modyfikacja oficjalnego klienta, ani klient oparty o API Dicord'a (które
-w domyśle jest wyłącznie do użytku przez boty) – zamiast tego wykorzystuje stronę internetową
-Discorda, co w mojej opinii jest obecnie najbardziej sprawdzonym rozwiązaniem względem bezpieczeństwa
-konta przed zablokowaniem. Dodatkowo WebCord podszywa się pod zwykłą przeglądarkę Chrome/Chromium
-dzięki stosowaniu fałszywego *user agent*'a, co znacznie utrudnia odróżnienie użytkowników od tych
-łączących się z Discord'em przez Chromium i zablokowaniem ich do dostępu do usługi (niestety, polityka
-Discord'a sprawia, że ciężko jest stworzyć własny klient dla tej usługi, z uwagi na zagrożenie
-związane z blokadą dostępu do konta przy wykorzystaniu API Discord'a).
-
-Projekt ten początkowo był fork'iem [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron),
-ale w końcu później postanowiłem napisać go ponownie od zera jako projekt *Electron Discord Web App*,
-którego nazwę zmieniłem na *WebCord* (aby nieco skrócić tą długą frazę 😉). Ponieważ jednak
-[@GyozaGuy](https://github.com/GyozaGuy) stworzył swój własny projekt, miałem okazję sporo się nauczyć
-na temat Electron'a oraz jak stworzyć przy jego pomocy klient Discorda. Dzięki pracy GyozaGuy,
-ten projekt mógł w końcu samodzielnie się rozwijać.
+Projekt ten początkowo był fork'iem [Discord-Electron][discord-electron],
+ale w końcu później postanowiłem napisać go ponownie od zera jako projekt
+*Electron Discord Web App*, którego nazwę zmieniłem na *WebCord* (aby nieco
+skrócić tą długą frazę 😉). Ponieważ jednak [@GyozaGuy](https://github.com/GyozaGuy)
+stworzył swój własny projekt, miałem okazję sporo się nauczyć na temat
+Electron'a oraz jak stworzyć przy jego pomocy klient Discorda. Dzięki pracy
+GyozaGuy, ten projekt mógł w końcu samodzielnie się rozwijać.
 
 ## Dokumentacja (w większości jeszcze nie przetłumaczona!):
 - [Lista funkcji WebCord'a](../Features.md)
@@ -92,8 +70,15 @@ ten projekt mógł w końcu samodzielnie się rozwijać.
 - [Licencja](../../LICENSE)
 - [Polityka prywatności](../Privacy.md)
 
+## Strony Wiki
+
+Z powodu, że **strony Wiki na GitHubie** tego projektu **zarządzane są przez**
+**społeczność**, ich zawartość powinna być uważana za potencjalnie szkodliwe
+źródło informacji. Zalecane jest w pierwszej kolejności zapoznanie się z
+oficjalną dokumentacji przed przeglądaniem stron Wiki.
+
 ## Licencja
-Ten program upubliczniany jest na warunkach **[licencji MIT](../../LICENSE)**:
+Ten program upubliczniany jest na warunkach **[licencji MIT][license]**:
 	
 	Niniejszym udziela się bezpłatnego dostępu do obrotu kopią tego oprogramowania i
 	powiązantymi z nią plikami dokumentacji (dalej nazywanymi: „Oprogramowaniem”)
@@ -114,21 +99,35 @@ Ten program upubliczniany jest na warunkach **[licencji MIT](../../LICENSE)**:
 	Z OPROGRAMOWANIEM, UŻYTKOWANIEM GO LUB WPROWADZANIEM GO DO OBROTU.
 
 <div align=right>
+<sub>
 
-<sub> To jest wyłącznie tłumaczenie fragmentu licencji, <br>
-które <strong> nie ma żadnej mocy prawnej </strong>. <br>
-<a href='../../LICENSE'> Kliknij tutaj </a> aby wyświetlić oryginalną licencję. </sub>
+**Uwaga:** Wyłącznie plik [`LICENSE`][license] jest licencją oprogramowania.\
+Ma on rozstrzygającą moc w przypadku konfliktu z treścią powyższego tekstu.
 
+</sub>
 </div>
 
 
 ## Chcesz pomóc w rozwoju aplikacji?
 
-- Jeżeli chesz pomóc w usprawnieniach dotyczących kodu aplikacji, stwórz tzw. *Pull Request* i dodaj siebie
-  do tablicy [`contributors`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors)
-  w pliku `package.json`.
+- Jeżeli chesz pomóc w usprawnieniach dotyczących kodu aplikacji, stwórz tzw.
+  *Pull Request* i dodaj siebie do tablicy [`contributors`][npm-docs] w pliku
+  `package.json`.
 
 - Jeżeli chcesz stworzyć tłumaczenie dla aplikacji, polecam zapoznać się z
   dokumentem [Translate.md](../Translate.md).
 
-Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Sprawdź [tą (anglojęzyczną) stronę](https://makeapullrequest.com/).
+Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Zobacz [tą stronę][makepr].
+
+[badge1]: https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron
+[badge2]: https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Downloads&color=%236586B3
+[badge3]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
+[badge4]: https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https%3A%2F%2Fraw.githubusercontent.com%2FBotspot%2Fpi-apps%2Fmaster%2Ficons%2Fvector%2Flogo.svg
+[badge5]: https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster
+[sentry]: https://sentry.io "Monitorowanie i śledzenie błędów aplikacji"
+[discord-electron]: https://github.com/GyozaGuy/Discord-Electron "Aplikacja Electron'a dla Discorda zaprojektowana z myślą o systemach Linux"
+[npm-docs]: https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors "Pola na temat ludzi | Dokumentacja NPM"
+[makepr]: https://makeapullrequest.com/ "Utwórz Pull Request"
+[electron]: https://www.electronjs.org/ "Twórz aplikacje wieloplatformowe w oparciu o Javascript, HTML i CSS."
+[electron-forge]: https://www.electronforge.io/ "Środowisko dla tworzenia, publikowania i instalacji nowoczesnych aplikacji Eletron'a."
+[license]: ../../LICENSE "Licencja WebCord"

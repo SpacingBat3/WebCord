@@ -1,66 +1,52 @@
-<!--                 Now featuring: Notepad-friendly comments! <3                      -->
-<div align='right'>
-<sub>
-  Znasz 🇵🇱? Przejdź <a href='pl/Readme.md'>tutaj</a>.
-</sub> <br>
-</div>
+<p align='right'><sub>
+  Znasz 🇵🇱? Przejdź <a href='pl/Readme.md' title='Polski plik README'>tutaj</a>.
+</sub></p>
 <div align='center'>
-<a href='https://github.com/SpacingBat3/WebCord'> <img src='../sources/assets/icons/app.png' width='192px'> </a>
-<h1>WebCord</h1>
+<a href='https://github.com/SpacingBat3/WebCord' title="WebCord's GitHub Repository">
+  <picture>
+    <source srcset='https://raw.githubusercontent.com/SpacingBat3/WebCord/master/sources/assets/icons/app.png'>
+    <img src='../sources/assets/icons/app.png' height='192' alt="WebCord Logo">
+  </picture>
+</a>
 
-<!--
-                                 ______________________
-                                /                      \ Art by SpacingBat3
-                                |                      | (IT'S NOT STOLEN :P)
-                                |                      |
-                                |     /--\____/--\     |
-                                |    /   _    _   \    |
-                                |   /   (_)  (_)   \   |
-                                |  |     ______     |  |
-                                |   \___/      \___/   |
-                                |                      |
-                                |                 \    |
-                                \__________________\   |
-                                                    \  |
-                                                      \|
-                                                        
-						     
-————————————————————————————————————— W e b C o r d —————————————————————————————————————
+<!-- BEGIN Readable part of the Readme file. -->
 
-		         MIT • Electron • Pull Request Welcome • Pi Apps • Debian Repository
--->
+# WebCord
 
-[![MIT license](https://img.shields.io/github/license/SpacingBat3/WebCord?label=License)](../LICENSE)
-[![GitHub release](https://img.shields.io/github/release/SpacingBat3/electron-discord-webapp.svg?label=Release)](https://github.com/SpacingBat3/WebCord/tags)
-[![Electron](https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron)](https://www.electronjs.org/)
-[![Github downloads](https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Downloads&color=%236586B3)](https://github.com/SpacingBat3/releases)
-[![Build](https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github)](../../../actions/workflows/build.yml)
-[![PRs Welcome](https://img.shields.io/badge/Pull%20requests-welcome-brightgreen.svg)](#want-to-contribute-to-my-project)
-[![Pi-Apps badge](https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://raw.githubusercontent.com/Botspot/pi-apps/master/icons/vector/logo.svg)](https://github.com/Botspot/pi-apps)
-[![Unofficial Debian repository](https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster)](https://itai-nelken.github.io/Webcord_debian-repo/)
+[![Electron][badge1]][electron]
+[![Github downloads][badge2]](https://github.com/SpacingBat3/WebCord/releases "Releases")
+[![Build][badge3]](https://github.com/SpacingBat3/WebCord/actions/workflows/build.yml "Build state")
+[![Pi-Apps badge][badge4]](https://github.com/Botspot/pi-apps "An app center with open source software for Raspberry Pi OS")
+[![Unofficial Debian repository][badge5]](https://itai-nelken.github.io/Webcord_debian-repo/ "Unofficial Debian repository")
 </div>
 
-<!-- ———————————————————————————————————————————————————————————————————————————————— -->
+A Discord web-based client made with the [Electron API][electron], developed
+with [Electron Forge][electron-forge].
 
-A Discord web-based client made with the [Electron API](https://github.com/electron/electron),
-developed with [Electron Forge](https://github.com/electron-userland/electron-forge).
+The main reason of the WebCord existence was previously creating a usable ARM
+alternative, but nowadays it's developement is more around making it *more open*
+alternative to WebCord, which would be both customizable and improving in some
+aspects like the security and privacy. As for now, some tweaks around the
+privacy has been implemented:
+  - blocking third-party websites via customizable CSP.
+  - blocking unnecesary services and tracers with custom CSP, like [Sentry][sentry].
+  
+Please note many features I have plans for hasn't been still implemented yet –
+you can find more about that [in the official documentation](Features.md).
 
-WebCord tries to enchance a little more user privacy by allowing the user to block any
-third-party website by overwritting website CSP header to the one configured via the settings.
-It also blocks some unnecesary services as well, like [Sentry](https://sentry.io).
+WebCord takes a differend approach from most clients, as it isn't just a mod of
+the official client nor does it use the Discord API to be functional – it is
+currently based on the web version of the Discord, which makes it more trusted
+solution in my opinion. As it even fakes the user agent to make it equal or
+similar to the one used by Chrome/Chromium, it is hard to detect it and block
+users from using it.
 
-WebCord takes a differend approach from most clients, as it isn't just a mod of the official
-client nor does it use the Discord API to be functional – it is currently based on the web
-version of the Discord, which makes it more trusted solution in my opinion. As it even fakes
-the user agent to make it equal or similar to the one used by Chrome/Chromium, it is hard to
-detect it and block users from using it.
-
-It began as a fork of the [Discord-Electron](https://github.com/GyozaGuy/Discord-Electron),
-but then eventually I had rewritten it as *Electron Discord Web App* project, which is
-currently called *WebCord* (to make that horribly long name a bit shorter 😉). However
-because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt much about
-Electron and how to implement a Discord client with it by analyzing his code. Thanks to his work,
-this project could begin on its own.
+It began as a fork of the [Discord-Electron][discord-electron], but then
+eventually I had rewritten it as *Electron Discord Web App* project, which is
+currently called *WebCord* (to make that horribly long name a bit shorter 😉).
+However, because [@GyozaGuy](https://github.com/GyozaGuy) made his own project,
+I learnt much about Electron and how to implement a Discord client with it by
+analyzing his code. Thanks to his work, this project could begin on its own.
 
 ## Documentation:
 - [List of WebCord's features](Features.md)
@@ -80,8 +66,15 @@ this project could begin on its own.
 - [License](../LICENSE)
 - [Privacy policy](Privacy.md)
 
+## Wiki pages
+
+Because **Github Wiki Pages** of this project **are maintained by the community**,
+they should be considered as a potentially malicious or misleading source of the
+information. It is recommended to read the official documentation first before
+you will proceed reading the community-maintained Wiki pages.
+
 ## License
-This project is redistributed under the **[MIT License](../LICENSE)**:
+This project is redistributed under the **[MIT License][license]**:
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -102,19 +95,33 @@ This project is redistributed under the **[MIT License](../LICENSE)**:
 	SOFTWARE.
 
 <div align=right>
+<sub>
 
-<sub> This is <strong> not </strong> the copyright notice nor the full license. </sub> <br>
-<sub> <a href='../LICENSE'> Click here </a> to display an actual license. </sub>
+Please note that [LICENSE][license] file is an actual license of this software. \
+It takes precedence over the text displayed above.
 
+</sub>
 </div>
 
 ## Want to contribute to my project?
 
 - If you want to improve my code, make a Pull Request and add yourself to the 
-  [`contributors`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors)
-  array in `package.json`.
+  [`contributors`][npm-docs] array in `package.json`.
 
 - If you want to translate strings in `lang` folder, please visit
   [TRANSLATE.md](Translate.md).
 
-Never made a pull request before? Please refer to [this website](https://makeapullrequest.com/).
+Never made a pull request before? Please refer to [this website][makepr].
+
+[badge1]: https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron
+[badge2]: https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Downloads&color=%236586B3
+[badge3]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
+[badge4]: https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://raw.githubusercontent.com/Botspot/pi-apps/master/icons/vector/logo.svg
+[badge5]: https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster
+[sentry]: https://sentry.io "Application Monitoring and Error Tracking Software"
+[discord-electron]: https://github.com/GyozaGuy/Discord-Electron "An Electron Discord app designed for use on Linux systems."
+[npm-docs]: https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors "People Fields | NPM Documentation"
+[makepr]: https://makeapullrequest.com/ "Make a Pull Request"
+[electron]: https://www.electronjs.org/ "Build cross-platform desktop apps with JavaScript, HTML, and CSS."
+[electron-forge]: https://www.electronforge.io/ "A complete tool for creating, publishing, and installing modern Electron applications."
+[license]: ../LICENSE "WebCord license"
