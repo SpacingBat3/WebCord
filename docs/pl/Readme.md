@@ -4,7 +4,7 @@
 </sub>
 </div>
 <div align='center'>
-<a href='https://github.com/SpacingBat3/WebCord' title="WebCord's GitHub Repository">
+<a href='https://github.com/SpacingBat3/WebCord' title="Repozytorium GitHub'a dla projektu WebCord">
   <picture>
     <source srcset='https://raw.githubusercontent.com/SpacingBat3/WebCord/master/sources/assets/icons/app.png'>
     <img src='../../sources/assets/icons/app.png' height='192' alt="WebCord Logo">
@@ -30,7 +30,7 @@ bezpieczeństwo użytkownika poprzez zezwolenie użytkownikowi na blokowanie
 dowolnych stron (posiadających integracje w Discord'dzie) firm trzecich poprzez
 nadpisywanie nagłówka na taki, jaki został skonfigurowany poprzez ustawienia
 aplikacji. WebCord blokuje również niektóre niepotrzebnie działające usługi,
-takie jak [Sentry](https://sentry.io).
+takie jak [Sentry][sentry].
 
 Implementacja WebCorda znacznie różni się od wielu innych klientów stworzonych
 przez społeczność, ponieważ nie jest to ani modyfikacja oficjalnego klienta, ani
@@ -124,10 +124,10 @@ Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Zobacz [tą stronę][makepr]
 [badge3]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
 [badge4]: https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https%3A%2F%2Fraw.githubusercontent.com%2FBotspot%2Fpi-apps%2Fmaster%2Ficons%2Fvector%2Flogo.svg
 [badge5]: https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster
-[sentry]: https://sentry.io "Monitorowanie i śledzenie błędów aplikacji"
-[discord-electron]: https://github.com/GyozaGuy/Discord-Electron "Aplikacja Electron'a dla Discorda zaprojektowana z myślą o systemach Linux"
+[sentry]: https://sentry.io "Monitorowanie i śledzenie błędów aplikacji."
+[discord-electron]: https://github.com/GyozaGuy/Discord-Electron "Aplikacja Electron'a dla Discorda zaprojektowana z myślą o systemach Linux."
 [npm-docs]: https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors "Pola na temat ludzi | Dokumentacja NPM"
-[makepr]: https://makeapullrequest.com/ "Utwórz Pull Request"
+[makepr]: https://makeapullrequest.com/ "Utwórz Pull Request."
 [electron]: https://www.electronjs.org/ "Twórz aplikacje wieloplatformowe w oparciu o Javascript, HTML i CSS."
 [electron-forge]: https://www.electronforge.io/ "Środowisko dla tworzenia, publikowania i instalacji nowoczesnych aplikacji Eletron'a."
-[license]: ../../LICENSE "Licencja WebCord"
+[license]: ../../LICENSE "Licencja WebCord."
