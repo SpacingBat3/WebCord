@@ -94,13 +94,19 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
 
 function fixImages(container:HTMLElement) {
     // Fix logo URL in Readme files.
-    const logo = container.querySelector<HTMLImageElement>('a[href="https://github.com/SpacingBat3/WebCord"] > img');
-    if(logo===null) return;
+    const logo = container.querySelector<HTMLImageElement>('a[href="https://github.com/SpacingBat3/WebCord"] > picture > img');
+    const logoPicture = logo?.parentNode ?? null
+    const logoAnchor = logoPicture?.parentElement ?? null
+    if(logo===null||logoPicture===null||logoAnchor===null) return;
+    (logoPicture as HTMLPictureElement).remove()
     if(logo.src.match('/sources/assets/web'))
         logo.src=logo.src.replace('/sources/assets/web','');
     else
         logo.src=logo.src.replace('/sources/assets','');
-
+    const newLogo = logo.cloneNode()
+    logoAnchor.appendChild(newLogo)
+    
+    // Remove badges (they require an internet connection).
     for(const image of container.getElementsByTagName('img'))
         if(image.src.startsWith('https:')&&image.parentElement&&image.parentElement.parentElement&&image.parentElement.parentElement.tagName === "P") {
             image.parentElement.parentElement.remove();
@@ -109,7 +115,9 @@ function fixImages(container:HTMLElement) {
 }
 
 ipcRenderer.on('documentation-load', (_event, readmeFile:string) => {
-    marked.setOptions({baseUrl: readmeFile});
+    marked.setOptions({
+        baseUrl: readmeFile
+    });
     const mdHeader = document.createElement('header');
     const mdArticle = document.createElement('article');
     const mdBody = document.createElement('div');
