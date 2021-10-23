@@ -116,11 +116,11 @@ export function isPackageJsonComplete(object: unknown): object is PackageJsonPro
 			return false;
 	}
 
-	// Check #6: `name` field has a valid patern.
+	// Check #6: `name` field is correct package name.
 	if((object as PackageJsonProperties).name.match(/^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/) === null)
 		return false
 
-	// Check #7: `name` is a `semver`-parsable string
+	// Check #7: `version` is a `semver`-parsable string
 	if(typeof (object as PackageJsonProperties).version === 'string')
 		if (parse((object as PackageJsonProperties).version) === null)
 			return false
@@ -195,7 +195,10 @@ export const discordFavicons = {
 	/** Default favicon (without *blue dot* indicator). */
     default: '25522cef7e234ab001bbbc85c7a3f477b996e20b',
 	/** Favicon indicating unread messages (not pings!). */
-    unread:  '44fe71afc7ab5e7f87ccbdac52c86618d6d19240'
+    unread: [
+		'40064cffe692bf4d50a9a2eb3d4886c91c07e9cd',
+		'44fe71afc7ab5e7f87ccbdac52c86618d6d19240'
+	]
 };
 
 /**

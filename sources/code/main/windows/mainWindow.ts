@@ -146,7 +146,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             // Compare hashes.
             if (!configData.disableTray) switch (faviconHash) {
                 case discordFavicons.default:
-                case discordFavicons.unread:
+                case discordFavicons.unread[0]:
+                case discordFavicons.unread[1]:
                     setFavicon = faviconHash;
                     t.setImage(appInfo.trayIcon);
                     win.flashFrame(false);
