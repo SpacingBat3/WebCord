@@ -3,7 +3,7 @@ import { app, BrowserWindow, ipcMain, session } from 'electron';
 //import { packageJson } from '../../global';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
-import { appInfo } from '../clientProperties';
+import { appInfo, getBuildInfo } from '../clientProperties';
 
 import l10n from '../l10nSupport';
 
@@ -53,6 +53,8 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
         callback(false);
     });
     docsWindow.webContents.session.setDevicePermissionHandler(()=> false);
-    docsWindow.removeMenu();
+    docsWindow.setAutoHideMenuBar(true);
+    docsWindow.setMenuBarVisibility(false);
+    if(getBuildInfo().type === 'release') docsWindow.removeMenu();
     return docsWindow
 }

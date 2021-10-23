@@ -107,7 +107,6 @@ function conf2html (config:AppConfig) {
 			}
 		]
 	})
-	console.dir(advanced)
 	return [general, advanced];
 }
 
@@ -129,7 +128,9 @@ export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
 	});
 	if(settingsWindow.webContents.session === parent.webContents.session)
         throw new Error("Child took session from parent!")
-	settingsWindow.removeMenu();
+	settingsWindow.setAutoHideMenuBar(true);
+    settingsWindow.setMenuBarVisibility(false);
+    if(getBuildInfo().type === 'release') settingsWindow.removeMenu();
 	settingsWindow.webContents.loadFile('sources/assets/web/html/settings.html');
 	ipcMain.on('settings-generate-html', (event) => { 
 		if(!settingsWindow.isDestroyed()) settingsWindow.show();
