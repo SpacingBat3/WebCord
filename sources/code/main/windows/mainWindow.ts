@@ -39,7 +39,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             devTools: true, // Too usefull to be blocked.
         }
     });
-    win.webContents.on('did-fail-load', () => {
+    win.webContents.on('did-fail-load', (_event, errorCode) => {
+        if(errorCode !== -106) return;
         win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
