@@ -6,13 +6,13 @@ h1 {
 
 h2 {
     margin-left: 15px;
-    font-size: 0.75em;
+    font-size: 0.8em;
     text-transform: uppercase;
 
 }
 
 p.description {
-    font-size: 0.75em;
+    font-size: 0.8em;
     margin: 0 15px 1em 15px;
     color: var(--color-font-settings);
 }
