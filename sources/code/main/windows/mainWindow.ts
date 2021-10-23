@@ -49,8 +49,11 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             }
         }, 1000);
     });
+    win.webContents.once('did-finish-load', () => {
+        win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) });
+        if (!startHidden) win.show();
+    })
     if (mainWindowState.initState.isMaximized) win.maximize();
-    if (!startHidden) win.show();
 
     // CSP
 
@@ -114,7 +117,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         });
         win.webContents.session.setDevicePermissionHandler(() => false);
     }
-    win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) });
+    win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/load.html'));
     win.setAutoHideMenuBar(configData.hideMenuBar);
     win.setMenuBarVisibility(!configData.hideMenuBar);
 
@@ -178,7 +181,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 return navigator.mediaDevices.getUserMedia(await window['${api}'].desktopCapturerPicker())
             }
         `;
-        win.webContents.executeJavaScript(functionString+';0');
+        win.webContents.executeJavaScript(functionString + ';0');
     });
 
     return win;
