@@ -49,6 +49,10 @@ export class AppConfig {
                 funimation: true
             }
         },
+        blockApi: {
+            typingIndicator: false,
+            science: true,
+        },
         permissionsBlocked: ([] as string[])
     };
     private path: fs.PathLike = resolve(app.getPath('userData'), 'config.json');
@@ -92,12 +96,13 @@ export class AppConfig {
             this.spaces = spaces;
         else
             this.spaces = 4;
-        if(!isJsonSyntaxCorrect)
-            fs.rmSync(this.path)
         if (!fs.existsSync(this.path))
             this.write(this.defaultConfig);
-        else
+        else {
+            if(!isJsonSyntaxCorrect(fs.readFileSync(this.path).toString()))
+                fs.rmSync(this.path)
             this.write({...this.defaultConfig, ...this.get()})
+        }
     }
 }
 

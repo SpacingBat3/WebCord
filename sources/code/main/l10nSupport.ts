@@ -132,6 +132,19 @@ const fallbackStrings = {
 				}
 			}
 		},
+		privacy: {
+			name: "Privacy",
+			group: {
+				blockApi: {
+					name: 'Block Discord API',
+					description: 'Blocks Discord API requests for hardening the privacy.',
+					label: {
+						science: 'Block known telemetry endpoints.',
+						typingIndicator: 'Block typing indicator.'
+					}
+				}
+			}
+		},
 		advanced: {
 			name: "Advanced",
 			group: {

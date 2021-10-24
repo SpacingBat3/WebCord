@@ -10,7 +10,7 @@ import { createHash } from 'crypto';
 import { resolve } from "path";
 
 
-const configData = (new AppConfig().get());
+const configData = new AppConfig().get();
 
 export default function createMainWindow(startHidden: boolean, l10nStrings: l10n["strings"]): BrowserWindow {
 
@@ -68,6 +68,32 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         });
     }
 
+    win.webContents.session.webRequest.onBeforeRequest(
+        {
+            urls: [
+                'https://discord.com/api/*/science',
+                'https://discord.com/api/*/channels/*/typing',
+                'https://discord.com/api/*/track'
+            ]
+        },
+        (details, callback) => {
+            
+            const configData = (new AppConfig()).get();
+            const cancel = configData.blockApi.science || configData.blockApi.typingIndicator;
+            const url = new URL(details.url);
+
+            if(cancel) console.log('[API] Blocking '+url.pathname);
+
+            if(url.pathname.endsWith('/science')||url.pathname.endsWith('/track'))
+                callback({cancel: configData.blockApi.science});
+            else if(url.pathname.endsWith('/typing'))
+                callback({cancel: configData.blockApi.typingIndicator});
+            else
+                callback({cancel: false})
+
+        },
+    );
+
     // (Device) permissions check/request handlers:
     {
         /** List of domains, urls or protocols accepted by permission handlers. */
@@ -81,6 +107,9 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 case "display-capture":
                 case "notifications":
                 case "media":
+                    for (const permissionBlocked of new AppConfig().get().permissionsBlocked)
+                        if (permission === permissionBlocked)
+                            return false;
                     break;
                 default:
                     return false;
@@ -104,6 +133,9 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     case "display-capture":
                     case "notifications":
                     case "media":
+                        for (const permissionBlocked of new AppConfig().get().permissionsBlocked)
+                            if (permission === permissionBlocked)
+                                return callback(false);
                         break;
                     default:
                         return callback(false);
@@ -112,7 +144,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     return callback(true);
                 }
             }
-            console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
+            console.warn('['+l10nStrings.dialog.common.warning.toLocaleUpperCase()+'] '+l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
             return callback(false);
         });
         win.webContents.session.setDevicePermissionHandler(() => false);
@@ -185,5 +217,15 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         win.webContents.executeJavaScript(functionString + ';0');
     });
 
+    // Apply settings that doesn't need app restart on change
+    ipcMain.on('settings-config-modified', () => {
+        const config = new AppConfig();
+        // Menu bar
+        if(!win.menuBarVisible !== config.get().hideMenuBar || win.autoHideMenuBar !== config.get().hideMenuBar) {
+            win.setAutoHideMenuBar(config.get().hideMenuBar)
+            win.setMenuBarVisibility(!config.get().hideMenuBar)
+        }
+            
+    })
     return win;
 }

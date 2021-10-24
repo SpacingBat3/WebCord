@@ -72,6 +72,28 @@ function conf2html (config:AppConfig) {
 			}
 		]
 	}
+	// Privacy
+	const privacy:HTMLSettingsGroup = {
+		title: lang.privacy.name,
+		options: [
+			{
+				name: lang.privacy.group.blockApi.name,
+				description: lang.privacy.group.blockApi.description,
+				checklists: [
+					{
+						label: lang.privacy.group.blockApi.label.science,
+						id: 'blockApi.science',
+						isChecked: config.get().blockApi.science
+					},
+					{
+						label: lang.privacy.group.blockApi.label.typingIndicator,
+						id: 'blockApi.typingIndicator',
+						isChecked: config.get().blockApi.typingIndicator
+					}
+				]
+			}
+		]
+	}
 	// Advanced
 	const advanced:HTMLSettingsGroup = deepmerge({
 		title: lang.advanced.name,
@@ -107,7 +129,7 @@ function conf2html (config:AppConfig) {
 			}
 		]
 	})
-	return [general, advanced];
+	return [general, privacy, advanced];
 }
 
 export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
