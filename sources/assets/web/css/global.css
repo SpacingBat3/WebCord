@@ -9,9 +9,9 @@
     --color-font-header: #fff;
     --color-link: #00A3E3;
     --color-input-bg: #484C52;
-    --font-primary: Twemoji,Whitney,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    --font-display: Twemoji,Ginto,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    --font-code: Twemoji,Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+    --font-primary: Whitney,"Helvetica Neue",Helvetica,Arial,sans-serif, Twemoji;
+    --font-display: Ginto,"Helvetica Neue",Helvetica,Arial,sans-serif, Twemoji;
+    --font-code: Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace, Twemoji;
 }
 
 html {
