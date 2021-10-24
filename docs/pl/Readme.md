@@ -25,12 +25,17 @@ Internetowy klient Discord'a, oparty o [Electron API][electron] i rozwijany
 dzięki [Electron Forge][electron-forge]. W większości (jeżeli nie w pełni)
 *wyprodukowany w Polsce* 🇵🇱️.
 
-WebCord stara się poprawiać (w stosunku do oficjalnego klienta) prywatność i
-bezpieczeństwo użytkownika poprzez zezwolenie użytkownikowi na blokowanie
-dowolnych stron (posiadających integracje w Discord'dzie) firm trzecich poprzez
-nadpisywanie nagłówka na taki, jaki został skonfigurowany poprzez ustawienia
-aplikacji. WebCord blokuje również niektóre niepotrzebnie działające usługi,
-takie jak [Sentry][sentry].
+Poprzednio głównym celem powstania projektu WebCord było stworzenie działającego
+klienta na platformy ARM, obecnie jednak jego rozwój skupiony jest na dążeniu do
+bardziej prywatnej i bezpiecznej alternatywy oficjalnego klienta Discorda oraz
+umożliwiającej użytkownikikowi na wprowadzanie dowolnych zmian. Względem 
+prywatności, WebCord obecnie wprowadza poniższe funkcje:
+  - blokowanie zbędnych usług firm trzecich, takie jak [Sentry][sentry],
+  - blokowanie wybranych usług firm trzecich zintegrowanych z Discordem przez
+    Politykę Bezpieczeństwa Treści (ang. *Content Security Policy*),
+  - domyślne blokowanie śledzenia Discord'a poprzez anulowanie niektórych żądań API
+    (`/science` i `/tracing`),
+  - opcjonalne blokowanie wskaźnika pisania tekstu (`/typing`).
 
 Implementacja WebCorda znacznie różni się od wielu innych klientów stworzonych
 przez społeczność, ponieważ nie jest to ani modyfikacja oficjalnego klienta, ani
@@ -97,16 +102,6 @@ Ten program upubliczniany jest na warunkach **[licencji MIT][license]**:
 	ROSZCZEŃ LUB WYRZĄDZONEJ SZKODY, A TAKŻE ŻADNEJ INNEJ ODPOWIEDZIALNOŚCI CZY TO
 	WYNIKAJĄCEJ Z UMOWY, DELIKTU, CZY JAKIEJKOLWIEK INNEJ PODSTAWY POWSTAŁEJ W ZWIĄZKU
 	Z OPROGRAMOWANIEM, UŻYTKOWANIEM GO LUB WPROWADZANIEM GO DO OBROTU.
-
-<div align=right>
-<sub>
-
-**Uwaga:** Wyłącznie plik [`LICENSE`][license] jest licencją oprogramowania.\
-Ma on rozstrzygającą moc w przypadku konfliktu z treścią powyższego tekstu.
-
-</sub>
-</div>
-
 
 ## Chcesz pomóc w rozwoju aplikacji?
 

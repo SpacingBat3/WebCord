@@ -28,8 +28,11 @@ alternative, but nowadays it's developement is more around making it *more open*
 alternative to WebCord, which would be both customizable and improving in some
 aspects like the security and privacy. As for now, some tweaks around the
 privacy has been implemented:
-  - blocking third-party websites via customizable CSP.
-  - blocking unnecesary services and tracers with custom CSP, like [Sentry][sentry].
+  - blocking third-party websites via customizable CSP,
+  - blocking unnecesary services and tracers with custom CSP, like [Sentry][sentry],
+  - blocking known Discord tracing API requests (`/science` and `/tracing`)
+    by the default,
+  - optionally blocking typing indicator (`/typing`).
   
 Please note many features I have plans for hasn't been still implemented yet –
 you can find more about that [in the official documentation](Features.md).
@@ -93,15 +96,6 @@ This project is redistributed under the **[MIT License][license]**:
 	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
-
-<div align=right>
-<sub>
-
-Please note that [LICENSE][license] file is an actual license of this software. \
-It takes precedence over the text displayed above.
-
-</sub>
-</div>
 
 ## Want to contribute to my project?
 
