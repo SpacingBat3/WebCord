@@ -31,6 +31,8 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
         parent: parent,
         minWidth: appInfo.minWinWidth,
 		minHeight: appInfo.minWinHeight,
+        width: 800,
+        height: 720,
         webPreferences: {
             session: session.fromPartition("temp:docs"),
             preload: resolve(app.getAppPath(), 'sources/app/renderer/preload/docs.js')
