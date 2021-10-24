@@ -66,10 +66,10 @@
 		},
 		"permission": {
 			"request": {
-				"denied": "%s: Żądanie uprawnień do elementu '%s' odrzucone."
+				"denied": "%s: Żądanie uprawnień do elementu „%s” odrzucone."
 			},
 			"check": {
-				"denied": "%s: Sprawdzenie uprawnień do elementu '%s' odrzucone."
+				"denied": "%s: Sprawdzenie uprawnień do elementu „%s” odrzucone."
 			}
 		},
 		"mod": {
@@ -106,6 +106,19 @@
 					"name": "Zasobnik systemowy",
 					"description": "Zmienia ustawienia widoczności ikony w zasobniku systemowym.",
 					"label": "Wyłącz funcję ukrywania okna do zasobnika systemowego."
+				}
+			}
+		},
+		"privacy": {
+			"name": "Prywatność",
+			"group": {
+				"blockApi": {
+					"name": "Blokowanie API Discord'a",
+					"description": "Blokuje żądania API Discord'a w celu polepszenia prywatności.",
+					"label": {
+						"science": "Blokuj znane żądania telemetrii.",
+						"typingIndicator": "Blokuj wskaźnik wpisywania tekstu."
+					}
 				}
 			}
 		},
