@@ -1,0 +1,96 @@
+name: Bug Report (forms)
+description: File a bug report
+assignees: [SpacingBat3]
+labels: [bug]
+body:
+  - type: markdown
+    id: notice
+    attributes:
+      value: |
+        **Note**: The project is still on process to switch to YAML forms.
+  - type: checkboxes
+    id: aknowledgments
+    attributes:
+      label: Aknowledgements
+      options:
+        - label: |
+            I have checked that there's no other issue describing the same or
+            similar problem that I currently have, regardless if it has been
+            closed or open.
+          required: true
+        - label: |
+            I can confirm that this is not an issue with the Discord website,
+            but it is a problem specific to the WebCord itself.
+        - label: |
+            I have tried running the build from the `master` branch and it does
+            not have any fixes implemented according to my issue.
+        - label: |
+            My issue describes one of the unstable and/or not fully implemented
+            features.
+        - label: |
+            I have found a workaround to mitigate or temporarily fix this issue
+            (please write it in *Additional context* section).
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Operating System / Platform
+      description: On which operating system you have encountered this issue?
+      options:
+        - 🪟️ Windows
+        - 🍎️ MacOS
+        - 🐧️ Linux
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: architecture
+    attributes:  
+      label: Operating system architecture
+      description: |
+        What type of the operating system you were using?
+        Is it for Intel/AMD processors or ARM single-board computers and devices?
+        Is it designed for the 32-bit instruction set or the 64-bit ones?
+      options:
+        - ia32 (32-bit Intel/AMD)
+        - x64 (64-bit Intel/AMD)
+        - armv7l (32-bit ARM)
+        - aarch64 (64-bit ARM)
+    validations:
+      required: true
+
+  - type: input
+    id: electron_version
+    attributes:
+      label: Electron version
+      description: |
+        An Electron version used by the application. You can find this in *About panel* menu.
+      placeholder: e.g. v15.3.0
+    validations:
+      required: true
+      
+  - type: input
+    id: app_version
+    attributes:
+      label: Application version
+      description: On which application version you have encountered this bug?
+      placeholder: e.g. v2.0.0-beta5
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: What this issue is about? How others can reproduce it?
+      placeholder: A detailed information describing the issue...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: |
+        Any workarounds? Screenshots? Other useful information about your device/OS?
+      placeholder: An additional information about this issue, images, videos...
