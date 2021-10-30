@@ -62,7 +62,7 @@ export const appInfo = {
 	trayIcon: resolve(app.getAppPath(), "sources/assets/icons/tray.png"),
 	trayPing: resolve(app.getAppPath(), "sources/assets/icons/tray-ping.png"),
 	rootURL: 'https://discord.com',
-	URL: 'https://watchanimeattheoffice.com/app',
+	URL: 'https://youtube.com',
 	minWinHeight: 412,
 	minWinWidth: 312
 };
