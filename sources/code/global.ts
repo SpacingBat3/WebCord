@@ -270,7 +270,6 @@ export const discordFavicons = {
  */
 export const trustedProtocolArray = [
 	'https:',   // most links to the content viewable by the browsers.
-	'sftp:',    // servers focused on file share, e.g. clouds.
 	'mailto:',  // redirects email adresses.
 	'tel:'      // redirects phone numbers.
 ];
