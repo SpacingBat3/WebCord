@@ -102,7 +102,7 @@ export function context(windowName: BrowserWindow): void {
 
 let funMode = 0;
 const today = new Date();
-if (os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.getMonth() == 3)) {
+if (os.userInfo().username == 'descendo' || (today.getDate() == 31 && today.getMonth() == 10)) {
 	funMode = 1; // There's always fun for me ;)
 } else if (os.userInfo().username == 'pi' && today.getDate() == 14 && today.getMonth() == 2) {
 	funMode = 2; // Happy π day!
