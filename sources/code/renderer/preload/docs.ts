@@ -94,7 +94,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
 
 function fixImages(container:HTMLElement) {
     // Fix logo URL in Readme files.
-    const logo = container.querySelector<HTMLImageElement>('a[href="https://github.com/SpacingBat3/WebCord"] > picture > img');
+    const logo = container.querySelector<HTMLImageElement>('a[href="https://github.com/Monkei-Cord/Monkei-Cord"] > picture > img');
     const logoPicture = logo?.parentNode ?? null
     const logoAnchor = logoPicture?.parentElement ?? null
     if(logo===null||logoPicture===null||logoAnchor===null) return;
