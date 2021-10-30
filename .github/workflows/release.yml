@@ -1,4 +1,4 @@
-name: Draft release
+name: Draft release.
 on:
   push:
     tags-ignore:
