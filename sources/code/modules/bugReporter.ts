@@ -51,7 +51,7 @@ export async function createGithubIssue(): Promise<void> {
         newGithubIssueUrl({
             repoUrl: 'https://github.com/' + appInfo.repository.name,
             body: markdownBody,
-            assignee: 'SpacingBat3',
+            assignee: 'Monkei-Cord',
             labels: ['bug'],
             template: 'bug_report.md'
         })
