@@ -1,7 +1,7 @@
 /**
  * HTML Settings preloader script
  * @todo: Implement "Save changes" and "Cancel" buttons
- * @todo: Implement script inside WebCord
+ * @todo: Implement script inside Monkei-Cord
  */
 import { ipcRenderer } from "electron";
 import { HTMLSettingsGroup, wLog } from "../../global";
