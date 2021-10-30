@@ -1,4 +1,9 @@
+:root {
+    --content-width: 300px;
+}
+
 html, body {
+    margin: 0;
     background-color: #36393F;
     height: 100%;
 }
@@ -16,7 +21,11 @@ h1 {
 }
 
 .aura-content {
-    width: 100vw;
+    width: var(--content-width);
+    margin-left: calc(50vw - calc(var(--content-width)/2));
+    margin-right: calc(50vw - calc(var(--content-width)/2));
+    overflow: hidden;
+    white-space: normal;
 }
 
 .aura {

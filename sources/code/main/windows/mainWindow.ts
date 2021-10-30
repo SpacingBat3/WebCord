@@ -50,8 +50,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         }, 1000);
     });
     win.webContents.once('did-finish-load', () => {
-        win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) });
         if (!startHidden) win.show();
+        setTimeout(()=>win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) }), 1500);
     })
     if (mainWindowState.initState.isMaximized) win.maximize();
 
