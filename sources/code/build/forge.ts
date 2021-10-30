@@ -27,7 +27,7 @@ function getCommit():string | undefined {
 }
 
 function getBuildID() {
-  switch(process.env.WEBCORD_BUILD?.toLocaleLowerCase()) {
+  switch(process.env.MONKEICORD_BUILD?.toLocaleLowerCase()) {
     case "release":
     case "stable":
       return "release";
@@ -40,7 +40,7 @@ const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
   packagerConfig: {
     executableName: packageJson.name, // name instead of the productName
-    asar: (process.env.WEBCORD_ASAR === "false" ? false : {
+    asar: (process.env.MONKEICORD_ASAR === "false" ? false : {
       unpack: "**/" + iconFile + ".png"
     }),
     icon: iconFile, // used in Windows and MacOS binaries
