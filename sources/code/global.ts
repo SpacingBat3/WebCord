@@ -13,7 +13,7 @@ import { parse } from "semver";
  */
 
 export function wLog(msg: string): void {
-	console.log("%c[WebCord]", 'color: #69A9C1', msg);
+	console.log("%c[Monkei-Cord]", 'color: #69A9C1', msg);
 }
 
 export type Person = string & {
