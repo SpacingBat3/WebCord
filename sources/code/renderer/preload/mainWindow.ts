@@ -5,7 +5,7 @@ import desktopCapturerPicker from "../modules/capturer";
 import preloadCosmetic from "../modules/cosmetic";
 
 /**
- * WebCord API key used as the object name of the exposed content
+ * Monkei-Cord API key used as the object name of the exposed content
  * by the Context Bridge.
  */
  const contextBridgeApiKey = "__"+randomBytes(32).toString('base64')+"__"
