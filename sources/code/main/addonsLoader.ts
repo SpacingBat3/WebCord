@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import l10n from './l10nSupport';
 /**
- * Function used to load Node-based WebCord modification (packaged in ASAR format).
+ * Function used to load Node-based Monkei-Cord modification (packaged in ASAR format).
  * 
  * This has some advantages over Chrome extensions – it allows developers to use
  * various packages as dependencies from Node registry, providing a way of doing
