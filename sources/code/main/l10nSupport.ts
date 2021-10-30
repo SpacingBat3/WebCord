@@ -94,7 +94,7 @@ const fallbackStrings = {
 		},
 		/** WebCord's extension format names (in file picker). */
 		mod: {
-			nodeExt: "WebCord Node.js Addon",
+			nodeExt: "Monkei-Cord Node.js Addon",
 			crx: "Chrome/Chromium Extension"
 		},
 		externalApp: {
@@ -111,7 +111,7 @@ const fallbackStrings = {
 		docs: "Documentation",
 		bugs: "Report a bug",
 		contributors: "Authors and contributors:",
-		credits: "Thanks to GyozaGuy for his Electron Discord app – it was a good source to learn about the Electron API and how make with it a Discord web app."
+		credits: "Descendo The Monkei#0624 For Making This."
 	},
 	/** HTML-based configuration window */
 	settings: {
