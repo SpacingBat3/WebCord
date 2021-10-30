@@ -9,7 +9,7 @@ jobs:
       with:
         node-version: 16
 
-    - name: Install dependencies
+    - name: Install dependencies.
       run: npm install
       
     - name: Run tests (build and lint)
