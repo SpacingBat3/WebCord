@@ -1,7 +1,3 @@
-/*
- * Thanks, @WesselKroos!
- */
-
 import { desktopCapturer } from 'electron';
 import { readFileSync } from 'fs';
 import * as path from 'path';
