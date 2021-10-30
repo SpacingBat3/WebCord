@@ -31,8 +31,8 @@ import { writeFile } from 'fs';
 import { trustedProtocolArray } from '../global';
 import { checkVersion } from './updateNotifier';
 import l10n from './l10nSupport';
-import createMainWindow from "./windows/mainWindow"
-import setAboutPanel from "./windows/aboutPanel"
+import createMainWindow from "./windows/mainWindow";
+import setAboutPanel from "./windows/aboutPanel";
 
 // Handle command line switches:
 
@@ -133,8 +133,7 @@ app.on('web-contents-created', (_event, webContents) => {
         let allowedProtocol = false;
 
         // Check if protocol of `openUrl` is secure.
-        for (const protocol of trustedProtocolArray)
-            if (openUrl.protocol === protocol)
+        if (trustedProtocolArray.includes(openUrl.protocol))
                 allowedProtocol = true;
         
         /* 
