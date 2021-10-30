@@ -1,8 +1,8 @@
 {
-  "name": "webcord",
-  "productName": "WebCord",
+  "name": "monkeicord",
+  "productName": "Monkei-Cord",
   "version": "2.0.0-beta6",
-  "description": "A Discord Web App made with the Electron API.",
+  "description": "A Discord Client made with the Electron API.",
   "main": "sources/app/main/mainScript.js",
   "scripts": {
     "test": "tsc && eslint --ext .ts .",
@@ -15,19 +15,19 @@
     "clean:linux": "rm sources/app/*.js*"
   },
   "author": {
-    "name": "SpacingBat3",
-    "email": "git@spacingbat3.anonaddy.com",
-    "url": "https://github.com/SpacingBat3"
+    "name": "Descendo The Monkei#0624",
+    "email": "github@descendo.anonaddy.me",
+    "url": "https://github.com/Monkei-Cord"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SpacingBat3/WebCord"
+    "url": "git+https://github.com/Monkei-Solutions/Monkei-Cord"
   },
   "bugs": {
-    "url": "https://github.com/SpacingBat3/WebCord/issues"
+    "url": "https://github.com/Monkei-Solutions/Monkei-Cord/issues"
   },
-  "homepage": "https://github.com/SpacingBat3/WebCord#readme",
+  "homepage": "https://github.com/Monkei-Solutions/Monkei-Cord#readme",
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.59",
     "@electron-forge/maker-deb": "^6.0.0-beta.59",
@@ -42,7 +42,7 @@
     "@typescript-eslint/experimental-utils": "latest",
     "@typescript-eslint/parser": "latest",
     "electron": "^15.1.0",
-    "electron-forge-maker-appimage": "github:SpacingBat3/electron-forge-maker-appimage",
+    "electron-forge-maker-appimage": "github:Monkei-Solutions/electron-forge-maker-appimage",
     "eslint": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-import": "latest",
