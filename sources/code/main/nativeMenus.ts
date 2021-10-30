@@ -242,7 +242,21 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 					accelerator: 'CmdOrCtrl+Alt+R',
 					click: () => {
 						wantQuit = true;
-						app.relaunch();
+						let newArgs:string[] = [];
+						for (const arg of process.argv) {
+							let willBreak = false;
+							for (const sw of ['start-minimized', 'm'])
+								if(arg.includes('-') && arg.endsWith(sw)) {
+									willBreak = true;
+									break;
+								}
+							if (willBreak) break;
+							newArgs.push(arg);
+						}
+						newArgs.shift();
+						app.relaunch({
+							args: newArgs, 
+						});
 						app.quit();
 					}
 				},
