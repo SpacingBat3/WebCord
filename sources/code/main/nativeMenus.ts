@@ -180,7 +180,12 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 		{
 			label: strings.tray.toggle,
 			click: function () {
-				windowName.isVisible() ? windowName.hide() : windowName.show();
+				if(windowName.isVisible() && windowName.isFocused())
+					windowName.hide()
+				else {
+					!windowName.isVisible() && windowName.show();
+					!windowName.isFocused() && windowName.focus();
+				}
 			}
 		},
 		{
@@ -242,7 +247,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 					accelerator: 'CmdOrCtrl+Alt+R',
 					click: () => {
 						wantQuit = true;
-						let newArgs:string[] = [];
+						const newArgs:string[] = [];
 						for (const arg of process.argv) {
 							let willBreak = false;
 							for (const sw of ['start-minimized', 'm'])
