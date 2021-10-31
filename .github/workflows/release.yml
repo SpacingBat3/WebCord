@@ -18,25 +18,25 @@ jobs:
 
     - name: Publish artifacts (x64)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish
 
     - name: Publish artifacts (arm64)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a arm64
 
     - name: Publish artifacts (armv7l)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a armv7l
 
     - name: Publish artifacts (ia32)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a ia32
 
@@ -53,19 +53,19 @@ jobs:
 
     - name: Publish artifacts (x64)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish
 
     - name: Publish artifacts (arm64)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a arm64
 
     - name: Publish artifacts (ia32)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a ia32
 
@@ -82,12 +82,12 @@ jobs:
 
     - name: Publish artifacts (x64)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish
 
     - name: Publish artifacts (arm64)
       env:
-        WEBCORD_RELEASE: Release
+        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a arm64
