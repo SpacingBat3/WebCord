@@ -40,7 +40,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         }
     });
     win.webContents.on('did-fail-load', (_event, errorCode) => {
-        if(errorCode !== -106) return;
+        if (errorCode !== -106) return;
         win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
@@ -51,8 +51,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     });
     win.webContents.once('did-finish-load', () => {
         if (!startHidden) win.show();
-        setTimeout(()=>win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) }), 1500);
-    })
+        setTimeout(() => win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) }), 1500);
+    });
     if (mainWindowState.initState.isMaximized) win.maximize();
 
     // CSP
@@ -77,19 +77,19 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             ]
         },
         (details, callback) => {
-            
+
             const configData = (new AppConfig()).get();
             const cancel = configData.blockApi.science || configData.blockApi.typingIndicator;
             const url = new URL(details.url);
 
-            if(cancel) console.log('[API] Blocking '+url.pathname);
+            if (cancel) console.log('[API] Blocking ' + url.pathname);
 
-            if(url.pathname.endsWith('/science')||url.pathname.endsWith('/track'))
-                callback({cancel: configData.blockApi.science});
-            else if(url.pathname.endsWith('/typing'))
-                callback({cancel: configData.blockApi.typingIndicator});
+            if (url.pathname.endsWith('/science') || url.pathname.endsWith('/track'))
+                callback({ cancel: configData.blockApi.science });
+            else if (url.pathname.endsWith('/typing'))
+                callback({ cancel: configData.blockApi.typingIndicator });
             else
-                callback({cancel: false})
+                callback({ cancel: false });
 
         },
     );
@@ -144,7 +144,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     return callback(true);
                 }
             }
-            console.warn('['+l10nStrings.dialog.common.warning.toLocaleUpperCase()+'] '+l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
+            console.warn('[' + l10nStrings.dialog.common.warning.toLocaleUpperCase() + '] ' + l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
             return callback(false);
         });
         win.webContents.session.setDevicePermissionHandler(() => false);
@@ -152,6 +152,17 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/load.html'));
     win.setAutoHideMenuBar(configData.hideMenuBar);
     win.setMenuBarVisibility(!configData.hideMenuBar);
+    // Add English to the spellchecker
+    {
+        let valid = true;
+        const spellCheckerLanguages = [app.getLocale(), 'en-US'];
+        if (app.getLocale() === 'en-US') valid = false;
+        if (valid && process.platform !== 'darwin')
+            for (const language in spellCheckerLanguages)
+                if (!win.webContents.session.availableSpellCheckerLanguages)
+                    valid = false;
+        if (valid) win.webContents.session.setSpellCheckerLanguages(spellCheckerLanguages);
+    }
 
     // Keep window state
 
@@ -221,11 +232,11 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     ipcMain.on('settings-config-modified', () => {
         const config = new AppConfig();
         // Menu bar
-        if(!win.menuBarVisible !== config.get().hideMenuBar || win.autoHideMenuBar !== config.get().hideMenuBar) {
-            win.setAutoHideMenuBar(config.get().hideMenuBar)
-            win.setMenuBarVisibility(!config.get().hideMenuBar)
+        if (!win.menuBarVisible !== config.get().hideMenuBar || win.autoHideMenuBar !== config.get().hideMenuBar) {
+            win.setAutoHideMenuBar(config.get().hideMenuBar);
+            win.setMenuBarVisibility(!config.get().hideMenuBar);
         }
-            
-    })
+
+    });
     return win;
 }
