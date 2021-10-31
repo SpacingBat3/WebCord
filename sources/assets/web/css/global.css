@@ -4,7 +4,9 @@
     --color-accient: #5865F2;
     --color-bg-primary: #36393F;
     --color-bg-secondary: #2F3136;
+    --color-bg-border: #1B1C1F;
     --color-font-settings: #8e9297;
+    --color-font-code: #b9bbbe;
     --color-font-normal: #dcddde;
     --color-font-header: #fff;
     --color-link: #00A3E3;
@@ -83,11 +85,16 @@ code {
     font-size: 1em;
 }
 
+.hljs-comment {
+    color: #5E646E;
+}
+
 pre {
     display: block;
+    border: 1px solid var(--color-bg-border);
     padding: 16px 12px;
     background-color: var(--color-bg-secondary);
-    color: var(--color-font-settings);
+    color: var(--color-font-code);
     font-family: var(--font-code);
     overflow: auto;
     border-radius: 15px;
