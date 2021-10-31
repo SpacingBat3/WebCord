@@ -10,7 +10,7 @@ import { wLog } from '../../global';
  * similar behaviour as the one achieved by the `.getElementsByClassName`
  * method, except it can allow for part of the class names as an input.
  * 
- * This can be extremly usefull when trying to tweak the sites whose class names
+ * This can be extremly useful when trying to tweak the sites whose class names
  * includes some part being randomly generated for each build/version.
  */
 
@@ -23,6 +23,7 @@ function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, 
 }
 
 export default function preloadCosmetic(localStorage: Storage): void {
+  if(window.location.origin !== 'https://discord.com') return;
   localStorage.setItem('hideNag', 'true');
   const removeUnneded = () => {
     // If user is at login/register website, do not apply any cosmetic changes
