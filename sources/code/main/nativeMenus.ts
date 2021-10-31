@@ -174,7 +174,7 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 		},
 		{
 			label: strings.help.bugs,
-			click: createGithubIssue
+			click: () => createGithubIssue()
 		},
 		{ type: 'separator' },
 		{
@@ -332,7 +332,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 				// Documentation
 				{ label: strings.help.docs, click: () => loadDocsWindow(mainWindow) },
 				// Report a bug
-				{ label: strings.help.bugs, click: createGithubIssue }
+				{ label: strings.help.bugs, click: () => createGithubIssue() }
 			]
 		}
 	]);
