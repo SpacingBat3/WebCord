@@ -13,12 +13,16 @@ you need to know to start developing WebCord.
 
 ## Table of contents
 
-- [Source tree](#source-tree)
-    - [Top-level directories and configuration files](#top-level-directories-and-configuration-files)
-    - [Directories and files inside the sources folder](#directories-and-files-inside-the-sources-folder)
-    - [Source files containing WebCord's code](#source-files-containing-webcords-code)
-- [Working with the sources](#working-with-the-sources)
-- [Code style accepted on WebCord](#code-style-accepted-on-webcord)
+  - [Source tree](#source-tree)
+      - [Top-level directories and configuration files](#top-level-directories-and-configuration-files)
+      - [Directories and files inside the sources folder](#directories-and-files-inside-the-sources-folder)
+      - [Source files containing WebCord's code](#source-files-containing-webcords-code)
+  - [Working with the sources](#working-with-the-sources)
+      - [Install app dependencies.](#install-app-dependencies)
+      - [Compile code and run app directly without packaging.](#compile-code-and-run-app-directly-without-packaging)
+      - [Run linter and validate the code.](#run-linter-and-validate-the-code)
+      - [Packaging / creating distributables.](#packaging--creating-distributables)
+  - [Code style accepted on WebCord](#code-style-accepted-on-webcord)
 
 ## Source tree
 WebCord contains many sources and assets for each of its features – this may
@@ -84,19 +88,19 @@ in following folders:
   - `main` – has the part of the code that is WebCord-specific and cannot be
      reused by the any other software without code modifications.
 
-  - `internalModules` – includes the scripts that are made in such way they can
+  - `modules` – includes the scripts that are made in such way they can
      be reused by different software without any code modifications. In the
      future, I will host them on the Node.js registry to allow others using them
      in their own software as modules.
 
-  - `buildConfig` – folder that includes scripts associated with the build
+  - `build` – folder that includes scripts associated with the build
     configuration; currently it is used for the Electron Forge only (`forge.ts`).
 
 - `assets` – contains all assets being part of the WebCord as a software. Assets
   in this folder are grouped in the following subfolders:
   
   - `icons` – contains all icons used by WebCord (including app icon and tray
-   icons).
+    icons).
 
   - `translations` – a directory that includes official translations made to
     WebCord.
@@ -139,8 +143,6 @@ In more detailed description, the following files has the roles described below:
     Chromium extensions support and non-standard Node.js WebCord extension
     format definition.
 
-  - `main/l10nSupport.ts` – definies the localization support within WebCord.
-
   - `main/cspTweaker.ts` – definies the Content Security Policy information,
     that will be used by WebCord to overwrite the original CSP headers, allowing
     to block some third-party websites not being neccessary for Discord to work.
@@ -152,7 +154,8 @@ In more detailed description, the following files has the roles described below:
   - `main/updateNotifier.ts` – a module used to implement the updates
     notification functionality in WebCord.
 
-2. Windows declarations (`main/windows/`):
+2. Application windows declarations (`main/windows/`):
+
   - `main/windows/aboutPanel.ts` – declares the OS native application's *about*
     panel, that displays some information like application's version or the
     contributors' list.
@@ -167,25 +170,27 @@ In more detailed description, the following files has the roles described below:
   - `main/windows/settingsWindow.ts` – a window definition used for WebCord's
     new HTML-based configuration panel.
 
-3. Internal modules (`internalModules/`):
+3. Internal modules (`modules/`):
 
-  - `internalModules/userAgent.ts` – a module that fakes the WebCord's user agent,
+  - `modules/userAgent.ts` – a module that fakes the WebCord's user agent,
     by generating it using Chromium engine version in current Electron release.
 
-  - `internalModules/bugReporter.ts` – a module which generates an URL to the new
+  - `modules/bugReporter.ts` – a module which generates an URL to the new
     GitHub issue, which is an URL to a `bug` template pre-filled with some OS
     details that are available to the Electron. Current (as of WebCord ) implementation
 
-  - `internalModules/errorHandler.ts` – handles `uncaughtException`s, allowing
+  - `modules/errorHandler.ts` – handles `uncaughtException`s, allowing
     for prettier output in some cases as well as `dialog` GUI window displaying
     error message and simplified error stack.
 
-4. Renderer process scripts:
+  - `modules/l10nSupport.ts` – definies the localization support within WebCord.
 
-  - `renderer/capturer.ts` – contains the implementation of the `desktopCapturer`
+4. Renderer process modules (`renderer/modules`):
+
+  - `renderer/modules/capturer.ts` – contains the implementation of the `desktopCapturer`
     interface, used for implementing a screen share support for Discord.
 
-  - `renderer/cosmetic.ts` – does some cosmetic changes to Discord website,
+  - `renderer/modules/cosmetic.ts` – does some cosmetic changes to Discord website,
     making it to look more like a real Discord client.
 
 5. Window-specific `preload` scripts:
@@ -203,9 +208,9 @@ In more detailed description, the following files has the roles described below:
 
 6. Build configuration (i.e. for Electron Forge):
 
-  - `buildConfig/forge.ts` – contains app's Electron Forge configurations.
+  - `build/forge.ts` – contains app's Electron Forge configurations.
   
-  - `buildConfig/forge.d.ts` – includes types definitions for the Electron
+  - `build/forge.d.ts` – includes types definitions for the Electron
     Forge configuration.
 
 7. `global.ts` – has simple modules declarations used between multiple processes
@@ -213,12 +218,89 @@ In more detailed description, the following files has the roles described below:
 
 ## Working with the sources
 
-<div align="center">
+When working with the WebCord, there're many tools you may have to use to be able
+to compile it from TypeScript to JavaScript, package it to the distributable
+format, run linter and so on. This section will describe the commands you may
+need to know to proceed with its developement or packaging it yourself from
+its source code.
 
-| 🚧️ **Part under construction!** |
-| --- |
+**Note:** To simplify the documentation, only `npm` command syntax is shown
+below. If you preffer using `yarn`, you're free to do so as WebCord does not
+depend on any specific Node.js package manager.
 
-</div>
+### Install app dependencies.
+
+This is the first command you need to execute – without that, you won't be able
+to proceed with the app testing and run most of the commands listed in
+`package.json`.
+```sh
+npm install # or npm i
+```
+
+To update the dependencies after you have installed them:
+```
+npm update
+```
+
+Be aware that `npm i` will also install the developement dependencies. **This is**
+**what you probably want**, as those dependencies includes all of the recommended
+packages required for compiling, linting and packaging WebCord. If you however
+want to install the production dependencies only (i.e. you want to use your own
+set of the tools or have installed them globally with `npm i -g`), you can use
+the following command instead:
+```
+npm i --only=prod
+```
+
+### Compile code and run app directly (without packaging).
+
+After you have installed all required `dependencies` and `devDependencies`, you
+can use the following command to incrementally transcompile WebCord's source
+code from TypeScript to JavaScript:
+```
+npm run build
+```
+
+To both compile code and start application even before it is packaged:
+```
+npm start
+```
+
+### Run linter and validate the code.
+
+While developing, you may want to check if your code quality is enough to be
+accepted as part of the WebCord project. To do that, you may want to both compile
+it (to ensure there're no compiler errors) and run linter (to check for the other
+issues). To do this, you can use the command below:
+```
+npm test
+```
+
+You can also run linter only if you don't want to compile the code:
+```
+npm run linter
+```
+
+### Packaging / creating distributables.
+
+If you want to share with someone the binaries of your packaged application, or
+just install and/or use it without the source code and developement packages,
+you can generate all distributable files that are valid for your platform using
+following command:
+```
+npm run make
+```
+
+You can also create a directory containing a packaged app. This directory isn't
+adapted for a specific distributable format, but it contains the Electron binary
+with the compiled application, which needs to be set up manually if you want to
+install it within your OS. To package an application without `make`-ing it,
+execute the following command:
+```
+npm run package
+```
+
+This will package the app for your current platform.
 
 ## Code style accepted on WebCord
 
