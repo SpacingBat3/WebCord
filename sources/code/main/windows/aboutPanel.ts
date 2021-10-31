@@ -4,7 +4,7 @@ import { packageJson } from '../../global';
 import { existsSync } from 'fs';
 import { appInfo, getBuildInfo } from '../clientProperties';
 import { app } from 'electron';
-import l10n from '../l10nSupport';
+import l10n from '../../modules/l10nSupport';
 
 /*
  * Remember to add yourself to the 'contributors' array in the package.json
@@ -54,7 +54,7 @@ const stringContributors = appContributors.join(', ');
 
 // "About" Panel:
 
-export default function setAboutPanel(l10nStrings:l10n["strings"]): void {
+export default function setAboutPanel(l10nStrings:l10n["client"]): void {
     let iconPath = appInfo.icon.replace(/\.asar(\\|\/)/, '.asar.unpacked$1');
     let commit = getBuildInfo().commit?.substring(0,7) ?? '';
     if(commit !== '') commit = '-'+commit

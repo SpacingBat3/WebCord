@@ -5,7 +5,7 @@
 import { app, dialog, BrowserWindow } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import l10n from './l10nSupport';
+import l10n from '../modules/l10nSupport';
 /**
  * Function used to load Node-based WebCord modification (packaged in ASAR format).
  * 
@@ -21,7 +21,7 @@ import l10n from './l10nSupport';
  * @param window Electron's `BrowserWindow` object.
  */
 export async function loadNodeAddons(window: BrowserWindow): Promise<void> {
-    const strings = (new l10n()).strings;
+    const strings = (new l10n()).client;
     const files = dialog.showOpenDialogSync({
         title: strings.menubar.file.addon.loadNode,
         filters: [
@@ -56,7 +56,7 @@ export async function loadNodeAddons(window: BrowserWindow): Promise<void> {
 }
 
 export async function loadChromeAddons(window: BrowserWindow): Promise<void> {
-    const strings = (new l10n()).strings;
+    const strings = (new l10n()).client;
     const session = window.webContents.session;
     const files = dialog.showOpenDialogSync({
         title: strings.menubar.file.addon.loadChrome,

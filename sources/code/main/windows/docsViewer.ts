@@ -5,7 +5,7 @@ import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { appInfo, getBuildInfo } from '../clientProperties';
 
-import l10n from '../l10nSupport';
+import l10n from '../../modules/l10nSupport';
 
 function handleEvents(docsWindow: BrowserWindow) {
     // Guess correct Readme.md file
@@ -24,7 +24,7 @@ function handleEvents(docsWindow: BrowserWindow) {
 }
 
 export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
-    const strings = (new l10n()).strings;
+    const strings = (new l10n()).client;
     const docsWindow = new BrowserWindow({
         title: app.getName() + ' – ' + strings.help.docs,
         show: false,

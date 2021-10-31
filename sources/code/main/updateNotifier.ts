@@ -6,7 +6,7 @@ import { isPackageJsonComplete } from '../global'
 import { app, Notification, shell, net } from 'electron';
 import { appInfo, getBuildInfo } from './clientProperties';
 import fetch from 'electron-fetch';
-import l10n from './l10nSupport';
+import l10n from '../modules/l10nSupport';
 
 /**
  * Checks and notifies users about the updates.
@@ -22,7 +22,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     // When app is not ready, wait until it is ready.
     if (!app.isReady()) await app.whenReady();
     // Initialize app translation.
-    const strings = new l10n().strings;
+    const strings = new l10n().client;
     // An alias to app's repository name.
     const repoName = appInfo.repository.name;
     let remoteTag: string, updateMsg: string, updateURL: string, remoteHeader: string;

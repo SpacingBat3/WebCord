@@ -3,6 +3,7 @@ import { randomBytes } from "crypto";
 import { wLog } from "../../global";
 import desktopCapturerPicker from "../modules/capturer";
 import preloadCosmetic from "../modules/cosmetic";
+import l10n from "../../modules/l10nSupport";
 
 /**
  * WebCord API key used as the object name of the exposed content
@@ -29,6 +30,14 @@ contextBridge.exposeInMainWorld(
     }
 )
 
-ipcRenderer.send('desktop-capturer-inject', contextBridgeApiKey)
+if(window.location.protocol === 'file:')
+    contextBridge.exposeInMainWorld(
+        'webcord',
+        {
+            l10n: (new l10n()).web
+        }
+    )
+
+ipcRenderer.send('api-exposed', contextBridgeApiKey)
 
 wLog("Everything has been preloaded successfully!");

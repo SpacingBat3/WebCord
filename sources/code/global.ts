@@ -232,8 +232,11 @@ export const discordFavicons = {
 		// Check again if object has the property.
 		if(Object.prototype.hasOwnProperty.call(obj1,key)&&Object.prototype.hasOwnProperty.call(obj2,key))
 			
-			// When properties are non-nullish and objects, start this test for the next tree level.
-			if(obj1[key] && obj2[key] && typeof(obj1[key]) === 'object' && typeof(obj2[key]) === 'object') {
+			if (Array.isArray(obj1[key])&&Array.isArray(obj2[key])) {
+				// Ignore array type checking.
+				break;
+			} else if (obj1[key] instanceof Object && obj2[key] instanceof Object) {
+				// When properties are objects, start this test for the next tree level.
 				const test = objectsAreSameType(obj1[key], obj2[key])
 				if(!test) return false;
 			} else if ((typeof(obj1[key]) !== typeof(obj2[key]))) {

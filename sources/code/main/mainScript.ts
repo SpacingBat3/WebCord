@@ -30,7 +30,7 @@ import { app, BrowserWindow, dialog, shell } from 'electron';
 import { writeFile } from 'fs';
 import { trustedProtocolArray } from '../global';
 import { checkVersion } from './updateNotifier';
-import l10n from './l10nSupport';
+import l10n from '../modules/l10nSupport';
 import createMainWindow from "./windows/mainWindow";
 import setAboutPanel from "./windows/aboutPanel";
 
@@ -51,7 +51,7 @@ let overwriteMain: (()=>void|unknown) | undefined;
         overwriteMain = () => {
             const locale = new l10n;
             const file = getSwitchValue('export-strings');
-            writeFile(file,JSON.stringify(locale.strings, null, 2), (err) => {
+            writeFile(file,JSON.stringify(locale.client, null, 2), (err) => {
                 if(err)
                     // An approach to make errors look more user-friendly.
                     console.error(
@@ -74,7 +74,7 @@ let overwriteMain: (()=>void|unknown) | undefined;
 
 const singleInstance = app.requestSingleInstanceLock();
 let mainWindow: BrowserWindow;
-let l10nStrings: l10n["strings"], updateInterval: NodeJS.Timeout | undefined;
+let l10nStrings: l10n["client"], updateInterval: NodeJS.Timeout | undefined;
 
 function main(): void {
     if (overwriteMain) {
@@ -82,7 +82,7 @@ function main(): void {
         overwriteMain();
     } else {
         // Run app normally
-        l10nStrings = (new l10n()).strings;
+        l10nStrings = (new l10n()).client;
         checkVersion(updateInterval);
         updateInterval = setInterval(function () { checkVersion(updateInterval); }, 1800000);
         mainWindow = createMainWindow(startHidden,l10nStrings);
@@ -92,7 +92,7 @@ function main(): void {
 
 if (!singleInstance) {
     app.on('ready', () => {
-        console.log((new l10n()).strings.misc.singleInstance)
+        console.log((new l10n()).client.misc.singleInstance)
         app.quit();
     });
 } else {
@@ -142,7 +142,7 @@ app.on('web-contents-created', (_event, webContents) => {
          */
         if(allowedProtocol === true && sameOrigin === false) {
             const window = BrowserWindow.fromWebContents(webContents);
-            const strings = (new l10n).strings.dialog;
+            const strings = (new l10n).client.dialog;
             const options:Electron.MessageBoxSyncOptions = {
                 type: 'warning',
                 title: strings.common.warning+': '+strings.externalApp.title,

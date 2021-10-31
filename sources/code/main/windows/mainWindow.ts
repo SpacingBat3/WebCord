@@ -4,7 +4,7 @@ import { app, BrowserWindow, Tray, net, nativeImage, ipcMain } from "electron";
 import * as getMenu from '../nativeMenus';
 import { packageJson, discordFavicons } from '../../global';
 import { discordContentSecurityPolicy } from '../cspTweaker';
-import l10n from "../l10nSupport";
+import l10n from "../../modules/l10nSupport";
 import { getUserAgent } from '../../modules/userAgent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
@@ -12,7 +12,7 @@ import { resolve } from "path";
 
 const configData = new AppConfig().get();
 
-export default function createMainWindow(startHidden: boolean, l10nStrings: l10n["strings"]): BrowserWindow {
+export default function createMainWindow(startHidden: boolean, l10nStrings: l10n["client"]): BrowserWindow {
 
     // Some variable declarations
 
@@ -219,7 +219,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     });
 
     // Inject desktop capturer
-    ipcMain.on('desktop-capturer-inject', (event, api) => {
+    ipcMain.on('api-exposed', (event, api) => {
         const functionString = `
             navigator.mediaDevices.getDisplayMedia = async () => {
                 return navigator.mediaDevices.getUserMedia(await window['${api}'].desktopCapturerPicker())

@@ -31,7 +31,7 @@ import fetch from 'electron-fetch';
 import * as os from 'os';
 import { EventEmitter } from 'events';
 import { createGithubIssue } from '../modules/bugReporter';
-import l10n from './l10nSupport';
+import l10n from '../modules/l10nSupport';
 import loadSettingsWindow from './windows/settingsWindow';
 import loadDocsWindow from './windows/docsViewer';
 
@@ -50,7 +50,7 @@ let wantQuit = false;
 // Contex Menu with spell checker
 
 export function context(windowName: BrowserWindow): void {
-	const strings = (new l10n()).strings;
+	const strings = (new l10n()).client;
 	windowName.webContents.on('context-menu', (event, params) => {
 		const cmenu: (MenuItemConstructorOptions | MenuItem)[] = [
 			{ type: 'separator' },
@@ -111,7 +111,7 @@ if (os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.ge
 // Tray menu
 
 export async function tray(windowName: BrowserWindow): Promise<Tray> {
-	const strings = (new l10n()).strings;
+	const strings = (new l10n()).client;
 	const tray = new Tray(appInfo.trayIcon);
 	let image: string | NativeImage;
 	if (funMode === 2) {
@@ -211,7 +211,7 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 // Menu Bar
 
 export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
-	const strings = (new l10n()).strings;
+	const strings = (new l10n()).client;
 	const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
 	const devMode = getDevel(devel, appConfig.get().devel);
 	const menu = Menu.buildFromTemplate([
@@ -277,7 +277,14 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 			]
 		},
 		// Edit
-		{ role: 'editMenu', label: strings.menubar.edit },
+		{ role: 'editMenu', label: strings.menubar.edit.groupName, submenu: [
+			{ label: strings.menubar.edit.undo, role: 'undo' },
+			{ label: strings.menubar.edit.redo, role: 'redo' },
+			{ type: 'separator' },
+			{ label: strings.context.cut, role: 'cut' },
+			{ label: strings.context.copy, role: 'copy' },
+			{ label: strings.context.paste, role: 'paste' }
+		]},
 		// View
 		{
 			label: strings.menubar.view.groupName, submenu: [

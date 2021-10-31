@@ -2,13 +2,13 @@ import { app, ipcMain, BrowserWindow, session } from "electron";
 import { AppConfig } from '../configManager';
 import { HTMLSettingsGroup } from '../../global';
 import { appInfo, getBuildInfo } from '../clientProperties';
-import l10n from '../l10nSupport';
+import l10n from '../../modules/l10nSupport';
 import { deepmerge } from 'deepmerge-ts';
 
 const appConfig = new AppConfig();
 
 function conf2html (config:AppConfig) {
-	const lang = (new l10n()).strings.settings;
+	const lang = (new l10n()).client.settings;
 	const websitesThirdParty: [string, string][] = [
 		['algolia', 'Algolia'],
 		['spotify', 'Spotify'],
@@ -133,7 +133,7 @@ function conf2html (config:AppConfig) {
 }
 
 export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
-	const strings = (new l10n().strings);
+	const strings = (new l10n().client);
 	const configWithStrings = conf2html(appConfig);
 	const settingsWindow = new BrowserWindow({
 		title: app.getName()+" – "+strings.settings.title,

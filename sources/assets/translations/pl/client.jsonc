@@ -30,7 +30,11 @@
 				"loadChrome": "Załaduj dodatek Chrome"
 			}
 		},
-		"edit": "Edycja",
+		"edit": {
+			"groupName": "Edycja",
+			"undo": "Cofnij",
+			"redo": "Powtórz"
+		},
 		"view": {
 			"groupName": "Widok",
 			"reload": "Odśwież",

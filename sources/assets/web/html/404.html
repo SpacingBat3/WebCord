@@ -20,7 +20,17 @@
     </style>
 </head>
 <body>
-    <h1> Cannot connect to the Discord service. </h1>
-    <p> Please make sure you're connected to the internet. </p>
+    <script>
+        if(window.webcord) {
+            const title = document.createElement('h1')
+            const description = document.createElement('p')
+
+            title.innerText = window.webcord.l10n.offline.title
+            description.innerText = window.webcord.l10n.offline.description
+
+            document.body.appendChild(title)
+            document.body.appendChild(description)
+        }
+    </script>
 </body>
 </html>
