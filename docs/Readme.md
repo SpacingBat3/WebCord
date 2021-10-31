@@ -25,7 +25,7 @@ with [Electron Forge][electron-forge].
 
 The main reason of the WebCord existence was previously creating a usable ARM
 alternative, but nowadays it's developement is more around making it *more open*
-alternative to WebCord, which would be both customizable and improving in some
+alternative to Discord, which would be both customizable and improving in some
 aspects like the security and privacy. As for now, some tweaks around the
 privacy has been implemented:
   - blocking third-party websites via customizable CSP,
