@@ -33,7 +33,7 @@
 		"edit": {
 			"groupName": "Edycja",
 			"undo": "Cofnij",
-			"redo": "Powtórz"
+			"redo": "Ponów"
 		},
 		"view": {
 			"groupName": "Widok",
