@@ -91,42 +91,49 @@ function isPerson(variable: unknown): variable is Person {
  */
 
 export function isPackageJsonComplete(object: unknown): object is PackageJsonProperties {
+	return (checkPackageJsonComplete(object) === "")
+}
+
+export function checkPackageJsonComplete(object: unknown): string {
 	// Check #1: 'contributors' is array of 'Person'
 	if (typeof (object as PackageJsonProperties).contributors === "object")
 		for (const key of (object as Record<string, Array<unknown>>).contributors)
-			if (!isPerson(key)) return false;
+			if (!isPerson(key)) return "Contributors field is of invalid type.";
 
 	// Check #2: 'author' is 'Person'
 	if (!isPerson((object as PackageJsonProperties).author))
-		return false;
+		return "Author field is of invalid type.";
 
 	// Check #3: 'name' and 'homepage' are strings.
 	for (const stringKey of ['name', 'homepage'])
 		if (typeof ((object as { [key: string]: string; })[stringKey]) !== 'string')
-			return false;
+			return "'"+stringKey+"' is not assignable to type 'string'.";
 
 	// Check #4: 'repository' is either string or object
 	if (typeof (object as PackageJsonProperties).repository !== "string" && typeof (object as PackageJsonProperties).repository !== "object")
-		return false;
+		return "Repository field is neither of type 'string' nor 'object'.";
 
 	// Check #5: As object, 'repository' has 'type' and 'url' keys of type 'string'
 	for (const stringKey of ['type', 'url']) {
 		const repository = (object as PackageJsonProperties).repository;
 		if (typeof (repository) === "object" && typeof ((repository as { [key: string]: string; })[stringKey]) !== "string")
-			return false;
+			return "Repository object does not contain a '"+stringKey+"' property.";
 	}
 
 	// Check #6: `name` field is correct package name.
 	if((object as PackageJsonProperties).name.match(/^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/) === null)
-		return false
+		return "'"+(object as PackageJsonProperties).name+"' is not a valid Node.js package name.";
 
 	// Check #7: `version` is a `semver`-parsable string
-	if(typeof (object as PackageJsonProperties).version === 'string')
+	if(typeof (object as PackageJsonProperties).version === 'string') {
 		if (parse((object as PackageJsonProperties).version) === null)
-			return false
+			return "Version "+(object as PackageJsonProperties).version+" can't be parsed to 'semver'.";
+	} else {
+		return "Version property is not assignable to type 'string'!"
+	}
 
-	// All checks passed, return `true`!
-	return true;
+	// All checks passed!
+	return "";
 }
 
 /**
@@ -140,7 +147,7 @@ export function isPackageJsonComplete(object: unknown): object is PackageJsonPro
 function getPackageJsonProperties(): Omit<PackageJsonProperties, 'version'> {
 	const packageJSON: Record<string, unknown> = JSON.parse(readFileSync(resolve(__dirname, "../../package.json")).toString());
 	if (!isPackageJsonComplete(packageJSON))
-		throw new TypeError("File 'package.json' does not contain all required properties or/and some of them are of invalid type!");
+		throw new TypeError(checkPackageJsonComplete("While parsing `package.json`: "+packageJSON));
 	return {
 		name: packageJSON.name,
 		author: packageJSON.author,
