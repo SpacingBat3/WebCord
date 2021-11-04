@@ -1,6 +1,6 @@
 /* l10nSupport – app localization implementation */
 
-import JSONC from "@spacingbat3/jsonc-parser"
+import JSONC from "@spacingbat3/jsonc-parser";
 import * as path from "path";
 import * as fs from "fs";
 import { deepmerge } from "deepmerge-ts";
@@ -10,36 +10,36 @@ import { EventEmitter } from "events";
 import { resolve } from "path";
 
 /** The current application directory. Cross-process safe method. */
-function getAppPath():string {
-	if(process.type === 'browser')
+function getAppPath(): string {
+	if (process.type === 'browser')
 		return app.getAppPath();
 	else
-		return resolve(__dirname+'../../../../');
+		return resolve(__dirname + '../../../../');
 }
 
 /** Show a message box. Cross-process safe method. */
-function showMessageBox(options:Electron.MessageBoxOptions):void {
-	if(process.type === 'browser') {
+function showMessageBox(options: Electron.MessageBoxOptions): void {
+	if (process.type === 'browser') {
 		import('electron').then(api => {
 			api.dialog.showMessageBox(options);
-		})
+		});
 	} else {
-		const title = options.title ? options.title + '\n' : ''
-		alert(title+options.message)
+		const title = options.title ? options.title + '\n' : '';
+		alert(title + options.message);
 	}
 }
 
 /** The current application locale. Cross-process safe method. */
-function getLocale():string {
-	if(process.type === 'browser')
+function getLocale(): string {
+	if (process.type === 'browser')
 		return app.getLocale();
 	else
 		return navigator.language;
 }
 
 /** The current application name. Cross-process safe method. */
-function getName():string {
-	if(process.type === 'browser')
+function getName(): string {
+	if (process.type === 'browser')
 		return app.getName();
 	else
 		return 'the application';
@@ -47,14 +47,14 @@ function getName():string {
 
 const langDialog = new EventEmitter();
 
-langDialog.once('show-error', (localizedStrings:string) => {
+langDialog.once('show-error', (localizedStrings: string) => {
 	showMessageBox({
-		title: "Error loading translations for locale: '"+getLocale().toLocaleUpperCase()+"'!",
+		title: "Error loading translations for locale: '" + getLocale().toLocaleUpperCase() + "'!",
 		type: "error",
-		message: "An error occured while loading 'strings' from file: '"+
-			jsonOrJsonc(localizedStrings)+"'. "+
-			"Please make sure that the file syntax is correct!\n\n"+
-			"This will lead to "+getName()+" use English strings instead."
+		message: "An error occured while loading 'strings' from file: '" +
+			jsonOrJsonc(localizedStrings) + "'. " +
+			"Please make sure that the file syntax is correct!\n\n" +
+			"This will lead to " + getName() + " use English strings instead."
 	});
 });
 
@@ -73,7 +73,7 @@ langDialog.once('show-error', (localizedStrings:string) => {
 
 class l10n {
 	/** An object containing the localized phrases used by the client (main process). */
-	private loadFile<T extends keyof l10n>(type:T):l10n[T] {
+	private loadFile<T extends keyof l10n>(type: T): l10n[T] {
 		/**
 		 * Computed strings (mixed localized and fallback object)
 		 */
@@ -107,7 +107,7 @@ class l10n {
 		if (objectsAreSameType(finalStrings, this[type])) {
 			return finalStrings;
 		} else {
-			langDialog.emit('show-error',internalStringsFile)
+			langDialog.emit('show-error', internalStringsFile);
 			return this[type];
 		}
 	}
@@ -122,7 +122,7 @@ class l10n {
 			quit: "Quit"
 		},
 		/** Context menu on right mouse click */
-		context:{
+		context: {
 			copy: "Copy",
 			paste: "Paste",
 			cut: "Cut",
@@ -135,9 +135,9 @@ class l10n {
 		menubar: {
 			enabled: "Enabled",
 			file: {
-				groupName:"File",
-				quit:"Quit",
-				relaunch:"Relaunch",
+				groupName: "File",
+				quit: "Quit",
+				relaunch: "Relaunch",
 				addon: {
 					groupName: "Extensions",
 					loadNode: "Load node extension",
@@ -159,7 +159,7 @@ class l10n {
 				zoomOut: "Zoom out",
 				fullScreen: "Toggle fullscreen"
 			},
-			window: { 
+			window: {
 				groupName: "Window",
 				mobileMode: "Hide side bar"
 			}
@@ -202,7 +202,7 @@ class l10n {
 			hideMenuBar: "Because you've set the option to hide the menu bar, you'll gain no access to it after you restart the app, unless you press the [ALT] key to temporarily unhide menu bar."
 		},
 		/** Help menu (in menubar and partialy in tray context menu) */
-		help:{
+		help: {
 			groupName: "Help",
 			about: "About",
 			repo: "Repository",
@@ -221,7 +221,7 @@ class l10n {
 					menuBar: {
 						name: "Menu bar",
 						description: "Changes visibility settings of native menu bar.",
-						label: "Hide menu bar automatically."
+						label: "Hide menu bar automatically (<kbd>ALT</kbd> key switches the visibility)."
 					},
 					tray: {
 						name: "Tray",
@@ -237,8 +237,8 @@ class l10n {
 						name: 'Block Discord API',
 						description: 'Blocks Discord API requests for hardening the privacy.',
 						label: {
-							science: 'Block known telemetry endpoints.',
-							typingIndicator: 'Block typing indicator.'
+							science: 'Block known telemetry endpoints (<code>/science</code> and <code>/tracing</code>).',
+							typingIndicator: 'Block typing indicator (<code>/typing</code>).'
 						}
 					}
 				}
@@ -255,7 +255,7 @@ class l10n {
 						name: "Content Security Policy",
 						extends: {
 							thirdparty: {
-								name:"Third party websites",
+								name: "Third party websites",
 								description: "Sets a list of the third-party websites allowed to connect or display content.",
 								list: {
 									gifProviders: "GIF Providers"
@@ -274,13 +274,13 @@ class l10n {
 		misc: {
 			singleInstance: "Switching to the existing window..."
 		}
-	}
+	};
 	public web = {
 		offline: {
 			title: "Cannot connect to the Discord service.",
 			description: "Please make sure you're connected to the internet."
 		}
-	}
+	};
 }
 
 export default l10n;

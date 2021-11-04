@@ -59,3 +59,8 @@ input.checkbox:checked {
     background-position: center;
     background-size: contain;
 }
+
+code {
+    background-color: var(--color-bg-primary) !important;
+    font-size: 0.9em !important;
+}

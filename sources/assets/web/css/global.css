@@ -85,6 +85,21 @@ code {
     font-size: 1em;
 }
 
+kbd {
+    position: relative;
+    font-size: 1em;
+    background-color: var(--color-input-bg);
+    color: var(--color-font-header);
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 3px;
+    box-shadow: var(--color-bg-border) 0px 4px;
+    padding: 2px 6px;
+    margin-right: 2px;
+    margin-left: 2px;
+    top: -1px;
+}
+
 .hljs-comment {
     color: #5E646E;
 }

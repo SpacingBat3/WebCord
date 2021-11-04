@@ -104,7 +104,7 @@
 				"menuBar": {
 					"name": "Pasek menu",
 					"description": "Zmienia ustawienia widoczności natywnego paska menu.",
-					"label": "Ukrywaj automatycznie pasek menu."
+					"label": "Ukrywaj automatycznie pasek menu (klawisz <kbd>ALT</kbd> przełącza widoczność)."
 				},
 				"tray": {
 					"name": "Zasobnik systemowy",
@@ -120,8 +120,8 @@
 					"name": "Blokowanie API Discord'a",
 					"description": "Blokuje żądania API Discord'a w celu polepszenia prywatności.",
 					"label": {
-						"science": "Blokuj znane żądania telemetrii.",
-						"typingIndicator": "Blokuj wskaźnik wpisywania tekstu."
+						"science": "Blokuj znane żądania telemetrii. (<code>/science</code> i <code>/tracing</code>)",
+						"typingIndicator": "Blokuj wskaźnik wpisywania tekstu. (<code>/typing</code>)"
 					}
 				}
 			}
@@ -145,10 +145,15 @@
 							}
 						},
 						"enable": {
-							"description": "Zmienia, czy aplikacja powinna zastosować się do własnej Polityki Bezpieczeństwa Treści, czy korzystać z nagłówka Discord'a.",
-							"label": "Korzystaj z nagłówka CSP aplikacji"
+							"description": "Zmienia, czy aplikacja powinna zastosować się do własnej Polityki Bezpieczeństwa Treści, czy zamiast tego korzystać z nagłówka Discord'a.",
+							"label": "Korzystaj z nagłówka CSP aplikacji."
 						}
 					}
+				},
+				"crossOrigin": {
+					"name": "Zachowanie przy przekierowaniach",
+					"description": "Określa zachowanie aplikacji na przekierowania do witryn o innym pochodzeniu. <b>To ustawnienie ma wpływ na bezpieczeństwo</b>.",
+					"label": "Zawsze ostrzegaj przy przekierowaniach między różnymi domenami do zewnętrznych aplikacji."
 				}
 			}
 		}
