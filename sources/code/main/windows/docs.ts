@@ -3,9 +3,9 @@ import { app, BrowserWindow, ipcMain, session } from 'electron';
 //import { packageJson } from '../../global';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
-import { appInfo, getBuildInfo } from '../clientProperties';
+import { appInfo, getBuildInfo } from '../modules/client';
 
-import l10n from '../../modules/l10nSupport';
+import l10n from '../../modules/l10n';
 
 function handleEvents(docsWindow: BrowserWindow) {
     // Guess correct Readme.md file

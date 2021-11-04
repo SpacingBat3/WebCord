@@ -20,20 +20,20 @@ import {
 	getDevel,
 	getBuildInfo,
 	appInfo
-} from './clientProperties';
+} from './client';
 
-import { AppConfig } from './configManager';
+import { AppConfig } from './config';
 
 const appConfig = new AppConfig()
 
-import { loadNodeAddons, loadChromeAddons } from './addonsLoader';
+import { loadNodeAddons, loadChromeAddons } from './addons';
 import fetch from 'electron-fetch';
 import * as os from 'os';
 import { EventEmitter } from 'events';
-import { createGithubIssue } from '../modules/bugReporter';
-import l10n from '../modules/l10nSupport';
-import loadSettingsWindow from './windows/settingsWindow';
-import loadDocsWindow from './windows/docsViewer';
+import { createGithubIssue } from '../../modules/bug';
+import l10n from '../../modules/l10n';
+import loadSettingsWindow from '../windows/settings';
+import loadDocsWindow from '../windows/docs';
 
 const sideBar = new EventEmitter();
 const devel = getBuildInfo().type === 'devel';

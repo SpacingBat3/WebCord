@@ -3,7 +3,7 @@
  */
 
 import { app, shell } from "electron";
-import { appInfo } from "../main/clientProperties";
+import { appInfo } from "../main/modules/client";
 
 /**
  * Generates a link to new GitHub issue, based on `bug_report.md`

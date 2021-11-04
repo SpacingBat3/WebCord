@@ -1,8 +1,8 @@
 import { app, ipcMain, BrowserWindow, session } from "electron";
-import { AppConfig } from '../configManager';
+import { AppConfig } from '../modules/config';
 import { HTMLSettingsGroup } from '../../global';
-import { appInfo, getBuildInfo } from '../clientProperties';
-import l10n from '../../modules/l10nSupport';
+import { appInfo, getBuildInfo } from '../modules/client';
+import l10n from '../../modules/l10n';
 import { deepmerge } from 'deepmerge-ts';
 
 const appConfig = new AppConfig();

@@ -1,11 +1,11 @@
-import { appInfo } from "../clientProperties";
-import { AppConfig, WinStateKeeper } from "../configManager";
+import { appInfo } from "../modules/client";
+import { AppConfig, WinStateKeeper } from "../modules/config";
 import { app, BrowserWindow, Tray, net, nativeImage, ipcMain } from "electron";
-import * as getMenu from '../nativeMenus';
+import * as getMenu from '../modules/menu';
 import { packageJson, discordFavicons } from '../../global';
-import { discordContentSecurityPolicy } from '../cspTweaker';
-import l10n from "../../modules/l10nSupport";
-import { getUserAgent } from '../../modules/userAgent';
+import { discordContentSecurityPolicy } from '../modules/csp';
+import l10n from "../../modules/l10n";
+import { getUserAgent } from '../../modules/user';
 import { createHash } from 'crypto';
 import { resolve } from "path";
 
@@ -34,7 +34,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         icon: appInfo.icon,
         show: false,
         webPreferences: {
-            preload: app.getAppPath() + "/sources/app/renderer/preload/mainWindow.js",
+            preload: app.getAppPath() + "/sources/app/renderer/preload/main.js",
             nodeIntegration: false,
             devTools: true, // Too usefull to be blocked.
         }

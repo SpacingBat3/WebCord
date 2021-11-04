@@ -2,11 +2,11 @@
  * updateNotifier – notifications about the updates
  */
 
-import { isPackageJsonComplete } from '../global'
+import { isPackageJsonComplete } from '../../global'
 import { app, Notification, shell, net } from 'electron';
-import { appInfo, getBuildInfo } from './clientProperties';
+import { appInfo, getBuildInfo } from './client';
 import fetch from 'electron-fetch';
-import l10n from '../modules/l10nSupport';
+import l10n from '../../modules/l10n';
 
 /**
  * Checks and notifies users about the updates.

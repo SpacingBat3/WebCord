@@ -5,7 +5,7 @@
 import { app, dialog, BrowserWindow } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import l10n from '../modules/l10nSupport';
+import l10n from '../../modules/l10n';
 /**
  * Function used to load Node-based WebCord modification (packaged in ASAR format).
  * 

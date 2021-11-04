@@ -5,8 +5,8 @@
 import * as fs from "fs";
 import { app, BrowserWindow, screen } from "electron";
 import { resolve } from "path"
-import { appInfo } from "./clientProperties";
-import { objectsAreSameType } from "../global";
+import { appInfo } from "./client";
+import { objectsAreSameType } from "../../global";
 import { deepmerge } from 'deepmerge-ts';
 
 function isJsonSyntaxCorrect(string: string) {

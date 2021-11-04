@@ -24,15 +24,15 @@ import('source-map-support').then(sMap => sMap.install());
  * information).
  */
 
-import('../modules/errorHandler').then(eHand => eHand.default());
+import('./modules/error').then(eHand => eHand.default());
 
 import { app, BrowserWindow, dialog, shell } from 'electron';
 import { writeFile } from 'fs';
-import { trustedProtocolArray } from '../global';
-import { checkVersion } from './updateNotifier';
-import l10n from '../modules/l10nSupport';
-import createMainWindow from "./windows/mainWindow";
-import setAboutPanel from "./windows/aboutPanel";
+import { trustedProtocolArray } from './global';
+import { checkVersion } from './main/modules/update';
+import l10n from './modules/l10n';
+import createMainWindow from "./main/windows/main";
+import setAboutPanel from "./main/windows/about";
 
 // Handle command line switches:
 

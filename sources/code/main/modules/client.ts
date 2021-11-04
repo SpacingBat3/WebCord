@@ -4,7 +4,7 @@
 
 import { app } from 'electron';
 import { resolve } from 'path';
-import { packageJson, Person } from '../global';
+import { packageJson, Person } from '../../global';
 import { readFileSync } from 'fs';
 
 

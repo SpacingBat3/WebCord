@@ -125,67 +125,67 @@ the folders under following name scheme:
 ```
 In more detailed description, the following files has the roles described below:
 
-1. Main process scripts (`main/`):
+1. `main/main.ts` – a script that is responsible for loading another
+   functions from the other files; it's currently includes some window
+   implementations, like *main* and *about* window declarations, althrought it
+   is planned to move these declarations into separate files.
 
-  - `main/mainScript.ts` – the function that is responsible for loading another
-    functions from the other files; it's currently includes some window
-    implementations, like *main* and *about* window declarations, althrought it
-    is planned to move these declarations into separate files.
+2. Main process modules (`main/`):
 
-  - `main/nativeMenus.ts` – includes modules that declares various (OS-native)
+  - `main/menus.ts` – includes modules that declares various (OS-native)
     menus, as well as some functions implementing various features called via
     it.
 
-  - `main/configManager.ts` – contains classes and types used for reading and
+  - `main/config.ts` – contains classes and types used for reading and
     modifying various configuration files in WebCord.
 
-  - `main/addonsLoader.ts` – provides a support for the addons within WebCord, including
+  - `main/addons.ts` – provides a support for the addons within WebCord, including
     Chromium extensions support and non-standard Node.js WebCord extension
     format definition.
 
-  - `main/cspTweaker.ts` – definies the Content Security Policy information,
+  - `main/csp.ts` – definies the Content Security Policy information,
     that will be used by WebCord to overwrite the original CSP headers, allowing
     to block some third-party websites not being neccessary for Discord to work.
     
-  - `main/clientProperties.ts` – contains some globablly-used properties within
+  - `main/client.ts` – contains some globablly-used properties within
     WebCord's main process. It contains some metadata not available in
     `package.json`, like the URL to Discord website.
 
-  - `main/updateNotifier.ts` – a module used to implement the updates
+  - `main/update.ts` – a module used to implement the updates
     notification functionality in WebCord.
 
-2. Application windows declarations (`main/windows/`):
+3. Application windows declarations (`main/windows/`):
 
-  - `main/windows/aboutPanel.ts` – declares the OS native application's *about*
+  - `main/windows/about.ts` – declares the OS native application's *about*
     panel, that displays some information like application's version or the
     contributors' list.
 
-  - `main/windows/docsViewer.ts` – definies the WebCord's documentation browser,
+  - `main/windows/docs.ts` – definies the WebCord's documentation browser,
     using the [`marked`](https://www.npmjs.com/package/marked) engine for the
     markdown rendering.
 
-  - `main/windows/mainWindow.ts` – contains the declaration of WebCord's main
+  - `main/windows/main.ts` – contains the declaration of WebCord's main
     window, i.e. a such window that shows up first when running it.
 
-  - `main/windows/settingsWindow.ts` – a window definition used for WebCord's
+  - `main/windows/settings.ts` – a window definition used for WebCord's
     new HTML-based configuration panel.
 
-3. Internal modules (`modules/`):
+4. Internal modules (`modules/`):
 
-  - `modules/userAgent.ts` – a module that fakes the WebCord's user agent,
+  - `modules/user.ts` – a module that fakes the WebCord's user agent,
     by generating it using Chromium engine version in current Electron release.
 
-  - `modules/bugReporter.ts` – a module which generates an URL to the new
+  - `modules/bug.ts` – a module which generates an URL to the new
     GitHub issue, which is an URL to a `bug` template pre-filled with some OS
     details that are available to the Electron. Current (as of WebCord ) implementation
 
-  - `modules/errorHandler.ts` – handles `uncaughtException`s, allowing
+  - `modules/error.ts` – handles `uncaughtException`s, allowing
     for prettier output in some cases as well as `dialog` GUI window displaying
     error message and simplified error stack.
 
-  - `modules/l10nSupport.ts` – definies the localization support within WebCord.
+  - `modules/l10n.ts` – definies the localization support within WebCord.
 
-4. Renderer process modules (`renderer/modules`):
+5. Renderer process modules (`renderer/modules`):
 
   - `renderer/modules/capturer.ts` – contains the implementation of the `desktopCapturer`
     interface, used for implementing a screen share support for Discord.
@@ -193,7 +193,7 @@ In more detailed description, the following files has the roles described below:
   - `renderer/modules/cosmetic.ts` – does some cosmetic changes to Discord website,
     making it to look more like a real Discord client.
 
-5. Window-specific `preload` scripts:
+6. Window-specific `preload` scripts:
 
   - `renderer/preload/mainWindow.ts` – a preload script for `mainWindow`,
      basically loads `capturer.ts` and `cosmetic.ts` scripts described in
@@ -206,14 +206,14 @@ In more detailed description, the following files has the roles described below:
   - `renderer/preload/docs.ts` – a script providing the functionality for
     WebCord's markdown documentation reader.
 
-6. Build configuration (i.e. for Electron Forge):
+7. Build configuration (i.e. for Electron Forge):
 
   - `build/forge.ts` – contains app's Electron Forge configurations.
   
   - `build/forge.d.ts` – includes types definitions for the Electron
     Forge configuration.
 
-7. `global.ts` – has simple modules declarations used between multiple processes
+8. `global.ts` – has simple modules declarations used between multiple processes
    (i.e. both main and renderer process scripts).
 
 ## Working with the sources

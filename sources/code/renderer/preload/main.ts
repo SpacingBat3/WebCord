@@ -3,7 +3,7 @@ import { randomBytes } from "crypto";
 import { wLog } from "../../global";
 import desktopCapturerPicker from "../modules/capturer";
 import preloadCosmetic from "../modules/cosmetic";
-import l10n from "../../modules/l10nSupport";
+import l10n from "../../modules/l10n";
 
 /**
  * WebCord API key used as the object name of the exposed content

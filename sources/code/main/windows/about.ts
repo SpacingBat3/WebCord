@@ -2,9 +2,9 @@ const copyYear = "2020-2021"
 
 import { packageJson } from '../../global';
 import { existsSync } from 'fs';
-import { appInfo, getBuildInfo } from '../clientProperties';
+import { appInfo, getBuildInfo } from '../modules/client';
 import { app } from 'electron';
-import l10n from '../../modules/l10nSupport';
+import l10n from '../../modules/l10n';
 
 /*
  * Remember to add yourself to the 'contributors' array in the package.json
