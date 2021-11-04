@@ -31,6 +31,7 @@ export class AppConfig {
         hideMenuBar: false,
         disableTray: false,
         devel: false,
+        redirectionWarning: true,
         csp: {
             enabled: true,
             thirdparty: {

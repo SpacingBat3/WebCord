@@ -266,6 +266,11 @@ class l10n {
 								label: "Use in-app Content Security Policy"
 							},
 						}
+					},
+					crossOrigin: {
+						name: "Cross-origin redirection behavior.",
+						description: "Controls the actions on cross-origin redirections. <b>This affects application security</b>.",
+						label: "Always warn user about cross-origin redirections to external applications."
 					}
 				}
 			}

@@ -115,6 +115,17 @@ function conf2html (config:AppConfig) {
 		title: lang.advanced.name,
 		options: [
 			{
+				name: lang.advanced.group.crossOrigin.name,
+				description: lang.advanced.group.crossOrigin.description,
+				checklists: [
+					{
+						label: lang.advanced.group.crossOrigin.label,
+						id: 'redirectionWarning',
+						isChecked: config.get().redirectionWarning
+					}
+				]
+			},
+			{
 				// Developer mode
 				name: lang.advanced.group.devel.name,
 				description: lang.advanced.group.devel.description,
@@ -156,7 +167,6 @@ export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
 	settingsWindow.webContents.loadFile('sources/assets/web/html/settings.html');
 	ipcMain.on('settings-generate-html', (event) => { 
 		if(!settingsWindow.isDestroyed()) settingsWindow.show();
-		console.dir(configWithStrings[1].options)
 		event.reply('settings-generate-html', configWithStrings)
 	})
 	settingsWindow.webContents.session.setPermissionCheckHandler(() => false);

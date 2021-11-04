@@ -33,6 +33,7 @@ import { checkVersion } from './main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "./main/windows/main";
 import setAboutPanel from "./main/windows/about";
+import { AppConfig } from './main/modules/config';
 
 // Handle command line switches:
 
@@ -139,8 +140,9 @@ app.on('web-contents-created', (_event, webContents) => {
         /* 
          * If origins of `openUrl` and current webContents URL are different,
          * ask the end user to confirm if the URL is safe enough for him.
+         * (unless an application user disabled that functionality)
          */
-        if(allowedProtocol === true && sameOrigin === false) {
+        if(allowedProtocol && !sameOrigin && new AppConfig().get().redirectionWarning || !(new URL(webContents.getURL()).origin === 'https://discord.com')) {
             const window = BrowserWindow.fromWebContents(webContents);
             const strings = (new l10n).client.dialog;
             const options:Electron.MessageBoxSyncOptions = {
