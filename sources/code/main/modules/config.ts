@@ -77,8 +77,9 @@ export class AppConfig {
     /** Returns the entire parsed configuration file in form of the JavaScript object. */
     public get(): AppConfig["defaultConfig"] {
         const parsedConfig:unknown = JSON.parse(fs.readFileSync(this.path).toString());
-        if(objectsAreSameType(parsedConfig, this.defaultConfig))
-            return parsedConfig;
+        const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig)
+        if(objectsAreSameType(mergedConfig, this.defaultConfig))
+            return mergedConfig;
         else
             return this.defaultConfig;
     }
