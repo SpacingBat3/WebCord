@@ -6,6 +6,20 @@
 import { ipcRenderer } from "electron";
 import { HTMLSettingsGroup, wLog } from "../../global";
 import { deepmerge } from "deepmerge-ts";
+import { sanitize } from 'dompurify';
+import DOMPurify = require("dompurify");
+
+type sanitizeConfig = DOMPurify.Config & {
+    RETURN_DOM_FRAGMENT?: false | undefined;
+    RETURN_DOM?: false | undefined
+}
+
+const sanitizeConfig: sanitizeConfig = {
+    // Allow tags that modifies text style and/or has a semantic meaning.
+    ALLOWED_TAGS: ['b', 'i', 'u', 's', 'em', 'kbd', 'strong', 'code'],
+    // Block every attribute
+    ALLOWED_ATTR: []
+}
 
 function fetchFromWebsite() {
     const AllInputs = document.getElementsByTagName('input');
@@ -34,7 +48,7 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
         const h1 = document.createElement('h1');
 
         // Makes sure title is appended first
-        h1.innerHTML = group.title;
+        h1.innerHTML = sanitize(group.title, sanitizeConfig);
         document.body.appendChild(h1);
 
         for (const option of group.options) {
@@ -43,9 +57,9 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
             const checklistContainer = document.createElement('div');
 
             // Tittle for various options, e.g. "Disable tray"
-            h2.innerHTML = option.name;
+            h2.innerHTML = sanitize(option.name, sanitizeConfig);
             pDesc.className = "description";
-            pDesc.innerHTML = option.description;
+            pDesc.innerHTML = sanitize(option.description, {ALLOWED_TAGS: ['i', 'u', 'code'], ALLOWED_ATTR: []});
             checklistContainer.className = "settingsContainer";
 
             // Hide all elements when option is set as hidden
@@ -66,7 +80,7 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
                 inputTag.id = checklist.id;
                 inputTag.classList.add('checkbox');
                 inputTag.checked = checklist.isChecked;
-                inputLabel.innerHTML = checklist.label;
+                inputLabel.innerHTML = sanitize(checklist.label);
 
                 inputTag.addEventListener('change', fetchFromWebsite);
 
