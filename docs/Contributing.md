@@ -125,12 +125,15 @@ the folders under following name scheme:
 ```
 In more detailed description, the following files has the roles described below:
 
-1. `main/main.ts` – a script that is responsible for loading another
-   functions from the other files; it's currently includes some window
-   implementations, like *main* and *about* window declarations, althrought it
-   is planned to move these declarations into separate files.
+---
 
-2. Main process modules (`main/`):
+#### `main/main.ts`
+
+A script that is responsible for loading another functions from the other files;
+it's currently includes some window implementations, like *main* and *about*
+window declarations, althrought it is planned to move these declarations into separate files.
+
+#### Main process modules (`main/`):
 
   - `main/menus.ts` – includes modules that declares various (OS-native)
     menus, as well as some functions implementing various features called via
@@ -154,7 +157,7 @@ In more detailed description, the following files has the roles described below:
   - `main/update.ts` – a module used to implement the updates
     notification functionality in WebCord.
 
-3. Application windows declarations (`main/windows/`):
+#### Application windows declarations (`main/windows/`):
 
   - `main/windows/about.ts` – declares the OS native application's *about*
     panel, that displays some information like application's version or the
@@ -170,7 +173,7 @@ In more detailed description, the following files has the roles described below:
   - `main/windows/settings.ts` – a window definition used for WebCord's
     new HTML-based configuration panel.
 
-4. Internal modules (`modules/`):
+#### Internal modules (`modules/`):
 
   - `modules/user.ts` – a module that fakes the WebCord's user agent,
     by generating it using Chromium engine version in current Electron release.
@@ -185,7 +188,7 @@ In more detailed description, the following files has the roles described below:
 
   - `modules/l10n.ts` – definies the localization support within WebCord.
 
-5. Renderer process modules (`renderer/modules`):
+#### Renderer process modules (`renderer/modules`):
 
   - `renderer/modules/capturer.ts` – contains the implementation of the `desktopCapturer`
     interface, used for implementing a screen share support for Discord.
@@ -193,7 +196,7 @@ In more detailed description, the following files has the roles described below:
   - `renderer/modules/cosmetic.ts` – does some cosmetic changes to Discord website,
     making it to look more like a real Discord client.
 
-6. Window-specific `preload` scripts:
+#### Window-specific `preload` scripts:
 
   - `renderer/preload/mainWindow.ts` – a preload script for `mainWindow`,
      basically loads `capturer.ts` and `cosmetic.ts` scripts described in
@@ -206,15 +209,17 @@ In more detailed description, the following files has the roles described below:
   - `renderer/preload/docs.ts` – a script providing the functionality for
     WebCord's markdown documentation reader.
 
-7. Build configuration (i.e. for Electron Forge):
+#### Build configuration (i.e. for Electron Forge):
 
   - `build/forge.ts` – contains app's Electron Forge configurations.
   
   - `build/forge.d.ts` – includes types definitions for the Electron
     Forge configuration.
 
-8. `global.ts` – has simple modules declarations used between multiple processes
-   (i.e. both main and renderer process scripts).
+#### `global.ts`
+
+A script that has simple modules declarations used between multiple processes
+(i.e. both main and renderer process scripts).
 
 ## Working with the sources
 
