@@ -1,26 +1,33 @@
 {
     "en": [
-        "Free as freedom! 🗽️",
-        "Privacy focused! 🕵️",
+        "Free as in freedom! 🗽️",
+        "Protects your privacy! 🛡️",
+        "Without unnecesary trackers! 🕵️",
         "Still ARM-friendly! ❤️",
         "With special care about security. 🔐️",
         "It's not written in Scratch for sure! 😹️",
         "Thank you for your trust! 👍️",
         "<i>Whoa, it's still running!?</i> 🤯️",
-        "<i>It did not crashed this time!</i> 🎉️",
+        "<i>It didn't crash this time!</i> 🎉️",
         "Your best collection of MEMEs. 🙃️",
         "<b>Do not</b> use for evil purposes! 😈️",
         "Somehow usable on PinePhones. 📱️",
-        "Designed without much dependencies! 🪶️",
+        "Designed without requiring many dependencies! 🪶️",
         "Runs <i>almost</i> everywhere! 🥔️",
         "A next-gen MEME generator! 💩️",
         "Made in Poland! 🇵🇱️",
-        "Definitely used by hackers! 😄️"
+        "Definitely used by hackers! 😄️",
+        "Focused on code quality and strict type checking. 🥇️",
+        "The best Discord client according to your choice. 😉️",
+        "<i>Press <kbd>ALT</kbd><kbd>F4</kbd> to get <i>free Nitro subscription</i>. 😃️",
+        "<i>Hello World!</i> 🌍️",
+        "Congratulations, you have found an <s>easter</s> egg. 🥚️"
     ],
     "pl": [
         "Wolny i otwarty! 🗽️",
-        "Dba o twoją prywatność! 🕵️",
-        "Przyjazny dla urządzeń ARM! ❤️",
+        "Chroni twoją prywatność! 🛡️",
+        "Bez zbędnego śledzenia! 🕵️",
+        "Wciąż przyjazny dla urządzeń ARM! ❤️",
         "Z troską o bezpieczeństwo kodu! 🔐️",
         "Na pewno nie został napisany w Scratch'u! 😹️",
         "Stworzony w Polsce! 🇵🇱️",
@@ -31,6 +38,11 @@
         "Zaprojektowany bez wielu zależności! 🪶️",
         "Działa <i>prawie</i> wszędzie! 🥔️",
         "Generator MEM-ów następnej generacji! 💩️",
-        "Definitywnie wykorzystywany przez hakerów! 😄️"
+        "Definitywnie wykorzystywany przez hakerów! 😄️",
+        "Skupiony na jakości kodu i sprawdzaniu <i>typów</i>. 🥇️",
+        "Najlepszy klient Discord'a względem Twojego wyboru. 😉️",
+        "Naciśnij <kbd>ALT</kbd><kbd>F4</kbd>, aby uzyskać <i>darmową subskrybcję Nitro</i>. 😃️",
+        "<i>Witaj, świecie!</i> 🌍️",
+        "Gratulacje, znalazłeś <i><s>easter</s> egg</i>. 🥚️"
     ]
 }
