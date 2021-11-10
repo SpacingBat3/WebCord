@@ -49,7 +49,7 @@
     "typescript": "^4.3.4"
   },
   "dependencies": {
-    "@spacingbat3/jsonc-parser": "^1.0.1",
+    "@spacingbat3/jsonc-parser": "^2.0.0",
     "colors": "^1.4.0",
     "deepmerge-ts": "^1.1.3",
     "dompurify": "^2.3.1",
