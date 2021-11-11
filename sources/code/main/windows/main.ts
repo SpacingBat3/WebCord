@@ -10,7 +10,7 @@ import { createHash } from 'crypto';
 import { resolve } from "path";
 
 
-const configData = new AppConfig().get();
+const configData = new AppConfig();
 
 export default function createMainWindow(startHidden: boolean, l10nStrings: l10n["client"]): BrowserWindow {
 
@@ -57,7 +57,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // CSP
 
-    if (configData.csp.enabled) {
+    if (configData.get().csp.enabled) {
         win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
             callback({
                 responseHeaders: {
@@ -96,6 +96,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // (Device) permissions check/request handlers:
     {
+        type permissionObject = ReturnType<AppConfig["get"]>["permissions"]
         /** List of domains, urls or protocols accepted by permission handlers. */
         const trustedURLs = [
             appInfo.rootURL,
@@ -107,9 +108,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 case "display-capture":
                 case "notifications":
                 case "media":
-                    for (const permissionBlocked of new AppConfig().get().permissionsBlocked)
-                        if (permission === permissionBlocked)
-                            return false;
+                        if(Object.prototype.hasOwnProperty.call(configData.get().permissions, permission))
+                            return (configData.get().permissions)[permission as keyof permissionObject]
                     break;
                 default:
                     return false;
@@ -127,21 +127,26 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, originURL, permission);
             return false;
         });
-        win.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+        win.webContents.session.setPermissionRequestHandler((webContents, permission, callback, details) => {
             for (const secureURL of trustedURLs) {
+                if (new URL(webContents.getURL()).origin !== new URL(secureURL).origin) {
+                    return callback(false);
+                }
                 switch (permission) {
+                    case "media":{
+                        if(details.mediaTypes === undefined) break;
+                        let callbackValue = true
+                        for(const type of details.mediaTypes)
+                            callbackValue = callbackValue &&
+                                configData.get().permissions[type];
+                        return callback(callbackValue);
+                    }
                     case "display-capture":
                     case "notifications":
-                    case "media":
-                        for (const permissionBlocked of new AppConfig().get().permissionsBlocked)
-                            if (permission === permissionBlocked)
-                                return callback(false);
-                        break;
+                    case "fullscreen":
+                        return callback(configData.get().permissions[permission]);
                     default:
                         return callback(false);
-                }
-                if (webContents.getURL().startsWith(secureURL)) {
-                    return callback(true);
                 }
             }
             console.warn('[' + l10nStrings.dialog.common.warning.toLocaleUpperCase() + '] ' + l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
@@ -150,8 +155,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         win.webContents.session.setDevicePermissionHandler(() => false);
     }
     win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/load.html'));
-    win.setAutoHideMenuBar(configData.hideMenuBar);
-    win.setMenuBarVisibility(!configData.hideMenuBar);
+    win.setAutoHideMenuBar(configData.get().hideMenuBar);
+    win.setMenuBarVisibility(!configData.get().hideMenuBar);
     // Add English to the spellchecker
     {
         let valid = true;
@@ -171,7 +176,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Load all menus:
 
     getMenu.context(win);
-    if (!configData.disableTray) tray = getMenu.tray(win);
+    if (!configData.get().disableTray) tray = getMenu.tray(win);
     getMenu.bar(packageJson.repository.url, win);
 
     // "Red dot" icon feature
@@ -187,7 +192,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             if (faviconHash === setFavicon) return;
 
             // Compare hashes.
-            if (!configData.disableTray) switch (faviconHash) {
+            if (!configData.get().disableTray) switch (faviconHash) {
                 case discordFavicons.default:
                 case discordFavicons.unread[0]:
                 case discordFavicons.unread[1]:
@@ -219,7 +224,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     });
 
     // Inject desktop capturer
-    ipcMain.on('api-exposed', (event, api) => {
+    ipcMain.on('api-exposed', (_event, api) => {
         const functionString = `
             navigator.mediaDevices.getDisplayMedia = async () => {
                 return navigator.mediaDevices.getUserMedia(await window['${api}'].desktopCapturerPicker())

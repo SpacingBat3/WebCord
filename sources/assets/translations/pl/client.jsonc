@@ -123,6 +123,16 @@
 						"science": "Blokuj znane żądania telemetrii. (<code>/science</code> i <code>/tracing</code>)",
 						"typingIndicator": "Blokuj wskaźnik wpisywania tekstu. (<code>/typing</code>)"
 					}
+				},
+				"permissions": {
+					"name": "Uprawnienia",
+					"description": "Zezwala bądź blokuje żądania i sprawdzenia uprawnień przez stronę Discord'a. Pozostałe uprawnienia są automatycznie blokowane przez klient.",
+					"label": {
+						"camera": "Kamera",
+						"microphone": "Mikrofon",
+						"fullscreen": "Pełny ekran",
+						"desktopCapture": "Nagrywanie ekranu"
+					}
 				}
 			}
 		},

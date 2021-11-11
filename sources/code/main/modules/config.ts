@@ -54,7 +54,13 @@ export class AppConfig {
             typingIndicator: false,
             science: true,
         },
-        permissionsBlocked: ([] as string[])
+        permissions: {
+            "video": false,
+            "audio": false,
+            "fullscreen": true,
+            "notifications": false,
+            "display-capture": true
+        }
     };
     private path: fs.PathLike = resolve(app.getPath('userData'), 'config.json');
     private spaces: number;

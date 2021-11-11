@@ -234,11 +234,21 @@ class l10n {
 				name: "Privacy",
 				group: {
 					blockApi: {
-						name: 'Block Discord API',
+						name: 'Discord API blocking',
 						description: 'Blocks Discord API requests for hardening the privacy.',
 						label: {
 							science: 'Block known telemetry endpoints (<code>/science</code> and <code>/tracing</code>).',
 							typingIndicator: 'Block typing indicator (<code>/typing</code>).'
+						}
+					},
+					permissions: {
+						name: 'Permissions',
+						description: 'Allows or denies the permission checks and request from the Discord website. Please note that other permissions not listed here are blocked automatically by WebCord.',
+						label: {
+							camera: 'Camera',
+							microphone: 'Microphone',
+							fullscreen: 'Fullscreen',
+							desktopCapture: 'Desktop capture'
 						}
 					}
 				}

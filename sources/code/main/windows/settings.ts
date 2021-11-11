@@ -91,6 +91,32 @@ function conf2html (config:AppConfig) {
 						isChecked: config.get().blockApi.typingIndicator
 					}
 				]
+			},
+			{
+				name: lang.privacy.group.permissions.name,
+				description: lang.privacy.group.permissions.description,
+				checklists: [
+					{
+						label: lang.privacy.group.permissions.label.camera,
+						id: 'permissions.video',
+						isChecked: config.get().permissions.video
+					},
+					{
+						label: lang.privacy.group.permissions.label.microphone,
+						id: 'permissions.audio',
+						isChecked: config.get().permissions.video
+					},
+					{
+						label: lang.privacy.group.permissions.label.fullscreen,
+						id: 'permissions.fullscreen',
+						isChecked: config.get().permissions.fullscreen
+					},
+					{
+						label: lang.privacy.group.permissions.label.desktopCapture,
+						id: 'permissions.display-capture',
+						isChecked: config.get().permissions["display-capture"]
+					}
+				]
 			}
 		]
 	}
