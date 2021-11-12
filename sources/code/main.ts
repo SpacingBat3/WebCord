@@ -26,6 +26,16 @@ import('source-map-support').then(sMap => sMap.install());
 
 import('./modules/error').then(eHand => eHand.default());
 
+// Optional debug logging implementation by overwritting the global `console` method.
+console.debug = function (message?, ...optionalParams) {
+    import('electron').then(e => e.app.commandLine.hasSwitch).then(hasSwitch => {
+        import('colors/safe').then(colors => {
+            if (hasSwitch('verbose')||hasSwitch('v'))
+                console.log(colors.gray(message), ...optionalParams)
+        })
+    }) 
+}
+
 import { app, BrowserWindow, dialog, shell } from 'electron';
 import { promises as fs } from 'fs';
 import { trustedProtocolArray } from './global';
@@ -42,7 +52,12 @@ import { resolve as resolvePath, relative } from 'path';
 /** Whenever `--start-minimized` or `-m` switch is used when running client. */
 let startHidden = false;
 let overwriteMain: (() => void | unknown) | undefined;
+
 {
+    const renderLine = (parameter:string, description:string, length?:number) => {
+        const spaceBetween = (length ?? 30) - parameter.length;
+        return '  '+colors.green(parameter)+' '.repeat(spaceBetween)+colors.gray(description)+'\n'
+    }
     const { hasSwitch, getSwitchValue } = app.commandLine;
     if (hasSwitch('help') || hasSwitch('h')) {
         console.log(
@@ -50,19 +65,15 @@ let overwriteMain: (() => void | unknown) | undefined;
             " – Privacy focused Discord client made with " + colors.bold(colors.white(colors.bgBlue("TypeScript"))) + " and " + colors.bold(colors.bgBlack(colors.cyan("Electron"))) + '.\n\n' +
             " " + colors.underline("Usage:") + " " + colors.red(process.argv0) + colors.green(" [option]\n\n") +
             " " + colors.underline("Options:") + "\n" +
-            "    • " + colors.green('--version') + ', ' + colors.green('-v') +
-            colors.gray("            Show current application version.\n") +
-            "    • " + colors.green('--start-minimized') + ', ' + colors.green('-m') +
-            colors.gray("    Hide application at first run\n" +
-                "                               (ignored at restarts).\n") +
-            "    • " + colors.green('--export-l10n') + '=' + colors.yellow('{dir}') +
-            colors.gray("   Export currently loaded translation files from\n" +
-                "                               " +
-                "the application to the " + colors.yellow('{dir}') + " directory.\n")
+            renderLine('--version  -V','Show current application version.')+
+            renderLine('--start-minimized  -m','Hide application at first run.') +
+            renderLine('--export-l10n'+ '=' + colors.yellow('{dir}'), '          Export currently loaded translation files from') +
+            " ".repeat(32)+colors.gray("the application to the " + colors.yellow('{dir}') + " directory.\n")+
+            renderLine('--verbose  -v', "Show debug messages.")
         );
         app.exit();
     }
-    if (hasSwitch('version') || hasSwitch('v')) {
+    if (hasSwitch('version') || hasSwitch('V')) {
         console.log(app.getName() + ' v' + app.getVersion());
         app.exit();
     }

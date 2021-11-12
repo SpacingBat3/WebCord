@@ -82,7 +82,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             const cancel = configData.blockApi.science || configData.blockApi.typingIndicator;
             const url = new URL(details.url);
 
-            if (cancel) console.log('[API] Blocking ' + url.pathname);
+            if (cancel) console.debug('[API] Blocking ' + url.pathname);
 
             if (url.pathname.endsWith('/science') || url.pathname.endsWith('/track'))
                 callback({ cancel: configData.blockApi.science });
