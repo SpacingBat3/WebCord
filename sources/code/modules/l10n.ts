@@ -175,12 +175,12 @@ class l10n {
 				source: "Source"
 			},
 			ver: {
-				update: "New app version is available!",
 				updateBadge: "[UPDATE]",
 				updateTitle: "Update available!",
+				update: "New application version is available!",
 				recent: "Application is up-to-date!",
-				newer: "Application version is newer than in the repository!",
-				diff: "Application version is different than in the repository!"
+				devel: "You're using the non-production build.",
+				downgrade: "Your production build is to newer than stable!"
 			},
 			permission: {
 				request: {

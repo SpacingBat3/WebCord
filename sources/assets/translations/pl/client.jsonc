@@ -61,12 +61,12 @@
 			"source": "Źródło"
 		},
 		"ver": {
-			"update": "Dostępna nowa wersja programu!",
 			"updateBadge": "[ZMIANY]",
 			"updateTitle": "Dostęna aktualizacja!",
+			"update": "Dostępna nowa wersja programu!",
 			"recent": "Aplikacja jest w najnowszej wersji!",
-			"newer": "Wersja aplikacji jest nowsza niż w repozytorium!",
-			"diff": "Wersja aplikacji jest inna niż w repozytorium!"
+			"devel": "Korzystasz z wersji rozwojowej aplikacji.",
+			"downgrade": "Wersja produkcyjna aplikacji jest nowsza niż stabilna!"
 		},
 		"permission": {
 			"request": {
@@ -96,6 +96,7 @@
 		"contributors": "Autorzy i osoby wnoszące wkład:",
 		"credits": "Podziękowania dla GyozaGuy za jego aplikację webową dla Discorda – była dobrym źródłem do dokształcenia się z Elektrona i z jego powiązań z Discordem."
 	},
+	/* Tłumaczenie dla okna ustawień. */
 	"settings": {
 		"title": "Ustawienia",
 		"basic": {

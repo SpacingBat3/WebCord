@@ -2,11 +2,12 @@
  * updateNotifier – notifications about the updates
  */
 
-import { isPackageJsonComplete } from '../../global'
 import { app, Notification, shell, net } from 'electron';
 import { appInfo, getBuildInfo } from './client';
 import fetch from 'electron-fetch';
 import l10n from '../../modules/l10n';
+import * as semver from 'semver';
+import { blue, bold } from 'colors/safe';
 
 /**
  * Checks and notifies users about the updates.
@@ -25,44 +26,33 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     const strings = new l10n().client;
     // An alias to app's repository name.
     const repoName = appInfo.repository.name;
-    let remoteTag: string, updateMsg: string, updateURL: string, remoteHeader: string;
-    let showGui = false;
-    if (getBuildInfo().type === 'devel') {
-        const remoteJson = await (await fetch('https://raw.githubusercontent.com/' + repoName + '/master/package.json')).json();
-        if(!isPackageJsonComplete(remoteJson)) return
-        remoteTag = remoteJson.version;
-        remoteHeader = 'v';
-        updateURL = 'https://github.com/' + repoName + '/commit/master';
-    } else {
-        const githubApi = await (await fetch('https://api.github.com/repos/' + repoName + '/releases/latest')).json();
-        if (githubApi.tag_name.includes('v')) {
-            remoteTag = githubApi.tag_name.substring(1);
-            remoteHeader = 'v';
-        } else if (githubApi.tag_name.match(/[a-z].*[0-9.]/) !== null) {
-            const remoteTagArray = githubApi.tag_name.split('-');
-            remoteTag = remoteTagArray[1];
-            remoteHeader = remoteTagArray[0] + '-';
-        } else {
-            remoteTag = githubApi.tag_name;
-            remoteHeader = 'v';
-        }
-        updateURL = 'https://github.com/' + repoName + '/releases/latest';
+    let updateMsg: string, showGui = false;
+    const githubApi = await (await fetch('https://api.github.com/repos/' + repoName + '/releases/latest')).json();
+    switch(semver.compare(githubApi.tag_name,app.getVersion())) {
+        case 0:
+            // Application version is the same as in tag
+            updateMsg = strings.dialog.ver.recent;
+            break;
+        case 1:
+            showGui = true;
+            updateMsg = strings.dialog.ver.update +
+                ' (v' + app.getVersion() + ' → v' + githubApi.tag_name.replace(/^v(.+)$/,'') + ')';
+            break;
+        case -1:
+            // Application is newer than remote version.
+            if(getBuildInfo().type === 'devel')
+                updateMsg = strings.dialog.ver.devel
+            else
+                updateMsg = strings.dialog.ver.downgrade +
+                    ' (v' + app.getVersion() + ' → v' + githubApi.tag_name.replace(/^v(.+)$/,'') + ')';
+            break;
+        default:
+            // If version can't be parsed by semver.
+            throw new Error("Couldn't compare versions while doing an update");
     }
+    console.log(bold(blue(strings.dialog.ver.updateBadge)) + ' ' + updateMsg);
 
-    if (remoteTag > app.getVersion()) {
-        showGui = true;
-        updateMsg = strings.dialog.ver.update + ' (v' + app.getVersion() + ' → ' + remoteHeader + remoteTag + ')';
-    } else if (remoteTag < app.getVersion()) {
-        updateMsg = strings.dialog.ver.newer + ' (v' + app.getVersion() + ' → ' + remoteHeader + remoteTag + ')';
-    } else if (remoteTag != app.getVersion()) {
-        updateMsg = strings.dialog.ver.diff + ' (v' + app.getVersion() + ' ≠ ' + remoteHeader + remoteTag + ')';
-    } else {
-        updateMsg = strings.dialog.ver.recent;
-    }
-
-    console.log(strings.dialog.ver.updateBadge + ' ' + updateMsg);
-
-    const updatePopup = {
+    const updatePopup:Electron.NotificationConstructorOptions = {
         title: app.getName() + ": " + strings.dialog.ver.updateTitle,
         icon: appInfo.icon,
         body: updateMsg
@@ -70,7 +60,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     if (showGui) {
         const notification = new Notification(updatePopup);
         notification.on('click', () => {
-            shell.openExternal(updateURL);
+            shell.openExternal(githubApi.html_url);
         });
         notification.show();
     }
