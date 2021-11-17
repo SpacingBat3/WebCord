@@ -5,7 +5,7 @@ import * as getMenu from '../modules/menu';
 import { packageJson, discordFavicons } from '../../global';
 import { discordContentSecurityPolicy } from '../modules/csp';
 import l10n from "../../modules/l10n";
-import { getUserAgent } from '../../modules/user';
+import { getUserAgent } from '../../modules/agent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
 
