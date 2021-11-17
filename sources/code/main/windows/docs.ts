@@ -43,11 +43,9 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
     docsWindow.webContents.on('did-start-loading', () => handleEvents(docsWindow));
     ipcMain.on('documentation-reload', (event, href:string, file:string) => {
         // Guess original markdown file path without knowing it at all.
-        console.log(file)
         let path = resolve(app.getAppPath(), 'docs/pl', file);
-        if(!existsSync(path))
+        if(!existsSync(path) || app.getLocaleCountryCode() !== 'PL')
             path = resolve(app.getAppPath(), 'docs', file);
-        console.log(path);
         event.reply('documentation-reload', href, readFileSync(path).toString())
     })
     docsWindow.webContents.session.setPermissionCheckHandler(() => false);
