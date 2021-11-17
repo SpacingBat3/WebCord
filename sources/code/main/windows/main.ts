@@ -8,6 +8,7 @@ import l10n from "../../modules/l10n";
 import { getUserAgent } from '../../modules/agent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
+import { red, bold } from 'colors/safe';
 
 
 const configData = new AppConfig();
@@ -39,9 +40,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             devTools: true, // Too usefull to be blocked.
         }
     });
-    win.webContents.on('did-fail-load', (_event, errorCode) => {
-        if (errorCode !== -106) return;
-        win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
+    win.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
+        console.error(red(bold('[ERROR]')+' '+errorDescription));
+        if (errorCode <= -100 && errorCode >= -199)
+            win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearTimeout(retry);
@@ -50,6 +52,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         }, 1000);
     });
     win.webContents.once('did-finish-load', () => {
+        console.debug("[PAGE] Starting to load the Discord page...")
         if (!startHidden) win.show();
         setTimeout(() => win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) }), 1500);
     });
@@ -59,6 +62,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     if (configData.get().csp.enabled) {
         win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+            console.debug("[CSP] Overwritting Discord CSP.");
             callback({
                 responseHeaders: {
                     ...details.responseHeaders,
@@ -202,6 +206,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     break;
                 default:
                     setFavicon = faviconHash;
+                    console.debug("[Mention] Hash: "+faviconHash)
                     t.setImage(appInfo.trayPing);
                     win.flashFrame(true);
             }
@@ -222,7 +227,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
      */
     ipcMain.once("cosmetic.load", (event) => {
         win.webContents.on("did-stop-loading", () => {
-            console.debug("[IPC] Exposing a 'did-stop-loading' event.")
+            console.debug("[IPC] Exposing a 'did-stop-loading' event...")
             event.reply("webContents.did-stop-loading")
         });
     });
@@ -230,15 +235,15 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Animate menu
 
     win.webContents.on('did-finish-load', () => {
+        console.debug("[CSS] Injecting a CSS for sidebar animation...")
         win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}");
     });
 
     // Inject desktop capturer
     ipcMain.on('api-exposed', (_event, api) => {
+        console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.")
         const functionString = `
-            navigator.mediaDevices.getDisplayMedia = async () => {
-                return navigator.mediaDevices.getUserMedia(await window['${api}'].desktopCapturerPicker())
-            }
+            navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [async() => navigator.mediaDevices.getUserMedia(await window['${api}'].desktopCapturerPicker())]);
         `;
         win.webContents.executeJavaScript(functionString + ';0');
     });
@@ -248,10 +253,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         const config = new AppConfig();
         // Menu bar
         if (!win.menuBarVisible !== config.get().hideMenuBar || win.autoHideMenuBar !== config.get().hideMenuBar) {
+            console.debug("[Settings] Updating menu bar state...")
             win.setAutoHideMenuBar(config.get().hideMenuBar);
             win.setMenuBarVisibility(!config.get().hideMenuBar);
         }
-
     });
     return win;
 }
