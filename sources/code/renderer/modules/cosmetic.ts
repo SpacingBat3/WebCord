@@ -2,6 +2,7 @@
  * Cosmetic.ts – Website improvements for better integration within client
  */
 
+import { ipcRenderer } from 'electron';
 import { wLog } from '../../global';
 
 /**
@@ -28,7 +29,6 @@ export default function preloadCosmetic(localStorage: Storage): void {
   const removeUnneded = () => {
     // If user is at login/register website, do not apply any cosmetic changes
     if (document.URL.includes('login') || document.URL.includes('register')) {
-      window.addEventListener('popstate', removeUnneded, false);
       return;
     }
     // Get array of `div` elements
@@ -38,10 +38,11 @@ export default function preloadCosmetic(localStorage: Storage): void {
       sideBarList[sideBarList.length - 1].remove(); // Remove "app download" button
       sideBarList[sideBarList.length - 2].remove(); // Remove separator
       wLog("Successfully removed unnecesarry elements on website.");
+      ipcRenderer.removeListener('webContents.did-stop-loading', removeUnneded)
     } else {
-      wLog("COSMETIC: Website hasn't been fully loaded yet, retrying after 0.5s...");
-      setTimeout(removeUnneded, 500);
+      wLog("COSMETIC: Couldn't find elements to remove, retrying on next event.");
     }
   };
-  window.addEventListener('load', removeUnneded);
+  ipcRenderer.on("webContents.did-stop-loading", removeUnneded);
+  window.addEventListener("load", () => ipcRenderer.send("cosmetic.load"), {once: true})
 }

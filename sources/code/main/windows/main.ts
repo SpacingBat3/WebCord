@@ -217,6 +217,16 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         }
     });
 
+    /* Expose "did-stop-loading" event to preloads, it seems to be the most
+     * precise way of watching for the changes within Discord's DOM.
+     */
+    ipcMain.once("cosmetic.load", (event) => {
+        win.webContents.on("did-stop-loading", () => {
+            console.debug("[IPC] Exposing a 'did-stop-loading' event.")
+            event.reply("webContents.did-stop-loading")
+        });
+    });
+
     // Animate menu
 
     win.webContents.on('did-finish-load', () => {
