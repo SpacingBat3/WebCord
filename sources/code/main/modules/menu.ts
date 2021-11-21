@@ -180,12 +180,13 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 		{
 			label: strings.tray.toggle,
 			click: function () {
-				if(windowName.isVisible() && windowName.isFocused())
+				if(windowName.isVisible() && windowName.isFocused()) {
 					windowName.hide();
-				else if (!windowName.isFocused())
-					windowName.focus();
-				else
+				} else if (!windowName.isVisible()) {
 					windowName.show();
+				} else {
+					windowName.focus();
+				}
 			}
 		},
 		{
