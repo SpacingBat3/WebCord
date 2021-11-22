@@ -36,6 +36,22 @@ console.debug = function (message?, ...optionalParams) {
     }) 
 }
 
+// Colorize output on errors/warnings
+{
+    const stdErr = console.error
+    const stdWarn = console.warn
+    console.error = function (message?, ...optionalParams) {
+        import('colors/safe').then(colors => {
+            stdErr(colors.red(message), ...optionalParams)
+        })
+    }
+    console.warn = function (message?, ...optionalParams) {
+        import('colors/safe').then(colors => {
+            stdWarn(colors.yellow(message), ...optionalParams)
+        })
+    }
+}
+
 import { app, BrowserWindow, dialog, shell } from 'electron';
 import { promises as fs } from 'fs';
 import { trustedProtocolRegExp } from './global';
