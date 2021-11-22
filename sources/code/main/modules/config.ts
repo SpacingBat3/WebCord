@@ -26,7 +26,7 @@ function isJsonSyntaxCorrect(string: string) {
  */
 
 export class AppConfig {
-    /** A configuration template that is used for generating the config with the default values. */
+    /** Default configuration values. */
     private defaultConfig = {
         hideMenuBar: false,
         disableTray: false,
@@ -47,7 +47,8 @@ export class AppConfig {
                 paypal: true,
                 audius: true,
                 algolia: true,
-                funimation: true
+                funimation: true,
+                reddit: true
             }
         },
         blockApi: {

@@ -175,26 +175,41 @@ export interface HTMLSettingsGroup {
 	/** Title of the settings section. (General, Advanced etc.) */
     title: string;
 	/** Array of the settings groups in the section. */
-    options: {
-			/** Name of the specific configuration entry (e.g. Tray icon). */
-            name: string;
-			/** Long description of the configuration entry (e.g. Controls the tray apperance) */
-            description: string;
-			/** Whenever checkbox is visible. */
-			hidden?: boolean;
-			/** An array of checkboxes and its labels. */
-            checklists: {
-				/** A label describing the single checkbox. */
-                label: string;
-				/**
-				 * An element id used for the indentification of the settings
-				 * entries to get / update its values.
-				 */
-                id: string;
-				/** Whenever checkbox is in *checked* state. */
-                isChecked: boolean;
-            }[]
-    }[]
+    options: (HTMLChecklistOption|HTMLRadioOption)[]
+}
+
+interface HTMLOption {
+	/** Name of the specific configuration entry (e.g. Tray icon). */
+	name: string;
+	/** Long description of the configuration entry (e.g. Controls the tray apperance) */
+	description: string;
+	/** Whenever checkbox is visible. */
+	hidden?: boolean;
+	/** Type of the options */
+}
+
+export interface HTMLForms {
+	/** A label describing the single checkbox. */
+	label: string;
+	/** Description that will on mouse hover. */
+	description?: string;
+	/**
+	 * An element id used for the indentification of the settings
+	 * entries to get / update its values.
+	 */
+	id: string;
+	/** Whenever forms are selected. */
+	isChecked: boolean;
+}
+
+export interface HTMLChecklistOption extends HTMLOption {
+	type: 'checkbox';
+	forms: HTMLForms[];
+}
+
+export interface HTMLRadioOption extends HTMLOption {
+	type: 'radio';
+	forms: HTMLForms[]
 }
 
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */

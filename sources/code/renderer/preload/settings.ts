@@ -26,7 +26,7 @@ function fetchFromWebsite() {
     const array: Record<string, unknown>[] = [];
     for (const input of AllInputs) {
         let configString: string;
-        if (input.id.includes('csp-thirdparty.'))
+        if (input.name.includes('csp-thirdparty.'))
             configString = '{"csp": {"thirdparty": {"' + input.id.split('.')[1] + '":' + input.checked + '} } }';
         else if (input.id.includes('.'))
             configString = '{"'+input.id.split('.')[0]+'": {"' + input.id.split('.')[1] + '":' + input.checked + '} }'
@@ -59,7 +59,7 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
             // Tittle for various options, e.g. "Disable tray"
             h2.innerHTML = sanitize(option.name, sanitizeConfig);
             pDesc.className = "description";
-            pDesc.innerHTML = sanitize(option.description, {ALLOWED_TAGS: ['i', 'u', 'code'], ALLOWED_ATTR: []});
+            pDesc.innerHTML = sanitize(option.description, sanitizeConfig);
             checklistContainer.className = "settingsContainer";
 
             // Hide all elements when option is set as hidden
@@ -70,23 +70,28 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
             }
 
             // A list of check boxes for a single opiton.
-            for (const checklist of option.checklists) {
-                const inputContainer = document.createElement('div');
+            for (const checklist of option.forms) {
+                const inputForm = document.createElement('form');
                 const inputTag = document.createElement('input');
                 const inputLabel = document.createElement('label');
 
-                inputContainer.className = "containerElement";
-                inputTag.type = "checkbox";
-                inputTag.id = checklist.id;
-                inputTag.classList.add('checkbox');
+                inputTag.type = option.type;
+                inputTag.name = inputTag.id = checklist.id;
                 inputTag.checked = checklist.isChecked;
-                inputLabel.innerHTML = sanitize(checklist.label);
 
+                if(checklist.description) {
+                    inputTag.title = checklist.description
+                    inputLabel.title = checklist.description
+                }
                 inputTag.addEventListener('change', fetchFromWebsite);
 
-                inputContainer.appendChild(inputTag);
-                inputContainer.appendChild(inputLabel);
-                checklistContainer.appendChild(inputContainer);
+                inputLabel.innerHTML = sanitize(checklist.label+(inputTag.title !== '' ? ' 🛈' : ''));
+                inputLabel.setAttribute('for', checklist.id);
+
+
+                inputForm.appendChild(inputTag);
+                inputForm.appendChild(inputLabel);
+                checklistContainer.appendChild(inputForm);
             }
             document.body.appendChild(h2);
             document.body.appendChild(pDesc);

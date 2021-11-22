@@ -1,9 +1,8 @@
 import { app, ipcMain, BrowserWindow, session } from "electron";
 import { AppConfig } from '../modules/config';
-import { HTMLSettingsGroup } from '../../global';
+import { HTMLSettingsGroup, HTMLForms, HTMLChecklistOption } from '../../global';
 import { appInfo, getBuildInfo } from '../modules/client';
 import l10n from '../../modules/l10n';
-import { deepmerge } from 'deepmerge-ts';
 
 const appConfig = new AppConfig();
 
@@ -22,25 +21,22 @@ function conf2html (config:AppConfig) {
 		['vimeo', 'Vimeo'],
 		['funimation', 'Funimation'],
 		['audius', 'Audius'],
-		['soundcloud', 'SoundCloud']
+		['soundcloud', 'SoundCloud'],
+		['reddit', 'Reddit']
 	];
-	const cspChecklist: HTMLSettingsGroup["options"][0]["checklists"] = []
-	for (const stringGroup of websitesThirdParty) {
+	const cspChecklist: HTMLForms[] = []
+	for (const stringGroup of websitesThirdParty.sort()) {
 		cspChecklist.push({
 			label: stringGroup[1],
 			id: "csp-thirdparty."+stringGroup[0],
 			isChecked: (appConfig.get().csp.thirdparty as Record<string, boolean>)[stringGroup[0]]
 		})
 	}
-	const csp: HTMLSettingsGroup = {
-		title: lang.advanced.name,
-		options: [
-			{
-				name: lang.advanced.group.csp.name+' – '+lang.advanced.group.csp.extends.thirdparty.name,
-				description: lang.advanced.group.csp.extends.thirdparty.description,
-				checklists: cspChecklist
-			}
-		]
+	const csp: HTMLChecklistOption = {
+		name: lang.advanced.group.csp.name+' – '+lang.advanced.group.csp.extends.thirdparty.name,
+		description: lang.advanced.group.csp.extends.thirdparty.description,
+		type: 'checkbox',
+		forms: cspChecklist
 	}
 	// Basic / general
 	const general:HTMLSettingsGroup = {
@@ -50,7 +46,8 @@ function conf2html (config:AppConfig) {
 				// Hide menu bar
 				name: lang.basic.group.menuBar.name,
 				description: lang.basic.group.menuBar.description,
-				checklists: [
+				type: 'checkbox',
+				forms: [
 					{
 						label: lang.basic.group.menuBar.label,
 						isChecked: config.get().hideMenuBar,
@@ -62,7 +59,8 @@ function conf2html (config:AppConfig) {
 				// Disable tray
 				name: lang.basic.group.tray.name,
 				description: lang.basic.group.tray.description,
-				checklists: [
+				type: 'checkbox',
+				forms: [
 					{
 						label: lang.basic.group.tray.label,
 						isChecked: config.get().disableTray,
@@ -79,7 +77,8 @@ function conf2html (config:AppConfig) {
 			{
 				name: lang.privacy.group.blockApi.name,
 				description: lang.privacy.group.blockApi.description,
-				checklists: [
+				type: 'checkbox',
+				forms: [
 					{
 						label: lang.privacy.group.blockApi.label.science,
 						id: 'blockApi.science',
@@ -95,7 +94,8 @@ function conf2html (config:AppConfig) {
 			{
 				name: lang.privacy.group.permissions.name,
 				description: lang.privacy.group.permissions.description,
-				checklists: [
+				type: 'checkbox',
+				forms: [
 					{
 						label: lang.privacy.group.permissions.label.camera,
 						id: 'permissions.video',
@@ -121,51 +121,45 @@ function conf2html (config:AppConfig) {
 		]
 	}
 	// Advanced
-	const advanced:HTMLSettingsGroup = deepmerge({
+	const advanced:HTMLSettingsGroup = {
 		title: lang.advanced.name,
 		options: [
 			{
 				// Enable CSP
 				name: lang.advanced.group.csp.name,
 				description: lang.advanced.group.csp.extends.enable.description,
-				checklists: [
-					{
-						label: lang.advanced.group.csp.extends.enable.label,
-						id: 'csp.enabled',
-						isChecked: config.get().csp.enabled
-					}
-				],
-			}
-		]
-	}, csp, {
-		title: lang.advanced.name,
-		options: [
+				type: 'checkbox',
+				forms: [{
+					label: lang.advanced.group.csp.extends.enable.label,
+					id: 'csp.enabled',
+					isChecked: config.get().csp.enabled
+				}],
+			},
+			csp,
 			{
 				name: lang.advanced.group.crossOrigin.name,
 				description: lang.advanced.group.crossOrigin.description,
-				checklists: [
-					{
-						label: lang.advanced.group.crossOrigin.label,
-						id: 'redirectionWarning',
-						isChecked: config.get().redirectionWarning
-					}
-				]
+				type: 'checkbox',
+				forms: [{
+					label: lang.advanced.group.crossOrigin.label,
+					id: 'redirectionWarning',
+					isChecked: config.get().redirectionWarning
+				}]
 			},
 			{
 				// Developer mode
 				name: lang.advanced.group.devel.name,
 				description: lang.advanced.group.devel.description,
+				type: 'checkbox',
 				hidden: getBuildInfo().type === "devel",
-				checklists: [
-					{
-						label: lang.advanced.group.devel.label,
-						id: 'devel',
-						isChecked: config.get().devel
-					}
-				],
+				forms: [{
+					label: lang.advanced.group.devel.label,
+					id: 'devel',
+					isChecked: config.get().devel
+				}],
 			}
 		]
-	})
+	}
 	return [general, privacy, advanced];
 }
 

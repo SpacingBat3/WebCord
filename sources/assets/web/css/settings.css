@@ -28,7 +28,7 @@ div.settingsContainer {
     border-radius: 5px;
 }
 
-div.containerElement {
+form {
     display: flex;
     margin: 0.5em 0px;
 }
@@ -38,21 +38,24 @@ label {
     font-size: 1em;
 }
 
-input.checkbox {
+input, label {
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
     flex-shrink: 0;
     margin: 0 1em;
     height: 1.5em;
     width: 1.5em;
     border-radius: 5px;
     appearance: none;
-    cursor: pointer;
     background-color: var(--color-input-bg);
     border-color: var(--color-input-bg);
     transition: background-color 0.2s ease;
     border: solid #0000 4px;
 }
 
-input.checkbox:checked {
+input[type="checkbox"]:checked {
     background-color: var(--color-accient);
     background-image: url(../../icons/symbols/checkmark.svg);
     background-repeat: no-repeat;
