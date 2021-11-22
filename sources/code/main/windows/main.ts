@@ -8,8 +8,7 @@ import l10n from "../../modules/l10n";
 import { getUserAgent } from '../../modules/agent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
-import { red, bold } from 'colors/safe';
-
+import { bold } from 'colors/safe';
 
 const configData = new AppConfig();
 
@@ -40,10 +39,16 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             devTools: true, // Too usefull to be blocked.
         }
     });
-    win.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
-        console.error(red(bold('[ERROR]')+' '+errorDescription));
+    win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
         if (errorCode <= -100 && errorCode >= -199)
+            // Show offline page on connection errors.
             win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
+        else if (errorCode === -30) {
+            // Ignore CSP errors.
+            console.warn(bold('[WARN]')+' A page "'+validatedURL+'" was blocked by CSP.')
+            return;
+        }
+        console.error(bold('[ERROR]')+' '+errorDescription+' ('+(errorCode*-1)+')');
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearTimeout(retry);
