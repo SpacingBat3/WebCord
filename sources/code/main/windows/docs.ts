@@ -1,7 +1,5 @@
 import { app, BrowserWindow, ipcMain, session } from 'electron';
-//import { appInfo } from '../properties';
-//import { packageJson } from '../../global';
-import { readFileSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import { resolve } from 'path';
 import { appInfo, getBuildInfo } from '../modules/client';
 
@@ -12,7 +10,6 @@ function handleEvents(docsWindow: BrowserWindow) {
     let readmeFile = 'docs/Readme.md';
     if(existsSync(resolve(app.getAppPath(), 'docs', app.getLocale(), 'Readme.md')))
         readmeFile = 'docs/'+app.getLocale()+'/Readme.md'
-    console.log()
     ipcMain.once('documentation-load', (event) => {
         ipcMain.once('documentation-load', () => {
             if(!docsWindow.isDestroyed()) {
@@ -41,13 +38,6 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
     docsWindow.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/docs.html'));
     handleEvents(docsWindow);
     docsWindow.webContents.on('did-start-loading', () => handleEvents(docsWindow));
-    ipcMain.on('documentation-reload', (event, href:string, file:string) => {
-        // Guess original markdown file path without knowing it at all.
-        let path = resolve(app.getAppPath(), 'docs/pl', file);
-        if(!existsSync(path) || app.getLocaleCountryCode() !== 'PL')
-            path = resolve(app.getAppPath(), 'docs', file);
-        event.reply('documentation-reload', href, readFileSync(path).toString())
-    })
     docsWindow.webContents.session.setPermissionCheckHandler(() => false);
     docsWindow.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => {
         callback(false);

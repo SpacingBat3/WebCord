@@ -3,8 +3,11 @@ import { sanitize } from "dompurify";
 import { ipcRenderer } from "electron";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
-
+import { pathToFileURL, fileURLToPath } from "url";
+import { trustedProtocolRegExp } from "../../global";
 import * as _hljsmodule from "highlight.js";
+
+const htmlFileUrl = document.URL
 
 // Workaround for highlight's wrong export type (there shouldn't be default as "root").
 const { highlight } = (_hljsmodule as unknown as _hljsmodule.HLJSApi);
@@ -38,7 +41,6 @@ function getId(url:string) {
 }
 
 function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
-    marked.setOptions({baseUrl: mdFile});
     mdBody.innerHTML = sanitize(marked.parse(readFileSync(mdFile).toString()));
 }
 
@@ -51,9 +53,20 @@ function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdA
 function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLElement, mdPrevious: string):void {
     for(const link of container.getElementsByTagName('a')){
         link.onclick = () => {
+            window.history.replaceState("", "", pathToFileURL(mdPrevious))
+            // Handle links with the whitelisted protocols
+            if(new URL(link.href).protocol.match(trustedProtocolRegExp)) {
+                open(link.href)
+            // Handle in-document links
+            } else if (link.href.startsWith(document.URL.split('#')[0]+'#')) {
+                const id = getId(link.href);
+                if (id) {
+                    const element = document.getElementById(id)
+                    if(element) element.scrollIntoView({behavior: "smooth"});
+                }
             // Handle markdown links and 'LICENSE' files.
-            if(link.href.startsWith("file:")&&(link.href.endsWith(".md")||link.href.endsWith("LICENSE")||link.href.match(/.*\.md#[a-z0-9%-]+/))) {
-                const mdFile = link.href.split('#')[0].replace('file://','');
+            } else if(link.href.match(/^file:\/\/.+(\.md|LICENSE)(#[a-z0-9-]+)?$/)) {
+                const mdFile = fileURLToPath(link.href);
                 const id = getId(link.href);
                 menuHeader.innerText = basename(mdFile);
                 document.body.removeChild(article);
@@ -76,17 +89,8 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
                     const element = document.getElementById(id);
                     if (element) element.scrollIntoView();
                 }
-            // Handle in-document links
-            } else if (link.href.startsWith(document.URL.split('#')[0]+'#')) {
-                const id = getId(link.href);
-                if (id) {
-                    const element = document.getElementById(id)
-                    if(element) element.scrollIntoView({behavior: "smooth"});
-                }
-            // Handle links with the whitelisted protocols
-            } else {
-                open(link.href)
             }
+            window.history.pushState("", "", htmlFileUrl)
             return false;
         }
     }
@@ -114,10 +118,7 @@ function fixImages(container:HTMLElement) {
         }
 }
 
-ipcRenderer.on('documentation-load', (_event, readmeFile:string) => {
-    marked.setOptions({
-        baseUrl: readmeFile
-    });
+ipcRenderer.once('documentation-load', (_event, readmeFile:string) => {
     const mdHeader = document.createElement('header');
     const mdArticle = document.createElement('article');
     const mdBody = document.createElement('div');
