@@ -52,10 +52,12 @@ including all URLs that are allowed to load. You can disable it [in Settings](./
 as a workaround.
 
 ### 3. How to get a microphone permission for WebCord?
-You can't, as it is aquired automatically when Discord website asks for it. In
-fact, this is rather an issue with your system audio settings – for some reason,
-Electron doesn't seems to get access to microphone when there's no default /
-fallback device set. To fix it, set your microphone as default/fallback in your
-system's audio settings and restart the application – make sure it's properly
-closed and there's no icon in tray nor electron/webcord process running in the
-background!
+If you granted it via the application settings, this warning may indicate a
+wrong configuration in your system audio settings – for some reason, Electron
+doesn't seems to get access to microphone when there's no default / fallback
+device set. To fix it, set your microphone as default/fallback in your system's
+audio settings and restart the application – make sure it's properly closed and
+there's no icon in tray nor electron/webcord process running in the background!
+
+Curently this bug could be encountered on Linux, it's state is unknown for the
+other platforms.
