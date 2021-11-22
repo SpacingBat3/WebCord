@@ -38,7 +38,7 @@ console.debug = function (message?, ...optionalParams) {
 
 import { app, BrowserWindow, dialog, shell } from 'electron';
 import { promises as fs } from 'fs';
-import { trustedProtocolArray } from './global';
+import { trustedProtocolRegExp } from './global';
 import { checkVersion } from './main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "./main/windows/main";
@@ -170,7 +170,7 @@ app.on('web-contents-created', (_event, webContents) => {
         let allowedProtocol = false;
 
         // Check if protocol of `openUrl` is secure.
-        if (trustedProtocolArray.includes(openUrl.protocol))
+        if (openUrl.protocol.match(trustedProtocolRegExp))
             allowedProtocol = true;
 
         /* 

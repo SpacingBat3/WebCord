@@ -293,8 +293,4 @@ export const discordFavicons = {
  * See:
  * https://www.electronjs.org/docs/tutorial/security#14-do-not-use-openexternal-with-untrusted-content
  */
-export const trustedProtocolArray = [
-	'https:',   // most links to the content viewable by the browsers.
-	'mailto:',  // redirects email adresses.
-	'tel:'      // redirects phone numbers.
-];
+export const trustedProtocolRegExp = /^(https:|mailto:|tel:|sms:)$/;
