@@ -1,4 +1,4 @@
-import * as marked from "marked"
+import { marked } from "marked"
 import { sanitize } from "dompurify";
 import { ipcRenderer } from "electron";
 import { basename, relative, resolve } from "path";
