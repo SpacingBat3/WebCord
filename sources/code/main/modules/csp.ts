@@ -19,7 +19,20 @@ if (thirdparty.spotify)
 if (thirdparty.reddit)
     csp += " https://www.redditstatic.com"; // Reddit
 
-// Style
+if (thirdparty.twitter)
+    csp += " https://abs.twimg.com/web-video-player/"; // Twitter
+
+if (thirdparty.twitch)
+    csp += " https://static.twitchcdn.net/assets/"; // Twitch
+
+/* === Worker scripts === */
+
+csp += "; worker-src 'self'";
+
+if (thirdparty.twitch)
+    csp += " blob: https://player.twitch.tv"
+
+/* === Style === */
 
 csp += "; style-src 'self' 'unsafe-inline' https://cdn.discordapp.com";
 
@@ -27,9 +40,12 @@ if (thirdparty.hcaptcha)
     csp += " https://*.hcaptcha.com https://hcaptcha.com"; // hCaptcha
 
 if (thirdparty.reddit)
-    csp += " https://www.redditstatic.com" // Reddit
+    csp += " https://www.redditstatic.com"; // Reddit
 
-// Images
+if (thirdparty.twitch)
+    csp += " https://static.twitchcdn.net/assets/"; // Twitch
+
+/* === Images === */
 
 csp += "; img-src 'self' blob: data: https://*.discordapp.net https://*.discordapp.com https://*.discord.com";
 
@@ -50,9 +66,15 @@ if (thirdparty.hcaptcha)
     csp += " https://*.hcaptcha.com https://hcaptcha.com"; // hCaptcha
 
 if (thirdparty.reddit)
-    csp += " https://www.redditstatic.com" // Reddit
+    csp += " https://www.redditstatic.com"; // Reddit
 
-// Connect
+if (thirdparty.twitter)
+    csp += " https://pbs.twimg.com/ext_tw_video_thumb/"; // Twitter
+
+if (thirdparty.twitch)
+    csp += " https://static-cdn.jtvnw.net/jtv_user_pictures/" // Twitch
+
+/* === Connect === */
 
 csp += "; connect-src 'self' https://status.discordapp.com https://status.discord.com";
 csp += " https://discordapp.com https://discord.com https://cdn.discordapp.com";
@@ -66,7 +88,7 @@ if (thirdparty.spotify)
     csp += " wss://dealer.spotify.com https://api.spotify.com"; // Spotify
 
 if (thirdparty.twitch) 
-    csp += " ttps://api.twitch.tv"; // Twitch
+    csp += " https://api.twitch.tv/v5/channels/"; // Twitch
 
 if (thirdparty.algolia)
     csp += " https://*.algolianet.com https://*.algolia.net"; // Algolia
@@ -75,9 +97,15 @@ if (thirdparty.youtube)
     csp += " https://*.googlevideo.com"; // Youtube
 
 if (thirdparty.reddit)
-    csp += " https://v.redd.it" // Reddit
+    csp += " https://v.redd.it"; // Reddit
 
-// Media
+if (thirdparty.twitter)
+    csp += " https://api.twitter.com/1.1/guest/activate.json https://api.twitter.com/1.1/videos/tweet/config/ https://video.twimg.com/ext_tw_video/"; // Twitter
+
+if (thirdparty.twitch)
+    csp += " https://gql.twitch.tv/gql https://spade.twitch.tv/track https://static.twitchcdn.net/assets/ https://usher.ttvnw.net/api/channel/hls/ https://*.hls.ttvnw.net/v1/playlist/ https://*.hls.ttvnw.net/v1/segment/"; // Twitch
+
+/* === Media === */
 
 csp += "; media-src 'self' blob: https://*.discordapp.net https://*.discord.com https://*.discordapp.com";
 
@@ -92,13 +120,13 @@ if (thirdparty.youtube)
     csp += " https://*.youtube.com"; // YouTube
 
 if (thirdparty.twitter)
-    csp += " https://twitter.com"; // Twitter
+    csp += " https://twitter.com/i/videos/tweet/"; // Twitter
 
 if (thirdparty.reddit)
     csp += " https://v.redd.it"; // Reddit
 
 
-// Frame
+/* === Frame === */
 
 csp += "; frame-src https://discordapp.com/domain-migration discord:";
 csp += " https://*.discordsays.com https://*.watchanimeattheoffice.com";
@@ -125,9 +153,16 @@ if (thirdparty.spotify)
     csp += " https://open.spotify.com/embed/"; // Vimeo
 
 if (thirdparty.reddit)
-    csp += " https://www.redditmedia.com/mediaembed/" // Reddit
+    csp += " https://www.redditmedia.com/mediaembed/"; // Reddit
 
-// Child
+if (thirdparty.twitter)
+    csp += " https://twitter.com/i/videos/tweet/"; // Twitter
+
+if (thirdparty.twitch)
+    csp += " https://player.twitch.tv"; // Twitch
+
+/* === Child === */
+
 if (thirdparty.paypal)
     csp += "; child-src 'self' https://checkout.paypal.com"; // PayPal
 
@@ -139,6 +174,6 @@ if (thirdparty.paypal)
  * By defaults, all Discord and thirdparty websites declared there are
  * allowed to connect.
  * 
- * This can be configured in `Settings → CSP Header → Third party websites`.
+ * This can be configured in settings.
  */
 export const discordContentSecurityPolicy = csp;
