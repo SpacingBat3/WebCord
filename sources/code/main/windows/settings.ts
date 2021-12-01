@@ -115,6 +115,11 @@ function conf2html (config:AppConfig) {
 						label: lang.privacy.group.permissions.label.desktopCapture,
 						id: 'permissions.display-capture',
 						isChecked: config.get().permissions["display-capture"]
+					},
+					{
+						label: lang.privacy.group.permissions.label.notifications,
+						id: 'permissions.notifications',
+						isChecked: config.get().permissions.notifications
 					}
 				]
 			}

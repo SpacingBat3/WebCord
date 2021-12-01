@@ -248,7 +248,8 @@ class l10n {
 							camera: 'Camera',
 							microphone: 'Microphone',
 							fullscreen: 'Fullscreen',
-							desktopCapture: 'Desktop capture'
+							desktopCapture: 'Desktop capture',
+							notifications: 'Notifications'
 						}
 					}
 				}

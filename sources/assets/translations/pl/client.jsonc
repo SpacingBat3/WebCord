@@ -132,7 +132,8 @@
 						"camera": "Kamera",
 						"microphone": "Mikrofon",
 						"fullscreen": "Pełny ekran",
-						"desktopCapture": "Nagrywanie ekranu"
+						"desktopCapture": "Nagrywanie ekranu",
+						"notifications": "Powiadomienia"
 					}
 				}
 			}
