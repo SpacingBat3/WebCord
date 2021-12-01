@@ -37,6 +37,9 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             preload: app.getAppPath() + "/sources/app/renderer/preload/main.js",
             nodeIntegration: false,
             devTools: true, // Too usefull to be blocked.
+            defaultFontFamily: {
+                standard: 'Arial' // `sans-serif` as default font.
+            }
         }
     });
     win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {

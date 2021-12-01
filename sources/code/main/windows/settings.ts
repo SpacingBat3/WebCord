@@ -181,7 +181,10 @@ export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
 		minHeight: appInfo.minWinHeight,
 		webPreferences: {
 			session: session.fromPartition("temp:settings"),
-			preload: app.getAppPath()+"/sources/app/renderer/preload/settings.js"
+			preload: app.getAppPath()+"/sources/app/renderer/preload/settings.js",
+			defaultFontFamily: {
+                standard: 'Arial' // `sans-serif` as default font.
+            }
 		}
 	});
 	if(settingsWindow.webContents.session === parent.webContents.session)

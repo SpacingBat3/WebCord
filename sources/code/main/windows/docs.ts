@@ -32,7 +32,10 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
         height: 720,
         webPreferences: {
             session: session.fromPartition("temp:docs"),
-            preload: resolve(app.getAppPath(), 'sources/app/renderer/preload/docs.js')
+            preload: resolve(app.getAppPath(), 'sources/app/renderer/preload/docs.js'),
+            defaultFontFamily: {
+                standard: 'Arial' // `sans-serif` as default font.
+            }
         }
     });
     docsWindow.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/docs.html'));
