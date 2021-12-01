@@ -191,7 +191,7 @@ interface HTMLOption {
 export interface HTMLForms {
 	/** A label describing the single checkbox. */
 	label: string;
-	/** Description that will on mouse hover. */
+	/** Description that will be visible on mouse hover. */
 	description?: string;
 	/**
 	 * An element id used for the indentification of the settings
