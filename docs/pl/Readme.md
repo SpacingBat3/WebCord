@@ -28,8 +28,8 @@ dzięki [Electron Forge][electron-forge]. W większości (jeżeli nie w pełni)
 Poprzednio głównym celem powstania projektu WebCord było stworzenie działającego
 klienta na platformy ARM, obecnie jednak jego rozwój skupiony jest na dążeniu do
 bardziej prywatnej i bezpiecznej alternatywy oficjalnego klienta Discorda oraz
-umożliwiającej użytkownikikowi na wprowadzanie dowolnych zmian. Względem 
-prywatności, WebCord obecnie wprowadza poniższe funkcje:
+umożliwiającej użytkownikowi na wprowadzanie dowolnych zmian. Względem 
+prywatności, w WebCordzie obecnie zaimplementowano poniższe funkcje:
   - blokowanie zbędnych usług firm trzecich, takie jak [Sentry][sentry],
   - blokowanie wybranych usług firm trzecich zintegrowanych z Discordem przez
     Politykę Bezpieczeństwa Treści (ang. *Content Security Policy*),
