@@ -237,6 +237,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         });
     });
 
+    ipcMain.once("cosmetic.hideElementByClass", (event, cssRule:string) => {
+        win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }');
+        event.reply("cosmetic.hideElementByClass");
+    })
     // Animate menu
 
     win.webContents.on('did-finish-load', () => {
