@@ -215,12 +215,7 @@ export interface HTMLRadioOption extends HTMLOption {
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
 export const discordFavicons = {
 	/** Default favicon (without *blue dot* indicator). */
-    default: '25522cef7e234ab001bbbc85c7a3f477b996e20b',
-	/** Favicon indicating unread messages (not pings!). */
-    unread: [
-		'40064cffe692bf4d50a9a2eb3d4886c91c07e9cd',
-		'44fe71afc7ab5e7f87ccbdac52c86618d6d19240'
-	]
+    default: '25522cef7e234ab001bbbc85c7a3f477b996e20b'
 };
 
 /**

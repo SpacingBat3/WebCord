@@ -60,6 +60,7 @@ export const appInfo = {
 	},
 	icon: resolve(app.getAppPath(), "sources/assets/icons/app.png"),
 	trayIcon: resolve(app.getAppPath(), "sources/assets/icons/tray.png"),
+	trayUnread: resolve(app.getAppPath(), "sources/assets/icons/tray-unread.png"),
 	trayPing: resolve(app.getAppPath(), "sources/assets/icons/tray-ping.png"),
 	rootURL: 'https://discord.com',
 	URL: 'https://watchanimeattheoffice.com/app',

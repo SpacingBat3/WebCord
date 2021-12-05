@@ -204,19 +204,19 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             if (faviconHash === setFavicon) return;
 
             // Compare hashes.
-            if (!configData.get().disableTray) switch (faviconHash) {
-                case discordFavicons.default:
-                case discordFavicons.unread[0]:
-                case discordFavicons.unread[1]:
-                    setFavicon = faviconHash;
+            if (!configData.get().disableTray) {
+                if(faviconHash === discordFavicons.default) {
                     t.setImage(appInfo.trayIcon);
                     win.flashFrame(false);
-                    break;
-                default:
-                    setFavicon = faviconHash;
+                } else if(faviconHash.startsWith('4')) {
+                    t.setImage(appInfo.trayUnread);
+                    win.flashFrame(false);
+                } else {
                     console.debug("[Mention] Hash: "+faviconHash)
                     t.setImage(appInfo.trayPing);
                     win.flashFrame(true);
+                }
+                setFavicon = faviconHash;
             }
         });
     });

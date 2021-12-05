@@ -12,8 +12,7 @@ import {
 	NativeImage, // Class, used after initialization and for types.
 	MenuItemConstructorOptions,
 	clipboard,
-	WebContents,
-	session
+	WebContents
 } from 'electron';
 
 import {
@@ -100,12 +99,10 @@ export function context(windowName: BrowserWindow): void {
 	});
 }
 
-let funMode = 0;
+let funMode = false;
 const today = new Date();
-if (os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.getMonth() == 3)) {
-	funMode = 1; // There's always fun for me ;)
-} else if (os.userInfo().username == 'pi' && today.getDate() == 14 && today.getMonth() == 2) {
-	funMode = 2; // Happy π day!
+if (os.userInfo().username == 'pi' && today.getDate() == 14 && today.getMonth() == 2) {
+	funMode = true; // Happy π day!
 }
 
 // Tray menu
@@ -113,64 +110,36 @@ if (os.userInfo().username == 'spacingbat3' || (today.getDate() == 1 && today.ge
 export async function tray(windowName: BrowserWindow): Promise<Tray> {
 	const strings = (new l10n()).client;
 	const tray = new Tray(appInfo.trayIcon);
-	let image: string | NativeImage;
-	if (funMode === 2) {
-		image = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
+	let icon: NativeImage;
+	if (funMode) {
+		icon = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
 	} else {
-		image = nativeImage.createFromPath(appInfo.trayIcon).resize({ width: 16 });
+		icon = nativeImage.createFromPath(appInfo.icon);
+	}
+	function toogleVisibility() {
+		if(windowName.isVisible() && windowName.isFocused()) {
+			windowName.hide();
+		} else if (!windowName.isVisible()) {
+			windowName.show();
+		} else {
+			windowName.focus();
+		}
 	}
 	const contextMenu = Menu.buildFromTemplate([
 		{
-			label: 'Top Secret Control Panel',
-			enabled: (funMode === 1),
-			icon: image,
-			click: () => {
-				windowName.show();
-				const child = new BrowserWindow({
-					parent: windowName,
-					title: "Top Secret Control Panel",
-					width: 647,
-					height: 485,
-					resizable: false,
-					modal: true,
-					backgroundColor: "#000",
-					icon: image,
-					webPreferences: {
-						session: session.fromPartition("temp:fun"),
-						disableBlinkFeatures: "AuxClick"
-					}
-				});
-				child.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-					callback({
-						responseHeaders: {
-							...details.responseHeaders,
-							'Content-Security-Policy': [
-								"default-src 'self' blob:;"+
-								" style-src 'sha256-n8V3/om6O5hiSDvdAJRQZROksW9j13D3/OdUsUXCN6E=';"+
-								" script-src 'unsafe-inline'"+
-								" https://jcw87.github.io"
-							]
-						}
-					});
-				});
-				child.loadURL('https://jcw87.github.io/c2-sans-fight/');
-				child.on('page-title-updated', (event) => {
-					event.preventDefault();
-				});
-				child.setAutoHideMenuBar(true);
-				child.setMenuBarVisibility(false);
-				child.webContents.session.setPermissionCheckHandler(() => false);
-				child.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => {
-					callback(false);
-				});
-				child.removeMenu();
-			}
+			label: app.getName(),
+			enabled: false,
+			icon,
 		},
 		{ type: 'separator' },
 		{
 			label: strings.help.about,
 			role: 'about',
-			click: function () { app.showAboutPanel(); }
+			click: app.showAboutPanel
+		},
+		{
+			label: strings.help.docs,
+			click: () => loadDocsWindow(windowName)
 		},
 		{
 			label: strings.help.bugs,
@@ -179,15 +148,7 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 		{ type: 'separator' },
 		{
 			label: strings.tray.toggle,
-			click: function () {
-				if(windowName.isVisible() && windowName.isFocused()) {
-					windowName.hide();
-				} else if (!windowName.isVisible()) {
-					windowName.show();
-				} else {
-					windowName.focus();
-				}
-			}
+			click: toogleVisibility
 		},
 		{
 			label: strings.tray.quit,
@@ -199,6 +160,7 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 	]);
 	tray.setContextMenu(contextMenu);
 	tray.setToolTip(app.getName());
+	tray.on("click", toogleVisibility);
 	// Exit to the tray
 	windowName.on('close', (event) => {
 		if (!wantQuit) {
