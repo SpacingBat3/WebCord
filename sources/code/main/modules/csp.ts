@@ -1,78 +1,87 @@
 /* csp.ts – Content Security Policy generation */
 
 import { AppConfig } from './config';
-const { thirdparty } = (new AppConfig()).get().csp;
+const t = (new AppConfig()).get().csp.thirdparty;
 
 /* === Default + script === */
 
 let csp = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.discordapp.com/animations/";
 
-if (thirdparty.hcaptcha)
-    csp += " https://*.hcaptcha.com https://hcaptcha.com"; // hCaptcha
+if (t.hcaptcha)
+    csp += " https://*.hcaptcha.com https://hcaptcha.com";
 
-if (thirdparty.paypal)
-    csp += " https://www.paypalobjects.com https://checkout.paypal.com"; // PayPal
+if (t.paypal)
+    csp += " https://www.paypalobjects.com https://checkout.paypal.com";
 
-if (thirdparty.spotify)
-    csp += " https://open.scdn.co"; // Spotify
+if (t.spotify)
+    csp += " https://open.scdn.co";
 
-if (thirdparty.reddit)
-    csp += " https://www.redditstatic.com"; // Reddit
+if (t.reddit)
+    csp += " https://www.redditstatic.com";
 
-if (thirdparty.twitter)
-    csp += " https://abs.twimg.com/web-video-player/"; // Twitter
+if (t.twitter)
+    csp += " https://abs.twimg.com/web-video-player/";
 
-if (thirdparty.twitch)
-    csp += " https://static.twitchcdn.net/assets/"; // Twitch
+if (t.twitch)
+    csp += " https://static.twitchcdn.net/assets/";
+
+if (t.vimeo)
+    csp += " https://f.vimeocdn.com/p/";
 
 /* === Worker scripts === */
 
 csp += "; worker-src 'self'";
 
-if (thirdparty.twitch)
-    csp += " blob: https://player.twitch.tv"
+if (t.twitch)
+    csp += " blob: https://player.twitch.tv";
 
 /* === Style === */
 
 csp += "; style-src 'self' 'unsafe-inline' https://cdn.discordapp.com";
 
-if (thirdparty.hcaptcha)
-    csp += " https://*.hcaptcha.com https://hcaptcha.com"; // hCaptcha
+if (t.hcaptcha)
+    csp += " https://*.hcaptcha.com https://hcaptcha.com";
 
-if (thirdparty.reddit)
-    csp += " https://www.redditstatic.com"; // Reddit
+if (t.reddit)
+    csp += " https://www.redditstatic.com";
 
-if (thirdparty.twitch)
-    csp += " https://static.twitchcdn.net/assets/"; // Twitch
+if (t.twitch)
+    csp += " https://static.twitchcdn.net/assets/";
+
+if (t.vimeo)
+    csp += " https://f.vimeocdn.com/p/";
 
 /* === Images === */
 
 csp += "; img-src 'self' blob: data: https://*.discordapp.net https://*.discordapp.com https://*.discord.com";
 
-if (thirdparty.spotify)
-    csp += " https://open.scdn.co"; // Spotify
+if (t.spotify)
+    csp += " https://open.scdn.co";
 
-if (thirdparty.youtube)
-    csp += " https://i.ytimg.com https://*.youtube.com"; // YouTube
+if (t.youtube)
+    csp += " https://i.ytimg.com https://*.youtube.com";
 
-if (thirdparty.gif) {
-    csp += " https://i.imgur.com https://*.gfycat.com https://media.tenor.co"; // GIF
-    csp += " https://media.tenor.com https://c.tenor.com https://*.giphy.com"; // Providers
+if (t.gif) {
+    csp += " https://i.imgur.com https://*.gfycat.com https://media.tenor.co";
+    csp += " https://media.tenor.com https://c.tenor.com https://*.giphy.com";
 }
-if (thirdparty.paypal)
-    csp += " https://checkout.paypal.com"; // PayPal
+if (t.paypal)
+    csp += " https://checkout.paypal.com";
 
-if (thirdparty.hcaptcha)
-    csp += " https://*.hcaptcha.com https://hcaptcha.com"; // hCaptcha
+if (t.hcaptcha)
+    csp += " https://*.hcaptcha.com https://hcaptcha.com";
 
-if (thirdparty.reddit)
-    csp += " https://www.redditstatic.com"; // Reddit
+if (t.reddit)
+    csp += " https://www.redditstatic.com";
 
-if (thirdparty.twitter)
-    csp += " https://pbs.twimg.com/ext_tw_video_thumb/"; // Twitter
+if (t.twitter)
+    csp += " https://pbs.twimg.com/ext_tw_video_thumb/";
 
-if (thirdparty.twitch)
-    csp += " https://static-cdn.jtvnw.net/jtv_user_pictures/" // Twitch
+if (t.twitch)
+    csp += " https://static-cdn.jtvnw.net/jtv_user_pictures/";
+
+if (t.vimeo)
+    csp += " https://i.vimeocdn.com"
 
 /* === Connect === */
 
@@ -81,89 +90,94 @@ csp += " https://discordapp.com https://discord.com https://cdn.discordapp.com";
 csp += " https://media.discordapp.net https://router.discordapp.net wss://*.discord.gg";
 csp += " https://best.discord.media https://latency.discord.media wss://*.discord.media";
 
-if (thirdparty.hcaptcha) 
-    csp += " https://*.hcaptcha.com https://hcaptcha.com"; // hCaptcha
+if (t.hcaptcha) 
+    csp += " https://*.hcaptcha.com https://hcaptcha.com";
 
-if (thirdparty.spotify)
-    csp += " wss://dealer.spotify.com https://api.spotify.com"; // Spotify
+if (t.spotify)
+    csp += " wss://dealer.spotify.com https://api.spotify.com";
 
-if (thirdparty.twitch) 
-    csp += " https://api.twitch.tv/v5/channels/"; // Twitch
+if (t.twitch) 
+    csp += " https://api.twitch.tv/v5/channels/";
 
-if (thirdparty.algolia)
-    csp += " https://*.algolianet.com https://*.algolia.net"; // Algolia
+if (t.algolia)
+    csp += " https://*.algolianet.com https://*.algolia.net";
 
-if (thirdparty.youtube)
-    csp += " https://*.googlevideo.com"; // Youtube
+if (t.youtube)
+    csp += " https://*.googlevideo.com";
 
-if (thirdparty.reddit)
-    csp += " https://v.redd.it"; // Reddit
+if (t.reddit)
+    csp += " https://v.redd.it";
 
-if (thirdparty.twitter)
-    csp += " https://api.twitter.com/1.1/guest/activate.json https://api.twitter.com/1.1/videos/tweet/config/ https://video.twimg.com/ext_tw_video/"; // Twitter
+if (t.twitter)
+    csp += " https://api.twitter.com/1.1/guest/activate.json https://api.twitter.com/1.1/videos/tweet/config/ https://video.twimg.com/ext_tw_video/";
 
-if (thirdparty.twitch)
-    csp += " https://gql.twitch.tv/gql https://spade.twitch.tv/track https://static.twitchcdn.net/assets/ https://usher.ttvnw.net/api/channel/hls/ https://*.hls.ttvnw.net/v1/playlist/ https://*.hls.ttvnw.net/v1/segment/"; // Twitch
+if (t.twitch)
+    csp += " https://gql.twitch.tv/gql https://spade.twitch.tv/track https://static.twitchcdn.net/assets/ https://usher.ttvnw.net/api/channel/hls/ https://*.hls.ttvnw.net/v1/playlist/ https://*.hls.ttvnw.net/v1/segment/";
+
+if (t.vimeo)
+    csp += " https://fresnel.vimeocdn.com/add/ https://24vod-adaptive.akamaized.net/";
 
 /* === Media === */
 
 csp += "; media-src 'self' blob: https://*.discordapp.net https://*.discord.com https://*.discordapp.com";
 
-if (thirdparty.gif) {
-    csp += " https://*.gfycat.com https://*.giphy.com https://i.imgur.com"; // GIF providers
+if (t.gif) {
+    csp += " https://*.gfycat.com https://*.giphy.com https://i.imgur.com";
     csp += " https://media.tenor.co https://media.tenor.com https://c.tenor.com";
 }
-if (thirdparty.streamable)
-    csp += " https://streamable.com"; // Streamable
+if (t.streamable)
+    csp += " https://streamable.com";
 
-if (thirdparty.youtube)
-    csp += " https://*.youtube.com"; // YouTube
+if (t.youtube)
+    csp += " https://*.youtube.com";
 
-if (thirdparty.twitter)
-    csp += " https://twitter.com/i/videos/tweet/"; // Twitter
+if (t.twitter)
+    csp += " https://twitter.com/i/videos/tweet/";
 
-if (thirdparty.reddit)
-    csp += " https://v.redd.it"; // Reddit
+if (t.reddit)
+    csp += " https://v.redd.it";
 
+if (t.vimeo)
+    csp += " https://vod-progressive.akamaized.net";
 
 /* === Frame === */
 
 csp += "; frame-src https://discordapp.com/domain-migration discord:";
 csp += " https://*.discordsays.com https://*.watchanimeattheoffice.com";
 
-if (thirdparty.hcaptcha)
-    csp += " https://*.hcaptcha.com https://hcaptcha.com"; // hCaptcha
+if (t.hcaptcha)
+    csp += " https://*.hcaptcha.com https://hcaptcha.com";
 
-if (thirdparty.paypal)
-    csp += " https://checkout.paypal.com"; // PayPal
+if (t.paypal)
+    csp += " https://checkout.paypal.com";
 
-if (thirdparty.vimeo)
-    csp += " https://player.vimeo.com"; // Vimeo
+if (t.vimeo)
+    csp += " https://player.vimeo.com";
 
-if (thirdparty.youtube)
-    csp += " https://www.youtube.com/embed/"; // YouTube
+if (t.youtube)
+    csp += " https://www.youtube.com/embed/";
 
-if (thirdparty.soundcloud)
-    csp += " https://w.soundcloud.com/player/"; // Vimeo
+if (t.soundcloud)
+    csp += " https://w.soundcloud.com/player/";
 
-if (thirdparty.audius)
-    csp += " https://audius.co/embed/"; // Vimeo
+if (t.audius)
+    csp += " https://audius.co/embed/";
 
-if (thirdparty.spotify)
-    csp += " https://open.spotify.com/embed/"; // Vimeo
+if (t.spotify)
+    csp += " https://open.spotify.com/embed/";
 
-if (thirdparty.reddit)
-    csp += " https://www.redditmedia.com/mediaembed/"; // Reddit
+if (t.reddit)
+    csp += " https://www.redditmedia.com/mediaembed/";
 
-if (thirdparty.twitter)
-    csp += " https://twitter.com/i/videos/tweet/"; // Twitter
+if (t.twitter)
+    csp += " https://twitter.com/i/videos/tweet/";
 
-if (thirdparty.twitch)
-    csp += " https://player.twitch.tv"; // Twitch
+if (t.twitch)
+    csp += " https://player.twitch.tv";
 
 /* === Child === */
 
-if (thirdparty.paypal)
+if (t.paypal)
     csp += "; child-src 'self' https://checkout.paypal.com"; // PayPal
 
 
