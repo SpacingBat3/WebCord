@@ -14,6 +14,18 @@ These two platfroms aren't officially supported yet – you may expect I won't f
 all of the issues that are specific to this platforms only. I may release
 binaries for these platforms as well, but don't expect they're going to be
 supported by me – if any issue that is specific to the one of these platform is
-started on the project's
-[GitHub repository](https://github.com/SpacingBat3/WebCord), it might be closed
-and/or flagged as `wontfix` without any explaination or answer.
+started on the project's [GitHub repository][repo], it might be closed and/or
+flagged as `wontfix` without any explaination or answer.
+
+### Non-GNU Linux distributions
+
+
+### FreeBSD
+
+Currently Electron isn't officially supported on FreeBSD. Electron was
+previously available in freshports, there's currently no Electron 14+ releases
+here, so it doesn't seems to be supported there anymore. Also see
+[electron/electron #3797][issue3797].
+
+[repo]: https://github.com/SpacingBat3/WebCord "Github: SpacingBat3/WebCord"
+[issue3797]: https://github.com/electron/electron/issues/3797 "Add FreeBSD support to electron."

@@ -57,13 +57,16 @@ analyzing his code. Thanks to his work, this project could begin on its own.
   - *[Which file I should download?](FAQ.md#1-which-file-i-should-download)*
   - *[Content does not load properly...](FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
   - *[How to grant permission to microphone?](FAQ.md#3-how-to-get-a-microphone-permission-for-webcord)*
-- [Configuring the application](Settings.md)
-  - [Automatically hide menu bar](Settings.md#auto-hide-menu-bar)
-  - [Disable tray functionality](Settings.md#disable-tray)
-  - [Hide Discord's side bar](Settings.md#hide-side-bar)
-  - [About CSP settings](Settings.md#content-security-policy-settings)
-  - [Command line flags](Settings.md#cli-flags)
-- [Contributing](Contributing.md)
+- [Command line / build flags](Flags.md)
+  - [Command line (runtime) flags](Flags.md#command-line-runtime-flags)
+  - [Build Flags](Flags.md#build-flags)
+- [Contributing in the application development](Contributing.md)
+- [Building, packaging and testing the source code](Build.md)
+  - [Installing app dependencies](Build.md#install-app-dependencies)
+  - [Compiling and directly running the code](Build.md#compile-code-and-run-app-directly-without-packaging)
+  - [Linting and validating the code](Build.md#run-linter-and-validate-the-code)
+  - [Packaging and creating the distributables](Build.md#packaging-creating-distributables)
+- [Source code directory structure](Files.md)
 - [Translations](Translate.md)
 - [Supported platforms](Support.md)
 - [License](../LICENSE)

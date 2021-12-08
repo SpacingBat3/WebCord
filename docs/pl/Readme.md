@@ -63,13 +63,16 @@ GyozaGuy, ten projekt mógł w końcu samodzielnie się rozwijać.
   - *[Który plik powinienem ściągnąć?](../FAQ.md#1-which-file-i-should-download)*
   - *[Treść nie wczytuje się prawidłowo...](../FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
   - *[Jak zezwolić na dostęp do mikrofonu?](../FAQ.md#3-how-to-get-a-microphone-permission-for-webcord)*
-- [Konfiguracja aplikacji](../Settings.md)
-  - [Automatyczne ukrywanie paska menu](../Settings.md#auto-hide-menu-bar)
-  - [Wyłączanie funkcji ukrywania aplikacji do zasobnika systemowego](../Settings.md#disable-tray)
-  - [Ukrywanie panelu bocznego Discord'a](../Settings.md#hide-side-bar)
-  - [O ustawieniach CSP](../Settings.md#content-security-policy-settings)
-  - [Przełączniki CLI](../Settings.md#cli-flags)
-- [Udział w kodzie](../Contributing.md)
+- [Przęłączniki linii poleceń / budowania aplikacji](../Flags.md)
+  - [Przełączniki linii poleceń](../Flags.md#command-line-runtime-flags)
+  - [Przełączniki budowania](../Flags.md#build-flags)
+- [Udział w repozytorium](../Contributing.md)
+- [Budowanie, pakowanie, testowanie i tworzenie plików dystrybucyjnych](Build.md)
+  - [Instalacja zależności aplikacji](../Build.md#install-app-dependencies)
+  - [Kompilacja i bezpośrednie uruchamianie aplikacji](../Build.md#compile-code-and-run-app-directly-without-packaging)
+  - [*Linting* i sprawdzanie kodu](../Build.md#run-linter-and-validate-the-code)
+  - [Pakowanie i tworzenie plików dystrybucyjnych](../Build.md#packaging-creating-distributables)
+- [Struktura katalogowa kodu źródłowego](../Files.md)
 - [Tłumaczenie](../Translate.md)
 - [Wspierane platformy](../Support.md)
 - [Licencja](../../LICENSE)
@@ -112,7 +115,8 @@ Ten program upubliczniany jest na warunkach **[licencji MIT][license]**:
 - Jeżeli chcesz stworzyć tłumaczenie dla aplikacji, polecam zapoznać się z
   dokumentem [Translate.md](../Translate.md).
 
-Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Zobacz [tą stronę][makepr].
+Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Koniecznie odwiedź
+[poniższą stronę][makepr] (chyba że nie znasz języka angielskiego 😁️).
 
 [badge1]: https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron
 [badge2]: https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Downloads&color=%236586B3
