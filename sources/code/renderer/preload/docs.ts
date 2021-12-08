@@ -68,6 +68,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
             } else if(link.href.match(/^file:\/\/.+(\.md|LICENSE)(#[a-z0-9-]+)?$/)) {
                 const mdFile = fileURLToPath(link.href);
                 const id = getId(link.href);
+                const oldHeader = menuHeader.innerHTML
                 menuHeader.innerText = basename(mdFile);
                 document.body.removeChild(article);
                 if(existsSync(mdFile)){
@@ -77,6 +78,14 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
                     // Fix for HTML links ('<a>' elements) that are unhandled by marked.
                     const relFile = relative(document.URL, link.href);
                     const mdFile = resolve(mdPrevious, relFile);
+                    if(!existsSync(mdFile)) {
+                        // Failsafe: revert all changes done so far...
+                        console.error("File '"+mdFile+"' does not exists!");
+                        document.body.appendChild(article);
+                        window.history.pushState("", "", htmlFileUrl);
+                        menuHeader.innerHTML = oldHeader;
+                        return false;
+                    }
                     loadMarkdown(container,mdFile);
                     mdPrevious = mdFile;
                     console.log(relFile);
