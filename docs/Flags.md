@@ -32,10 +32,10 @@ following build enviroment variables to set build specific flags:
 ## 2. Other tools
 
 If you're packaging the application on your own, you can create directly a
-`buildConfig.json` file, which is used internally by WebCord do determine the
+`buildInfo.json` file, which is used internally by WebCord do determine the
 state of the build enviroment flags (except ASAR packaging, this is what you
 need to implement or configure with your own Electron packaging software).
-The `buildConfig.json` file should be placed in the application's root directory
+The `buildInfo.json` file should be placed in the application's root directory
 (i.e. next to `package.json`) and contain following properties:
 
 - `"type": "devel"/"release"` – similary to `WEBCORD_BUILD`, this controls
