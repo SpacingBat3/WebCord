@@ -17,7 +17,7 @@ p.description {
     color: var(--color-font-settings);
 }
 
-div.settingsContainer {
+form {
     display: flex;
     overflow-x: hidden;
     flex-direction: column;
@@ -28,9 +28,11 @@ div.settingsContainer {
     border-radius: 5px;
 }
 
-form {
+fieldset {
     display: flex;
     margin: 0.5em 0px;
+    padding: 0;
+    border: none;
 }
 
 label {
@@ -42,7 +44,7 @@ input, label {
     cursor: pointer;
 }
 
-input[type="checkbox"] {
+input[type="checkbox"], input[type="radio"] {
     flex-shrink: 0;
     margin: 0 1em;
     height: 1.5em;
@@ -50,9 +52,16 @@ input[type="checkbox"] {
     border-radius: 5px;
     appearance: none;
     background-color: var(--color-input-bg);
-    border-color: var(--color-input-bg);
-    transition: background-color 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: solid #0000 4px;
+}
+
+input[type="radio"] {
+    border-radius: 100%;
+    background-color: var(--color-bg-secondary);
+    border: solid var(--color-bg-secondary) 4px;
+    outline: solid var(--color-font-normal) 2px;
+
 }
 
 input[type="checkbox"]:checked {
@@ -61,6 +70,12 @@ input[type="checkbox"]:checked {
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
+}
+
+input[type="radio"]:checked {
+    background-color: var(--color-forms-accient);
+    outline-color: var(--color-font-header)
+    
 }
 
 code {

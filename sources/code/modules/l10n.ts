@@ -282,6 +282,10 @@ class l10n {
 						name: "Cross-origin redirection behavior.",
 						description: "Controls the actions on cross-origin redirections. <b>This affects application security</b>.",
 						label: "Always warn user about cross-origin redirections to external applications."
+					},
+					instance: {
+						name: "Discord instance.",
+						description: "Select which Discord instance should WebCord connect to.",
 					}
 				}
 			}

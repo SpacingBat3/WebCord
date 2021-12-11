@@ -2,7 +2,7 @@ import { appInfo } from "../modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
 import { app, BrowserWindow, Tray, net, nativeImage, ipcMain } from "electron";
 import * as getMenu from '../modules/menu';
-import { packageJson, discordFavicons } from '../../global';
+import { packageJson, discordFavicons, knownIstancesList } from '../../global';
 import { discordContentSecurityPolicy } from '../modules/csp';
 import l10n from "../../modules/l10n";
 import { getUserAgent } from '../../modules/agent';
@@ -55,14 +55,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearTimeout(retry);
-                win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) });
+                win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) });
             }
         }, 1000);
     });
     win.webContents.once('did-finish-load', () => {
         console.debug("[PAGE] Starting to load the Discord page...")
         if (!startHidden) win.show();
-        setTimeout(() => win.loadURL(appInfo.URL, { userAgent: getUserAgent(process.versions.chrome) }), 1500);
+        setTimeout(() => win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) }), 1500);
     });
     if (mainWindowState.initState.isMaximized) win.maximize();
 
@@ -111,7 +111,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         type permissionObject = ReturnType<AppConfig["get"]>["permissions"]
         /** List of domains, urls or protocols accepted by permission handlers. */
         const trustedURLs = [
-            appInfo.rootURL,
+            knownIstancesList[new AppConfig().get().currentInstance][1].origin,
             'devtools://'
         ];
         win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
@@ -224,23 +224,26 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Window Title
 
     win.on('page-title-updated', (event: Event, title: string) => {
-        if (title === "Discord") {
+        if (title.includes("Discord Test Client")) {
             event.preventDefault();
-            win.setTitle(app.getName());
+            win.setTitle(app.getName() + " (Fosscord)")
+        } else if (title.includes("Discord")) {
+            event.preventDefault();
+            win.setTitle(title.replace("Discord",app.getName()));
         }
     });
 
     /* Expose "did-stop-loading" event to preloads, it seems to be the most
      * precise way of watching for the changes within Discord's DOM.
      */
-    ipcMain.once("cosmetic.load", (event) => {
+    ipcMain.on("cosmetic.load", (event) => {
         win.webContents.on("did-stop-loading", () => {
             console.debug("[IPC] Exposing a 'did-stop-loading' event...")
             event.reply("webContents.did-stop-loading")
         });
     });
 
-    ipcMain.once("cosmetic.hideElementByClass", (event, cssRule:string) => {
+    ipcMain.on("cosmetic.hideElementByClass", (event, cssRule:string) => {
         win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }');
         event.reply("cosmetic.hideElementByClass");
     })
@@ -261,13 +264,17 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     });
 
     // Apply settings that doesn't need app restart on change
-    ipcMain.on('settings-config-modified', () => {
+    ipcMain.on('settings-config-modified', (_event, object:Record<string,unknown>) => {
         const config = new AppConfig();
         // Menu bar
-        if (!win.menuBarVisible !== config.get().hideMenuBar || win.autoHideMenuBar !== config.get().hideMenuBar) {
+        if ("hideMenuBar" in object) {
             console.debug("[Settings] Updating menu bar state...")
             win.setAutoHideMenuBar(config.get().hideMenuBar);
             win.setMenuBarVisibility(!config.get().hideMenuBar);
+        }
+        // Custom Discord instance switch
+        if("currentInstance" in object) {
+            win.loadURL(knownIstancesList[config.get().currentInstance][1].href)
         }
     });
     return win;

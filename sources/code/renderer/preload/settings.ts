@@ -4,14 +4,17 @@
  * @todo: Implement script inside WebCord
  */
 import { ipcRenderer } from "electron";
-import { HTMLSettingsGroup, wLog } from "../../global";
-import { deepmerge } from "deepmerge-ts";
+import { HTMLChecklistForms, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup, wLog } from "../../global";
 import { sanitize } from 'dompurify';
 import DOMPurify = require("dompurify");
 
 type sanitizeConfig = DOMPurify.Config & {
     RETURN_DOM_FRAGMENT?: false | undefined;
     RETURN_DOM?: false | undefined
+}
+
+function isChecklistForms(arg: HTMLRadioForms|HTMLChecklistForms):arg is HTMLChecklistForms {
+    return (arg as unknown as HTMLChecklistForms).id !== undefined
 }
 
 const sanitizeConfig: sanitizeConfig = {
@@ -21,22 +24,19 @@ const sanitizeConfig: sanitizeConfig = {
     ALLOWED_ATTR: []
 }
 
-function fetchFromWebsite() {
-    const AllInputs = document.getElementsByTagName('input');
-    const array: Record<string, unknown>[] = [];
-    for (const input of AllInputs) {
-        let configString: string;
-        if (input.name.includes('csp-thirdparty.'))
-            configString = '{"csp": {"thirdparty": {"' + input.id.split('.')[1] + '":' + input.checked + '} } }';
-        else if (input.id.includes('.'))
-            configString = '{"'+input.id.split('.')[0]+'": {"' + input.id.split('.')[1] + '":' + input.checked + '} }'
-        else
-            configString = '{"' + input.id + '": ' + input.checked + '}';
-        array.push(JSON.parse(configString));
-    }
-    const config = deepmerge(...array);
-    ipcRenderer.send('settings-config-modified', config);
+function fetchFromWebsite(this: HTMLInputElement) {
 
+    const dotArray = this.name.split('.');
+
+    const value = (this.type === "checkbox" ? this.checked : parseInt(this.value))
+
+    let config:Record<string, unknown> = {};
+
+    config = {[dotArray[dotArray.length-1]]: value};
+    for(let n = dotArray.length-2; n >= 0; n--)
+        config = {[dotArray[n]]: config}
+    console.log(config);
+    ipcRenderer.send('settings-config-modified', config);
 }
 
 function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
@@ -54,7 +54,7 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
         for (const option of group.options) {
             const h2 = document.createElement('h2');
             const pDesc = document.createElement('p');
-            const checklistContainer = document.createElement('div');
+            const checklistContainer = document.createElement('form');
 
             // Tittle for various options, e.g. "Disable tray"
             h2.innerHTML = sanitize(option.name, sanitizeConfig);
@@ -71,12 +71,17 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
 
             // A list of check boxes for a single opiton.
             for (const checklist of option.forms) {
-                const inputForm = document.createElement('form');
+                const inputForm = document.createElement('fieldset');
                 const inputTag = document.createElement('input');
                 const inputLabel = document.createElement('label');
 
                 inputTag.type = option.type;
-                inputTag.name = inputTag.id = checklist.id;
+                if(isChecklistForms(checklist))
+                    inputTag.name = inputTag.id = checklist.id;
+                else {
+                    inputTag.name = (option as HTMLRadioOption).id;
+                    inputTag.value = (checklist as HTMLRadioForms).value.toString();
+                }
                 inputTag.checked = checklist.isChecked;
 
                 if(checklist.description) {
@@ -86,7 +91,8 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
                 inputTag.addEventListener('change', fetchFromWebsite);
 
                 inputLabel.innerHTML = sanitize(checklist.label+(inputTag.title !== '' ? ' 🛈' : ''));
-                inputLabel.setAttribute('for', checklist.id);
+                if(isChecklistForms(checklist))
+                    inputLabel.setAttribute('for', checklist.id);
 
 
                 inputForm.appendChild(inputTag);

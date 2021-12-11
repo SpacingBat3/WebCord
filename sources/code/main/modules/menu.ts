@@ -16,7 +16,6 @@ import {
 } from 'electron';
 
 import {
-	getDevel,
 	getBuildInfo,
 	appInfo
 } from './client';
@@ -84,7 +83,7 @@ export function context(windowName: BrowserWindow): void {
 			});
 			cmenu.push({ type: 'separator' });
 		}
-		if (getDevel(devel, appConfig.get().devel)) {
+		if (devel || appConfig.get().devel) {
 			cmenu.push({
 				label: strings.context.inspectElement,
 				click: () => windowName.webContents.inspectElement(params.x, params.y)
@@ -176,7 +175,6 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 	const strings = (new l10n()).client;
 	const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
-	const devMode = getDevel(devel, appConfig.get().devel);
 	const menu = Menu.buildFromTemplate([
 		// File
 		{
@@ -188,7 +186,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 				},
 				// Extensions (Work In Progress state)
 				{
-					label: strings.menubar.file.addon.groupName, visible: devMode, submenu: [
+					label: strings.menubar.file.addon.groupName, visible: devel || appConfig.get().devel, submenu: [
 						// Node-based extensions
 						{
 							label: strings.menubar.file.addon.loadNode,
@@ -261,7 +259,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 					label: strings.menubar.view.devTools,
 					id: 'devTools',
 					role: 'toggleDevTools',
-					enabled: devMode
+					enabled: devel || appConfig.get().devel
 				},
 				{ type: 'separator' },
 				// Zoom settings (reset, zoom in, zoom out)

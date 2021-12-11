@@ -54,7 +54,7 @@ console.debug = function (message?, ...optionalParams) {
 
 import { app, BrowserWindow, dialog, shell } from 'electron';
 import { promises as fs } from 'fs';
-import { trustedProtocolRegExp } from './global';
+import { knownIstancesList, trustedProtocolRegExp } from './global';
 import { checkVersion } from './main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "./main/windows/main";
@@ -180,6 +180,7 @@ app.on('web-contents-created', (_event, webContents) => {
 
     // Securely open some urls in external software.
     webContents.setWindowOpenHandler((details) => {
+        const config = new AppConfig().get()
         if (!app.isReady()) return { action: 'deny' };
         const openUrl = new URL(details.url);
         const sameOrigin = new URL(webContents.getURL()).origin === openUrl.origin;
@@ -194,7 +195,7 @@ app.on('web-contents-created', (_event, webContents) => {
          * ask the end user to confirm if the URL is safe enough for him.
          * (unless an application user disabled that functionality)
          */
-        if (allowedProtocol && !sameOrigin && new AppConfig().get().redirectionWarning || !(new URL(webContents.getURL()).origin === 'https://discord.com')) {
+        if (allowedProtocol && !sameOrigin && config.redirectionWarning || !(new URL(webContents.getURL()).origin === knownIstancesList[config.currentInstance][1].origin)) {
             const window = BrowserWindow.fromWebContents(webContents);
             const strings = (new l10n).client.dialog;
             const options: Electron.MessageBoxSyncOptions = {

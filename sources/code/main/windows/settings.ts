@@ -1,10 +1,21 @@
 import { app, ipcMain, BrowserWindow, session } from "electron";
 import { AppConfig } from '../modules/config';
-import { HTMLSettingsGroup, HTMLForms, HTMLChecklistOption } from '../../global';
+import { HTMLSettingsGroup, HTMLChecklistForms, HTMLChecklistOption, knownIstancesList, HTMLRadioForms } from '../../global';
 import { appInfo, getBuildInfo } from '../modules/client';
 import l10n from '../../modules/l10n';
 
 const appConfig = new AppConfig();
+
+function instances2forms() {
+	const instanceForms:HTMLRadioForms[] = []
+	for(const instance in knownIstancesList)
+		instanceForms.push({
+			label: knownIstancesList[instance][0],
+			value: parseInt(instance),
+			isChecked: appConfig.get().currentInstance === parseInt(instance)
+		})
+	return instanceForms
+}
 
 function conf2html (config:AppConfig) {
 	const lang = (new l10n()).client.settings;
@@ -24,11 +35,11 @@ function conf2html (config:AppConfig) {
 		['soundcloud', 'SoundCloud'],
 		['reddit', 'Reddit']
 	];
-	const cspChecklist: HTMLForms[] = []
+	const cspChecklist: HTMLChecklistForms[] = []
 	for (const stringGroup of websitesThirdParty.sort()) {
 		cspChecklist.push({
 			label: stringGroup[1],
-			id: "csp-thirdparty."+stringGroup[0],
+			id: "csp.thirdparty."+stringGroup[0],
 			isChecked: (appConfig.get().csp.thirdparty as Record<string, boolean>)[stringGroup[0]]
 		})
 	}
@@ -129,6 +140,12 @@ function conf2html (config:AppConfig) {
 	const advanced:HTMLSettingsGroup = {
 		title: lang.advanced.name,
 		options: [
+			{
+				...lang.advanced.group.instance,
+				type: 'radio',
+				id: 'currentInstance',
+				forms: instances2forms()
+			},
 			{
 				// Enable CSP
 				name: lang.advanced.group.csp.name,

@@ -3,7 +3,7 @@
  */
 
 import { ipcRenderer } from 'electron';
-import { wLog } from '../../global';
+import { wLog, knownIstancesList } from '../../global';
 import { compare } from 'semver';
 /**
  * Gets list of the elements with `tagName` tag name that has any class assigned
@@ -25,8 +25,11 @@ function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, 
 }
 
 export default function preloadCosmetic(): void {
-  // Exit if not Discord domain
-  if(window.location.origin !== 'https://discord.com') return;
+  let discordInstance = false
+  for(const instance of knownIstancesList)
+    if(window.location.origin === instance[1].origin) discordInstance = true;
+  // Cancel further code execution for non-Discord/non-Fosscord instance sites.
+  if(!discordInstance) return;
   /*
    * Hide orange popup about downloading the application 
    * (Broken since Electron 16)

@@ -73,11 +73,16 @@ function isPerson(variable: unknown): variable is Person {
 	// Check #3: When Person is string, it shall be in `name <email> [url]` format.
 	if (typeof variable === 'string'){
 		return (
+			// Check format.
 			variable.split(/\[.*\]|<.*>/).length < 2 ||
 			(
 				variable.split(/\[.*\]|<.*>/).length == 2 &&
 				variable.split(/\[.*\]|<.*>/)[1] === ''
 			)
+		) && (
+			// Validate email if it exists.
+			!variable.match(/<.*>/) ||
+			isEmail(variable.replace(/.*<(.*)>.*/,'$1'))
 		)
 	}
 	return true;
@@ -183,33 +188,44 @@ interface HTMLOption {
 	name: string;
 	/** Long description of the configuration entry (e.g. Controls the tray apperance) */
 	description: string;
-	/** Whenever checkbox is visible. */
+	/** Whenever this configuration part is visible. */
 	hidden?: boolean;
-	/** Type of the options */
+	/** Type of the inputs used in the `forms` property. */
+	type: string;
+	/** An array of inputs of the same type that are used for the configuration. */
+	forms: HTMLForms[];
 }
 
-export interface HTMLForms {
+interface HTMLForms {
 	/** A label describing the single checkbox. */
 	label: string;
 	/** Description that will be visible on mouse hover. */
 	description?: string;
+	/** Whenever forms are selected. */
+	isChecked: boolean;
+}
+
+export interface HTMLChecklistForms extends HTMLForms {
 	/**
 	 * An element id used for the indentification of the settings
 	 * entries to get / update its values.
 	 */
 	id: string;
-	/** Whenever forms are selected. */
-	isChecked: boolean;
+}
+
+export interface HTMLRadioForms extends HTMLForms {
+	value: number;
 }
 
 export interface HTMLChecklistOption extends HTMLOption {
 	type: 'checkbox';
-	forms: HTMLForms[];
+	forms: HTMLChecklistForms[];
 }
 
 export interface HTMLRadioOption extends HTMLOption {
 	type: 'radio';
-	forms: HTMLForms[]
+	id: string;
+	forms: HTMLRadioForms[];
 }
 
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
@@ -289,3 +305,9 @@ export const discordFavicons = {
  * https://www.electronjs.org/docs/tutorial/security#14-do-not-use-openexternal-with-untrusted-content
  */
 export const trustedProtocolRegExp = /^(https:|mailto:|tel:|sms:)$/;
+
+/** Known Discord instances, including the official ones. */
+export const knownIstancesList:[string,URL][] = [
+	["Discord", new URL("https://discord.com/app")],
+	["Fosscord", new URL("https://dev.fosscord.com/app")]
+]

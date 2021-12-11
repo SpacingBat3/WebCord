@@ -66,7 +66,7 @@ export default function setAboutPanel(l10nStrings:l10n["client"]): void {
         applicationName: app.getName(),
         applicationVersion: 'v' + app.getVersion() + commit + ' (' + getBuildInfo().type + ')',
         authors: appContributors,
-        website: appInfo.URL,
+        website: packageJson.repository.url.slice(4),
         credits: l10nStrings.help.contributors + ' ' + stringContributors,
         copyright: 'MIT License\n' + 'Copyright © ' + copyYear + ' ' + packageJson.author.name + '\n\n' + l10nStrings.help.credits + '\n\n' + aboutVersions,
         iconPath: iconPath

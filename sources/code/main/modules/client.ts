@@ -7,7 +7,6 @@ import { resolve } from 'path';
 import { packageJson, Person } from '../../global';
 import { readFileSync } from 'fs';
 
-
 interface buildInfo {
 	type: 'release' | 'devel',
 	commit?: string;
@@ -62,16 +61,6 @@ export const appInfo = {
 	trayIcon: resolve(app.getAppPath(), "sources/assets/icons/tray.png"),
 	trayUnread: resolve(app.getAppPath(), "sources/assets/icons/tray-unread.png"),
 	trayPing: resolve(app.getAppPath(), "sources/assets/icons/tray-ping.png"),
-	rootURL: 'https://discord.com',
-	URL: 'https://watchanimeattheoffice.com/app',
 	minWinHeight: 412,
 	minWinWidth: 312
 };
-
-export function getDevel(dev: boolean, conf: boolean): boolean {
-	if (dev) {
-		return dev;
-	} else {
-		return conf;
-	}
-}

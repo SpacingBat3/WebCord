@@ -61,7 +61,8 @@ export class AppConfig {
             "fullscreen": true,
             "notifications": false,
             "display-capture": true
-        }
+        },
+        currentInstance: 0,
     };
     private path: fs.PathLike = resolve(app.getPath('userData'), 'config.json');
     private spaces: number;
