@@ -259,7 +259,7 @@ class l10n {
 				group: {
 					devel: {
 						name: "Developer mode",
-						description: "Enables the access to tools and unfinished options that are potentially considered as a dangerous. Disclaimer: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
+						description: "Enables the access to tools and unfinished options that are potentially considered as broken or dangerous. Disclaimer: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
 						label: "Enable developer mode"
 					},
 					csp: {
@@ -285,7 +285,7 @@ class l10n {
 					},
 					instance: {
 						name: "Discord instance.",
-						description: "Select which Discord instance should WebCord connect to.",
+						description: "Selects the instance to which Webcord should connect. <b>Experimental<b> as Fosscord implementation is not fully finished yet.",
 					}
 				}
 			}
