@@ -4,7 +4,7 @@
 
 // Let's import some keys from the package.json:
 
-import { packageJson } from '../global';
+import { buildInfo, packageJson } from '../global';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path'
 import { ForgeConfigFile } from './forge.d';
@@ -119,9 +119,12 @@ const config: ForgeConfigFile = {
   ],
   hooks: {
     packageAfterCopy: async (_ForgeConfig, path) => {
-      const buildConfig = {
+      const buildConfig: buildInfo = {
         type: getBuildID(),
         commit: getBuildID() === "devel" ? getCommit() : undefined,
+        features: {
+          updateNotifications: process.env.WEBCORD_UPDATE_NOTIFICATIONS !== "false"
+        }
       }
       writeFileSync(resolve(path, 'buildInfo.json'), JSON.stringify(buildConfig, null, 2))
     }

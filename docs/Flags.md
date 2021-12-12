@@ -26,8 +26,14 @@ following build enviroment variables to set build specific flags:
   WebCord will be build as a stable release, with some experimental features
   disabled that are not meant for production build. Default build type is
   `devel`.
+
 - `WEBCORD_ASAR={true,false}` – if set to `false`, WebCord won't be packaged to
   the ASAR archive. Default is `true`.
+
+- `WEBCORD_UPDATE_NOTIFICATIONS={true,false}` – if set to `false`, notifications
+  won't show on the new updates; this feature is meant for the package
+  maintainers so they can disable the notifications for their users and let the
+  package manager to handle the update notifications.
 
 ## 2. Other tools
 
@@ -42,5 +48,12 @@ The `buildInfo.json` file should be placed in the application's root directory
   whenever this build is meant for production use or for development purposes.
   If not set, WebCord's build type will be set as `devel`.
 
-- `"commit": [hash]` – this property will save the information about the build
+- `"commit": [hash]` – this property will save the information about the build
   commit; it is ignored for the `release` build type.
+
+- `"features": [Object]` – this is the object controling some features;
+  currently it can contain these optional properties:
+
+    - `"updateNotifications": true/false` – whenever to show notifications on
+      the new releases; this does not disable the update checker to print the
+      its current status in the console (i.e. if the version is out-of-date).

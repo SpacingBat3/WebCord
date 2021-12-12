@@ -4,30 +4,8 @@
 
 import { app } from 'electron';
 import { resolve } from 'path';
-import { packageJson, Person } from '../../global';
+import { packageJson, Person, buildInfo, isBuildInfo } from '../../global';
 import { readFileSync } from 'fs';
-
-interface buildInfo {
-	type: 'release' | 'devel',
-	commit?: string;
-}
-
-export function isBuildInfo(object: unknown): object is buildInfo {
-	if (!(object instanceof Object))
-		return false;
-	if (!Object.prototype.hasOwnProperty.call(object, 'type')) return false;
-	switch ((object as buildInfo).type) {
-		case 'release':
-		case 'devel':
-			break;
-		default:
-			return false;
-	}
-	if (Object.prototype.hasOwnProperty.call(object, 'commit'))
-		if (!(typeof (object as buildInfo).commit === 'string'))
-			return false;
-	return true;
-}
 
 export function getBuildInfo(): buildInfo {
 	try {

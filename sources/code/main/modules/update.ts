@@ -57,7 +57,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
         icon: appInfo.icon,
         body: updateMsg
     };
-    if (showGui) {
+    if (showGui && (getBuildInfo()?.features?.updateNotifications ?? true)) {
         const notification = new Notification(updatePopup);
         notification.on('click', () => {
             shell.openExternal(githubApi.html_url);
