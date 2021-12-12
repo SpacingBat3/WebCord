@@ -83,9 +83,9 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     win.webContents.session.webRequest.onBeforeRequest(
         {
             urls: [
-                'https://discord.com/api/*/science',
-                'https://discord.com/api/*/channels/*/typing',
-                'https://discord.com/api/*/track'
+                'https://*/api/*/science',
+                'https://*/api/*/channels/*/typing',
+                'https://*/api/*/track'
             ]
         },
         (details, callback) => {
