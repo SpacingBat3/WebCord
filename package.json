@@ -15,10 +15,24 @@
     "clean:linux": "rm sources/app/*.js*"
   },
   "author": {
-    "name": "Descendo The Monkei#0624",
-    "email": "github@descendo.anonaddy.me",
-    "url": "https://github.com/Monkei-Cord"
+    "name": "SpacingBat3",
+    "email": "git@spacingbat3.anonaddy.com",
+    "url": "https://github.com/SpacingBat3"
   },
+  "maintainers": [
+    {
+      "name": "Descendo The Monkei#0624",
+      "email": "github@descendo.anonaddy.me",
+      "url": "https://github.com/Monkei-Cord"
+    }
+  ],
+  "contributors":[
+    {
+      "name": "Descendo The Monkei#0624",
+      "email": "github@descendo.anonaddy.me",
+      "url": "https://github.com/Monkei-Cord"
+    }
+  ], 
   "license": "MIT",
   "repository": {
     "type": "git",
