@@ -202,6 +202,13 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             const faviconHash = createHash('sha1').update(faviconRaw).digest('hex');
             // Stop execution when icon is same as the one set.
             if (faviconHash === setFavicon) return;
+            // Stop code execution on Fosscord instances.
+            if (new URL(win.webContents.getURL()).origin !== knownIstancesList[0][1].origin) {
+                setFavicon = faviconHash;
+                t.setImage(appInfo.trayIcon);
+                win.flashFrame(false);
+                return;
+            }
 
             // Compare hashes.
             if (!configData.get().disableTray) {
