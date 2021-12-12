@@ -4,7 +4,6 @@
 
 import { ipcRenderer } from 'electron';
 import { wLog, knownIstancesList } from '../../global';
-import { compare } from 'semver';
 /**
  * Gets list of the elements with `tagName` tag name that has any class assigned
  * which its name includes the `searchString`. This tries to replicate the
@@ -31,11 +30,9 @@ export default function preloadCosmetic(): void {
   // Cancel further code execution for non-Discord/non-Fosscord instance sites.
   if(!discordInstance) return;
   /*
-   * Hide orange popup about downloading the application 
-   * (Broken since Electron 16)
+   * Hide orange popup about downloading the application.
    */
-  if(compare(process.versions.electron, '16.0.0') === -1 && localStorage.getItem('hideNag') !== 'true')
-    localStorage.setItem('hideNag', 'true');
+  ipcRenderer.once("webContents.did-stop-loading", () => window.localStorage.setItem('hideNag', 'true'));
   const removeUnneded = () => {
     // If user is at login/register website, do not apply any cosmetic changes
     if (document.URL.includes('login') || document.URL.includes('register')) {
