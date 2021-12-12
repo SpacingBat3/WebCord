@@ -166,6 +166,10 @@
 					"name": "Zachowanie przy przekierowaniach",
 					"description": "Określa zachowanie aplikacji na przekierowania do witryn o innym pochodzeniu. <b>To ustawnienie ma wpływ na bezpieczeństwo</b>.",
 					"label": "Zawsze ostrzegaj przy przekierowaniach między różnymi domenami do zewnętrznych aplikacji."
+				},
+				"instance": {
+					"name": "Instancje Discord'a",
+					"description": "Wybierz instancję Discord'a, z którą WebCord powinien się łączyć."
 				}
 			}
 		}
