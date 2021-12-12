@@ -21,8 +21,9 @@
 
 </div>
 
-Internetowy klient Discord'a, oparty o [Electron API][electron] i rozwijany
-dzięki [Electron Forge][electron-forge]. W większości (jeżeli nie w pełni)
+Internetowy klient dla usługi Discord i instancji [Fosscord], oparty o
+[API Electron'a][electron] i rozwijany poprzez narzędzie
+[Electron Forge][electron-forge]. W większości (jeżeli nie w pełni)
 *wyprodukowany w Polsce* 🇵🇱️.
 
 Poprzednio głównym celem powstania projektu WebCord było stworzenie działającego
@@ -63,6 +64,7 @@ GyozaGuy, ten projekt mógł w końcu samodzielnie się rozwijać.
   - *[Który plik powinienem ściągnąć?](../FAQ.md#1-which-file-i-should-download)*
   - *[Treść nie wczytuje się prawidłowo...](../FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
   - *[Jak zezwolić na dostęp do mikrofonu?](../FAQ.md#3-how-to-get-a-microphone-permission-for-webcord)*
+  - *[Dlaczego Electron?](../FAQ.md#4-why-electron)*
 - [Przęłączniki linii poleceń / budowania aplikacji](../Flags.md)
   - [Przełączniki linii poleceń](../Flags.md#command-line-runtime-flags)
   - [Przełączniki budowania](../Flags.md#build-flags)
@@ -130,3 +132,4 @@ Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Koniecznie odwiedź
 [electron]: https://www.electronjs.org/ "Twórz aplikacje wieloplatformowe w oparciu o Javascript, HTML i CSS."
 [electron-forge]: https://www.electronforge.io/ "Środowisko dla tworzenia, publikowania i instalacji nowoczesnych aplikacji Eletron'a."
 [license]: ../../LICENSE "Licencja WebCord."
+[Fosscord]: https://fosscord.com "Darmowa, otwartoźródłowa i własnoręcznie hostowalna kompatybilna z Discord'em platforma dla rozmów tekstowych, głosowych i wideo."

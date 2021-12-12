@@ -20,36 +20,47 @@
 [![Unofficial Debian repository][badge5]](https://itai-nelken.github.io/Webcord_debian-repo/ "Unofficial Debian repository")
 </div>
 
-A Discord web-based client made with the [Electron API][electron], developed
-with [Electron Forge][electron-forge].
+A Discord and [Fosscord] web-based client made with the [Electron API][electron],
+developed with [Electron Forge][electron-forge].
 
 The main reason of the WebCord existence was previously creating a usable ARM
 alternative, but nowadays it's developement is more around making it *more open*
-alternative to Discord, which would be both customizable and improving in some
+alternative to the Discord client, which would be both customizable and improving in some
 aspects like the security and privacy. As for now, some tweaks around the
 privacy has been implemented:
+
   - blocking third-party websites via customizable CSP,
-  - blocking unnecesary services and tracers with custom CSP, like [Sentry][sentry],
+  - blocking unnecesary services and tracers with custom CSP, like [Sentry],
   - blocking known Discord tracing API requests (`/science` and `/tracing`)
     by the default,
   - optionally blocking typing indicator (`/typing`).
   
 Please note many features I have plans for hasn't been still implemented yet –
-you can find more about that [in the official documentation](Features.md).
+you can find more about that [in this file](Features.md).
 
 WebCord takes a differend approach from most clients, as it isn't just a mod of
 the official client nor does it use the Discord API to be functional – it is
-currently based on the web version of the Discord, which makes it more trusted
-solution in my opinion. As it even fakes the user agent to make it equal or
-similar to the one used by Chrome/Chromium, it is hard to detect it and block
-users from using it.
+currently based on the web version of the Discord, trying to protect the users
+from being detected as third-party client. It also does a bit more to hide all
+changes it mades:
 
-It began as a fork of the [Discord-Electron][discord-electron], but then
-eventually I had rewritten it as *Electron Discord Web App* project, which is
-currently called *WebCord* (to make that horribly long name a bit shorter 😉).
-However, because [@GyozaGuy](https://github.com/GyozaGuy) made his own project,
-I learnt much about Electron and how to implement a Discord client with it by
-analyzing his code. Thanks to his work, this project could begin on its own.
+  - Chrome/Chromium user-agent spoofing (Discord treats WebCord as the regular
+    browser),
+
+  - spoofing some functions modifications as native (so Discord will treat the
+    same way as it wouldn't be touched by WebCord),
+
+  - hiding the content over removing it (so it can't be simply detected by
+    watching the changes to the HTML code; Discord would need to also watch for
+    the changes within the each of the elements style to detect client designed
+    like that).
+
+This project at first was a fork of the [Discord-Electron], but then eventually
+I had rewritten it as *Electron Discord Web App* project, which is currently
+called *WebCord* (to make that horribly long name a bit shorter 😉). However,
+because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt
+much about Electron and how to implement a Discord client with it by analyzing
+his code. Thanks to his work, this project could begin on its own.
 
 ## Documentation:
 - [List of WebCord's features](Features.md)
@@ -57,6 +68,7 @@ analyzing his code. Thanks to his work, this project could begin on its own.
   - *[Which file I should download?](FAQ.md#1-which-file-i-should-download)*
   - *[Content does not load properly...](FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
   - *[How to grant permission to microphone?](FAQ.md#3-how-to-get-a-microphone-permission-for-webcord)*
+  - *[Why Electron?](FAQ.md#4-why-electron)*
 - [Command line / build flags](Flags.md)
   - [Command line (runtime) flags](Flags.md#command-line-runtime-flags)
   - [Build Flags](Flags.md#build-flags)
@@ -115,10 +127,11 @@ Never made a pull request before? Please refer to [this website][makepr].
 [badge3]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
 [badge4]: https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https://raw.githubusercontent.com/Botspot/pi-apps/master/icons/vector/logo.svg
 [badge5]: https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster
-[sentry]: https://sentry.io "Application Monitoring and Error Tracking Software"
-[discord-electron]: https://github.com/GyozaGuy/Discord-Electron "An Electron Discord app designed for use on Linux systems."
+[Sentry]: https://sentry.io "Application Monitoring and Error Tracking Software"
+[Discord-Electron]: https://github.com/GyozaGuy/Discord-Electron "An Electron Discord app designed for use on Linux systems."
 [npm-docs]: https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors "People Fields | NPM Documentation"
 [makepr]: https://makeapullrequest.com/ "Make a Pull Request"
 [electron]: https://www.electronjs.org/ "Build cross-platform desktop apps with JavaScript, HTML, and CSS."
 [electron-forge]: https://www.electronforge.io/ "A complete tool for creating, publishing, and installing modern Electron applications."
 [license]: ../LICENSE "WebCord license"
+[Fosscord]: https://fosscord.com "Free, open source and selfhostable Discord compatible chat, voice and video platform."
