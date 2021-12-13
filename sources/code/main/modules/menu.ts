@@ -45,16 +45,29 @@ sideBar.on('hide', async (contents: WebContents) => {
 
 let wantQuit = false;
 
+function paste(contents:WebContents) {
+	const contentTypes = clipboard.availableFormats().toString();
+	//Workaround: fix pasting the images.
+	if(contentTypes.includes('image/') && contentTypes.includes('text/html'))
+		clipboard.writeImage(clipboard.readImage());
+
+	contents.paste();
+}
+
 // Contex Menu with spell checker
 
 export function context(windowName: BrowserWindow): void {
 	const strings = (new l10n()).client;
-	windowName.webContents.on('context-menu', (event, params) => {
+	windowName.webContents.on('context-menu', (_event, params) => {
 		const cmenu: (MenuItemConstructorOptions | MenuItem)[] = [
 			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut', enabled: params.editFlags.canCut },
 			{ label: strings.context.copy, role: 'copy', enabled: params.editFlags.canCopy },
-			{ label: strings.context.paste, role: 'paste', enabled: params.editFlags.canPaste },
+			{ 
+				label: strings.context.paste,
+				enabled: clipboard.availableFormats().length !== 0 && params.editFlags.canPaste,
+				click: () => paste(windowName.webContents)
+			},
 			{ type: 'separator' }
 		];
 		let position = 0;
@@ -244,7 +257,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut' },
 			{ label: strings.context.copy, role: 'copy' },
-			{ label: strings.context.paste, role: 'paste' }
+			{ label: strings.context.paste, click: () => paste(mainWindow.webContents) }
 		]},
 		// View
 		{
