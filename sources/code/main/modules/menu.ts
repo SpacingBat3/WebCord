@@ -257,7 +257,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut' },
 			{ label: strings.context.copy, role: 'copy' },
-			{ label: strings.context.paste, click: () => paste(mainWindow.webContents) }
+			{ label: strings.context.paste, accelerator: 'CmdOrCtrl+V', click: () => paste(mainWindow.webContents) }
 		]},
 		// View
 		{
