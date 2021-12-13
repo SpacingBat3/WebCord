@@ -1,7 +1,0 @@
-node_modules/
-out/
-sources/app
-package-lock.json
-yarn.lock
-.*/
-!.github/
