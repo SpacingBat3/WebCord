@@ -126,7 +126,7 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 	if (funMode) {
 		icon = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
 	} else {
-		icon = nativeImage.createFromPath(appInfo.icon);
+		icon = nativeImage.createFromPath(appInfo.icon).resize({width: 16, height: 16});
 	}
 	function toogleVisibility() {
 		if(windowName.isVisible() && windowName.isFocused()) {
@@ -257,7 +257,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut' },
 			{ label: strings.context.copy, role: 'copy' },
-			{ label: strings.context.paste, accelerator: 'CmdOrCtrl+V', click: () => paste(mainWindow.webContents) }
+			{ label: strings.context.paste, accelerator: 'CmdOrCtrl+V', registerAccelerator: false, click: () => paste(mainWindow.webContents) }
 		]},
 		// View
 		{
