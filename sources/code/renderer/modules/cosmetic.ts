@@ -3,7 +3,7 @@
  */
 
 import { ipcRenderer } from 'electron';
-import { wLog, knownIstancesList } from '../../global';
+import { wLog, knownIstancesList } from '../../global/global';
 /**
  * Gets list of the elements with `tagName` tag name that has any class assigned
  * which its name includes the `searchString`. This tries to replicate the

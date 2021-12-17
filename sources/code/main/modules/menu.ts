@@ -32,6 +32,7 @@ import { createGithubIssue } from '../../modules/bug';
 import l10n from '../../modules/l10n';
 import loadSettingsWindow from '../windows/settings';
 import loadDocsWindow from '../windows/docs';
+import showAboutPanel from '../windows/about';
 
 const sideBar = new EventEmitter();
 const devel = getBuildInfo().type === 'devel';
@@ -56,9 +57,9 @@ function paste(contents:WebContents) {
 
 // Contex Menu with spell checker
 
-export function context(windowName: BrowserWindow): void {
+export function context(parent: BrowserWindow): void {
 	const strings = (new l10n()).client;
-	windowName.webContents.on('context-menu', (_event, params) => {
+	parent.webContents.on('context-menu', (_event, params) => {
 		const cmenu: (MenuItemConstructorOptions | MenuItem)[] = [
 			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut', enabled: params.editFlags.canCut },
@@ -66,7 +67,7 @@ export function context(windowName: BrowserWindow): void {
 			{ 
 				label: strings.context.paste,
 				enabled: clipboard.availableFormats().length !== 0 && params.editFlags.canPaste,
-				click: () => paste(windowName.webContents)
+				click: () => paste(parent.webContents)
 			},
 			{ type: 'separator' }
 		];
@@ -74,14 +75,14 @@ export function context(windowName: BrowserWindow): void {
 		for (const suggestion of params.dictionarySuggestions) {
 			cmenu.splice(++position, 0, {
 				label: suggestion,
-				click: () => windowName.webContents.replaceMisspelling(suggestion)
+				click: () => parent.webContents.replaceMisspelling(suggestion)
 			});
 		}
 		if (params.misspelledWord) {
 			cmenu.splice(++position, 0, { type: 'separator' });
 			cmenu.splice(++position, 0, {
 				label: strings.context.dictionaryAdd,
-				click: () => windowName.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+				click: () => parent.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
 			});
 			cmenu.splice(++position, 0, { type: 'separator' });
 		}
@@ -99,12 +100,12 @@ export function context(windowName: BrowserWindow): void {
 		if (devel || appConfig.get().devel) {
 			cmenu.push({
 				label: strings.context.inspectElement,
-				click: () => windowName.webContents.inspectElement(params.x, params.y)
+				click: () => parent.webContents.inspectElement(params.x, params.y)
 			});
 			cmenu.push({ type: 'separator' });
 		}
 		Menu.buildFromTemplate(cmenu).popup({
-			window: windowName,
+			window: parent,
 			x: params.x,
 			y: params.y
 		});
@@ -119,7 +120,7 @@ if (os.userInfo().username == 'pi' && today.getDate() == 14 && today.getMonth() 
 
 // Tray menu
 
-export async function tray(windowName: BrowserWindow): Promise<Tray> {
+export async function tray(parent: BrowserWindow): Promise<Tray> {
 	const strings = (new l10n()).client;
 	const tray = new Tray(appInfo.trayIcon);
 	let icon: NativeImage;
@@ -129,12 +130,12 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 		icon = nativeImage.createFromPath(appInfo.icon).resize({width: 16, height: 16});
 	}
 	function toogleVisibility() {
-		if(windowName.isVisible() && windowName.isFocused()) {
-			windowName.hide();
-		} else if (!windowName.isVisible()) {
-			windowName.show();
+		if(parent.isVisible() && parent.isFocused()) {
+			parent.hide();
+		} else if (!parent.isVisible()) {
+			parent.show();
 		} else {
-			windowName.focus();
+			parent.focus();
 		}
 	}
 	const contextMenu = Menu.buildFromTemplate([
@@ -147,11 +148,11 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 		{
 			label: strings.help.about,
 			role: 'about',
-			click: app.showAboutPanel
+			click: () => showAboutPanel(parent)
 		},
 		{
 			label: strings.help.docs,
-			click: () => loadDocsWindow(windowName)
+			click: () => loadDocsWindow(parent)
 		},
 		{
 			label: strings.help.bugs,
@@ -174,10 +175,10 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 	tray.setToolTip(app.getName());
 	tray.on("click", toogleVisibility);
 	// Exit to the tray
-	windowName.on('close', (event) => {
+	parent.on('close', (event) => {
 		if (!wantQuit) {
 			event.preventDefault();
-			windowName.hide();
+			parent.hide();
 		}
 	});
 	return tray;
@@ -185,7 +186,7 @@ export async function tray(windowName: BrowserWindow): Promise<Tray> {
 
 // Menu Bar
 
-export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
+export function bar(repoLink: string, parent: BrowserWindow): Menu {
 	const strings = (new l10n()).client;
 	const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
 	const menu = Menu.buildFromTemplate([
@@ -195,7 +196,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 				// Settings
 				{
 					label: strings.settings.title,
-					click: () => loadSettingsWindow(mainWindow)
+					click: () => loadSettingsWindow(parent)
 				},
 				// Extensions (Work In Progress state)
 				{
@@ -204,13 +205,13 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 						{
 							label: strings.menubar.file.addon.loadNode,
 							enabled: devel,
-							click: () => loadNodeAddons(mainWindow)
+							click: () => loadNodeAddons(parent)
 						},
 						// Chrome/Chromium extensions
 						{
 							label: strings.menubar.file.addon.loadChrome,
 							enabled: devel,
-							click: () => loadChromeAddons(mainWindow)
+							click: () => loadChromeAddons(parent)
 						}
 					]
 				},
@@ -257,7 +258,11 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut' },
 			{ label: strings.context.copy, role: 'copy' },
-			{ label: strings.context.paste, accelerator: 'CmdOrCtrl+V', registerAccelerator: false, click: () => paste(mainWindow.webContents) }
+			{ 
+				label: strings.context.paste, accelerator: 'CmdOrCtrl+V',
+				registerAccelerator: false,
+				click: () => paste(parent.webContents)
+			}
 		]},
 		// View
 		{
@@ -297,7 +302,7 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 					if ((sideBar.listenerCount('show') + sideBar.listenerCount('hide')) > 1) {
 						sideBar.emit('show');
 					} else {
-						sideBar.emit('hide', mainWindow.webContents);
+						sideBar.emit('hide', parent.webContents);
 					}
 				}
 			}
@@ -307,11 +312,11 @@ export function bar(repoLink: string, mainWindow: BrowserWindow): Menu {
 		{
 			label: strings.help.groupName, role: 'help', submenu: [
 				// About
-				{ label: strings.help.about, role: 'about', click: () => app.showAboutPanel() },
+				{ label: strings.help.about, role: 'about', click: () => showAboutPanel(parent) },
 				// Repository
 				{ label: strings.help.repo, click: () => shell.openExternal(webLink) },
 				// Documentation
-				{ label: strings.help.docs, click: () => loadDocsWindow(mainWindow) },
+				{ label: strings.help.docs, click: () => loadDocsWindow(parent) },
 				// Report a bug
 				{ label: strings.help.bugs, click: () => createGithubIssue() }
 			]

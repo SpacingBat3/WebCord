@@ -4,7 +4,7 @@
  * @todo: Implement script inside WebCord
  */
 import { ipcRenderer } from "electron";
-import { HTMLChecklistForms, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup, wLog } from "../../global";
+import { HTMLChecklistForms, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup, wLog } from "../../global/global";
 import { sanitize } from 'dompurify';
 import DOMPurify = require("dompurify");
 

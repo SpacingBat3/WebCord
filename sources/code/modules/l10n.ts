@@ -5,7 +5,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { deepmerge } from "deepmerge-ts";
 import { app } from "electron";
-import { jsonOrJsonc, objectsAreSameType } from "../global";
+import { jsonOrJsonc, objectsAreSameType } from "../global/global";
 import { EventEmitter } from "events";
 import { resolve } from "path";
 

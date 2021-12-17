@@ -4,13 +4,14 @@
 
 import { app } from 'electron';
 import { resolve } from 'path';
-import { packageJson, Person, buildInfo, isBuildInfo } from '../../global';
+import { buildInfo, isBuildInfo } from '../../global/global';
+import packageJson, { Person } from '../../modules/package';
 import { readFileSync } from 'fs';
 
 export function getBuildInfo(): buildInfo {
 	try {
 		const data = readFileSync(resolve(app.getAppPath(), 'buildInfo.json'));
-		const buildInfo = JSON.parse(data.toString());
+		const buildInfo:unknown = JSON.parse(data.toString());
 		if (isBuildInfo(buildInfo))
 			return buildInfo
 		else
@@ -31,7 +32,7 @@ export const appInfo = {
 	/** Application repository details */
 	repository: {
 		/** Repository indentifier in format `author/name`. */
-		name: person2string(packageJson.author) + '/' + app.getName(),
+		name: person2string(packageJson.data.author) + '/' + app.getName(),
 		/** Web service on which app repository is published. */
 		provider: 'github.com'
 	},
@@ -40,5 +41,6 @@ export const appInfo = {
 	trayUnread: resolve(app.getAppPath(), "sources/assets/icons/tray-unread.png"),
 	trayPing: resolve(app.getAppPath(), "sources/assets/icons/tray-ping.png"),
 	minWinHeight: 412,
-	minWinWidth: 312
+	minWinWidth: 312,
+	backgroundColor: "#36393F"
 };

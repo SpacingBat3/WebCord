@@ -1,6 +1,6 @@
 import { app, ipcMain, BrowserWindow, session } from "electron";
 import { AppConfig } from '../modules/config';
-import { HTMLSettingsGroup, HTMLChecklistForms, HTMLChecklistOption, knownIstancesList, HTMLRadioForms } from '../../global';
+import { HTMLSettingsGroup, HTMLChecklistForms, HTMLChecklistOption, knownIstancesList, HTMLRadioForms } from '../../global/global';
 import { appInfo, getBuildInfo } from '../modules/client';
 import l10n from '../../modules/l10n';
 
@@ -192,7 +192,7 @@ export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
 		title: app.getName()+" – "+strings.settings.title,
 		icon: appInfo.icon,
 		show: false,
-		backgroundColor: "#36393F",
+		backgroundColor: appInfo.backgroundColor,
 		parent: parent,
 		minWidth: appInfo.minWinWidth,
 		minHeight: appInfo.minWinHeight,

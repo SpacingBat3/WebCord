@@ -65,7 +65,7 @@ input[type="radio"] {
 }
 
 input[type="checkbox"]:checked {
-    background-color: var(--color-accient);
+    background-color: var(--color-accent);
     background-image: url(../../icons/symbols/checkmark.svg);
     background-repeat: no-repeat;
     background-position: center;
@@ -73,7 +73,7 @@ input[type="checkbox"]:checked {
 }
 
 input[type="radio"]:checked {
-    background-color: var(--color-forms-accient);
+    background-color: var(--color-forms-accent);
     outline-color: var(--color-font-header)
     
 }

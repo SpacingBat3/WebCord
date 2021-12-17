@@ -4,7 +4,7 @@ import { ipcRenderer } from "electron";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import { pathToFileURL, fileURLToPath } from "url";
-import { trustedProtocolRegExp } from "../../global";
+import { trustedProtocolRegExp } from "../../global/global";
 import * as _hljsmodule from "highlight.js";
 
 const htmlFileUrl = document.URL

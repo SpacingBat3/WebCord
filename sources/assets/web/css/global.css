@@ -1,7 +1,7 @@
 @import url('../../../../node_modules/twemoji-colr-font/twemoji.css');
 
 :root {
-    --color-accient: #5865F2;
+    --color-accent: #5865F2;
     --color-forms-accient: #959DF4;
     --color-bg-primary: #36393F;
     --color-bg-secondary: #2F3136;
@@ -70,7 +70,7 @@ tr:nth-child(even) {
 
 th {
     color: var(--color-font-header);
-    background-color: var(--color-accient);
+    background-color: var(--color-accent);
 }
 
 html :not(pre) > code {

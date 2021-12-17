@@ -6,7 +6,7 @@ import * as fs from "fs";
 import { app, BrowserWindow, screen } from "electron";
 import { resolve } from "path"
 import { appInfo } from "./client";
-import { objectsAreSameType } from "../../global";
+import { objectsAreSameType } from "../../global/global";
 import { deepmerge } from 'deepmerge-ts';
 
 function isJsonSyntaxCorrect(string: string) {
@@ -148,7 +148,7 @@ export class WinStateKeeper {
         if(objectsAreSameType(newObject, oldObject)) this.write(newObject);
     }
     private get(): WinStateKeeper["defaultConfig"] {
-        const parsedConfig = JSON.parse(fs.readFileSync(this.file).toString());
+        const parsedConfig:unknown = JSON.parse(fs.readFileSync(this.file).toString());
         if(objectsAreSameType(parsedConfig, this.defaultConfig))
             return parsedConfig;
         else

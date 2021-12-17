@@ -24,14 +24,17 @@ import('source-map-support').then(sMap => sMap.install());
  * information).
  */
 
-import('./modules/error').then(eHand => eHand.default());
+import('../modules/error').then(eHand => eHand.default());
 
 // Optional debug logging implementation by overwritting the global `console` method.
-console.debug = function (message?, ...optionalParams) {
+console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
     import('electron').then(e => e.app.commandLine.hasSwitch).then(hasSwitch => {
         import('colors/safe').then(colors => {
             if (hasSwitch('verbose')||hasSwitch('v'))
-                console.log(colors.gray(message), ...optionalParams)
+                if(typeof message === "string")
+                    console.log(colors.gray(message), ...optionalParams)
+                else
+                    console.log(message, ...optionalParams)
         })
     }) 
 }
@@ -40,26 +43,30 @@ console.debug = function (message?, ...optionalParams) {
 {
     const stdErr = console.error
     const stdWarn = console.warn
-    console.error = function (message?, ...optionalParams) {
+    console.error = function (message?:unknown, ...optionalParams:unknown[]) {
         import('colors/safe').then(colors => {
-            stdErr(colors.red(message), ...optionalParams)
+            if(typeof message === "string")
+                stdErr(colors.red(message), ...optionalParams)
+            else
+                stdErr(message, ...optionalParams)
         })
     }
-    console.warn = function (message?, ...optionalParams) {
+    console.warn = function (message?, ...optionalParams:unknown[]) {
         import('colors/safe').then(colors => {
-            stdWarn(colors.yellow(message), ...optionalParams)
+            if(typeof message === "string")
+                stdWarn(colors.yellow(message), ...optionalParams)
+            else
+                stdWarn(message, ...optionalParams)
         })
     }
 }
-
 import { app, BrowserWindow, dialog, shell } from 'electron';
 import { promises as fs } from 'fs';
 import { knownIstancesList, trustedProtocolRegExp } from './global';
-import { checkVersion } from './main/modules/update';
-import l10n from './modules/l10n';
-import createMainWindow from "./main/windows/main";
-import setAboutPanel from "./main/windows/about";
-import { AppConfig } from './main/modules/config';
+import { checkVersion } from '../main/modules/update';
+import l10n from '../modules/l10n';
+import createMainWindow from "../main/windows/main";
+import { AppConfig } from '../main/modules/config';
 import * as colors from 'colors/safe';
 import { resolve as resolvePath, relative } from 'path';
 
@@ -139,7 +146,6 @@ function main(): void {
         checkVersion(updateInterval);
         updateInterval = setInterval(function () { checkVersion(updateInterval); }, 1800000);
         mainWindow = createMainWindow(startHidden, l10nStrings);
-        setAboutPanel(l10nStrings);
     }
 }
 

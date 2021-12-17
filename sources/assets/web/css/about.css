@@ -1,0 +1,114 @@
+@import "./global.css";
+
+:root {
+    --header-height: 48px;
+    --font-size-factor: 10pt;
+    --logo-size-factor: 96px;
+}
+
+* {
+    font-size: var(--font-size-factor);
+    text-align: center;
+}
+h3, p, li {
+    margin-bottom: var(--font-size-factor);
+}
+ul {
+    margin-top: 0;
+}
+a, a:hover {
+    color: unset;
+    text-decoration: unset;
+    font-weight: bold;
+}
+
+html, body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+body {
+    height: calc(100vh - var(--header-height));
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--header-height);
+    width: 100vw;
+    background-color: var(--color-bg-secondary);
+    position:absolute;
+    top:0;
+    left:0;
+    -webkit-app-region: drag;
+}
+
+picture#logo > img {
+    width: var(--logo-size-factor);
+    height: var(--logo-size-factor);
+}
+
+main {
+    width: 100vw;
+    display: flex;
+    flex-flow: row nowrap;
+    margin: 0;
+    margin-top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+main > article {
+    display:flex;
+    flex-shrink: 0;
+    width: calc(100vw - 16px);
+    flex-flow: column nowrap;
+    align-items: center;
+    padding: 16px 8px;
+}
+
+h1 {
+    margin-top: 0.5em;
+    font-size: calc(var(--font-size-factor) * 1.5)
+}
+h2 {
+    font-size: calc(var(--font-size-factor) * 1.2)
+}
+h3 {
+    font-size: calc(var(--font-size-factor) * 1.1)
+}
+h1 ~ h2 {
+    margin-top: -.5em;
+    color: var(--color-font-header);
+}
+hr {
+    width: calc(90vw - 32px);
+}
+
+div.person {
+    display: flex;
+
+}
+
+img#closebutton {
+    height: calc(var(--header-height) * 0.3);
+    padding: 8px;
+    position: absolute;
+    right: 15px;
+    top: auto;
+    bottom: auto;
+    border-radius: 100%;
+    -webkit-app-region: no-drag;
+}
+
+img#closebutton:hover {
+    background-color: #fff1;
+}
+
+img.profilePicture {
+    border-radius: 100%;
+}

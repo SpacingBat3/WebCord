@@ -4,11 +4,11 @@
 
 // Let's import some keys from the package.json:
 
-import { buildInfo, packageJson } from '../global';
+import { buildInfo } from '../global/global';
+import packageJson from '../modules/package';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path'
 import { ForgeConfigFile } from './forge.d';
-
 
 // Global variables in the config:
 const iconFile = "sources/assets/icons/app";
@@ -39,7 +39,7 @@ function getBuildID() {
 const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
   packagerConfig: {
-    executableName: packageJson.name, // name instead of the productName
+    executableName: packageJson.data.name, // name instead of the productName
     asar: (process.env.WEBCORD_ASAR === "false" ? false : {
       unpack: "**/" + iconFile + ".png"
     }),
@@ -110,7 +110,7 @@ const config: ForgeConfigFile = {
       config: {
         prerelease: getBuildID() === "devel",
         repository: {
-          owner: packageJson.author.name,
+          owner: packageJson.data.author.name,
           name: "WebCord"
         },
         draft: getBuildID() === "release"
@@ -118,7 +118,7 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: async (_ForgeConfig, path) => {
+    packageAfterCopy: async (_ForgeConfig, path:string) => {
       const buildConfig: buildInfo = {
         type: getBuildID(),
         commit: getBuildID() === "devel" ? getCommit() : undefined,

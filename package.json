@@ -1,9 +1,9 @@
 {
   "name": "webcord",
   "productName": "WebCord",
-  "version": "2.2.0",
+  "version": "3.0.0-beta1",
   "description": "A Discord Web App made with the Electron API.",
-  "main": "sources/app/main.js",
+  "main": "sources/app/global/main.js",
   "scripts": {
     "test": "tsc && eslint --ext .ts .",
     "lint": "eslint --ext .ts .",

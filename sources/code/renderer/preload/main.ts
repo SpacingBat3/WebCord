@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { randomBytes } from "crypto";
-import { wLog } from "../../global";
+import { wLog } from "../../global/global";
 import desktopCapturerPicker from "../modules/capturer";
 import preloadCosmetic from "../modules/cosmetic";
 import l10n from "../../modules/l10n";

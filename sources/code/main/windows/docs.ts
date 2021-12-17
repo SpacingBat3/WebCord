@@ -30,6 +30,7 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
 		minHeight: appInfo.minWinHeight,
         width: 800,
         height: 720,
+        backgroundColor: appInfo.backgroundColor,
         webPreferences: {
             session: session.fromPartition("temp:docs"),
             preload: resolve(app.getAppPath(), 'sources/app/renderer/preload/docs.js'),

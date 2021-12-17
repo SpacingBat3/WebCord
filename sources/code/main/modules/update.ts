@@ -27,7 +27,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     // An alias to app's repository name.
     const repoName = appInfo.repository.name;
     let updateMsg: string, showGui = false;
-    const githubApi = await (await fetch('https://api.github.com/repos/' + repoName + '/releases/latest')).json();
+    const githubApi:Record<string,string> = await (await fetch('https://api.github.com/repos/' + repoName + '/releases/latest')).json();
     switch(semver.compare(githubApi.tag_name,app.getVersion())) {
         case 0:
             // Application version is the same as in tag

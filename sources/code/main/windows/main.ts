@@ -2,7 +2,8 @@ import { appInfo } from "../modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
 import { app, BrowserWindow, Tray, net, nativeImage, ipcMain } from "electron";
 import * as getMenu from '../modules/menu';
-import { packageJson, discordFavicons, knownIstancesList } from '../../global';
+import { discordFavicons, knownIstancesList } from '../../global/global';
+import packageJson from '../../modules/package';
 import { discordContentSecurityPolicy } from '../modules/csp';
 import l10n from "../../modules/l10n";
 import { getUserAgent } from '../../modules/agent';
@@ -30,7 +31,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         minHeight: appInfo.minWinHeight,
         height: mainWindowState.initState.height,
         width: mainWindowState.initState.width,
-        backgroundColor: "#36393F",
+        backgroundColor: appInfo.backgroundColor,
         icon: appInfo.icon,
         show: false,
         webPreferences: {
@@ -189,7 +190,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     getMenu.context(win);
     if (!configData.get().disableTray) tray = getMenu.tray(win);
-    getMenu.bar(packageJson.repository.url, win);
+    getMenu.bar(packageJson.data.repository.url, win);
 
     // "Red dot" icon feature
     let setFavicon: string | undefined;

@@ -4,17 +4,27 @@
     "es6": true,
     "node": true
   },
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:import/errors",
-      "plugin:import/warnings"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "settings": {
-    "import/resolver": {
-      "typescript": {}
-    }
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+  "import/resolver": {
+    "typescript": {}
+  }
+  },
+  "rules": {
+    "@typescript-eslint/no-unsafe-argument": "error",
+    "@typescript-eslint/no-unsafe-assignment": "error",
+    "@typescript-eslint/no-unsafe-call": "error",
+    "@typescript-eslint/no-unsafe-member-access": "error",
+    "@typescript-eslint/no-unsafe-return": "error"
   }
 }

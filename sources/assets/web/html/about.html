@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/about.css">
+</head>
+<body>
+    <header>
+        <img id="closebutton" src="../../icons/symbols/close.svg">
+    </header>
+    <main>
+        <article id="about">
+            <picture id="logo">
+                <source src="/usr/share/icons/hicolor/192x192/apps/webcord.png"/>
+                <source src="/usr/share/icons/hicolor/256x256/apps/webcord.png"/>
+                <source src="/usr/share/icons/hicolor/512x512/apps/webcord.png"/>
+                <img src="../../icons/app.png"/>
+            </picture>
+            <h1 id="appName"></h1>
+            <h2 id="appVersion"></h2>
+            <hr>
+            <i>Work in progress...</i>
+        </article>
+        <article id="contributors">
+            <h1 id="contributorsTitle"><i>Work in progress...</i></h1>
+        </article>
+        <article id="license">
+            Copyright (C) 2020-2021 SpacingBat3 MIT License<br>
+            <i>Work in progress...</i>
+        </article>
+    </main>
+    <script>
+        const about = document.getElementById("about");
+        const contrib = document.getElementById("contributors");
+        const license = document.getElementById("license");
+        document.getElementById("closebutton").addEventListener("click", aboutWindow.close, {once:true});
+        setTimeout(() => contrib.scrollIntoView(),3000);
+        setTimeout(() => license.scrollIntoView(),5000);
+        setTimeout(() => about.scrollIntoView(),7000);
+    </script>
+</body>
+</html>
