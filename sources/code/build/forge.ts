@@ -40,9 +40,7 @@ const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
   packagerConfig: {
     executableName: packageJson.data.name, // name instead of the productName
-    asar: (process.env.WEBCORD_ASAR === "false" ? false : {
-      unpack: "**/" + iconFile + ".png"
-    }),
+    asar: process.env.WEBCORD_ASAR !== "false",
     icon: iconFile, // used in Windows and MacOS binaries
     extraResource: [
       "LICENSE"
