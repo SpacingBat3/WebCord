@@ -49,6 +49,9 @@
     "typescript": "^4.5.2"
   },
   "dependencies": {
+    "@fontsource/roboto": "^4.5.1",
+    "@fontsource/source-code-pro": "^4.5.1",
+    "@fontsource/ubuntu": "^4.5.0",
     "@spacingbat3/jsonc-parser": "^2.0.0",
     "colors": "^1.4.0",
     "deepmerge-ts": "^1.1.3",

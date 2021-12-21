@@ -1,8 +1,11 @@
 @import url('../../../../node_modules/twemoji-colr-font/twemoji.css');
+@import url('../../../../node_modules/@fontsource/roboto/index.css');
+@import url('../../../../node_modules/@fontsource/ubuntu/index.css');
+@import url('../../../../node_modules/@fontsource/source-code-pro/index.css');
 
 :root {
     --color-accent: #5865F2;
-    --color-forms-accient: #959DF4;
+    --color-forms-accent: #959DF4;
     --color-bg-primary: #36393F;
     --color-bg-secondary: #2F3136;
     --color-bg-border: #1B1C1F;
@@ -12,15 +15,15 @@
     --color-font-header: #fff;
     --color-link: #00A3E3;
     --color-input-bg: #484C52;
-    --font-primary: Whitney,"Helvetica Neue",Helvetica,Arial,sans-serif, Twemoji;
-    --font-display: Ginto,"Helvetica Neue",Helvetica,Arial,sans-serif, Twemoji;
-    --font-code: Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace, Twemoji;
+    --font-primary: 'Roboto',Arial,sans-serif, Twemoji;
+    --font-display: 'Ubuntu',Arial,sans-serif, Twemoji;
+    --font-code: 'Source Code Pro',Courier,monospace, Twemoji;
 }
 
 html {
     margin: 0 10px;
     user-select: none;
-    font-family: var(--font-display);
+    font-family: var(--font-primary);
     background-color: var(--color-bg-primary);
     color: var(--color-font-normal);
     line-height: 1.5;
