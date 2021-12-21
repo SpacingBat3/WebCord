@@ -36,7 +36,6 @@ import showAboutPanel from '../windows/about';
 
 const sideBar = new EventEmitter();
 const devel = getBuildInfo().type === 'devel';
-
 sideBar.on('hide', async (contents: WebContents) => {
 	const cssKey = await contents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
 	sideBar.once('show', () => {
@@ -312,7 +311,7 @@ export function bar(repoLink: string, parent: BrowserWindow): Menu {
 		{
 			label: strings.help.groupName, role: 'help', submenu: [
 				// About
-				{ label: strings.help.about, role: 'about', click: () => showAboutPanel(parent) },
+				{ label: strings.help.about, role: 'about', click: () => showAboutPanel(parent)},
 				// Repository
 				{ label: strings.help.repo, click: () => shell.openExternal(webLink) },
 				// Documentation

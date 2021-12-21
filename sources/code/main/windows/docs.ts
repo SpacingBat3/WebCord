@@ -20,12 +20,16 @@ function handleEvents(docsWindow: BrowserWindow) {
     })
 }
 
-export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow {
+export default async function loadDocsWindow(parent: BrowserWindow):Promise<BrowserWindow|undefined> {
+    if(!app.isReady) await app.whenReady();
+    if(parent.getChildWindows().length !== 0) return;
     const strings = (new l10n()).client;
+    if(!parent.isVisible()) parent.show();
     const docsWindow = new BrowserWindow({
         title: app.getName() + ' – ' + strings.help.docs,
         show: false,
         parent: parent,
+        modal: true,
         minWidth: appInfo.minWinWidth,
 		minHeight: appInfo.minWinHeight,
         width: 800,

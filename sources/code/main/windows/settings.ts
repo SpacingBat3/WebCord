@@ -185,15 +185,19 @@ function conf2html (config:AppConfig) {
 	return [general, privacy, advanced];
 }
 
-export default function loadSettingsWindow(parent:BrowserWindow):BrowserWindow {
+export default async function loadSettingsWindow(parent:BrowserWindow):Promise<BrowserWindow|undefined> {
+	if(!app.isReady) await app.whenReady();
+	if(parent.getChildWindows().length !== 0) return;
 	const strings = (new l10n().client);
 	const configWithStrings = conf2html(appConfig);
+	if(!parent.isVisible()) parent.show();
 	const settingsWindow = new BrowserWindow({
 		title: app.getName()+" – "+strings.settings.title,
 		icon: appInfo.icon,
 		show: false,
 		backgroundColor: appInfo.backgroundColor,
 		parent: parent,
+		modal: true,
 		minWidth: appInfo.minWinWidth,
 		minHeight: appInfo.minWinHeight,
 		webPreferences: {

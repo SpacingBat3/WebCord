@@ -1,6 +1,6 @@
 import { ipcRenderer as ipc, contextBridge } from "electron";
 import { buildInfo } from "../../global/global";
-import { createHash } from "crypto";
+/*import { createHash } from "crypto";
 
 export function getGithubAvatarUrl(user:string) {
     return "https://github.com/"+user+".png"
@@ -8,7 +8,7 @@ export function getGithubAvatarUrl(user:string) {
 
 export function getGravatarUrl(email:string) {
     return "https://gravatar.com/"+createHash("md5").update(email).digest('hex')
-}
+}*/
 
 // Continue only on the local sites.
 if(window.location.protocol !== "file:") {
@@ -25,15 +25,13 @@ contextBridge.exposeInMainWorld("aboutWindow", {
 })
 
 // Get app details and inject them into the page
-document.addEventListener("readystatechange", () => {
-    if(document.readyState === "interactive")
-        ipc.send("about.getDetails")
-});
+window.addEventListener("load", () => ipc.send("about.getDetails"));
+
 ipc.on("about.getDetails", (_event, details:{appName: string, appVersion: string, buildInfo: buildInfo, responseId: number}) => {
     const nameElement = document.getElementById("appName");
     const versionElement = document.getElementById("appVersion");
     if(!nameElement || !versionElement) return;
     nameElement.innerText = details.appName + " ("+details.buildInfo.type+")"
-    versionElement.innerText = details.appVersion + (details.buildInfo.commit ? "-"+details.buildInfo.commit : "")
-    window.addEventListener("load", () => ipc.send("about.readyToShow"), {once: true});
+    versionElement.innerText = details.appVersion + (details.buildInfo.commit ? "-"+details.buildInfo.commit.substring(0, 7) : "")
+    ipc.send("about.readyToShow");
 });
