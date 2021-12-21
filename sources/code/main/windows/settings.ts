@@ -115,7 +115,7 @@ function conf2html (config:AppConfig) {
 					{
 						label: lang.privacy.group.permissions.label.microphone,
 						id: 'permissions.audio',
-						isChecked: config.get().permissions.video
+						isChecked: config.get().permissions.audio
 					},
 					{
 						label: lang.privacy.group.permissions.label.fullscreen,
