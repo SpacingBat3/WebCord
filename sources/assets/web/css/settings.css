@@ -73,7 +73,7 @@ input[type="checkbox"]:checked {
 }
 
 input[type="radio"]:checked {
-    background-color: var(--color-forms-accent);
+    background-color: var(--color-accent-light);
     outline-color: var(--color-font-header)
     
 }

@@ -299,6 +299,11 @@ class l10n {
 		offline: {
 			title: "Cannot connect to the Discord service.",
 			description: "Please make sure you're connected to the internet."
+		},
+		aboutWindow: {
+			about: "About",
+			contributors: "Contributors",
+			licenses: "Licenses"	
 		}
 	};
 }

@@ -8,6 +8,20 @@
 </head>
 <body>
     <header>
+        <nav>
+            <div id="about-nav" class="selected">
+                <div class="content"></div>
+                <div class="line"></div>
+            </div>
+            <div id="contributors-nav">
+                <div class="content"></div>
+                <div class="line"></div>
+            </div>
+            <div id="licenses-nav">
+                <div class="content"></div>
+                <div class="line"></div>
+            </div>
+        </nav>
         <img id="closebutton" src="../../icons/symbols/close.svg">
     </header>
     <main>
@@ -26,19 +40,29 @@
         <article id="contributors">
             <h1 id="contributorsTitle"><i>Work in progress...</i></h1>
         </article>
-        <article id="license">
+        <article id="licenses">
             Copyright (C) 2020-2021 SpacingBat3 MIT License<br>
             <i>Work in progress...</i>
         </article>
     </main>
-    <script>
-        const about = document.getElementById("about");
-        const contrib = document.getElementById("contributors");
-        const license = document.getElementById("license");
-        document.getElementById("closebutton").addEventListener("click", aboutWindow.close, {once:true});
-        setTimeout(() => contrib.scrollIntoView(),3000);
-        setTimeout(() => license.scrollIntoView(),5000);
-        setTimeout(() => about.scrollIntoView(),7000);
+    <script>        
+        function select(id) {
+            console.log(id);
+            const element = document.getElementById(id);
+            const nav = document.getElementById(id+"-nav")
+            /** @type {NodeListOf<HTMLDivElement>} */
+            const allNavs = document.querySelectorAll("nav > div")
+            if(element && nav) {
+                if(!nav.classList.toString().includes("selected"))
+                    element.scrollIntoView();
+                for(const anyNav of allNavs)
+                    anyNav.classList.remove("selected");
+                nav.classList.add("selected");
+            }
+        }
+        for(const element of document.querySelectorAll("nav > div")) {
+            element.addEventListener("click", () => select(element.id.replace("-nav","")));
+        }
     </script>
 </body>
 </html>

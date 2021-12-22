@@ -5,6 +5,8 @@
     --font-size-factor: 10pt;
     --logo-size-factor: 96px;
     --border-width: 2px;
+    --nav-width: 60vw;
+    --nav-elements: 3;
 }
 
 * {
@@ -46,6 +48,10 @@ header {
     -webkit-app-region: drag;
 }
 
+header > * {
+    -webkit-app-region: no-drag;
+}
+
 picture#logo > img {
     width: var(--logo-size-factor);
     height: var(--logo-size-factor);
@@ -67,7 +73,7 @@ main {
 main > article {
     display:flex;
     flex-shrink: 0;
-    width: calc(100vw - 16px);
+    width: calc(100vw - 16px - 2*var(--border-width));
     flex-flow: column nowrap;
     align-items: center;
     padding: 16px 8px;
@@ -85,10 +91,51 @@ h3 {
 }
 h1 ~ h2 {
     margin-top: -.5em;
-    color: var(--color-font-header);
 }
 hr {
     width: calc(90vw - 32px);
+}
+
+nav {
+    display: flex;
+}
+
+nav > div > div.content {
+    font-family: 'Ubuntu';
+    cursor: pointer;
+    color: var(--color-font-settings);
+    font-size: var(--font-size-factor);
+    font-weight: bold;
+    width: calc(var(--nav-width) / var(--nav-elements));
+    border-radius: 5px;
+    padding: 6px;
+    margin-bottom: -2px;
+}
+
+nav > div > div.content:hover, nav > div.selected > div.content {
+    background-color: var(--color-accent-light-bg);;
+    transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+}
+
+nav > div.selected > div.content {
+    cursor: default;
+    color: var(--color-accent-light);
+    transition: color cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+}
+
+nav > div > div.line {
+    width: 0%;
+    height: 2px;
+    background-color: var(--color-accent-light);
+    position:static;
+    bottom: 2px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+nav > div.selected > div.line {
+    width: 100%;
+    transition: width cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
 }
 
 div.person {
@@ -104,7 +151,6 @@ img#closebutton {
     top: auto;
     bottom: auto;
     border-radius: 100%;
-    -webkit-app-region: no-drag;
 }
 
 img#closebutton:hover {

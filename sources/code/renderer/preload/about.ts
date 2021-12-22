@@ -1,5 +1,6 @@
-import { ipcRenderer as ipc, contextBridge } from "electron";
+import { ipcRenderer as ipc } from "electron";
 import { buildInfo } from "../../global/global";
+import L10N from "../../modules/l10n";
 /*import { createHash } from "crypto";
 
 export function getGithubAvatarUrl(user:string) {
@@ -16,18 +17,24 @@ if(window.location.protocol !== "file:") {
     throw new URIError("Loaded website is not a local page!")
 }
 
-// Because it is not a remote site, any API key would be OK
-contextBridge.exposeInMainWorld("aboutWindow", {
-    "close": () => {
-        (window as unknown as {aboutWindow:unknown}).aboutWindow = undefined;
-        ipc.send("about.close");
-    }
-})
-
 // Get app details and inject them into the page
-window.addEventListener("load", () => ipc.send("about.getDetails"));
+window.addEventListener("load", () => {
+    ipc.send("about.getDetails");
+    const close = document.getElementById("closebutton");
+    if (close)
+        close.addEventListener("click", () => {
+            ipc.send("about.close");
+        }, {once:true});
+    else
+        throw new Error("Couldn't find element with 'closebutton' id.");
+});
 
 ipc.on("about.getDetails", (_event, details:{appName: string, appVersion: string, buildInfo: buildInfo, responseId: number}) => {
+    const l10n = new L10N().web.aboutWindow;
+    for(const div of document.querySelectorAll<HTMLDivElement>("nav > div")) {
+        const content = div.querySelector<HTMLDivElement>("div.content");
+        if(content) content.innerText = l10n[(div.id.replace("-nav","") as keyof typeof l10n)]
+    }
     const nameElement = document.getElementById("appName");
     const versionElement = document.getElementById("appVersion");
     if(!nameElement || !versionElement) return;

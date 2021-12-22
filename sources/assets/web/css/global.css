@@ -4,8 +4,9 @@
 @import url('../../../../node_modules/@fontsource/source-code-pro/index.css');
 
 :root {
-    --color-accent: #5865F2;
-    --color-forms-accent: #959DF4;
+    --color-accent: #4185D3;
+    --color-accent-light: #8CCAFF;
+    --color-accent-light-bg: #8CCAFF11;
     --color-bg-primary: #36393F;
     --color-bg-secondary: #2F3136;
     --color-bg-border: #1B1C1F;

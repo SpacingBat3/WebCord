@@ -2,5 +2,10 @@
     "offline": {
         "title": "Nie można połączyć z usługą Discord'a",
         "description": "Proszę sprawdzić połączenie z internetem."
+    },
+    "aboutWindow": {
+        "about": "O aplikacji",
+        "contributors": "Współtwórcy",
+        "licenses": "Licencje"	
     }
 }

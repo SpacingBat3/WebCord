@@ -11,9 +11,6 @@ export default async function showAboutPanel(parent:BrowserWindow): Promise<Brow
     console.dir(parent.getChildWindows().length)
     if(parent.getChildWindows().length !== 0) return;
     const screenBounds = screen.getPrimaryDisplay().size
-    const resizable = process.platform === "linux" &&
-        /^arm(?:64|v\d)?$/.test(process.arch) &&
-        process.env.WEBCORD_EXPERIMENTAL_ABOUT_MOBILEUI === "true";
     const [width, height] = [
         (screenBounds.width < 600 ? screenBounds.width : 600),
         (screenBounds.height < 480 ? screenBounds.height : 480)
@@ -22,9 +19,9 @@ export default async function showAboutPanel(parent:BrowserWindow): Promise<Brow
     const aboutPanel = new BrowserWindow ({
         width,
         height,
-        resizable,
-        fullscreenable: resizable,
-        frame: resizable,
+        resizable: false,
+        fullscreenable: false,
+        frame: false,
         show: false,
         parent,
         modal: true,
