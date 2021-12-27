@@ -15,6 +15,15 @@ export function wLog(msg: string): void {
 	console.log("%c[WebCord]", 'color: #69A9C1', msg);
 }
 
+export function isJsonSyntaxCorrect(string: string) {
+	try {
+		JSON.parse(string);
+	} catch {
+		return false;
+	}
+	return true;
+}
+
 /**
  * Configuration format that can be used to generate a configuration interface
  * for WebCord's settings manager.

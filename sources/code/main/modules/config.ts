@@ -6,67 +6,53 @@ import * as fs from "fs";
 import { app, BrowserWindow, screen } from "electron";
 import { resolve } from "path"
 import { appInfo } from "./client";
-import { objectsAreSameType } from "../../global/global";
+import { objectsAreSameType, isJsonSyntaxCorrect } from "../../global/global";
 import { deepmerge } from 'deepmerge-ts';
 
-function isJsonSyntaxCorrect(string: string) {
-	try {
-		JSON.parse(string);
-	} catch {
-		return false;
-	}
-	return true;
+const defaultAppConfig = {
+    hideMenuBar: false,
+    disableTray: false,
+    devel: false,
+    redirectionWarning: true,
+    csp: {
+        enabled: true,
+        thirdparty: {
+            spotify: true,
+            gif: true,
+            hcaptcha: true,
+            youtube: true,
+            twitter: true,
+            twitch: true,
+            streamable: true,
+            vimeo: true,
+            soundcloud: true,
+            paypal: true,
+            audius: true,
+            algolia: true,
+            funimation: true,
+            reddit: true
+        }
+    },
+    blockApi: {
+        typingIndicator: false,
+        science: true,
+    },
+    permissions: {
+        "video": false,
+        "audio": false,
+        "fullscreen": true,
+        "notifications": false,
+        "display-capture": true
+    },
+    currentInstance: 0,
 }
 
-/**
- * An class which initializes and modifies of the main application configuration.
- * 
- * @todo Implement translated strings for TypeErrors.
- * @todo Use JSONC format instead, so every option will have its describtion in the comments.
- */
-
-export class AppConfig {
+class Config<T> {
     /** Default configuration values. */
-    private defaultConfig = {
-        hideMenuBar: false,
-        disableTray: false,
-        devel: false,
-        redirectionWarning: true,
-        csp: {
-            enabled: true,
-            thirdparty: {
-                spotify: true,
-                gif: true,
-                hcaptcha: true,
-                youtube: true,
-                twitter: true,
-                twitch: true,
-                streamable: true,
-                vimeo: true,
-                soundcloud: true,
-                paypal: true,
-                audius: true,
-                algolia: true,
-                funimation: true,
-                reddit: true
-            }
-        },
-        blockApi: {
-            typingIndicator: false,
-            science: true,
-        },
-        permissions: {
-            "video": false,
-            "audio": false,
-            "fullscreen": true,
-            "notifications": false,
-            "display-capture": true
-        },
-        currentInstance: 0,
-    };
-    private path: fs.PathLike = resolve(app.getPath('userData'), 'config.json');
-    private spaces: number;
-    private write(object: AppConfig["defaultConfig"]) {
+    protected defaultConfig!: T;
+    protected path!: fs.PathLike;
+    protected spaces = 4;
+    protected write(object: typeof this.defaultConfig) {
         fs.writeFileSync(this.path, JSON.stringify(object, null, this.spaces));
     }
     /** 
@@ -78,13 +64,13 @@ export class AppConfig {
      * @param object A JavaScript object that will be merged with the configuration object.
      */
 
-    public set(object: Partial<AppConfig["defaultConfig"]>): void {
+    public set(object: Partial<typeof this.defaultConfig>): void {
         const oldObject = this.get();
         const newObject = deepmerge(oldObject, object);
         if(objectsAreSameType(newObject, oldObject)) this.write(newObject);
     }
     /** Returns the entire parsed configuration file in form of the JavaScript object. */
-    public get(): AppConfig["defaultConfig"] {
+    public get(): typeof this.defaultConfig {
         const parsedConfig:unknown = JSON.parse(fs.readFileSync(this.path).toString());
         const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig)
         if(objectsAreSameType(mergedConfig, this.defaultConfig))
@@ -92,6 +78,23 @@ export class AppConfig {
         else
             return this.defaultConfig;
     }
+    constructor(path?: fs.PathLike, spaces?: number) {
+        // Replace "path" if it is definied in the constructor.
+        if(path !== undefined)
+            this.path = path;
+        // Replace "spaces" if it is definied in the constructor
+        if (spaces !== undefined && spaces > 0)
+            this.spaces = spaces;
+    }
+}
+/**
+ * An class which initializes and modifies of the main application configuration.
+ *
+ * @todo Use JSONC format instead, so every option will have its description in the comments.
+ */
+export class AppConfig extends Config<typeof defaultAppConfig> {
+    protected override defaultConfig = defaultAppConfig;
+    protected override path: fs.PathLike = resolve(app.getPath('userData'), 'config.json')
     /**
      * Initializes the main application configuration and provides the way of controling it,
      * using `get`, `set` and `getProperty` public methods.
@@ -99,16 +102,13 @@ export class AppConfig {
      * @param path A path to application's configuration. Defaults to `App.getPath('userdata')+"/config.json"`
      * @param spaces A number of spaces that will be used for indentation of the configuration file.
      */
-    constructor(path?: fs.PathLike, spaces?: number) {
-        if(path !== undefined)
-            this.path = path;
-        if (spaces !== undefined && spaces > 0)
-            this.spaces = spaces;
-        else
-            this.spaces = 4;
+     constructor(path?: fs.PathLike, spaces?: number) {
+        super(path,spaces);
+        // If config file does not exists, create it.
         if (!fs.existsSync(this.path))
             this.write(this.defaultConfig);
         else {
+            // If config is not a valid JSON file, remove it.
             if(!isJsonSyntaxCorrect(fs.readFileSync(this.path).toString()))
                 fs.rmSync(this.path)
             this.write({...this.defaultConfig, ...this.get()})
@@ -122,38 +122,13 @@ type windowStatus = {
     isMaximized: boolean;
 }
 
-export class WinStateKeeper {
-
-    // Private properties
-
-    private defaultConfig: Record<string, windowStatus>;
-    private file: fs.PathLike = resolve(app.getPath('userData'),'windowState.json')
-    private spaces: number;
+export class WinStateKeeper extends Config<Record<string, windowStatus>> {
+    protected override path: fs.PathLike = resolve(app.getPath('userData'),'windowState.json')
     private windowName: string;
-
     /**
      * An object containing width and height of the window watched by `WinStateKeeper`
      */
-
     public initState: Readonly<windowStatus>;
-
-    // Private methods:
-
-    private write(object: WinStateKeeper["defaultConfig"]) {
-        fs.writeFileSync(this.file, JSON.stringify(object, null, this.spaces));
-    }
-    private set(object: Partial<WinStateKeeper["defaultConfig"]>): void {
-        const oldObject = this.get();
-        const newObject = deepmerge(oldObject, object);
-        if(objectsAreSameType(newObject, oldObject)) this.write(newObject);
-    }
-    private get(): WinStateKeeper["defaultConfig"] {
-        const parsedConfig:unknown = JSON.parse(fs.readFileSync(this.file).toString());
-        if(objectsAreSameType(parsedConfig, this.defaultConfig))
-            return parsedConfig;
-        else
-            return this.defaultConfig;
-    }
     private setState(window: BrowserWindow) { 
         if(window.isMaximized()) {
             this.set({
@@ -190,11 +165,11 @@ export class WinStateKeeper {
      * Reads the data from the current configuration
      * 
      * @param windowName Name of the group in which other properties should be saved.
-     * @param file Path to application's configuration. Defaults to `app.getPath('userData')+/windowState.json`
+     * @param path Path to application's configuration. Defaults to `app.getPath('userData')+/windowState.json`
      * @param spaces Number of spaces that will be used for indentation of the configuration file.
      */
-    constructor(windowName: string, file?: fs.PathLike, spaces?: number) {
-
+     constructor(windowName: string, path?: fs.PathLike, spaces?: number) {
+        super(path,spaces);
         // Initialize class
         this.windowName = windowName;
         this.defaultConfig = {
@@ -204,16 +179,14 @@ export class WinStateKeeper {
                 isMaximized: false
             }
         }
-        if (file !== undefined)
-            this.file = file;
-        if (spaces !== undefined && spaces > 0)
-            this.spaces = spaces;
-        else
-            this.spaces = 4; 
-
-        if (!fs.existsSync(this.file) || this.get().win !== undefined)
+        if (!fs.existsSync(this.path))
             this.write(this.defaultConfig);
-
+        else {
+            // If config is not a valid JSON file, remove it.
+            if(!isJsonSyntaxCorrect(fs.readFileSync(this.path).toString()))
+                fs.rmSync(this.path)
+            this.write({...this.defaultConfig, ...this.get()})
+        }
         this.initState = {
             width: this.get()[this.windowName].width,
             height: this.get()[this.windowName].height,
