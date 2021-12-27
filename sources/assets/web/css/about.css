@@ -102,7 +102,6 @@ nav {
 
 nav > div > div.content {
     font-family: 'Ubuntu';
-    cursor: pointer;
     color: var(--color-font-settings);
     font-size: var(--font-size-factor);
     font-weight: bold;
@@ -114,13 +113,12 @@ nav > div > div.content {
 
 nav > div > div.content:hover, nav > div.selected > div.content {
     background-color: var(--color-accent-light-bg);;
-    transition: background-color cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+    transition: background-color cubic-bezier(0.4, 0, 0.2, 1) 0.25s;
 }
 
 nav > div.selected > div.content {
-    cursor: default;
     color: var(--color-accent-light);
-    transition: color cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+    transition: color cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
 }
 
 nav > div > div.line {
@@ -135,7 +133,7 @@ nav > div > div.line {
 
 nav > div.selected > div.line {
     width: 100%;
-    transition: width cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+    transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.25s;
 }
 
 div.person {
