@@ -24,7 +24,7 @@ import('source-map-support').then(sMap => sMap.install());
  * information).
  */
 
-import('./modules/error').then(eHand => eHand.default());
+import('../main/modules/error').then(eHand => eHand.default());
 
 // Optional debug logging implementation by overwritting the global `console` method.
 console.debug = function (message?:unknown, ...optionalParams:unknown[]) {

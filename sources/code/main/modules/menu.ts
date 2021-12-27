@@ -1,5 +1,5 @@
 /*
- * nativeMenus – OS native menus (tray menu, context menu, menu bar etc.)
+ * menus – OS native menus (tray menu, context menu, menu bar etc.)
  */
 import {
 	app,
@@ -27,7 +27,7 @@ const appConfig = new AppConfig()
 import fetch from 'electron-fetch';
 import * as os from 'os';
 import { EventEmitter } from 'events';
-import { createGithubIssue } from '../../global/modules/bug';
+import { createGithubIssue } from './bug';
 import l10n from '../../global/modules/l10n';
 import loadSettingsWindow from '../windows/settings';
 import loadDocsWindow from '../windows/docs';

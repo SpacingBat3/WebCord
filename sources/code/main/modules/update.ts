@@ -1,5 +1,5 @@
 /*
- * updateNotifier – notifications about the updates
+ * update – notifications about the updates
  */
 
 import { app, Notification, shell, net } from 'electron';
