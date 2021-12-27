@@ -29,7 +29,7 @@
         }).then((motd) => {
             const motdLocal = motd[navigator.language] ?? motd.en
             const element = document.getElementById('motd');
-            element.innerHTML = motdLocal[Math.round(Math.random() * (motdLocal.length - 1))];
+            element.innerHTML = motdLocal[Math.floor(Math.random() * motdLocal.length)];
         });
     </script>
 </body>
