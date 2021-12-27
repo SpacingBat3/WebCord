@@ -1,9 +1,8 @@
-import { app, BrowserWindow, ipcMain, session } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
-import { appInfo, getBuildInfo } from '../modules/client';
-
-import l10n from '../../modules/l10n';
+import { appInfo } from '../modules/client';
+import { initWindow } from '../modules/parent';
 
 function handleEvents(docsWindow: BrowserWindow) {
     // Guess correct Readme.md file
@@ -20,39 +19,15 @@ function handleEvents(docsWindow: BrowserWindow) {
     })
 }
 
-export default async function loadDocsWindow(parent: BrowserWindow):Promise<BrowserWindow|undefined> {
-    if(!app.isReady) await app.whenReady();
-    if(parent.getChildWindows().length !== 0) return;
-    const strings = (new l10n()).client;
-    if(!parent.isVisible()) parent.show();
-    const docsWindow = new BrowserWindow({
-        title: app.getName() + ' – ' + strings.help.docs,
-        show: false,
-        parent: parent,
-        modal: true,
+export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow|undefined {
+    const docsWindow = initWindow("docs", parent, {
         minWidth: appInfo.minWinWidth,
 		minHeight: appInfo.minWinHeight,
         width: 800,
-        height: 720,
-        backgroundColor: appInfo.backgroundColor,
-        webPreferences: {
-            session: session.fromPartition("temp:docs"),
-            preload: resolve(app.getAppPath(), 'sources/app/renderer/preload/docs.js'),
-            defaultFontFamily: {
-                standard: 'Arial' // `sans-serif` as default font.
-            }
-        }
+        height: 720
     });
-    docsWindow.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/docs.html'));
+    if(docsWindow === undefined) return;
     handleEvents(docsWindow);
     docsWindow.webContents.on('did-start-loading', () => handleEvents(docsWindow));
-    docsWindow.webContents.session.setPermissionCheckHandler(() => false);
-    docsWindow.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => {
-        callback(false);
-    });
-    docsWindow.webContents.session.setDevicePermissionHandler(()=> false);
-    docsWindow.setAutoHideMenuBar(true);
-    docsWindow.setMenuBarVisibility(false);
-    if(getBuildInfo().type === 'release') docsWindow.removeMenu();
     return docsWindow
 }

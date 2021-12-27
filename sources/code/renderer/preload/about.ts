@@ -1,6 +1,6 @@
 import { ipcRenderer as ipc } from "electron";
 import { buildInfo } from "../../global/global";
-import L10N from "../../modules/l10n";
+import L10N from "../../global/modules/l10n";
 /*import { createHash } from "crypto";
 
 export function getGithubAvatarUrl(user:string) {

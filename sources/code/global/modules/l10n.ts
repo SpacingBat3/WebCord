@@ -5,7 +5,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { deepmerge } from "deepmerge-ts";
 import { app } from "electron";
-import { jsonOrJsonc, objectsAreSameType } from "../global/global";
+import { jsonOrJsonc, objectsAreSameType } from "../global";
 import { EventEmitter } from "events";
 import { resolve } from "path";
 
@@ -164,6 +164,12 @@ class l10n {
 				mobileMode: "Hide side bar"
 			}
 		},
+		/** Child windows declarations. */
+		windows: {
+			settings: "Settings",
+			about: "About",
+			docs: "Documentation"
+		},
 		/** GTK / Terminal dialogs, warnings, errors etc. */
 		dialog: {
 			common: {
@@ -204,17 +210,13 @@ class l10n {
 		/** Help menu (in menubar and partialy in tray context menu) */
 		help: {
 			groupName: "Help",
-			about: "About",
 			repo: "Repository",
-			docs: "Documentation",
 			bugs: "Report a bug",
 			contributors: "Authors and contributors:",
 			credits: "Thanks to GyozaGuy for his Electron Discord app – it was a good source to learn about the Electron API and how make with it a Discord web app."
 		},
 		/** HTML-based configuration window */
 		settings: {
-			/** Title-bar translations. */
-			title: "Settings",
 			basic: {
 				name: "Basic",
 				group: {

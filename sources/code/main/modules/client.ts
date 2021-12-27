@@ -5,7 +5,7 @@
 import { app } from 'electron';
 import { resolve } from 'path';
 import { buildInfo, isBuildInfo } from '../../global/global';
-import packageJson, { Person } from '../../modules/package';
+import packageJson, { Person } from '../../global/modules/package';
 import { readFileSync } from 'fs';
 
 export function getBuildInfo(): buildInfo {

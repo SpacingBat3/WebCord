@@ -169,7 +169,7 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
         return (this.checkPackageJsonComplete(object) === "")
     }
     constructor(keys: T) {
-        const packageJSON: unknown = JSON.parse(readFileSync(resolve(__dirname, "../../../package.json")).toString());
+        const packageJSON: unknown = JSON.parse(readFileSync(resolve(__dirname, "../../../../package.json")).toString());
         if (!this.isPackageJsonComplete(packageJSON))
             throw new TypeError(this.checkPackageJsonComplete("While parsing `package.json`: "+packageJSON));
         const newObj = ({} as Pick<PackageJsonProperties, T[number]>)

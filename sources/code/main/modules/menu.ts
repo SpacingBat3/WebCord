@@ -24,12 +24,11 @@ import { AppConfig } from './config';
 
 const appConfig = new AppConfig()
 
-import { loadNodeAddons, loadChromeAddons } from './addons';
 import fetch from 'electron-fetch';
 import * as os from 'os';
 import { EventEmitter } from 'events';
-import { createGithubIssue } from '../../modules/bug';
-import l10n from '../../modules/l10n';
+import { createGithubIssue } from '../../global/modules/bug';
+import l10n from '../../global/modules/l10n';
 import loadSettingsWindow from '../windows/settings';
 import loadDocsWindow from '../windows/docs';
 import showAboutPanel from '../windows/about';
@@ -145,12 +144,12 @@ export async function tray(parent: BrowserWindow): Promise<Tray> {
 		},
 		{ type: 'separator' },
 		{
-			label: strings.help.about,
+			label: strings.windows.about,
 			role: 'about',
 			click: () => showAboutPanel(parent)
 		},
 		{
-			label: strings.help.docs,
+			label: strings.windows.docs,
 			click: () => loadDocsWindow(parent)
 		},
 		{
@@ -194,25 +193,14 @@ export function bar(repoLink: string, parent: BrowserWindow): Menu {
 			label: strings.menubar.file.groupName, submenu: [
 				// Settings
 				{
-					label: strings.settings.title,
+					label: strings.windows.settings,
 					click: () => loadSettingsWindow(parent)
 				},
 				// Extensions (Work In Progress state)
 				{
-					label: strings.menubar.file.addon.groupName, visible: devel || appConfig.get().devel, submenu: [
-						// Node-based extensions
-						{
-							label: strings.menubar.file.addon.loadNode,
-							enabled: devel,
-							click: () => loadNodeAddons(parent)
-						},
-						// Chrome/Chromium extensions
-						{
-							label: strings.menubar.file.addon.loadChrome,
-							enabled: devel,
-							click: () => loadChromeAddons(parent)
-						}
-					]
+					label: strings.menubar.file.addon.groupName,
+					visible: devel || appConfig.get().devel,
+					//click: () => {}
 				},
 				{ type: 'separator' },
 				// Reset
@@ -311,11 +299,11 @@ export function bar(repoLink: string, parent: BrowserWindow): Menu {
 		{
 			label: strings.help.groupName, role: 'help', submenu: [
 				// About
-				{ label: strings.help.about, role: 'about', click: () => showAboutPanel(parent)},
+				{ label: strings.windows.settings, role: 'about', click: () => showAboutPanel(parent)},
 				// Repository
 				{ label: strings.help.repo, click: () => shell.openExternal(webLink) },
 				// Documentation
-				{ label: strings.help.docs, click: () => loadDocsWindow(parent) },
+				{ label: strings.windows.docs, click: () => loadDocsWindow(parent) },
 				// Report a bug
 				{ label: strings.help.bugs, click: () => createGithubIssue() }
 			]

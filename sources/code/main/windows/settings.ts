@@ -1,8 +1,9 @@
-import { app, ipcMain, BrowserWindow, session } from "electron";
+import { ipcMain, BrowserWindow } from "electron";
 import { AppConfig } from '../modules/config';
 import { HTMLSettingsGroup, HTMLChecklistForms, HTMLChecklistOption, knownIstancesList, HTMLRadioForms } from '../../global/global';
 import { appInfo, getBuildInfo } from '../modules/client';
-import l10n from '../../modules/l10n';
+import l10n from '../../global/modules/l10n';
+import { initWindow } from "../modules/parent";
 
 const appConfig = new AppConfig();
 
@@ -186,43 +187,17 @@ function conf2html (config:AppConfig) {
 }
 
 export default async function loadSettingsWindow(parent:BrowserWindow):Promise<BrowserWindow|undefined> {
-	if(!app.isReady) await app.whenReady();
-	if(parent.getChildWindows().length !== 0) return;
-	const strings = (new l10n().client);
 	const configWithStrings = conf2html(appConfig);
 	if(!parent.isVisible()) parent.show();
-	const settingsWindow = new BrowserWindow({
-		title: app.getName()+" – "+strings.settings.title,
-		icon: appInfo.icon,
-		show: false,
-		backgroundColor: appInfo.backgroundColor,
-		parent: parent,
-		modal: true,
+	const settingsWindow = initWindow("settings", parent, {
 		minWidth: appInfo.minWinWidth,
 		minHeight: appInfo.minWinHeight,
-		webPreferences: {
-			session: session.fromPartition("temp:settings"),
-			preload: app.getAppPath()+"/sources/app/renderer/preload/settings.js",
-			defaultFontFamily: {
-                standard: 'Arial' // `sans-serif` as default font.
-            }
-		}
-	});
-	if(settingsWindow.webContents.session === parent.webContents.session)
-        throw new Error("Child took session from parent!")
-	settingsWindow.setAutoHideMenuBar(true);
-    settingsWindow.setMenuBarVisibility(false);
-    if(getBuildInfo().type === 'release') settingsWindow.removeMenu();
-	settingsWindow.webContents.loadFile('sources/assets/web/html/settings.html');
+	})
+	if(settingsWindow === undefined) return;
 	ipcMain.on('settings-generate-html', (event) => { 
 		if(!settingsWindow.isDestroyed()) settingsWindow.show();
 		event.reply('settings-generate-html', configWithStrings)
 	})
-	settingsWindow.webContents.session.setPermissionCheckHandler(() => false);
-	settingsWindow.webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => {
-        return callback(false);
-    });
-	settingsWindow.webContents.session.setDevicePermissionHandler(()=> false);
     return settingsWindow;
 }
 

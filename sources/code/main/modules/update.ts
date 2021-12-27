@@ -5,7 +5,7 @@
 import { app, Notification, shell, net } from 'electron';
 import { appInfo, getBuildInfo } from './client';
 import fetch from 'electron-fetch';
-import l10n from '../../modules/l10n';
+import l10n from '../../global/modules/l10n';
 import * as semver from 'semver';
 import { blue, bold } from 'colors/safe';
 

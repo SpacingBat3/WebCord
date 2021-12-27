@@ -1,44 +1,25 @@
 //import { packageJson } from '../../global';
-import { app, BrowserWindow, ipcMain as ipc, screen, session } from 'electron';
-import { resolve } from "path";
-import { appInfo, getBuildInfo } from '../modules/client';
+import { app, BrowserWindow, ipcMain as ipc, screen } from 'electron';
+import { getBuildInfo } from '../modules/client';
+import { initWindow } from '../modules/parent';
 //import l10n from '../../modules/l10n';
 
 // "About" Panel:
 
-export default async function showAboutPanel(parent:BrowserWindow): Promise<BrowserWindow|undefined> {
-    if(!app.isReady) await app.whenReady();
-    console.dir(parent.getChildWindows().length)
-    if(parent.getChildWindows().length !== 0) return;
+export default function showAboutPanel(parent:BrowserWindow): BrowserWindow|undefined {
     const screenBounds = screen.getPrimaryDisplay().size
     const [width, height] = [
         (screenBounds.width < 600 ? screenBounds.width : 600),
         (screenBounds.height < 480 ? screenBounds.height : 480)
     ]
-    if(!parent.isVisible()) parent.show();
-    const aboutPanel = new BrowserWindow ({
+    const aboutPanel = initWindow("about", parent, {
         width,
         height,
         resizable: false,
         fullscreenable: false,
-        frame: false,
-        show: false,
-        parent,
-        modal: true,
-        backgroundColor: appInfo.backgroundColor,
-        icon: appInfo.icon,
-        webPreferences: {
-            session: session.fromPartition("temp:about"),
-            preload: resolve(app.getAppPath(), "sources/app/renderer/preload/about.js"),
-            defaultFontFamily: {
-                standard: 'Arial' // `sans-serif` as default font.
-            }
-        }
+        frame: false
     });
-    aboutPanel.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/about.html"));
-    aboutPanel.setAutoHideMenuBar(true);
-    aboutPanel.setMenuBarVisibility(false);
-    if (getBuildInfo().type !== "devel") aboutPanel.removeMenu();
+    if(aboutPanel === undefined) return;
     ipc.once("about.close", () => {
         if(!aboutPanel.isDestroyed()) aboutPanel.close();
     });

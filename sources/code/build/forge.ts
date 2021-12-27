@@ -5,7 +5,7 @@
 // Let's import some keys from the package.json:
 
 import { buildInfo } from '../global/global';
-import packageJson from '../modules/package';
+import packageJson from '../global/modules/package';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path'
 import { ForgeConfigFile } from './forge.d';

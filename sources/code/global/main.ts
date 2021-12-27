@@ -24,7 +24,7 @@ import('source-map-support').then(sMap => sMap.install());
  * information).
  */
 
-import('../modules/error').then(eHand => eHand.default());
+import('./modules/error').then(eHand => eHand.default());
 
 // Optional debug logging implementation by overwritting the global `console` method.
 console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
@@ -64,7 +64,7 @@ import { app, BrowserWindow, dialog, shell } from 'electron';
 import { promises as fs } from 'fs';
 import { knownIstancesList, trustedProtocolRegExp } from './global';
 import { checkVersion } from '../main/modules/update';
-import l10n from '../modules/l10n';
+import l10n from './modules/l10n';
 import createMainWindow from "../main/windows/main";
 import { AppConfig } from '../main/modules/config';
 import * as colors from 'colors/safe';
@@ -176,7 +176,10 @@ app.on('window-all-closed', () => {
 
 // Global `webContents` defaults for hardened security
 app.on('web-contents-created', (_event, webContents) => {
-
+    // Block all permission requests/checks by the default.
+    webContents.session.setPermissionCheckHandler(() => false);
+    webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => callback(false));
+    webContents.session.setDevicePermissionHandler(() => false);
     // Block navigation to the different origin.
     webContents.on('will-navigate', (event, url) => {
         const originUrl = webContents.getURL();

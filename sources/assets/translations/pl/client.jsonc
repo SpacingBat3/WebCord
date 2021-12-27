@@ -50,6 +50,12 @@
 			"mobileMode": "Ukryj pasek boczny"
 		}
 	},
+	/* Tłumaczenia tytułów okien. */
+	"windows": {
+		"about": "O aplikacji",
+		"settings": "Ustawienia",
+		"docs": "Dokumentacja"
+	},
 	/* Tłumaczenie dialogów (błędy, ostrzeżenia, aktualizacje itp.) */
 	"dialog": {
 		"common": {
@@ -89,16 +95,13 @@
 	/* Menu pomocy (na pasku menu i częściowo w menu ikony zasobnika systemowego). */
 	"help":{
 		"groupName": "Pomoc",
-		"about": "O aplikacji",
 		"repo": "Repozytorium",
-		"docs": "Dokumentacja",
 		"bugs": "Zgłoś błąd",
 		"contributors": "Autorzy i osoby wnoszące wkład:",
 		"credits": "Podziękowania dla GyozaGuy za jego aplikację webową dla Discorda – była dobrym źródłem do dokształcenia się z Elektrona i z jego powiązań z Discordem."
 	},
 	/* Tłumaczenie dla okna ustawień. */
 	"settings": {
-		"title": "Ustawienia",
 		"basic": {
 			"name": "Podstawowe",
 			"group": {
