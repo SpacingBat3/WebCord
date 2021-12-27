@@ -299,7 +299,7 @@ export function bar(repoLink: string, parent: BrowserWindow): Menu {
 		{
 			label: strings.help.groupName, role: 'help', submenu: [
 				// About
-				{ label: strings.windows.settings, role: 'about', click: () => showAboutPanel(parent)},
+				{ label: strings.windows.about, role: 'about', click: () => showAboutPanel(parent)},
 				// Repository
 				{ label: strings.help.repo, click: () => shell.openExternal(webLink) },
 				// Documentation
