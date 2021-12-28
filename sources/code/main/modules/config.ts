@@ -129,24 +129,36 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
      * An object containing width and height of the window watched by `WinStateKeeper`
      */
     public initState: Readonly<windowStatus>;
-    private setState(window: BrowserWindow) { 
-        if(window.isMaximized()) {
-            this.set({
-                [this.windowName]: {
-                    width: this.get()[this.windowName].width,
-                    height: this.get()[this.windowName].height,
-                    isMaximized: true
-                }
-            })
-        } else {
-            this.set({
-                [this.windowName]: {
-                    width: window.getNormalBounds().width,
-                    height: window.getNormalBounds().height,
-                    isMaximized: false
-                }
-            });
+    private setState(window: BrowserWindow, eventType?: string) {
+        // Workaround: fix `*maximize` events being detected as `resize`:
+        let event = eventType
+        if(eventType === "resize" && window.isMaximized())
+            event = "maximize";
+        else if (eventType === "resize" && this.get()[this.windowName].isMaximized)
+            event = "unmaximize";
+        switch(event) {
+            case "maximize":
+            case "unmaximize":
+                this.set({
+                    [this.windowName]: {
+                        width: this.get()[this.windowName].width,
+                        height: this.get()[this.windowName].height,
+                        isMaximized: window.isMaximized()
+                    }
+                })
+                break;
+            default:
+                this.set({
+                    [this.windowName]: {
+                        width: window.getNormalBounds().width,
+                        height: window.getNormalBounds().height,
+                        isMaximized: window.isMaximized()
+                    }
+                });   
         }
+        console.debug("[WIN] State changed to: "+JSON.stringify(this.get()[this.windowName]));
+        console.debug("[WIN] Electron event: "+eventType);
+        if(event !== eventType) console.debug("[WIN] Actual event calculated by WebCord: "+event);
     }
 
     /**
@@ -156,9 +168,11 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
      */
 
     public watchState(window: BrowserWindow):void {
-        window.on('resize', () => { this.setState(window) });
-        window.on('unmaximize', () => { this.setState(window) });
-        window.on('maximize', () => { this.setState(window) });
+        // Timeout is needed to give some time for resize to end on Linux:
+        window.on('resize', () => setTimeout(()=>this.setState(window, 'resize'),100));
+        window.on('unmaximize', () => this.setState(window, 'unmaximize'));
+        window.on('maximize', () => this.setState(window, 'maximize'));
+        window.on('responsive', ()=> console.log("test1"))
     }
 
     /**
