@@ -1,12 +1,8 @@
-@import url('../../../../node_modules/twemoji-colr-font/twemoji.css');
-@import url('../../../../node_modules/@fontsource/roboto/index.css');
-@import url('../../../../node_modules/@fontsource/ubuntu/index.css');
-@import url('../../../../node_modules/@fontsource/source-code-pro/index.css');
+@import url("fonts.css");
 
 :root {
     --color-accent: #4185D3;
-    --color-accent-light: #8CCAFF;
-    --color-accent-light-bg: #8CCAFF11;
+    --color-accent-light: 140, 202, 255;
     --color-bg-primary: #36393F;
     --color-bg-secondary: #2F3136;
     --color-bg-border: #1B1C1F;
@@ -16,9 +12,7 @@
     --color-font-header: #fff;
     --color-link: #00A3E3;
     --color-input-bg: #484C52;
-    --font-primary: 'Roboto',Arial,sans-serif, Twemoji;
-    --font-display: 'Ubuntu',Arial,sans-serif, Twemoji;
-    --font-code: 'Source Code Pro',Courier,monospace, Twemoji;
+    --scrollbar-width: 8px;
 }
 
 html {
@@ -38,8 +32,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
     background-color: var(--color-bg-secondary);
     border-radius: 25px;
 }

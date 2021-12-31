@@ -7,11 +7,11 @@
     --border-width: 2px;
     --nav-width: 60vw;
     --nav-elements: 3;
+    --animation: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
     font-size: var(--font-size-factor);
-    text-align: center;
 }
 h3, p, li {
     margin-bottom: var(--font-size-factor);
@@ -52,9 +52,10 @@ header > * {
     -webkit-app-region: no-drag;
 }
 
-picture#logo > img {
+img#logo {
     width: var(--logo-size-factor);
     height: var(--logo-size-factor);
+    align-self: center;
 }
 
 main {
@@ -65,8 +66,9 @@ main {
     margin-top: var(--header-height);
     height: calc(100vh - var(--header-height) -  2*var(--border-width));
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
     scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
     border: var(--color-bg-secondary) solid var(--border-width);
 }
 
@@ -74,9 +76,15 @@ main > article {
     display:flex;
     flex-shrink: 0;
     width: calc(100vw - 16px - 2*var(--border-width));
+    height: calc(100vh - 32 - var(--header-height) - 2*var(--border-width));
     flex-flow: column nowrap;
-    align-items: center;
     padding: 16px 8px;
+    scroll-snap-align: center;
+    overflow-y: overlay;
+}
+
+main > article#about, header {
+    text-align: center;
 }
 
 h1 {
@@ -87,7 +95,8 @@ h2 {
     font-size: calc(var(--font-size-factor) * 1.2)
 }
 h3 {
-    font-size: calc(var(--font-size-factor) * 1.1)
+    font-size: calc(var(--font-size-factor) * 1.1);
+    margin-bottom: -.5em
 }
 h1 ~ h2 {
     margin-top: -.5em;
@@ -100,7 +109,7 @@ nav {
     display: flex;
 }
 
-nav > div > div.content {
+nav > div div.content {
     font-family: 'Ubuntu';
     color: var(--color-font-settings);
     font-size: var(--font-size-factor);
@@ -111,34 +120,39 @@ nav > div > div.content {
     margin-bottom: -2px;
 }
 
-nav > div > div.content:hover, nav > div.selected > div.content {
-    background-color: var(--color-accent-light-bg);;
-    transition: background-color cubic-bezier(0.4, 0, 0.2, 1) 0.25s;
+nav > div div.content:hover {
+    background-color: rgba(255,255,255,.075);
+    transition: background-color var(--animation) 0.25s;
 }
 
-nav > div.selected > div.content {
-    color: var(--color-accent-light);
-    transition: color cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+nav > div.selected div.content {
+    color: rgb(var(--color-accent-light));
+    background-color: rgba(var(--color-accent-light), 0.05);
+    transition: background-color var(--animation) 0.25s, color var(--animation) 0.1s;
 }
 
-nav > div > div.line {
+nav > div.selected div.content:hover {
+    background-color: rgba(var(--color-accent-light), .1);
+    transition: background-color var(--animation) 0.25s;
+}
+
+nav > div div.line {
     width: 0%;
     height: 2px;
-    background-color: var(--color-accent-light);
+    background-color: rgb(var(--color-accent-light));
     position:static;
     bottom: 2px;
     margin-left: auto;
     margin-right: auto;
 }
 
-nav > div.selected > div.line {
+nav > div.selected div.line {
     width: 100%;
-    transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.25s;
+    transition: width var(--animation) 0.25s;
 }
 
 div.person {
     display: flex;
-
 }
 
 img#closebutton {
@@ -157,4 +171,8 @@ img#closebutton:hover {
 
 img.profilePicture {
     border-radius: 100%;
+}
+
+body {
+    display: none;
 }
