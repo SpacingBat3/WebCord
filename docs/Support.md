@@ -8,24 +8,35 @@ Linux distribution you're installing my application – both ARM and X86 compute
 are supported. Please note that Electron deprecates the 32-bit X86 architecture,
 so the support for it may be dropped by me as well.
 
-### Windows and MacOS
+### Windows
 
-These two platfroms aren't officially supported yet – you may expect I won't fix
-all of the issues that are specific to this platforms only. I may release
-binaries for these platforms as well, but don't expect they're going to be
-supported by me – if any issue that is specific to the one of these platform is
-started on the project's [GitHub repository][repo], it might be closed and/or
-flagged as `wontfix` without any explaination or answer.
+This is yet another platform to which I may give some attention to as I'm able
+to test how my application works on it. It's support might still not be as great
+as on Linux, but I'll give my best to fix most or all issues that are specific
+to it.
 
-### Non-GNU Linux distributions
+### MacOS
 
+Because I don't own any macOS device, I am not able to provide the official
+support to this platform. That doesn't mean that app won't work on the macOS at
+all – I will provide the binaries for it and try to make my software at least
+usable for the macOS computers by not writing any platform-specific code that
+could cause the incompatibility with the Apple devices. However, I may not fix
+any of the reported issues that I won't be able to reproduce on other platforms.
+
+### Musl libc based Linux distributions
+
+Unfortunatelly, there's no official Electron release built under musl libc,
+althrough it might be possible to compile it, at least for some Electron
+releases. See [`electron/electron #9662`][issue9662] for further details.
 
 ### FreeBSD
 
 Currently Electron isn't officially supported on FreeBSD. Electron was
-previously available in freshports, there's currently no Electron 14+ releases
-here, so it doesn't seems to be supported there anymore. Also see
-[electron/electron #3797][issue3797].
+previously available in freshports, but now there're no Electron 14+ releases
+here, so it doesn't seems to be maintaned here anymore. Also see
+[`electron/electron #3797`][issue3797].
 
 [repo]: https://github.com/SpacingBat3/WebCord "Github: SpacingBat3/WebCord"
-[issue3797]: https://github.com/electron/electron/issues/3797 "Add FreeBSD support to electron."
+[issue3797]: https://github.com/electron/electron/issues/3797 "Add FreeBSD support to electron • Issue #3797 • electron/electron"
+[issue9662]: https://github.com/electron/electron/issues/9662 "musl libc support • Issue #9662 • electron/electron"
