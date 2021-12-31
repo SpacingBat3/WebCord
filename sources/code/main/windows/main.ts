@@ -55,7 +55,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         console.error(bold('[ERROR]')+' '+errorDescription+' ('+(errorCode*-1)+')');
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
-                clearTimeout(retry);
+                clearInterval(retry);
                 win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) });
             }
         }, 1000);

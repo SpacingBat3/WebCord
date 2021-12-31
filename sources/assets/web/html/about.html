@@ -46,6 +46,7 @@
         </article>
     </main>
     <script>        
+        /** @param {string} id */
         function select(id) {
             console.log(id);
             const element = document.getElementById(id);
@@ -54,11 +55,15 @@
             const allNavs = document.querySelectorAll("nav > div")
             if(element && nav) {
                 if(!nav.classList.toString().includes("selected"))
-                    element.scrollIntoView();
+                    scrollToElement(element)
                 for(const anyNav of allNavs)
                     anyNav.classList.remove("selected");
                 nav.classList.add("selected");
             }
+        }
+        /** @param {HTMLElement} element */
+        function scrollToElement(element) {
+            element.parentElement.scrollLeft = element.offsetLeft
         }
         for(const element of document.querySelectorAll("nav > div")) {
             element.addEventListener("click", () => select(element.id.replace("-nav","")));

@@ -4,7 +4,10 @@ import * as colors from "colors/safe";
 /* Handles uncaughtException errors */
 
 export default function uncaughtExceptionHandler(): void {
+    process.removeAllListeners('uncaughtException');
     process.on('uncaughtException', async (error:Error&NodeJS.ErrnoException) => {
+        let wasReady = false;
+        if(app.isReady()) wasReady = true;
         let stack = "", message = "", stackColor = "";
         const name = "UncaughtException: " + app.getName() + " threw '" + error.name + "'.";
         if (error.message !== "")
@@ -36,9 +39,8 @@ export default function uncaughtExceptionHandler(): void {
                 stack = stackProcessed.join('\n');
             stackColor = stackColorProcessed.join('\n');
         }
-
-        await app.whenReady();
-        console.error('\n' + colors.red(colors.bold(name)) + colors.blue(message) + stackColor);
+        if(!app.isReady()) await app.whenReady();
+        if(wasReady) console.error('\n' + colors.red(colors.bold(name)) + colors.blue(message) + stackColor);
         dialog.showMessageBoxSync({
             title: name,
             message: error.message + stack,

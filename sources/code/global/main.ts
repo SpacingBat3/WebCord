@@ -11,9 +11,9 @@
  * it will load before Electron will print any error.
  */
 
-import('source-map-support').then(sMap => sMap.install());
-
-/**
+import { install } from 'source-map-support';
+install();
+/*
  * Handle "crashes".
  * 
  * This module should be loaded and initalized before
@@ -24,7 +24,8 @@ import('source-map-support').then(sMap => sMap.install());
  * information).
  */
 
-import('../main/modules/error').then(eHand => eHand.default());
+import crash from '../main/modules/error';
+crash();
 
 // Optional debug logging implementation by overwritting the global `console` method.
 console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
