@@ -4,8 +4,21 @@
         "description": "Proszę sprawdzić połączenie z internetem."
     },
     "aboutWindow": {
-        "about": "O aplikacji",
-        "contributors": "Współtwórcy",
-        "licenses": "Licencje"	
+        "about": {
+            "nav": "O aplikacji"
+        },
+        "contributors": {
+            "nav": "Współtwórcy"
+        },
+        "licenses": {
+            "nav": "Licencje",
+            "appLicenseTitle": "Licencja aplikacji",
+            "appLicenseBody": "%s jest wolnym oprogramowaniem: możesz swobodnie modyfikować i rozpowszechniać to oprogramowanie zgodnie z warunkami licencji MIT, która powinna być dostarczona wraz z tym oprogramowaniem.",
+            "showLicense": "Pokaż licencję",
+            "thirdPartyLicensesTitle": "Licencje firm trzecich",
+            "thirdPartyLicensesBody": "%s jest zależny od następującego oprogramowania firm trzecich:",
+            "licensedUnder": "na licencji %s",
+            "packageAuthors": "autorzy %s"
+        }
     }
 }

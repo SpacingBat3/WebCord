@@ -2,7 +2,7 @@
 import { app, BrowserWindow, ipcMain as ipc, screen } from 'electron';
 import { getBuildInfo } from '../modules/client';
 import { initWindow } from '../modules/parent';
-//import l10n from '../../modules/l10n';
+//import l10n from '../../global/modules/l10n';
 
 // "About" Panel:
 
@@ -24,14 +24,21 @@ export default function showAboutPanel(parent:BrowserWindow): BrowserWindow|unde
         if(!aboutPanel.isDestroyed()) aboutPanel.close();
     });
     ipc.once("about.readyToShow", () => {
-        if(!aboutPanel.isDestroyed()) aboutPanel.show()
+        if(!aboutPanel.isDestroyed())
+            aboutPanel.show();
     });
     ipc.on("about.getDetails", (event) => {
-        event.reply("about.getDetails", {
-            appName: app.getName(),
-            appVersion: app.getVersion(),
-            buildInfo: getBuildInfo()
-        });
+        if(!aboutPanel.isDestroyed())
+            event.reply("about.getDetails", {
+                appName: app.getName(),
+                appVersion: app.getVersion(),
+                buildInfo: getBuildInfo()
+            });
+    });
+    aboutPanel.once("close", () => {
+        ipc.removeAllListeners("about.getDetails");
+        ipc.removeAllListeners("about.readyToShow");
+        ipc.removeAllListeners("about.close");
     });
     return aboutPanel;
 }

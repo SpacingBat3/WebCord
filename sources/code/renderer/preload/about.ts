@@ -1,15 +1,41 @@
 import { ipcRenderer as ipc } from "electron";
 import { buildInfo, getAppIcon } from "../../global/global";
+import { getAppPath } from "../../global/modules/electron";
+import { resolve } from "path";
 import L10N from "../../global/modules/l10n";
+import { PackageJSON, Person } from "../../global/modules/package";
 /*import { createHash } from "crypto";
 
-export function getGithubAvatarUrl(user:string) {
+function getGithubAvatarUrl(user:string) {
     return "https://github.com/"+user+".png"
 }
 
-export function getGravatarUrl(email:string) {
+function getGravatarUrl(email:string) {
     return "https://gravatar.com/"+createHash("md5").update(email).digest('hex')
 }*/
+
+function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], name:string) {
+    const packageJson = new PackageJSON(["dependencies", "devDependencies"]);
+    for (const id of ["appLicenseTitle","appLicenseBody","thirdPartyLicensesTitle", "thirdPartyLicensesBody"]) {
+        const element = document.getElementById(id)
+        if(element) 
+            element.innerText = l10n.licenses[id as keyof typeof l10n.licenses]
+                .replace("%s",name);
+    }
+    for (const packName in packageJson.data.dependencies) {
+        const {data} = new PackageJSON(
+            ["author", "license"],
+            resolve(getAppPath(), "node_modules/"+packName+"/package.json")
+        )
+        const title = document.createElement("h3");
+        const copy = document.createElement("p");
+        title.innerText = packName;
+        copy.innerText = "© " +
+            new Person(data.author ?? '"'+l10n.licenses.packageAuthors.replace("%s", packName)+'"').name + " " + l10n.licenses.licensedUnder.replace("%s",data.license)
+        document.getElementById("licenses")?.appendChild(title);
+        document.getElementById("licenses")?.appendChild(copy);
+    }
+}
 
 // Continue only on the local sites.
 if(window.location.protocol !== "file:") {
@@ -31,9 +57,10 @@ window.addEventListener("load", () => {
 
 ipc.on("about.getDetails", (_event, details:{appName: string, appVersion: string, buildInfo: buildInfo, responseId: number}) => {
     const l10n = new L10N().web.aboutWindow;
+    // Header sections names
     for(const div of document.querySelectorAll<HTMLDivElement>("nav > div")) {
         const content = div.querySelector<HTMLDivElement>("div.content");
-        if(content) content.innerText = l10n[(div.id.replace("-nav","") as keyof typeof l10n)]
+        if(content) content.innerText = l10n[(div.id.replace("-nav","") as keyof typeof l10n)].nav
     }
     const nameElement = document.getElementById("appName");
     const versionElement = document.getElementById("appVersion");

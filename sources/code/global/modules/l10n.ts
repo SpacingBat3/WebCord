@@ -38,11 +38,11 @@ langDialog.once('show-error', (localizedStrings: string) => {
 
 class l10n {
 	/** An object containing the localized phrases used by the client (main process). */
-	private loadFile<T extends keyof l10n>(type: T): l10n[T] {
+	private loadFile<T extends keyof typeof this>(type: T): typeof this[T] {
 		/**
 		 * Computed strings (mixed localized and fallback object)
 		 */
-		let finalStrings: l10n[T] | unknown = this[type];
+		let finalStrings: typeof this[T] | unknown = this[type];
 		/**
 		 * Translated strings in the user TranslatedStringsuage.
 		 * 
@@ -75,10 +75,6 @@ class l10n {
 			langDialog.emit('show-error', internalStringsFile);
 			return this[type];
 		}
-	}
-	constructor() {
-		this.client = this.loadFile('client');
-		this.web = this.loadFile('web');
 	}
 	public client = {
 		/** Tray menu. */
@@ -268,11 +264,28 @@ class l10n {
 			description: "Please make sure you're connected to the internet."
 		},
 		aboutWindow: {
-			about: "About",
-			contributors: "Contributors",
-			licenses: "Licenses"	
+			about: {
+				nav: "About"
+			},
+			contributors: {
+				nav: "Contributors"
+			},
+			licenses: {
+				nav: "Licenses",
+				appLicenseTitle: "Application license",
+				appLicenseBody: "%s is a free software: you can use, modify and redistribute it under terms of MIT license, which should be distributed with this software.",
+				showLicense: "Show license",
+				thirdPartyLicensesTitle: "Third party licenses",
+				thirdPartyLicensesBody: "%s depends on following third party software:",
+				licensedUnder: "under %s license",
+				packageAuthors: "%s authors"
+			},
 		}
 	};
+	constructor() {
+		this.client = this.loadFile('client');
+		this.web = this.loadFile('web');
+	}
 }
 
 export default l10n;
