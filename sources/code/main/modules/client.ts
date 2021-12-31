@@ -21,18 +21,12 @@ export function getBuildInfo(): buildInfo {
 	}
 }
 
-function person2string(person: Person) {
-	if (person.name)
-		return person.name;
-	return person;
-}
-
 /** Basic application details. */
 export const appInfo = {
 	/** Application repository details */
 	repository: {
 		/** Repository indentifier in format `author/name`. */
-		name: person2string(packageJson.data.author) + '/' + app.getName(),
+		name: new Person(packageJson.data.author ?? "").name + '/' + app.getName(),
 		/** Web service on which app repository is published. */
 		provider: 'github.com'
 	},

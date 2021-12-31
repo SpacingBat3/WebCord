@@ -108,7 +108,7 @@ const config: ForgeConfigFile = {
       config: {
         prerelease: getBuildID() === "devel",
         repository: {
-          owner: packageJson.data.author.name,
+          owner: packageJson.data.author?.name ?? "SpacingBat3",
           name: "WebCord"
         },
         draft: getBuildID() === "release"
