@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { randomBytes } from "crypto";
-import { wLog } from "../../global/global";
+import { getAppIcon, wLog } from "../../global/global";
 import desktopCapturerPicker from "../modules/capturer";
 import preloadCosmetic from "../modules/cosmetic";
 import l10n from "../../global/modules/l10n";
@@ -23,14 +23,19 @@ contextBridge.exposeInMainWorld(
     }
 );
 
-if (window.location.protocol === 'file:')
+if (window.location.protocol === 'file:') {
+    window.addEventListener("load", () => {
+        const element = document.getElementById("logo")
+        if(element && element.tagName === "IMG")
+            (element as HTMLImageElement).src = getAppIcon([512,256,192]);
+    });
     contextBridge.exposeInMainWorld(
         'webcord',
         {
             l10n: (new l10n()).web
         }
     );
-
+}
 ipcRenderer.send('api-exposed', contextBridgeApiKey);
 
 wLog("Everything has been preloaded successfully!");

@@ -3,7 +3,8 @@
  */
 
 import { existsSync } from "fs";
-
+import { getAppPath } from "./modules/electron";
+import { resolve } from "path";
 
 /**
  * Outputs a fancy log message in the (DevTools) console.
@@ -205,4 +206,14 @@ export function isBuildInfo(object: unknown): object is buildInfo {
 					return false;
 
 	return true;
+}
+
+export function getAppIcon(sizes:number[]) {
+	const defaultPath = resolve(getAppPath(), "sources/assets/icons/app.png")
+	if(existsSync(defaultPath))
+		return defaultPath;
+	for (const size of sizes)
+		if(existsSync("/usr/share/icons/hicolor/"+size+"x"+size+"/apps/webcord.png"))
+			return "/usr/share/icons/hicolor/"+size+"x"+size+"/apps/webcord.png";
+	return "";
 }

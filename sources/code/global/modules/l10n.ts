@@ -7,43 +7,8 @@ import { deepmerge } from "deepmerge-ts";
 import { app } from "electron";
 import { jsonOrJsonc, objectsAreSameType } from "../global";
 import { EventEmitter } from "events";
-import { resolve } from "path";
+import { getAppPath, getLocale, getName, showMessageBox } from "./electron";
 
-/** The current application directory. Cross-process safe method. */
-function getAppPath(): string {
-	if (process.type === 'browser')
-		return app.getAppPath();
-	else
-		return resolve(__dirname + '../../../../');
-}
-
-/** Show a message box. Cross-process safe method. */
-function showMessageBox(options: Electron.MessageBoxOptions): void {
-	if (process.type === 'browser') {
-		import('electron').then(api => {
-			api.dialog.showMessageBox(options);
-		});
-	} else {
-		const title = options.title ? options.title + '\n' : '';
-		alert(title + options.message);
-	}
-}
-
-/** The current application locale. Cross-process safe method. */
-function getLocale(): string {
-	if (process.type === 'browser')
-		return app.getLocale();
-	else
-		return navigator.language;
-}
-
-/** The current application name. Cross-process safe method. */
-function getName(): string {
-	if (process.type === 'browser')
-		return app.getName();
-	else
-		return 'the application';
-}
 
 const langDialog = new EventEmitter();
 

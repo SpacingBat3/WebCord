@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from "electron";
-import { buildInfo } from "../../global/global";
+import { buildInfo, getAppIcon } from "../../global/global";
 import L10N from "../../global/modules/l10n";
 /*import { createHash } from "crypto";
 
@@ -38,7 +38,10 @@ ipc.on("about.getDetails", (_event, details:{appName: string, appVersion: string
     const nameElement = document.getElementById("appName");
     const versionElement = document.getElementById("appVersion");
     if(!nameElement || !versionElement) return;
-    nameElement.innerText = details.appName + " ("+details.buildInfo.type+")"
-    versionElement.innerText = details.appVersion + (details.buildInfo.commit ? "-"+details.buildInfo.commit.substring(0, 7) : "")
+    nameElement.innerText = details.appName + " ("+details.buildInfo.type+")";
+    versionElement.innerText = details.appVersion + (details.buildInfo.commit !== undefined ? "-"+details.buildInfo.commit.substring(0, 7) : "");
+    (document.getElementById("logo") as HTMLImageElement).src = getAppIcon([256,192,128,96])
+    generateLicenseContent(l10n, details.appName);
+    document.body.style.display = "initial";
     ipc.send("about.readyToShow");
 });
