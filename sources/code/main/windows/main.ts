@@ -109,61 +109,57 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // (Device) permissions check/request handlers:
     {
-        type permissionObject = ReturnType<AppConfig["get"]>["permissions"]
         /** List of domains, urls or protocols accepted by permission handlers. */
         const trustedURLs = [
             knownIstancesList[new AppConfig().get().currentInstance][1].origin,
             'devtools://'
         ];
-        win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin) => {
-            let websiteURL: string;
-            switch (permission) {
-                case "display-capture":
-                case "notifications":
-                case "media":
-                        if(Object.prototype.hasOwnProperty.call(configData.get().permissions, permission))
-                            return (configData.get().permissions)[permission as keyof permissionObject]
-                    break;
-                default:
+        const permissionHandler = function (webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null {
+            for (const secureURL of trustedURLs) {
+                if (new URL(webContentsUrl).origin !== new URL(secureURL).origin) {
                     return false;
-            }
-            (webContents !== null && webContents.getURL() !== "") ? websiteURL = webContents.getURL() : websiteURL = requestingOrigin;
-            // In some cases URL might be empty string, it should be denied then for that reason.
-            if (websiteURL === "")
-                return false;
-            const originURL = new URL(websiteURL).origin;
-            for (const secureURL of trustedURLs) {
-                if (originURL.startsWith(secureURL)) {
-                    return true;
-                }
-            }
-            console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, originURL, permission);
-            return false;
-        });
-        win.webContents.session.setPermissionRequestHandler((webContents, permission, callback, details) => {
-            for (const secureURL of trustedURLs) {
-                if (new URL(webContents.getURL()).origin !== new URL(secureURL).origin) {
-                    return callback(false);
                 }
                 switch (permission) {
                     case "media":{
-                        if(details.mediaTypes === undefined) break;
                         let callbackValue = true
-                        for(const type of details.mediaTypes)
-                            callbackValue = callbackValue &&
-                                configData.get().permissions[type];
-                        return callback(callbackValue);
+                        if("mediaTypes" in details) {
+                            if(details.mediaTypes === undefined) break;
+                            for(const type of details.mediaTypes)
+                                callbackValue = callbackValue && configData.get().permissions[type];
+                        } else if("mediaType" in details) {
+                            if(details.mediaType === undefined || details.mediaType === "unknown") break;
+                            callbackValue = callbackValue && configData.get().permissions[details.mediaType];
+                        } else {
+                            callbackValue = false;
+                        }
+                        return callbackValue;
                     }
                     case "display-capture":
                     case "notifications":
                     case "fullscreen":
-                        return callback(configData.get().permissions[permission]);
+                        return configData.get().permissions[permission];
                     default:
-                        return callback(false);
+                        return false;
                 }
             }
-            console.warn('[' + l10nStrings.dialog.common.warning.toLocaleUpperCase() + '] ' + l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
-            return callback(false);
+            return null;
+        }
+        win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
+            const requestUrl = (webContents !== null && webContents.getURL() !== "" ? webContents.getURL() : requestingOrigin);
+            const returnValue = permissionHandler(requestUrl,permission,details);
+            if(returnValue === null) {
+                console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, new URL(requestUrl), permission);
+                return false;
+            }
+            return returnValue;
+        });
+        win.webContents.session.setPermissionRequestHandler((webContents, permission, callback, details) => {
+            const returnValue = permissionHandler(webContents.getURL(), permission, details);
+            if(returnValue === null) {
+                console.warn('[' + l10nStrings.dialog.common.warning.toLocaleUpperCase() + '] ' + l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
+                return callback(false);
+            }
+            return callback(returnValue);
         });
         win.webContents.session.setDevicePermissionHandler(() => false);
     }
