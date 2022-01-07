@@ -24,6 +24,9 @@ usable for the macOS computers by not writing any platform-specific code that
 could cause the incompatibility with the Apple devices. However, I may not fix
 any of the reported issues that I won't be able to reproduce on other platforms.
 
+Workaround for the signing-issue `xattr -cr /Applications/WebCord.app`
+For related discussion see [`issue #78`](https://github.com/SpacingBat3/WebCord/issues/78)
+
 ### Musl libc based Linux distributions
 
 Unfortunatelly, there's no official Electron release built under musl libc,
