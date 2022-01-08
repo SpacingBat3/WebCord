@@ -1,9 +1,14 @@
-import { app, BrowserWindow, session, BrowserWindowConstructorOptions } from "electron";
+import { app, BrowserWindow, session } from "electron";
 import l10n from "../../global/modules/l10n";
 import { appInfo, getBuildInfo } from "./client";
 import { resolve } from "path";
 
-export function initWindow(name:string&keyof l10n["client"]["windows"], parent: BrowserWindow, properties?: BrowserWindowConstructorOptions) {
+/**
+ * Initializes the new `BrowserWindow` that will be a child of `mainWindow`.
+ * It will either create a such window or do nothing if it does already exists.
+ * 
+ */
+export function initWindow(name:string&keyof l10n["client"]["windows"], parent: Electron.BrowserWindow, properties?: Electron.BrowserWindowConstructorOptions) {
     if(!app.isReady) throw new Error("Tried to initialize a new parent window when app is not ready!")
     const wSession = session.fromPartition("temp:"+name)
     for (const window of parent.getChildWindows())

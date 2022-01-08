@@ -1,10 +1,13 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import { existsSync } from 'fs';
-import { resolve } from 'path';
-import { appInfo } from '../modules/client';
-import { initWindow } from '../modules/parent';
-
-function handleEvents(docsWindow: BrowserWindow) {
+async function handleEvents(docsWindow: Electron.BrowserWindow) {
+    const [
+        { existsSync },  // from "fs"
+        { resolve },     // from "path"
+        { app, ipcMain } // from "electron"
+    ] = await Promise.all([
+        import("fs"),
+        import("path"),
+        import("electron")
+    ]);
     // Guess correct Readme.md file
     let readmeFile = 'docs/Readme.md';
     if(existsSync(resolve(app.getAppPath(), 'docs', app.getLocale(), 'Readme.md')))
@@ -19,7 +22,14 @@ function handleEvents(docsWindow: BrowserWindow) {
     })
 }
 
-export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow|undefined {
+export default async function loadDocsWindow(parent: Electron.BrowserWindow) {
+    const [
+        { initWindow },  // from "../modules/parent"
+        { appInfo },     // from "../modules/client"
+    ] = await Promise.all([
+        import("../modules/parent"),
+        import("../modules/client")
+    ]);
     const docsWindow = initWindow("docs", parent, {
         minWidth: appInfo.minWinWidth,
 		minHeight: appInfo.minWinHeight,
@@ -29,5 +39,4 @@ export default function loadDocsWindow(parent: BrowserWindow):BrowserWindow|unde
     if(docsWindow === undefined) return;
     handleEvents(docsWindow);
     docsWindow.webContents.on('did-start-loading', () => handleEvents(docsWindow));
-    return docsWindow
 }

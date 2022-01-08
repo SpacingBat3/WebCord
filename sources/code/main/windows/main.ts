@@ -69,8 +69,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // CSP
 
-    if (configData.get().csp.enabled) {
-        win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+        if (configData.get().csp.enabled) {
             console.debug("[CSP] Overwritting Discord CSP.");
             callback({
                 responseHeaders: {
@@ -78,8 +78,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     'Content-Security-Policy': [discordContentSecurityPolicy]
                 }
             });
-        });
-    }
+        }
+    });
 
     win.webContents.session.webRequest.onBeforeRequest(
         {
@@ -121,7 +121,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 }
                 switch (permission) {
                     case "media":{
-                        let callbackValue = true
+                        let callbackValue = true;
                         if("mediaTypes" in details) {
                             if(details.mediaTypes === undefined) break;
                             for(const type of details.mediaTypes)
@@ -254,8 +254,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Animate menu
 
     win.webContents.on('did-finish-load', () => {
-        console.debug("[CSS] Injecting a CSS for sidebar animation...")
-        win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}");
+        if(new URL(win.webContents.getURL()).protocol === "https:") {
+            console.debug("[CSS] Injecting a CSS for sidebar animation...")
+            win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}");
+        }
     });
 
     // Inject desktop capturer

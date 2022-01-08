@@ -1,12 +1,12 @@
 //import { packageJson } from '../../global';
-import { app, BrowserWindow, ipcMain as ipc, screen } from 'electron';
+import { app, ipcMain as ipc, screen } from 'electron';
 import { getBuildInfo } from '../modules/client';
 import { initWindow } from '../modules/parent';
 //import l10n from '../../global/modules/l10n';
 
 // "About" Panel:
 
-export default function showAboutPanel(parent:BrowserWindow): BrowserWindow|undefined {
+export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.BrowserWindow|undefined {
     const screenBounds = screen.getPrimaryDisplay().size
     const [width, height] = [
         (screenBounds.width < 600 ? screenBounds.width : 600),
