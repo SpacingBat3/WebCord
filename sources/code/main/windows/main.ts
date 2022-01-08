@@ -172,7 +172,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         const spellCheckerLanguages = [app.getLocale(), 'en-US'];
         if (app.getLocale() === 'en-US') valid = false;
         if (valid && process.platform !== 'darwin')
-            for (const language in spellCheckerLanguages)
+            for (const language of spellCheckerLanguages)
                 if (!win.webContents.session.availableSpellCheckerLanguages.includes(language))
                     valid = false;
         if (valid) win.webContents.session.setSpellCheckerLanguages(spellCheckerLanguages);
