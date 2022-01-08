@@ -7,8 +7,10 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-latest
+    env:
+      WEBCORD_BUILD: Release
     steps:
-    - uses: actions/checkout@v2       
+    - uses: actions/checkout@v2
     - uses: actions/setup-node@master
       with:
         node-version: 16
@@ -18,25 +20,21 @@ jobs:
 
     - name: Publish artifacts (x64)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish
 
     - name: Publish artifacts (arm64)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a arm64
 
     - name: Publish artifacts (armv7l)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a armv7l
 
     - name: Publish artifacts (ia32)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a ia32
 

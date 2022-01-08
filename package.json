@@ -1,8 +1,8 @@
 {
   "name": "webcord",
   "productName": "WebCord",
-  "version": "3.0.0-beta5",
-  "description": "A Discord Web App made with the Electron API.",
+  "version": "3.0.0-beta6",
+  "description": "A Discord and Fosscord client made with the Electron API.",
   "main": "sources/app/global/main.js",
   "scripts": {
     "test": "tsc && eslint --ext .ts .",
@@ -29,11 +29,12 @@
   },
   "homepage": "https://github.com/SpacingBat3/WebCord#readme",
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.59",
-    "@electron-forge/maker-deb": "^6.0.0-beta.59",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.59",
-    "@electron-forge/maker-zip": "^6.0.0-beta.59",
-    "@electron-forge/publisher-github": "^6.0.0-beta.59",
+    "@electron-forge/cli": "^6.0.0-beta.61",
+    "@electron-forge/maker-deb": "^6.0.0-beta.61",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.61",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
+    "@electron-forge/maker-zip": "^6.0.0-beta.61",
+    "@electron-forge/publisher-github": "^6.0.0-beta.61",
     "@types/dompurify": "^2.2.3",
     "@types/marked": "^4.0.1",
     "@types/semver": "^7.3.8",

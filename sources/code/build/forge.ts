@@ -10,6 +10,8 @@ import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path'
 import { ForgeConfigFile } from './forge.d';
 
+const projectPath = resolve(__dirname, '../../..')
+
 // Global variables in the config:
 const iconFile = "sources/assets/icons/app";
 const desktopGeneric = "Internet Messenger";
@@ -18,7 +20,6 @@ const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Netwo
 // Some custom functions
 
 function getCommit():string | undefined {
-  const projectPath = resolve(__dirname, '../../..')
   const refsPath = readFileSync(resolve(projectPath, '.git/HEAD'))
     .toString()
     .split(': ')[1]
@@ -51,11 +52,11 @@ const config: ForgeConfigFile = {
       /sources\/app\/.build/,
       /out\//,
       // Files:
-      /\.eslintrc\.json/,
-      /tsconfig\.json/,
+      /\.eslintrc\.json$/,
+      /tsconfig\.json$/,
       /sources\/app\/forge\/config\..*/,
       /sources\/code\/.*/,
-      /sources\/assets\/icons\/app\.(ico|icns)/,
+      /sources\/assets\/icons\/app\.ic(?:o|ns)$/,
       // Hidden (for *nix OSes) files:
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
@@ -64,10 +65,14 @@ const config: ForgeConfigFile = {
   makers: [
     {
       name: "@electron-forge/maker-zip",
-      platforms: [
-        "win32",
-        "darwin"
-      ],
+      platforms: ["win32"]
+    },
+    {
+      name: "@electron-forge/maker-dmg",
+      config: {
+        icon: iconFile + ".icns",
+        debug: getBuildID() === "devel"
+      }
     },
     {
       name: "electron-forge-maker-appimage",
@@ -101,6 +106,37 @@ const config: ForgeConfigFile = {
         }
       }
     },
+    /* Snaps are disabled until maker will be fixed to work without the
+       multipass.
+    {
+      name: "@electron-forge/maker-snap",
+      config: {
+        features: {
+          audio: true,
+          browserSandbox: true
+        },
+        grade: (getBuildID() === "release" ? "stable" : "devel"),
+      }
+    },
+    */
+    /*{
+      name: "@electron-forge/maker-flatpak",
+      config: {
+        options: {
+          files: [
+            [
+              projectPath+"/docs",
+              "/share/docs/"+packageJson.data.name
+            ],
+            [
+              projectPath+"/LICENSE",
+              "/share/licenses/"+packageJson.data.name+"/LICENSE.txt"
+            ]
+          ],
+          icon: iconFile + ".png"
+        }
+      }
+    }*/
   ],
   publishers: [
     {
