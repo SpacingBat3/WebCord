@@ -10,6 +10,7 @@ import { getUserAgent } from '../../global/modules/agent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
 import { bold } from 'colors/safe';
+import { loadStyles } from "./extensions";
 
 const configData = new AppConfig();
 
@@ -251,12 +252,13 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }');
         event.reply("cosmetic.hideElementByClass");
     })
-    // Animate menu
+    // Animate menu and insert custom css styles:
 
     win.webContents.on('did-finish-load', () => {
         if(new URL(win.webContents.getURL()).protocol === "https:") {
             console.debug("[CSS] Injecting a CSS for sidebar animation...")
             win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}");
+            loadStyles(win.webContents);
         }
     });
 
