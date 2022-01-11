@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow } from "electron";
+import { ipcMain } from "electron";
 import { AppConfig } from '../modules/config';
 import { HTMLSettingsGroup, HTMLChecklistForms, HTMLChecklistOption, knownIstancesList, HTMLRadioForms } from '../../global/global';
 import { appInfo, getBuildInfo } from '../modules/client';
@@ -186,7 +186,7 @@ function conf2html (config:AppConfig) {
 	return [general, privacy, advanced];
 }
 
-export default async function loadSettingsWindow(parent:BrowserWindow):Promise<BrowserWindow|undefined> {
+export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electron.BrowserWindow|void {
 	const configWithStrings = conf2html(appConfig);
 	if(!parent.isVisible()) parent.show();
 	const settingsWindow = initWindow("settings", parent, {

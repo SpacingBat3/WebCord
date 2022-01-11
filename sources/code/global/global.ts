@@ -161,10 +161,10 @@ export const discordFavicons = {
 export const trustedProtocolRegExp = /^(https:|mailto:|tel:|sms:)$/;
 
 /** Known Discord instances, including the official ones. */
-export const knownIstancesList:[string,URL][] = [
-	["Discord", new URL("https://discord.com/app")],
-	["Fosscord", new URL("https://dev.fosscord.com/app")]
-]
+export const knownIstancesList:Record<string,[string,URL]> = {
+	'0': ["Discord", new URL("https://discord.com/app")],
+	'1': ["Fosscord", new URL("https://dev.fosscord.com/app")]
+}
 
 export interface buildInfo {
 	type: 'release' | 'devel',
@@ -213,7 +213,7 @@ export function getAppIcon(sizes:number[]) {
 	if(existsSync(defaultPath))
 		return defaultPath;
 	for (const size of sizes)
-		if(existsSync("/usr/share/icons/hicolor/"+size+"x"+size+"/apps/webcord.png"))
-			return "/usr/share/icons/hicolor/"+size+"x"+size+"/apps/webcord.png";
+		if(existsSync("/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png"))
+			return "/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png";
 	return "";
 }

@@ -66,5 +66,5 @@ export async function createGithubIssue(reason?: string): Promise<void> {
     /* Verify origin and open URL in default browser. */
 
     if (githubIssueUrl.origin === "https://github.com")
-        shell.openExternal(githubIssueUrl.href);
+        return shell.openExternal(githubIssueUrl.href);
 }

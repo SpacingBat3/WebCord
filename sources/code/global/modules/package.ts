@@ -183,10 +183,16 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
                 return "Property '"+key+"' is of invalid type!"
             else if(testValue instanceof Object) {
                 for(const key in testValue)
-                    if(typeof key !== "string")
-                        return "Package name '"+key+"' is not a valid 'string'."
-                    else if (typeof (testValue as Record<string, unknown>)[key] !== "string")
-                        return "Package version '"+(testValue as Record<string, unknown>)[key]+"' is not of type 'string'."
+                    if(typeof key !== "string") {
+                        const key2string:unknown = (key as Record<string,unknown>)?.toString();
+                        let keyString:string;
+                        if(typeof key2string === "string")
+                            keyString = key2string
+                        else
+                            keyString = "[unknown]"
+                        return "Package name '"+keyString+"' is not a valid 'string'."
+                    } else if (typeof (testValue as Record<string, unknown>)[key] !== "string")
+                        return "Version of the package '"+key+"' is not of type 'string'."
             }
         }
 

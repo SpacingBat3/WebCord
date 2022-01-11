@@ -25,8 +25,8 @@ function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, 
 
 export default function preloadCosmetic(): void {
   let discordInstance = false
-  for(const instance of knownIstancesList)
-    if(window.location.origin === instance[1].origin) discordInstance = true;
+  for(const instance in knownIstancesList)
+    if(window.location.origin === knownIstancesList[instance][1].origin) discordInstance = true;
   // Cancel further code execution for non-Discord/non-Fosscord instance sites.
   if(!discordInstance) return;
   /*

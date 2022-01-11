@@ -80,7 +80,7 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
                     inputTag.name = inputTag.id = checklist.id;
                 else {
                     inputTag.name = (option as HTMLRadioOption).id;
-                    inputTag.value = (checklist as HTMLRadioForms).value.toString();
+                    inputTag.value = checklist.value.toString();
                 }
                 inputTag.checked = checklist.isChecked;
 

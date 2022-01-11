@@ -157,8 +157,8 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
                 });   
         }
         console.debug("[WIN] State changed to: "+JSON.stringify(this.get()[this.windowName]));
-        console.debug("[WIN] Electron event: "+eventType);
-        if(event !== eventType) console.debug("[WIN] Actual event calculated by WebCord: "+event);
+        console.debug("[WIN] Electron event: "+(eventType??"not definied"));
+        if(event !== eventType) console.debug("[WIN] Actual event calculated by WebCord: "+(event??"unknown"));
     }
 
     /**

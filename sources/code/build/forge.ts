@@ -161,6 +161,7 @@ const config: ForgeConfigFile = {
         }
       }
       writeFileSync(resolve(path, 'buildInfo.json'), JSON.stringify(buildConfig, null, 2))
+      return Promise.resolve();
     }
   }
 };

@@ -36,7 +36,7 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
     win.setAutoHideMenuBar(true);
     win.setMenuBarVisibility(false);
     if(getBuildInfo().type === 'release') win.removeMenu();
-    win.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/"+name+".html"));
+    win.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/"+name+".html")).catch(()=>{return;});
     setTimeout( () => { if(!win.isDestroyed() && !win.isVisible()) win.show() }, 10000 )
     return win;
 }

@@ -1,3 +1,5 @@
+import { commonCatches } from "../modules/error";
+
 /**
  * Loads CSS styles from `${userdata}/styles` directory and observes their changes.
  * 
@@ -45,7 +47,7 @@ export async function loadStyles(webContents:Electron.WebContents) {
                             for(const data of dataArray)
                                 themeIDs.push(webContents.insertCSS(data.toString(), {cssOrigin: 'user'}))
                             callback(themeIDs);
-                        });
+                        }).catch(reason => reject(reason));
                     })
                     .catch(reason => reject(reason))
             })
@@ -55,5 +57,5 @@ export async function loadStyles(webContents:Electron.WebContents) {
         watch(stylesDir, {recursive:true}).once("change", () => {
             webContents.reload();
         })
-    callback();
+    callback().catch(commonCatches.print);
 }

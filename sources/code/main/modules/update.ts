@@ -8,6 +8,7 @@ import fetch from 'electron-fetch';
 import l10n from '../../global/modules/l10n';
 import * as semver from 'semver';
 import { blue, bold } from 'colors/safe';
+import { commonCatches } from './error';
 
 /**
  * Checks and notifies users about the updates.
@@ -60,7 +61,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     if (showGui && (getBuildInfo()?.features?.updateNotifications ?? true)) {
         const notification = new Notification(updatePopup);
         notification.on('click', () => {
-            shell.openExternal(githubApi.html_url);
+            shell.openExternal(githubApi.html_url).catch(commonCatches.throw);
         });
         notification.show();
     }

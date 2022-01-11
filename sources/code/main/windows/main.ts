@@ -11,6 +11,7 @@ import { createHash } from 'crypto';
 import { resolve } from "path";
 import { bold } from 'colors/safe';
 import { loadStyles } from "./extensions";
+import { commonCatches } from "../modules/error";
 
 const configData = new AppConfig();
 
@@ -47,24 +48,25 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
         if (errorCode <= -100 && errorCode >= -199)
             // Show offline page on connection errors.
-            win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
+            win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html')).catch(()=>{return;});
         else if (errorCode === -30) {
             // Ignore CSP errors.
             console.warn(bold('[WARN]')+' A page "'+validatedURL+'" was blocked by CSP.')
             return;
         }
-        console.error(bold('[ERROR]')+' '+errorDescription+' ('+(errorCode*-1)+')');
+        console.error(bold('[ERROR]')+' '+errorDescription+' ('+(errorCode*-1).toString()+')');
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearInterval(retry);
-                win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) });
+                win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) })
+                    .catch(()=>{return;});
             }
         }, 1000);
     });
     win.webContents.once('did-finish-load', () => {
         console.debug("[PAGE] Starting to load the Discord page...")
         if (!startHidden) win.show();
-        setTimeout(() => win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) }), 1500);
+        setTimeout(() => {win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) }).catch(()=>{return;})}, 1500);
     });
     if (mainWindowState.initState.isMaximized) win.maximize();
 
@@ -164,7 +166,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         });
         win.webContents.session.setDevicePermissionHandler(() => false);
     }
-    win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/load.html'));
+    win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/load.html'))
+        .catch(()=>{return;});
     win.setAutoHideMenuBar(configData.get().hideMenuBar);
     win.setMenuBarVisibility(!configData.get().hideMenuBar);
     // Add English to the spellchecker
@@ -192,8 +195,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // "Red dot" icon feature
     let setFavicon: string | undefined;
     win.webContents.once('did-finish-load', () => {
-        win.webContents.on('page-favicon-updated', async (_event, favicons) => {
-            const t = await tray;
+        win.webContents.on('page-favicon-updated', (_event, favicons) => {
+            const t = tray;
             // Convert from DataURL to RAW.
             const faviconRaw = nativeImage.createFromDataURL(favicons[0]).toBitmap();
             // Hash discord favicon.
@@ -203,7 +206,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             // Stop code execution on Fosscord instances.
             if (new URL(win.webContents.getURL()).origin !== knownIstancesList[0][1].origin) {
                 setFavicon = faviconHash;
-                t.setImage(appInfo.trayIcon);
+                t.then(t=>t.setImage(appInfo.trayIcon)).catch(commonCatches.throw);
                 win.flashFrame(false);
                 return;
             }
@@ -211,14 +214,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             // Compare hashes.
             if (!configData.get().disableTray) {
                 if(faviconHash === discordFavicons.default) {
-                    t.setImage(appInfo.trayIcon);
+                    t.then(t=>t.setImage(appInfo.trayIcon)).catch(commonCatches.throw);
                     win.flashFrame(false);
                 } else if(faviconHash.startsWith('4')) {
-                    t.setImage(appInfo.trayUnread);
+                    t.then(t=>t.setImage(appInfo.trayUnread)).catch(commonCatches.throw);
                     win.flashFrame(false);
                 } else {
                     console.debug("[Mention] Hash: "+faviconHash)
-                    t.setImage(appInfo.trayPing);
+                    t.then(t=>t.setImage(appInfo.trayPing)).catch(commonCatches.throw);
                     win.flashFrame(true);
                 }
                 setFavicon = faviconHash;
@@ -249,7 +252,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     });
 
     ipcMain.on("cosmetic.hideElementByClass", (event, cssRule:string) => {
-        win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }');
+        win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }')
+            .catch(()=>{return});
         event.reply("cosmetic.hideElementByClass");
     })
     // Animate menu and insert custom css styles:
@@ -257,18 +261,20 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     win.webContents.on('did-finish-load', () => {
         if(new URL(win.webContents.getURL()).protocol === "https:") {
             console.debug("[CSS] Injecting a CSS for sidebar animation...")
-            win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}");
-            loadStyles(win.webContents);
+            win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}")
+                .catch(()=>{return});
+            loadStyles(win.webContents)
+                .catch(commonCatches.print);
         }
     });
 
     // Inject desktop capturer
-    ipcMain.on('api-exposed', (_event, api) => {
+    ipcMain.on('api-exposed', (_event, api:string) => {
         console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.")
         const functionString = `
             navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [async() => navigator.mediaDevices.getUserMedia(await window['${api}'].desktopCapturerPicker())]);
         `;
-        win.webContents.executeJavaScript(functionString + ';0');
+        win.webContents.executeJavaScript(functionString + ';0').catch(commonCatches.throw);
     });
 
     // Apply settings that doesn't need app restart on change
@@ -283,6 +289,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         // Custom Discord instance switch
         if("currentInstance" in object) {
             win.loadURL(knownIstancesList[config.get().currentInstance][1].href)
+                .catch(()=>{return});
         }
     });
     return win;

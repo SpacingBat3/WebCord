@@ -24,20 +24,20 @@ install();
  * information).
  */
 
-import crash from '../main/modules/error';
+import crash, {commonCatches} from '../main/modules/error';
 crash();
 
 // Optional debug logging implementation by overwritting the global `console` method.
 console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
-    import('electron').then(e => e.app.commandLine.hasSwitch).then(hasSwitch => {
-        import('colors/safe').then(colors => {
-            if (hasSwitch('verbose')||hasSwitch('v'))
+    Promise.all([import('electron'),import('colors/safe')])
+        .then(([Electron,colors]) => [Electron.app.commandLine, colors] as [Electron.CommandLine, typeof colors])
+        .then(([cmd,colors]) => {
+            if (cmd.hasSwitch('verbose')||cmd.hasSwitch('v'))
                 if(typeof message === "string")
                     console.log(colors.gray(message), ...optionalParams)
                 else
                     console.log(message, ...optionalParams)
-        })
-    }) 
+    }).catch(commonCatches.print)
 }
 
 // Colorize output on errors/warnings
@@ -50,7 +50,7 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
                 stdErr(colors.red(message), ...optionalParams)
             else
                 stdErr(message, ...optionalParams)
-        })
+        }).catch(commonCatches.print)
     }
     console.warn = function (message?, ...optionalParams:unknown[]) {
         import('colors/safe').then(colors => {
@@ -58,7 +58,7 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
                 stdWarn(colors.yellow(message), ...optionalParams)
             else
                 stdWarn(message, ...optionalParams)
-        })
+        }).catch(commonCatches.print)
     }
 }
 import { app, BrowserWindow, dialog, shell } from 'electron';
@@ -82,8 +82,8 @@ let overwriteMain: (() => void | unknown) | undefined;
         const spaceBetween = (length ?? 30) - parameter.length;
         return '  '+colors.green(parameter)+' '.repeat(spaceBetween)+colors.gray(description)+'\n'
     }
-    const { hasSwitch, getSwitchValue } = app.commandLine;
-    if (hasSwitch('help') || hasSwitch('h')) {
+    const cmd = app.commandLine;
+    if (cmd.hasSwitch('help') || cmd.hasSwitch('h')) {
         console.log(
             "\n " + colors.bold(colors.blue(app.getName())) +
             " – Privacy focused Discord client made with " + colors.bold(colors.white(colors.bgBlue("TypeScript"))) + " and " + colors.bold(colors.bgBlack(colors.cyan("Electron"))) + '.\n\n' +
@@ -97,16 +97,16 @@ let overwriteMain: (() => void | unknown) | undefined;
         );
         app.exit();
     }
-    if (hasSwitch('version') || hasSwitch('V')) {
+    if (cmd.hasSwitch('version') || cmd.hasSwitch('V')) {
         console.log(app.getName() + ' v' + app.getVersion());
         app.exit();
     }
-    if (hasSwitch('start-minimized') || hasSwitch('m'))
+    if (cmd.hasSwitch('start-minimized') || cmd.hasSwitch('m'))
         startHidden = true;
-    if (hasSwitch('export-l10n')) {
+    if (cmd.hasSwitch('export-l10n')) {
         overwriteMain = () => {
             const locale = new l10n;
-            const directory = getSwitchValue('export-l10n');
+            const directory = cmd.getSwitchValue('export-l10n');
             const filePromise: Promise<void>[] = [];
             for (const file in locale)
                 filePromise.push(
@@ -120,10 +120,10 @@ let overwriteMain: (() => void | unknown) | undefined;
                 app.quit();
             }).catch((err:NodeJS.ErrnoException) => {
                 console.error(
-                    '\n⛔️ ' + colors.red(colors.bold(err.code || err.name)) + ' ' + err.syscall + ': ' +
+                    '\n⛔️ ' + colors.red(colors.bold(err.code ?? err.name)) + ' ' + (err.syscall ?? "") + ': ' +
                         (err.path ? colors.blue(colors.underline(relative(process.cwd(),err.path))) + ': ' : '') +
-                        err.message.replace(err.code + ': ', '')
-                            .replace(', ' + err.syscall + " '" + err.path + "'", '') + '.\n'
+                        err.message.replace((err.code ?? '') + ': ', '')
+                            .replace(', ' + (err.syscall ?? '') + " '" + (err.path ?? '') + "'", '') + '.\n'
                 );
                 app.exit((err.errno??0)*(-1));
             });
@@ -144,8 +144,8 @@ function main(): void {
     } else {
         // Run app normally
         l10nStrings = (new l10n()).client;
-        checkVersion(updateInterval);
-        updateInterval = setInterval(function () { checkVersion(updateInterval); }, 1800000);
+        checkVersion(updateInterval).catch(commonCatches.print);
+        updateInterval = setInterval(function () { checkVersion(updateInterval).catch(commonCatches.print); }, 1800000);
         mainWindow = createMainWindow(startHidden, l10nStrings);
     }
 }
@@ -228,7 +228,7 @@ app.on('web-contents-created', (_event, webContents) => {
 
             if (result === 1) return { action: 'deny' };
         }
-        if (allowedProtocol) shell.openExternal(details.url);
+        if (allowedProtocol) shell.openExternal(details.url).catch(commonCatches.print);
         return { action: 'deny' };
     });
 });

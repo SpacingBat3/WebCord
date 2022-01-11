@@ -1,3 +1,5 @@
+import { commonCatches } from "../modules/error";
+
 async function handleEvents(docsWindow: Electron.BrowserWindow) {
     const [
         { existsSync },  // from "fs"
@@ -37,6 +39,8 @@ export default async function loadDocsWindow(parent: Electron.BrowserWindow) {
         height: 720
     });
     if(docsWindow === undefined) return;
-    handleEvents(docsWindow);
-    docsWindow.webContents.on('did-start-loading', () => handleEvents(docsWindow));
+    handleEvents(docsWindow).catch(commonCatches.throw);
+    docsWindow.webContents.on('did-start-loading', () => {
+        handleEvents(docsWindow).catch(commonCatches.throw);
+    });
 }

@@ -32,14 +32,16 @@ import l10n from '../../global/modules/l10n';
 import loadSettingsWindow from '../windows/settings';
 import loadDocsWindow from '../windows/docs';
 import showAboutPanel from '../windows/about';
+import { commonCatches } from './error';
 
 const sideBar = new EventEmitter();
 const devel = getBuildInfo().type === 'devel';
-sideBar.on('hide', async (contents: WebContents) => {
-	const cssKey = await contents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }");
-	sideBar.once('show', () => {
-		contents.removeInsertedCSS(cssKey);
-	});
+sideBar.on('hide', (contents: WebContents) => {
+	contents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }").then(cssKey => {
+		sideBar.once('show', () => {
+			contents.removeInsertedCSS(cssKey).catch(commonCatches.throw)
+		});
+	}).catch(commonCatches.print)
 });
 
 let wantQuit = false;
@@ -285,7 +287,7 @@ export function bar(repoLink: string, parent: BrowserWindow): Menu {
 				type: 'checkbox',
 				accelerator: 'CmdOrCtrl+Alt+M',
 				checked: false,
-				click: async () => {
+				click: () => {
 					if ((sideBar.listenerCount('show') + sideBar.listenerCount('hide')) > 1) {
 						sideBar.emit('show');
 					} else {

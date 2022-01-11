@@ -3,6 +3,11 @@ import { app } from "electron";
 import { existsSync } from "fs";
 import { resolve } from "path";
 
+function catchAndThrowErrors (error:unknown) {
+	if(error instanceof Error)
+		throw error;
+}
+
 /** The current application directory. Cross-process safe method. */
 export function getAppPath(): string {
 	if (process.type === 'browser')
@@ -21,8 +26,9 @@ export function getAppPath(): string {
 export function showMessageBox(options: Electron.MessageBoxOptions): void {
 	if (process.type === 'browser') {
 		import('electron').then(api => {
-			api.dialog.showMessageBox(options);
-		});
+			api.dialog.showMessageBox(options)
+				.catch(catchAndThrowErrors);
+		}).catch(catchAndThrowErrors);
 	} else {
 		const title = options.title ? options.title + '\n' : '';
 		alert(title + options.message);

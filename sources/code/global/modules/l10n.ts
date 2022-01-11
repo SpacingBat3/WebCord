@@ -52,8 +52,8 @@ class l10n {
 		 */
 		let localStrings: Partial<unknown>;
 
-		let internalStringsFile = path.resolve(getAppPath(), "sources/assets/translations/" + getLocale() + "/" + type);
-		const externalStringsFile = path.resolve(path.dirname(getAppPath()), 'translations/' + getLocale() + "/" + type);
+		let internalStringsFile = path.resolve(getAppPath(), "sources/assets/translations/" + getLocale() + "/" + type.toString());
+		const externalStringsFile = path.resolve(path.dirname(getAppPath()), 'translations/' + getLocale() + "/" + type.toString());
 
 		/* Handle unofficial translations */
 

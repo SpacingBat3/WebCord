@@ -94,9 +94,8 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
 
 export default function desktopCapturerPicker(): Promise<EMediaStreamConstraints> {
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
-        try {
-            const sources = await desktopCapturer.getSources({ types: ['screen', 'window'], fetchWindowIcons: true });
+    return new Promise((resolve, reject) => {
+        desktopCapturer.getSources({ types: ['screen', 'window'], fetchWindowIcons: true }).then(sources => {
             const container = renderCapturerContainer(sources);
 
             for (const button of document.querySelectorAll('.capturer-button'))
@@ -105,7 +104,7 @@ export default function desktopCapturerPicker(): Promise<EMediaStreamConstraints
                         const id = button.getAttribute('data-id');
                         const source = sources.find(source => source.id === id);
                         if (!source) {
-                            throw new Error('Source with id: "' + id + '" does not exist!');
+                            throw new Error('Source with id: "' + (id ?? '[null]') + '" does not exist!');
                         }
                         const constrains: EMediaStreamConstraints = {
                             audio: false,
@@ -118,16 +117,20 @@ export default function desktopCapturerPicker(): Promise<EMediaStreamConstraints
                         };
                         resolve(constrains);
                         container.remove();
-                    } catch (err) {
-                        console.error('[ERROR] Failed to select desktop capture source: "' + err + '"!');
-                        reject(err);
+                    } catch (e) {
+                        const err:unknown = e instanceof Error ? e.message : (typeof e === "string" ? e : (e as Record<string,unknown>)?.toString());
+                        if(typeof err === "string")
+                            console.error('[ERROR] Failed to select desktop capture source: "' + err + '"!');
+                        reject(e);
                     }
                 });
             document.querySelector('.capturer-close')
                 ?.addEventListener('click', () => container.remove());
-        } catch (err) {
-            console.error('[ERROR] Failed to display desktop capture sources: "' + err + '"!');
-            reject(err);
-        }
+        }).catch(e => {
+            const error:unknown = e instanceof Error ? e.message : (typeof e === "string" ? e : (e as Record<string,unknown>)?.toString());
+            if(typeof error === "string")
+                console.error('[ERROR] Failed to display desktop capture sources: "' + error + '"!');
+            reject(e);
+        });
     });
 }
