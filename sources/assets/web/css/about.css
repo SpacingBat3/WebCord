@@ -19,11 +19,6 @@ h3, p, li {
 ul {
     margin-top: 0;
 }
-a, a:hover {
-    color: unset;
-    text-decoration: unset;
-    font-weight: bold;
-}
 
 html, body {
     margin: 0;
@@ -95,6 +90,7 @@ h2 {
     font-size: calc(var(--font-size-factor) * 1.2)
 }
 h3 {
+    color: var(--color-link);
     font-size: calc(var(--font-size-factor) * 1.1);
     margin-bottom: -.5em
 }

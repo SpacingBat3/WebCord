@@ -28,12 +28,17 @@ function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], name:string) {
             ["author", "license"],
             resolve(getAppPath(), "node_modules/"+packName+"/package.json")
         )
+        const npmLink = document.createElement("a");
         const title = document.createElement("h3");
         const copy = document.createElement("p");
+        npmLink.href = "https://www.npmjs.com/package/"+packName;
+        npmLink.relList.add("noreferrer");
+        npmLink.target = "_blank";
         title.innerText = packName;
         copy.innerText = "© " +
             new Person(data.author ?? '"'+l10n.licenses.packageAuthors.replace("%s", packName)+'"').name + " " + l10n.licenses.licensedUnder.replace("%s",data.license)
-        document.getElementById("licenses")?.appendChild(title);
+        npmLink.appendChild(title);
+        document.getElementById("licenses")?.appendChild(npmLink);
         document.getElementById("licenses")?.appendChild(copy);
     }
 }
