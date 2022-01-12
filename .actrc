@@ -1,0 +1,2 @@
+# Workaround for an issue with act's invalid `.gitignore` parsing.
+--use-gitignore=false
