@@ -4,15 +4,11 @@
 import {
 	app,
 	Menu,
-	BrowserWindow,
-	MenuItem,
 	Tray,
 	shell,
-	nativeImage, // Static methods, that initializes class (NativeImage).
-	NativeImage, // Class, used after initialization and for types.
-	MenuItemConstructorOptions,
+	nativeImage,
 	clipboard,
-	WebContents
+	ipcMain
 } from 'electron';
 
 import {
@@ -36,17 +32,22 @@ import { commonCatches } from './error';
 
 const sideBar = new EventEmitter();
 const devel = getBuildInfo().type === 'devel';
-sideBar.on('hide', (contents: WebContents) => {
-	contents.insertCSS(".sidebar-2K8pFh{ width: 0px !important; }").then(cssKey => {
-		sideBar.once('show', () => {
-			contents.removeInsertedCSS(cssKey).catch(commonCatches.throw)
-		});
-	}).catch(commonCatches.print)
+
+ipcMain.once('cosmetic.sideBarClass', (_event, className:string) => {
+	sideBar.on('hide', (contents: Electron.WebContents) => {
+		console.debug("[EVENT] Hiding menu bar...")
+		contents.insertCSS("."+className+"{ width: 0px !important; }").then(cssKey => {
+			sideBar.once('show', () => {
+				console.debug("[EVENT] Showing menu bar...")
+				contents.removeInsertedCSS(cssKey).catch(commonCatches.throw)
+			});
+		}).catch(commonCatches.print)
+	});
 });
 
 let wantQuit = false;
 
-function paste(contents:WebContents) {
+function paste(contents:Electron.WebContents) {
 	const contentTypes = clipboard.availableFormats().toString();
 	//Workaround: fix pasting the images.
 	if(contentTypes.includes('image/') && contentTypes.includes('text/html'))
@@ -57,10 +58,10 @@ function paste(contents:WebContents) {
 
 // Contex Menu with spell checker
 
-export function context(parent: BrowserWindow): void {
+export function context(parent: Electron.BrowserWindow): void {
 	const strings = (new l10n()).client;
 	parent.webContents.on('context-menu', (_event, params) => {
-		const cmenu: (MenuItemConstructorOptions | MenuItem)[] = [
+		const cmenu: (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] = [
 			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut', enabled: params.editFlags.canCut },
 			{ label: strings.context.copy, role: 'copy', enabled: params.editFlags.canCopy },
@@ -120,10 +121,10 @@ if (os.userInfo().username == 'pi' && today.getDate() == 14 && today.getMonth() 
 
 // Tray menu
 
-export async function tray(parent: BrowserWindow): Promise<Tray> {
+export async function tray(parent: Electron.BrowserWindow): Promise<Electron.Tray> {
 	const strings = (new l10n()).client;
 	const tray = new Tray(appInfo.trayIcon);
-	let icon: NativeImage;
+	let icon: Electron.NativeImage;
 	if (funMode) {
 		icon = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
 	} else {
@@ -186,7 +187,7 @@ export async function tray(parent: BrowserWindow): Promise<Tray> {
 
 // Menu Bar
 
-export function bar(repoLink: string, parent: BrowserWindow): Menu {
+export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.Menu {
 	const strings = (new l10n()).client;
 	const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
 	const menu = Menu.buildFromTemplate([

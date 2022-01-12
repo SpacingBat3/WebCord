@@ -39,14 +39,14 @@ export default function preloadCosmetic(): void {
       return;
     }
     // Get array of `div` elements
-    const sideBarClassList = [findClass('listItem-', 'div'), findClass('scroller-', 'div')]
+    const classList = [findClass('listItem-', 'div'), findClass('scroller-', 'div'), findClass('sidebar-', 'div')]
 
-    if (sideBarClassList[0].length === 1) {
-      ipcRenderer.send('cosmetic.hideElementByClass', 'div.'+sideBarClassList[1][0]+' > div.'+sideBarClassList[0][0])
+    if (classList[0].length === 1) {
+      ipcRenderer.send('cosmetic.hideElementByClass', 'div.'+classList[1][0]+' > div.'+classList[0][0])
       ipcRenderer.once('cosmetic.hideElementByClass', () => wLog("Successfully removed unnecesarry elements on website."));
+      ipcRenderer.send('cosmetic.sideBarClass', classList[2][0]);
       ipcRenderer.removeListener('webContents.did-stop-loading', removeUnneded)
     } else {
-      console.dir(sideBarClassList)
       wLog("COSMETIC: Couldn't find elements to remove, retrying on next event.");
     }
   };

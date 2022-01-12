@@ -256,9 +256,17 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             .catch(()=>{return});
         event.reply("cosmetic.hideElementByClass");
     })
-    // Animate menu and insert custom css styles:
 
-    win.webContents.on('did-finish-load', () => {
+    // Animate menu
+    ipcMain.on('cosmetic.sideBarClass', (_event, className:string) => {
+        console.debug("[CSS] Injecting a CSS for sidebar animation...")
+        win.webContents.insertCSS("."+className+"{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}")
+            .catch(()=>{return});
+    });
+
+    // Insert custom css styles:
+
+    win.webContents.once('did-finish-load', () => {
         if(new URL(win.webContents.getURL()).protocol === "https:") {
             console.debug("[CSS] Injecting a CSS for sidebar animation...")
             win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}")
