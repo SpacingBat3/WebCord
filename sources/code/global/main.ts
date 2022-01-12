@@ -29,8 +29,8 @@ crash();
 
 // Optional debug logging implementation by overwritting the global `console` method.
 console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
-    Promise.all([import('electron'),import('colors/safe')])
-        .then(([Electron,colors]) => [Electron.app.commandLine, colors] as [Electron.CommandLine, typeof colors])
+    Promise.all([import('electron'),import('@spacingbat3/kolor')])
+        .then(([Electron,colors]) => [Electron.app.commandLine, colors.default] as [Electron.CommandLine, typeof colors.default])
         .then(([cmd,colors]) => {
             if (cmd.hasSwitch('verbose')||cmd.hasSwitch('v'))
                 if(typeof message === "string")
@@ -45,7 +45,7 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
     const stdErr = console.error
     const stdWarn = console.warn
     console.error = function (message?:unknown, ...optionalParams:unknown[]) {
-        import('colors/safe').then(colors => {
+        import('@spacingbat3/kolor').then(colors => colors.default).then(colors => {
             if(typeof message === "string")
                 stdErr(colors.red(message), ...optionalParams)
             else
@@ -53,7 +53,7 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
         }).catch(commonCatches.print)
     }
     console.warn = function (message?, ...optionalParams:unknown[]) {
-        import('colors/safe').then(colors => {
+        import('@spacingbat3/kolor').then(colors => colors.default).then(colors => {
             if(typeof message === "string")
                 stdWarn(colors.yellow(message), ...optionalParams)
             else
@@ -68,7 +68,7 @@ import { checkVersion } from '../main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "../main/windows/main";
 import { AppConfig } from '../main/modules/config';
-import * as colors from 'colors/safe';
+import colors from '@spacingbat3/kolor';
 import { resolve as resolvePath, relative } from 'path';
 
 // Handle command line switches:
@@ -86,9 +86,9 @@ let overwriteMain: (() => void | unknown) | undefined;
     if (cmd.hasSwitch('help') || cmd.hasSwitch('h')) {
         console.log(
             "\n " + colors.bold(colors.blue(app.getName())) +
-            " – Privacy focused Discord client made with " + colors.bold(colors.white(colors.bgBlue("TypeScript"))) + " and " + colors.bold(colors.bgBlack(colors.cyan("Electron"))) + '.\n\n' +
-            " " + colors.underline("Usage:") + " " + colors.red(process.argv0) + colors.green(" [option]\n\n") +
-            " " + colors.underline("Options:") + "\n" +
+            " – Privacy focused Discord client made with " + colors.bold(colors.white(colors.blueBg("TypeScript"))) + " and " + colors.bold(colors.blackBg(colors.cyan("Electron"))) + '.\n\n' +
+            " " + colors.underscore("Usage:") + " " + colors.red(process.argv0) + colors.green(" [option]\n\n") +
+            " " + colors.underscore("Options:") + "\n" +
             renderLine('--version  -V','Show current application version.')+
             renderLine('--start-minimized  -m','Hide application at first run.') +
             renderLine('--export-l10n'+ '=' + colors.yellow('{dir}'), '          Export currently loaded translation files from') +
@@ -121,7 +121,7 @@ let overwriteMain: (() => void | unknown) | undefined;
             }).catch((err:NodeJS.ErrnoException) => {
                 console.error(
                     '\n⛔️ ' + colors.red(colors.bold(err.code ?? err.name)) + ' ' + (err.syscall ?? "") + ': ' +
-                        (err.path ? colors.blue(colors.underline(relative(process.cwd(),err.path))) + ': ' : '') +
+                        (err.path ? colors.blue(colors.underscore(relative(process.cwd(),err.path))) + ': ' : '') +
                         err.message.replace((err.code ?? '') + ': ', '')
                             .replace(', ' + (err.syscall ?? '') + " '" + (err.path ?? '') + "'", '') + '.\n'
                 );

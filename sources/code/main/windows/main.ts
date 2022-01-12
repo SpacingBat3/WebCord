@@ -9,7 +9,7 @@ import l10n from "../../global/modules/l10n";
 import { getUserAgent } from '../../global/modules/agent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
-import { bold } from 'colors/safe';
+import colors from '@spacingbat3/kolor';
 import { loadStyles } from "./extensions";
 import { commonCatches } from "../modules/error";
 
@@ -51,10 +51,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html')).catch(()=>{return;});
         else if (errorCode === -30) {
             // Ignore CSP errors.
-            console.warn(bold('[WARN]')+' A page "'+validatedURL+'" was blocked by CSP.')
+            console.warn(colors.bold('[WARN]')+' A page "'+validatedURL+'" was blocked by CSP.')
             return;
         }
-        console.error(bold('[ERROR]')+' '+errorDescription+' ('+(errorCode*-1).toString()+')');
+        console.error(colors.bold('[ERROR]')+' '+errorDescription+' ('+(errorCode*-1).toString()+')');
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearInterval(retry);

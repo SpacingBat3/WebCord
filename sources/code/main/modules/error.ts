@@ -1,5 +1,5 @@
 import { app, dialog } from "electron";
-import * as colors from "colors/safe";
+import colors from "@spacingbat3/kolor";
 
 export const commonCatches = {
     print: (reason:unknown) => {
