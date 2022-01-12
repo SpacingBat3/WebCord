@@ -23,6 +23,7 @@ function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], name:string) {
                 .replace("%s",name);
     }
     for (const packName in packageJson.data.dependencies) {
+        if(packName.startsWith('@spacingbat3/')) continue;
         const {data} = new PackageJSON(
             ["author", "license"],
             resolve(getAppPath(), "node_modules/"+packName+"/package.json")
