@@ -10,7 +10,7 @@ import { getUserAgent } from '../../global/modules/agent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
 import colors from '@spacingbat3/kolor';
-import { loadStyles } from "./extensions";
+import { loadStyles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 
 const configData = new AppConfig();
@@ -266,11 +266,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // Insert custom css styles:
 
-    win.webContents.once('did-finish-load', () => {
+    win.webContents.on('did-finish-load', () => {
         if(new URL(win.webContents.getURL()).protocol === "https:") {
-            console.debug("[CSS] Injecting a CSS for sidebar animation...")
-            win.webContents.insertCSS(".sidebar-2K8pFh{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}")
-                .catch(()=>{return});
             loadStyles(win.webContents)
                 .catch(commonCatches.print);
         }

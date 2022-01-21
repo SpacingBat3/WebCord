@@ -1,4 +1,4 @@
-import { commonCatches } from "../modules/error";
+import { commonCatches } from "./error";
 
 /**
  * Loads CSS styles from `${userdata}/styles` directory and observes their changes.
