@@ -253,7 +253,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     ipcMain.on("cosmetic.hideElementByClass", (event, cssRule:string) => {
         win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }')
-            .catch(()=>{return});
+            .catch(void 0);
         event.reply("cosmetic.hideElementByClass");
     })
 
@@ -261,7 +261,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     ipcMain.on('cosmetic.sideBarClass', (_event, className:string) => {
         console.debug("[CSS] Injecting a CSS for sidebar animation...")
         win.webContents.insertCSS("."+className+"{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}")
-            .catch(()=>{return});
+            .catch(void 0);
     });
 
     // Insert custom css styles:
@@ -294,7 +294,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         // Custom Discord instance switch
         if("currentInstance" in object) {
             win.loadURL(knownIstancesList[config.get().currentInstance][1].href)
-                .catch(()=>{return});
+                .catch(void 0);
         }
     });
     return win;
