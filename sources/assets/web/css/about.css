@@ -54,28 +54,31 @@ img#logo {
 }
 
 main {
-    width: calc(100vw - 2*var(--border-width));
+    width: 100vw;
     display: flex;
     flex-flow: row nowrap;
     margin: 0;
     margin-top: var(--header-height);
-    height: calc(100vh - var(--header-height) -  2*var(--border-width));
+    height: calc(100vh - var(--header-height));
     overflow-x: hidden;
     overflow-y: hidden;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     border: var(--color-bg-secondary) solid var(--border-width);
+    box-sizing: border-box;
 }
 
 main > article {
     display:flex;
     flex-shrink: 0;
-    width: calc(100vw - 16px - 2*var(--border-width));
-    height: calc(100vh - 32 - var(--header-height) - 2*var(--border-width));
+    width: 100vw;
+    height: 100%;
     flex-flow: column nowrap;
-    padding: 16px 8px;
+    padding: 8px 16px;
     scroll-snap-align: center;
-    overflow-y: overlay;
+    overflow-x: clip;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 main > article#about, header {

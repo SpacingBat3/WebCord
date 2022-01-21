@@ -24,8 +24,8 @@ h1 {
 
 .aura-content {
     width: var(--content-width);
-    margin-left: calc(50vw - calc(var(--content-width)/2));
-    margin-right: calc(50vw - calc(var(--content-width)/2));
+    margin-left: calc(50vw - (var(--content-width)/2));
+    margin-right: calc(50vw - (var(--content-width)/2));
     overflow: hidden;
     white-space: normal;
 }
@@ -33,7 +33,7 @@ h1 {
 .aura {
     height: 100%;
     width: 100%;
-    background-color: #4185D3;
+    background-color: var(--color-accent);
     animation-name: aura;
     animation-duration: 1s;
     animation-timing-function: ease-in-out;
@@ -44,6 +44,6 @@ h1 {
 }
 @keyframes aura {
     0% {width: 0%}
-    10% {width: 0%;background-color: #4185D3}
+    10% {width: 0%;background-color: var(--color-accent)}
     100% {width: 100%;background-color: transparent}
 }
