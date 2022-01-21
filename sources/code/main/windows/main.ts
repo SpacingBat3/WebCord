@@ -1,4 +1,4 @@
-import { appInfo } from "../modules/client";
+import { appInfo, getBuildInfo } from "../modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
 import { app, BrowserWindow, Tray, net, nativeImage, ipcMain } from "electron";
 import * as getMenu from '../modules/menu';
@@ -10,7 +10,7 @@ import { getUserAgent } from '../../global/modules/agent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
 import colors from '@spacingbat3/kolor';
-import { loadStyles } from "../modules/extensions";
+import { loadChromiumExtensions, loadStyles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 
 const configData = new AppConfig();
@@ -297,5 +297,11 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 .catch(void 0);
         }
     });
+
+    // Load extensions for builds of type "devel".
+    if(getBuildInfo().type === "devel")
+        loadChromiumExtensions(win.webContents.session)
+            .catch(void 0)
+
     return win;
 }
