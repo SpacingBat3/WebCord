@@ -73,15 +73,19 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // CSP
 
     win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+        let headersOverwrite:{'Content-Security-Policy':string[]}|undefined = undefined;
         if (configData.get().csp.enabled) {
             console.debug("[CSP] Overwritting Discord CSP.");
-            callback({
-                responseHeaders: {
-                    ...details.responseHeaders,
-                    'Content-Security-Policy': [discordContentSecurityPolicy]
-                }
-            });
+            headersOverwrite = {
+                'Content-Security-Policy': [discordContentSecurityPolicy]
+            }
         }
+        callback({
+            responseHeaders: {
+                ...details.responseHeaders,
+                ...headersOverwrite
+            }
+        });
     });
 
     win.webContents.session.webRequest.onBeforeRequest(
@@ -301,7 +305,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Load extensions for builds of type "devel".
     if(getBuildInfo().type === "devel")
         loadChromiumExtensions(win.webContents.session)
-            .catch(void 0)
+            .catch(()=>{return;})
 
     return win;
 }
