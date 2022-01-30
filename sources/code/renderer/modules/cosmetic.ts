@@ -48,6 +48,7 @@ export default function preloadCosmetic(): void {
       ipcRenderer.removeListener('webContents.did-stop-loading', removeUnneded)
     } else {
       wLog("COSMETIC: Couldn't find elements to remove, retrying on next event.");
+      ipcRenderer.send("cosmetic.load");
     }
   };
   ipcRenderer.on("webContents.did-stop-loading", removeUnneded);

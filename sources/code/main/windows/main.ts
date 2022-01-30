@@ -249,9 +249,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
      * precise way of watching for the changes within Discord's DOM.
      */
     ipcMain.on("cosmetic.load", (event) => {
-        win.webContents.on("did-stop-loading", () => {
-            console.debug("[IPC] Exposing a 'did-stop-loading' event...")
-            event.reply("webContents.did-stop-loading")
+        const callback = () => {
+            if(!win.webContents.getURL().startsWith("https:")) return;
+            console.debug("[IPC] Exposing a 'did-stop-loading' event...");
+            event.reply("webContents.did-stop-loading");
+        }
+        win.webContents.once("did-stop-loading", callback);
+        win.webContents.once("did-navigate", () => {
+            win.webContents.removeListener("did-stop-loading", callback);
         });
     });
 
