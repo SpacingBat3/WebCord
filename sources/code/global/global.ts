@@ -217,3 +217,12 @@ export function getAppIcon(sizes:number[]) {
 			return "/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png";
 	return "";
 }
+
+export type SessionLatest = Electron.Session & {
+	/**
+	 * A method that is unsupported within your Electron version, but valid
+	 * for Electron releases supporting WebHID API, which are versions from
+	 * range `>=14.1.0 && <15.0.0 || >=15.1.0`.
+	 */
+	setDevicePermissionHandler: (handler: (()=>boolean)|null)=>void;
+}

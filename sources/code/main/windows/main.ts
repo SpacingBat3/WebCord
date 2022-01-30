@@ -168,7 +168,6 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             }
             return callback(returnValue);
         });
-        win.webContents.session.setDevicePermissionHandler(() => false);
     }
     win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/load.html'))
         .catch(()=>{return;});

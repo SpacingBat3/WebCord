@@ -63,13 +63,14 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
 }
 import { app, BrowserWindow, dialog, shell } from 'electron';
 import { promises as fs } from 'fs';
-import { knownIstancesList, trustedProtocolRegExp } from './global';
+import { knownIstancesList, trustedProtocolRegExp, SessionLatest } from './global';
 import { checkVersion } from '../main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "../main/windows/main";
 import { AppConfig } from '../main/modules/config';
 import colors from '@spacingbat3/kolor';
 import { resolve as resolvePath, relative } from 'path';
+import { major } from "semver";
 
 // Handle command line switches:
 
@@ -180,7 +181,9 @@ app.on('web-contents-created', (_event, webContents) => {
     // Block all permission requests/checks by the default.
     webContents.session.setPermissionCheckHandler(() => false);
     webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => callback(false));
-    webContents.session.setDevicePermissionHandler(() => false);
+    // Block HID request only when Electron supports handling them.
+    if(major(process.versions.electron) >= 16 || /^(?:14|15)\.1\.\d+.*$/.test(process.versions.electron))
+        (webContents.session as SessionLatest).setDevicePermissionHandler(() => false);
     // Block navigation to the different origin.
     webContents.on('will-navigate', (event, url) => {
         const originUrl = webContents.getURL();
