@@ -284,7 +284,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     ipcMain.on('api-exposed', (_event, api:string) => {
         console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.")
         const functionString = `
-            navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [async() => navigator.mediaDevices.getUserMedia(await window['${api}'].desktopCapturerPicker())]);
+            navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [async() => navigator.mediaDevices.getUserMedia(await window['${api.replaceAll("'","\\'")}'].desktopCapturerPicker())]);
         `;
         win.webContents.executeJavaScript(functionString + ';0').catch(commonCatches.throw);
     });
