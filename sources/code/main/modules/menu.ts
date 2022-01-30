@@ -6,7 +6,6 @@ import {
 	Menu,
 	Tray,
 	shell,
-	nativeImage,
 	clipboard,
 	ipcMain
 } from 'electron';
@@ -20,8 +19,6 @@ import { AppConfig } from './config';
 
 const appConfig = new AppConfig()
 
-import fetch from 'electron-fetch';
-import * as os from 'os';
 import { EventEmitter } from 'events';
 import { createGithubIssue } from './bug';
 import l10n from '../../global/modules/l10n';
@@ -113,23 +110,11 @@ export function context(parent: Electron.BrowserWindow): void {
 	});
 }
 
-let funMode = false;
-const today = new Date();
-if (os.userInfo().username == 'pi' && today.getDate() == 14 && today.getMonth() == 2) {
-	funMode = true; // Happy π day!
-}
-
 // Tray menu
 
-export async function tray(parent: Electron.BrowserWindow): Promise<Electron.Tray> {
+export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 	const strings = (new l10n()).client;
 	const tray = new Tray(appInfo.trayIcon);
-	let icon: Electron.NativeImage;
-	if (funMode) {
-		icon = nativeImage.createFromBuffer(await (await fetch('https://raw.githubusercontent.com/iiiypuk/rpi-icon/master/16.png')).buffer());
-	} else {
-		icon = nativeImage.createFromPath(appInfo.icon).resize({width: 16, height: 16});
-	}
 	function toogleVisibility() {
 		if(parent.isVisible() && parent.isFocused()) {
 			parent.hide();
@@ -140,12 +125,6 @@ export async function tray(parent: Electron.BrowserWindow): Promise<Electron.Tra
 		}
 	}
 	const contextMenu = Menu.buildFromTemplate([
-		{
-			label: app.getName(),
-			enabled: false,
-			icon,
-		},
-		{ type: 'separator' },
 		{
 			label: strings.windows.about,
 			role: 'about',

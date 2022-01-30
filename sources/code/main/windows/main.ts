@@ -19,7 +19,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // Some variable declarations
 
-    let tray: Promise<Tray>;
+    let tray: Tray;
 
     // Check the window state
 
@@ -198,39 +198,37 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // "Red dot" icon feature
     let setFavicon: string | undefined;
-    win.webContents.once('did-finish-load', () => {
-        win.webContents.on('page-favicon-updated', (_event, favicons) => {
-            const t = tray;
-            // Convert from DataURL to RAW.
-            const faviconRaw = nativeImage.createFromDataURL(favicons[0]).toBitmap();
-            // Hash discord favicon.
-            const faviconHash = createHash('sha1').update(faviconRaw).digest('hex');
-            // Stop execution when icon is same as the one set.
-            if (faviconHash === setFavicon) return;
-            // Stop code execution on Fosscord instances.
-            if (new URL(win.webContents.getURL()).origin !== knownIstancesList[0][1].origin) {
-                setFavicon = faviconHash;
-                t.then(t=>t.setImage(appInfo.trayIcon)).catch(commonCatches.throw);
-                win.flashFrame(false);
-                return;
-            }
+    win.webContents.on('page-favicon-updated', (_event, favicons) => {
+        const t = tray;
+        // Convert from DataURL to RAW.
+        const faviconRaw = nativeImage.createFromDataURL(favicons[0]).toBitmap();
+        // Hash discord favicon.
+        const faviconHash = createHash('sha1').update(faviconRaw).digest('hex');
+        // Stop execution when icon is same as the one set.
+        if (faviconHash === setFavicon) return;
+        // Stop code execution on Fosscord instances.
+        if (new URL(win.webContents.getURL()).origin !== knownIstancesList[0][1].origin) {
+            setFavicon = faviconHash;
+            t.setImage(appInfo.trayIcon);
+            win.flashFrame(false);
+            return;
+        }
 
-            // Compare hashes.
-            if (!configData.get().disableTray) {
-                if(faviconHash === discordFavicons.default) {
-                    t.then(t=>t.setImage(appInfo.trayIcon)).catch(commonCatches.throw);
-                    win.flashFrame(false);
-                } else if(faviconHash.startsWith('4')) {
-                    t.then(t=>t.setImage(appInfo.trayUnread)).catch(commonCatches.throw);
-                    win.flashFrame(false);
-                } else {
-                    console.debug("[Mention] Hash: "+faviconHash)
-                    t.then(t=>t.setImage(appInfo.trayPing)).catch(commonCatches.throw);
-                    win.flashFrame(true);
-                }
-                setFavicon = faviconHash;
+        // Compare hashes.
+        if (!configData.get().disableTray) {
+            if(faviconHash === discordFavicons.default) {
+                t.setImage(appInfo.trayIcon);
+                win.flashFrame(false);
+            } else if(faviconHash.startsWith('4')) {
+                t.setImage(appInfo.trayUnread);
+                win.flashFrame(false);
+            } else {
+                console.debug("[Mention] Hash: "+faviconHash)
+                t.setImage(appInfo.trayPing);
+                win.flashFrame(true);
             }
-        });
+            setFavicon = faviconHash;
+        }
     });
 
     // Window Title
