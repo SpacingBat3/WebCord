@@ -172,7 +172,6 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
         window.on('resize', () => setTimeout(()=>this.setState(window, 'resize'),100));
         window.on('unmaximize', () => this.setState(window, 'unmaximize'));
         window.on('maximize', () => this.setState(window, 'maximize'));
-        window.on('responsive', ()=> console.log("test1"))
     }
 
     /**
