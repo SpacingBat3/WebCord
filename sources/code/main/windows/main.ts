@@ -1,6 +1,6 @@
 import { appInfo, getBuildInfo } from "../modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
-import { app, BrowserWindow, Tray, net, nativeImage, ipcMain } from "electron";
+import { app, BrowserWindow, Tray, net, nativeImage, ipcMain, desktopCapturer, BrowserView } from "electron";
 import * as getMenu from '../modules/menu';
 import { discordFavicons, knownIstancesList } from '../../global/global';
 import packageJson from '../../global/modules/package';
@@ -258,16 +258,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     });
 
     ipcMain.on("cosmetic.hideElementByClass", (event, cssRule:string) => {
-        win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }')
-            .catch(void 0);
+        void win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }')
         event.reply("cosmetic.hideElementByClass");
     })
 
     // Animate menu
     ipcMain.on('cosmetic.sideBarClass', (_event, className:string) => {
         console.debug("[CSS] Injecting a CSS for sidebar animation...")
-        win.webContents.insertCSS("."+className+"{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}")
-            .catch(void 0);
+        void win.webContents.insertCSS("."+className+"{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}")
     });
 
     // Insert custom css styles:
@@ -299,8 +297,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         }
         // Custom Discord instance switch
         if("currentInstance" in object) {
-            win.loadURL(knownIstancesList[config.get().currentInstance][1].href)
-                .catch(void 0);
+            void win.loadURL(knownIstancesList[config.get().currentInstance][1].href)
         }
     });
 
@@ -308,6 +305,47 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     if(getBuildInfo().type === "devel")
         loadChromiumExtensions(win.webContents.session)
             .catch(()=>{return;})
+
+    // Handle desktopCapturer functionality through experimental BrowserViews
+    {
+        let lock = false;
+        ipcMain.handle("desktopCapturerRequest", () => {
+            return new Promise((resolvePromise) => {
+                if(lock || win.getBrowserViews().length !== 0)
+                    return new Error("Main process is busy by another request.")
+                lock = true;
+                const sources = desktopCapturer.getSources({
+                    types: ["screen", "window"],
+                    fetchWindowIcons: true
+                });
+                const view = new BrowserView({
+                    webPreferences: {
+                        preload: resolve(app.getAppPath(), "sources/app/renderer/preload/capturer.js")
+                    }
+                });
+                ipcMain.handleOnce("getDesktopCapturerSources", (event) => {
+                    if(event.sender === view.webContents)
+                        return sources;
+                    else
+                        return null;
+                });
+                ipcMain.once("closeCapturerView", (_event,data:unknown) => {
+                    win.removeBrowserView(view);
+                    resolvePromise(data);
+                    lock = false;
+                })
+                win.setBrowserView(view);
+                void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
+                view.webContents.once("did-finish-load", () => {
+                    view.setBounds({
+                        ...win.getBounds(),
+                        x:0,
+                        y:0,
+                    })
+                })
+            });
+        });
+    }
 
     return win;
 }

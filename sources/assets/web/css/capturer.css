@@ -1,22 +1,22 @@
-.capturer-selection {
+#capturer-selection {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(30,30,30,.75);
+    background: #000a;
     color: #fff;
     z-index: 10000000;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.capturer-scroller {
+#capturer-scroller {
     width: 100%;
     max-height: 100vh;
     overflow-y: auto;
 }
-.capturer-list {
+#capturer-list {
     max-width: calc(100% - 100px);
     margin: 50px;
     padding: 0;
@@ -71,7 +71,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.capturer-close {
+#capturer-close {
     background-color: #36393F;
     color: #dcddde;
     font-size: 20px;
@@ -82,7 +82,9 @@
     right: 15px;
     padding-top: 5px;
     transition: background-color .15s;
+    border: transparent;
+    box-shadow: none;
 }
-.capturer-close:hover {
+#capturer-close:hover {
     background-color: #823A3A;
 }
