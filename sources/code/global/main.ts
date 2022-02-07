@@ -218,9 +218,9 @@ app.on('web-contents-created', (_event, webContents) => {
                 type: 'warning',
                 title: strings.common.warning + ': ' + strings.externalApp.title,
                 message: strings.externalApp.message,
-                buttons: [strings.common.yes, strings.common.no],
-                defaultId: 1,
-                cancelId: 1,
+                buttons: [strings.common.no, strings.common.yes],
+                defaultId: 0,
+                cancelId: 0,
                 detail: strings.common.source + ':\n' + details.url,
                 textWidth: 320,
                 normalizeAccessKeys: true
@@ -232,7 +232,7 @@ app.on('web-contents-created', (_event, webContents) => {
             else
                 result = dialog.showMessageBoxSync(options);
 
-            if (result === 1) return { action: 'deny' };
+            if (result === 0) return { action: 'deny' };
         }
         if (allowedProtocol) shell.openExternal(details.url).catch(commonCatches.print);
         return { action: 'deny' };
