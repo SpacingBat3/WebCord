@@ -61,9 +61,9 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
         }).catch(commonCatches.print)
     }
 }
-import { app, BrowserWindow, dialog, shell } from 'electron';
+import { app, BrowserWindow, dialog, session, shell } from 'electron';
 import { promises as fs } from 'fs';
-import { knownIstancesList, trustedProtocolRegExp, SessionLatest } from './global';
+import { trustedProtocolRegExp, SessionLatest } from './global';
 import { checkVersion } from '../main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "../main/windows/main";
@@ -178,9 +178,12 @@ app.on('window-all-closed', () => {
 
 // Global `webContents` defaults for hardened security
 app.on('web-contents-created', (_event, webContents) => {
+    const isMainWindow = webContents.session === session.defaultSession;
     // Block all permission requests/checks by the default.
-    webContents.session.setPermissionCheckHandler(() => false);
-    webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => callback(false));
+    if(!isMainWindow){
+        webContents.session.setPermissionCheckHandler(() => false);
+        webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => callback(false));
+    }
     // Block HID request only when Electron supports handling them.
     if(major(process.versions.electron) >= 16 || /^(?:14|15)\.1\.\d+.*$/.test(process.versions.electron))
         (webContents.session as SessionLatest).setDevicePermissionHandler(() => false);
@@ -208,7 +211,7 @@ app.on('web-contents-created', (_event, webContents) => {
          * ask the end user to confirm if the URL is safe enough for him.
          * (unless an application user disabled that functionality)
          */
-        if (allowedProtocol && !sameOrigin && config.redirectionWarning || !(new URL(webContents.getURL()).origin === knownIstancesList[config.currentInstance][1].origin)) {
+        if (allowedProtocol && !sameOrigin && config.redirectionWarning || !isMainWindow) {
             const window = BrowserWindow.fromWebContents(webContents);
             const strings = (new l10n).client.dialog;
             const options: Electron.MessageBoxSyncOptions = {
@@ -224,7 +227,7 @@ app.on('web-contents-created', (_event, webContents) => {
             };
             let result: number;
 
-            if (window)
+            if (window instanceof BrowserWindow)
                 result = dialog.showMessageBoxSync(window, options);
             else
                 result = dialog.showMessageBoxSync(options);
