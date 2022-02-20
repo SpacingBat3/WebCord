@@ -26,11 +26,26 @@
     </header>
     <main>
         <article id="about">
-            <img id="logo">
-            <h1 id="appName"></h1>
-            <h2 id="appVersion"></h2>
+            <div class="center">
+                <img id="logo">
+                <h1 id="appName"></h1>
+                <h2 id="appVersion"></h2>
+                <p id="appDescription"></p>
+                <h2><a id="appRepo" rel="noreferrer" target="_blank"></a></h2>
+            </div>
             <hr>
-            <i>Work in progress...</i>
+            <div class="list">
+                <h3>Electron</h3>
+                <p id="electron"></p>
+            </div>
+            <div class="list">
+                <h3>Chromium</h3>
+                <p id="chrome"></p>
+            </div>
+            <div class="list">
+                <h3>Node.js</h3>
+                <p id="node"></p>
+            </div>
         </article>
         <article id="contributors">
             <h1 id="contributorsTitle"><i>Work in progress...</i></h1>
@@ -38,6 +53,7 @@
         <article id="licenses">
             <h2 id="appLicenseTitle"></h2>
             <p id="appLicenseBody"></p>
+            <button id="showLicense"></button>
             <hr>
             <h2 id="thirdPartyLicensesTitle"></h2>
             <p id="thirdPartyLicensesBody"></p>

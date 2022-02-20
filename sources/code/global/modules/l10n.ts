@@ -265,7 +265,9 @@ class l10n {
 		},
 		aboutWindow: {
 			about: {
-				nav: "About"
+				nav: "About",
+				appDescription: "Discord and Fosscord web client with privacy-focused features.",
+				appRepo: "GitHub Repository"
 			},
 			contributors: {
 				nav: "Contributors"

@@ -1,5 +1,6 @@
 //import { packageJson } from '../../global';
 import { app, ipcMain as ipc, screen } from 'electron';
+import packageJson from '../../global/modules/package';
 import { getBuildInfo } from '../modules/client';
 import { initWindow } from '../modules/parent';
 //import l10n from '../../global/modules/l10n';
@@ -17,7 +18,8 @@ export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.
         height,
         resizable: false,
         fullscreenable: false,
-        frame: false
+        frame: false,
+        modal: true
     });
     if(aboutPanel === undefined) return;
     ipc.once("about.close", () => {
@@ -32,10 +34,12 @@ export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.
             event.reply("about.getDetails", {
                 appName: app.getName(),
                 appVersion: app.getVersion(),
-                buildInfo: getBuildInfo()
+                buildInfo: getBuildInfo(),
+                appRepo: packageJson.data.homepage
             });
     });
     aboutPanel.once("close", () => {
+        ipc.removeAllListeners("showAppLicense");
         ipc.removeAllListeners("about.getDetails");
         ipc.removeAllListeners("about.readyToShow");
         ipc.removeAllListeners("about.close");

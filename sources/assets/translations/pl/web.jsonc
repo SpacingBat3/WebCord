@@ -5,7 +5,9 @@
     },
     "aboutWindow": {
         "about": {
-            "nav": "O aplikacji"
+            "nav": "O aplikacji",
+            "appDescription": "Klient Discord'a i Fosscord'a z funkcjami skupionymi na prywatności.",
+            "appRepo": "Repozytorium GitHub"
         },
         "contributors": {
             "nav": "Współtwórcy"
@@ -14,7 +16,7 @@
             "nav": "Licencje",
             "appLicenseTitle": "Licencja aplikacji",
             "appLicenseBody": "%s jest wolnym oprogramowaniem: możesz swobodnie modyfikować i rozpowszechniać to oprogramowanie zgodnie z warunkami licencji MIT, która powinna być dostarczona wraz z tym oprogramowaniem.",
-            "showLicense": "Pokaż licencję",
+            "showLicense": "Wyświetl licencję",
             "thirdPartyLicensesTitle": "Licencje firm trzecich",
             "thirdPartyLicensesBody": "%s jest zależny od następującego oprogramowania firm trzecich:",
             "licensedUnder": "na licencji %s",

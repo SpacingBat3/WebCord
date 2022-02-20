@@ -71,7 +71,7 @@ main {
 main > article {
     display:flex;
     flex-shrink: 0;
-    width: 100vw;
+    width: 100%;
     height: 100%;
     flex-flow: column nowrap;
     padding: 8px 16px;
@@ -81,35 +81,45 @@ main > article {
     box-sizing: border-box;
 }
 
-main > article#about, header {
+header {
     text-align: center;
+}
+
+div.center {
+    text-align: center;
+    align-self: center;
 }
 
 h1 {
     margin-top: 0.5em;
-    font-size: calc(var(--font-size-factor) * 1.5)
+    font-size: calc(var(--font-size-factor) * 1.5);
 }
 h2 {
-    font-size: calc(var(--font-size-factor) * 1.2)
+    font-size: calc(var(--font-size-factor) * 1.2) !important;
+    margin-bottom: 12px;
 }
 h3 {
-    color: var(--color-link);
     font-size: calc(var(--font-size-factor) * 1.1);
-    margin-bottom: -.5em
 }
 h1 ~ h2 {
     margin-top: -.5em;
 }
-hr {
-    width: calc(90vw - 32px);
+#about {
+    padding: 8px 48px;
 }
-
+#licenses h3 {
+    color: var(--color-link);
+    margin-bottom: -.5em;
+}
+hr {
+    width: calc(100% - 4px);
+}
 nav {
     display: flex;
 }
 
 nav > div div.content {
-    font-family: 'Ubuntu';
+    font-family: var(--font-display);
     color: var(--color-font-settings);
     font-size: var(--font-size-factor);
     font-weight: bold;
@@ -174,4 +184,69 @@ img.profilePicture {
 
 body {
     display: none;
+}
+
+button {
+    width: fit-content;
+    color: rgb(var(--color-accent-light));
+    background-color: transparent;
+    align-self: flex-end;
+    text-transform: uppercase;
+    animation: backgroundease ease 0.4s paused;
+    font-size: calc(var(--font-size-factor)*0.9);
+    font-weight: bold;
+    letter-spacing: 2pt;
+    padding: 8px;
+    margin-top: -4px;
+    margin-bottom: 8px;
+    border: transparent;
+    outline: transparent;
+    cursor: pointer;
+}
+
+@keyframes backgroundease {
+    0% { background-color: rgba(var(--color-accent-light), 0)}
+    30% { background-color: rgba(var(--color-accent-light), 0.2)}
+    100% { background-color: rgba(var(--color-accent-light), 0);}
+}
+
+div.dialog {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: #0005;
+    animation: showSmoothly 0.1s linear;
+    -webkit-app-region: no-drag;
+}
+
+div.dialog > div {
+    margin: 0px 20px;
+    padding: 5px 16px;
+    background-color: var(--color-bg-primary);
+    border: solid var(--color-bg-secondary) 5px;
+    box-shadow: #0005 6px 10px 12px -2px;
+    box-sizing: border-box;
+    font-family: var(--font-code);
+    font-size: 9pt;
+}
+
+div.list {
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 2px;
+}
+
+@keyframes showSmoothly {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
