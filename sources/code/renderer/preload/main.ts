@@ -9,19 +9,14 @@ import l10n from "../../global/modules/l10n";
  * WebCord API key used as the object name of the exposed content
  * by the Context Bridge.
  */
-const contextBridgeApiKey = "__" + randomBytes(32).toString('base64') + "__";
+const contextBridgeApiKey = randomBytes(Math.floor((Math.random()+6)*32)).toString('base64');
 
 /*
  * Cosmetic script uses that to hide the Discord's download popup on fresh
  * installations.
  */
 preloadCosmetic();
-contextBridge.exposeInMainWorld(
-    contextBridgeApiKey,
-    {
-        desktopCapturerPicker: desktopCapturerPicker
-    }
-);
+contextBridge.exposeInMainWorld(contextBridgeApiKey,desktopCapturerPicker);
 
 if (window.location.protocol === 'file:') {
     window.addEventListener("load", () => {

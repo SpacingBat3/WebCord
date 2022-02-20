@@ -47,7 +47,7 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
 window.addEventListener("load", () => {
     ipc.invoke("getDesktopCapturerSources").then((result:null|Electron.DesktopCapturerSource[]) => {
         if(result === null) {
-            ipc.send("closeCapturerView");
+            ipc.send("closeCapturerView", new Error("Unknown sources list."));
         } else {
             try {
                 renderCapturerContainer(result);
@@ -69,10 +69,10 @@ window.addEventListener("load", () => {
                         });
                     });
                 document.getElementById('capturer-close')
-                    ?.addEventListener('click', () => ipc.send("closeCapturerView"));
-            } catch {
-                ipc.send("closeCapturerView");
+                    ?.addEventListener('click', () => ipc.send("closeCapturerView", "Operation canceled by user"));
+            } catch(reason) {
+                ipc.send("closeCapturerView", reason);
             }
         }
-    }).catch(() => ipc.send("closeCapturerView"));
+    }).catch(reason => ipc.send("closeCapturerView", reason));
 })

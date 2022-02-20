@@ -281,7 +281,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     ipcMain.on('api-exposed', (_event, api:string) => {
         console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.")
         const functionString = `
-            navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [async() => navigator.mediaDevices.getUserMedia(await window['${api.replaceAll("'","\\'")}'].desktopCapturerPicker())]);
+            navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [async() => navigator.mediaDevices.getUserMedia(await window['${api.replaceAll("'","\\'")}']())]);
         `;
         win.webContents.executeJavaScript(functionString + ';0').catch(commonCatches.throw);
     });
@@ -308,11 +308,16 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // Handle desktopCapturer functionality through experimental BrowserViews
     {
+        /** Determines whenever another request is in process. */
         let lock = false;
         ipcMain.handle("desktopCapturerRequest", () => {
             return new Promise((resolvePromise) => {
+                // Handle lock and check for a presence of another BrowserView.
                 if(lock || win.getBrowserViews().length !== 0)
                     return new Error("Main process is busy by another request.")
+                // Fail when client has denied the permission to the capturer.
+                if(!configData.get().permissions["display-capture"])
+                    return new Error("Permission denied.")
                 lock = true;
                 const sources = desktopCapturer.getSources({
                     types: ["screen", "window"],
@@ -341,7 +346,11 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                         ...win.getBounds(),
                         x:0,
                         y:0,
-                    })
+                    });
+                    view.setAutoResize({
+                        width: true,
+                        height: true
+                    });
                 })
             });
         });
