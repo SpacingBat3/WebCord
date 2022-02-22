@@ -63,7 +63,7 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
 }
 import { app, BrowserWindow, dialog, session, shell } from 'electron';
 import { promises as fs } from 'fs';
-import { trustedProtocolRegExp, SessionLatest } from './global';
+import { trustedProtocolRegExp, SessionLatest, knownIstancesList } from './global';
 import { checkVersion } from '../main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "../main/windows/main";
@@ -190,7 +190,7 @@ app.on('web-contents-created', (_event, webContents) => {
     // Block navigation to the different origin.
     webContents.on('will-navigate', (event, url) => {
         const originUrl = webContents.getURL();
-        if ((new URL(originUrl)).origin !== (new URL(url)).origin)
+        if (originUrl !== '' && (new URL(originUrl)).origin !== (new URL(url)).origin)
             event.preventDefault();
     });
 
@@ -234,7 +234,25 @@ app.on('web-contents-created', (_event, webContents) => {
 
             if (result === 0) return { action: 'deny' };
         }
-        if (allowedProtocol) shell.openExternal(details.url).catch(commonCatches.print);
+        if (allowedProtocol) {
+            const url = new URL(details.url);
+            if(url.host === knownIstancesList[config.currentInstance][1].host && url.pathname === '/popout')
+                return {
+                    action: 'allow',
+                    overrideBrowserWindowOptions: {
+                        autoHideMenuBar: true,
+                        parent: BrowserWindow.fromWebContents(webContents) ?? undefined,
+                        fullscreenable: false // not functional with 'children'
+                    }
+                }
+            else
+                shell.openExternal(details.url).catch(commonCatches.print);
+        }
         return { action: 'deny' };
+    });
+
+    // Remove menu from popups
+    webContents.on("did-create-window", (window) => {
+        window.removeMenu();
     });
 });
