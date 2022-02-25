@@ -179,11 +179,11 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
 					click: () => loadSettingsWindow(parent)
 				},
 				// Extensions (Work In Progress state)
-				{
+				/*{
 					label: strings.menubar.file.addon.groupName,
 					visible: devel || appConfig.get().devel,
 					//click: () => {}
-				},
+				},*/
 				{ type: 'separator' },
 				// Reset
 				{
