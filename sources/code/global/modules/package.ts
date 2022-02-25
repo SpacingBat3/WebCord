@@ -239,5 +239,5 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
     }
 }
 
-const packageJson = new PackageJSON(["homepage", "name", "repository", "author"]);
+const packageJson = new PackageJSON(["homepage", "name", "repository", "author", "contributors"]);
 export default packageJson;

@@ -3,16 +3,73 @@ import { buildInfo, getAppIcon } from "../../global/global";
 import { getAppPath } from "../../global/modules/electron";
 import { resolve } from "path";
 import L10N from "../../global/modules/l10n";
-import { PackageJSON, Person } from "../../global/modules/package";
-/*import { createHash } from "crypto";
+import packageJson, { PackageJSON, Person } from "../../global/modules/package";
+import { createHash } from "crypto";
 
-function getGithubAvatarUrl(user:string) {
-    return "https://github.com/"+user+".png"
+/**
+ * Fetches user avatar by making the requests to both GitHub and Gravatar
+ * services and picking the promise that resolves first. It is also designed to
+ * cancel all presenting fetches when once has been already resolved to conserve
+ * the network and cleanup the code.
+ */
+async function getUserAvatar(person: Person, size = 96) {
+    const sources = [], promises = [], controler = new AbortController();
+    sources.push("https://github.com/"+encodeURIComponent(person.name)+".png?size="+size.toString());
+    if(person.email)
+        sources.push("https://gravatar.com/avatar/"+createHash("md5").update(person.email).digest('hex')+'?d=404&s='+size.toString())
+    for(const source of sources) {
+        promises.push(fetch(source, { signal: controler.signal }).then(async (data) => {
+            if(data.ok && data.headers.get("Content-Type")?.startsWith("image")) {
+                const blobUrl =  URL.createObjectURL(await data.blob());
+                const image = document.createElement('img');
+                image.src = blobUrl;
+                image.addEventListener('load', () => URL.revokeObjectURL(blobUrl));
+                return image;
+            } else if(data.ok)
+                throw new Error('[Avatar] Not an image!')
+            else
+                throw new Error('[Avatar] HTTP '+data.status.toString()+data.statusText);
+        }));
+    }
+    return await Promise.any(promises).finally(() => controler.abort());
 }
 
-function getGravatarUrl(email:string) {
-    return "https://gravatar.com/"+createHash("md5").update(email).digest('hex')
-}*/
+function addContributor(person: Person, role?: string) {
+    const container = document.createElement('div');
+    const description = document.createElement('div');
+    
+    getUserAvatar(person)
+        .then(avatar => container.appendChild(avatar))
+        .finally(() => container.appendChild(description));
+    
+    container.classList.add("contributor");
+
+    const nameElement = document.createElement('h2');  
+    const link = document.createElement('a');
+    if(typeof person.url === 'string')
+        link.href = person.url;
+    else if (typeof person.email === 'string')
+        link.href = 'mailto:'+person.email
+    if(link.href !== '') {
+        link.innerText = person.name;
+        link.rel="noreferrer";
+        link.target="_blank";
+        nameElement.appendChild(link);
+    } else {
+        link.remove();
+        nameElement.innerText = person.name;
+    }
+    description.appendChild(nameElement);
+
+    if(role) {
+        const roleElement = document.createElement('p');
+        roleElement.classList.add("description")
+        roleElement.innerText = role;
+        description.appendChild(roleElement);
+    }
+
+    document.getElementById("credits")?.appendChild(container);
+}
 
 const locks = { 
     dialog: false
@@ -61,7 +118,7 @@ function generateAppContent(l10n:L10N["web"]["aboutWindow"], details:aboutWindow
     if(repoElement.tagName === 'A')
         (repoElement as HTMLAnchorElement).href = details.appRepo??'';
     
-    for (const id of Object.keys(l10n.about).filter((value)=>value!=="nav")) {
+    for (const id of Object.keys(l10n.about)) {
         const element = document.getElementById(id);
         if(element) 
             element.innerText = l10n.about[id as keyof typeof l10n.about]
@@ -75,7 +132,7 @@ function generateAppContent(l10n:L10N["web"]["aboutWindow"], details:aboutWindow
 
 function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], name:string) {
     const packageJson = new PackageJSON(["dependencies", "devDependencies"]);
-    for (const id of Object.keys(l10n.licenses).filter((value)=>value.match(/^(?:nav|licensedUnder|packageAuthors)$/) === null)) {
+    for (const id of Object.keys(l10n.licenses).filter((value)=>value.match(/^(?:licensedUnder|packageAuthors)$/) === null)) {
         const element = document.getElementById(id)
         if(element) 
             element.innerText = l10n.licenses[id as keyof typeof l10n.licenses]
@@ -125,9 +182,20 @@ ipc.on("about.getDetails", (_event, details:aboutWindowDetails) => {
     // Header sections names
     for(const div of document.querySelectorAll<HTMLDivElement>("nav > div")) {
         const content = div.querySelector<HTMLDivElement>("div.content");
-        if(content) content.innerText = l10n[(div.id.replace("-nav","") as keyof typeof l10n)].nav
+        if(content) content.innerText = l10n.nav[div.id.replace("-nav","") as keyof typeof l10n.nav]
     }
     generateAppContent(l10n, details);
+    {
+        if(packageJson.data.author)
+            addContributor(new Person(packageJson.data.author), l10n.credits.people.author)
+        for (const person of packageJson.data.contributors??[]) {
+            const safePerson = new Person(person);
+            let translation:string = l10n.credits.people.contributors.default;
+            if(safePerson.name in l10n.credits.people.contributors)
+                translation = l10n.credits.people.contributors[safePerson.name as keyof typeof l10n.credits.people.contributors];
+            addContributor(safePerson, translation);
+        }
+    }
     generateLicenseContent(l10n, details.appName);
     // Initialize license button
     document.getElementById("showLicense")?.addEventListener("click", () => {

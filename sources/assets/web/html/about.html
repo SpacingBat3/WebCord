@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://avatars.githubusercontent.com https://github.com https://*.gravatar.com https://gravatar.com; img-src 'self' blob:">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/about.css">
 </head>
@@ -14,7 +14,7 @@
                 <div class="content"></div>
                 <div class="line"></div>
             </div>
-            <div id="contributors-nav">
+            <div id="credits-nav">
                 <div class="content"></div>
                 <div class="line"></div>
             </div>
@@ -32,7 +32,7 @@
                 <h1 id="appName"></h1>
                 <h2 id="appVersion"></h2>
                 <p id="appDescription"></p>
-                <h2><a id="appRepo" rel="noreferrer" target="_blank"></a></h2>
+                <h3><a id="appRepo" rel="noreferrer" target="_blank"></a></h3>
             </div>
             <hr>
             <div class="list">
@@ -48,8 +48,7 @@
                 <p id="node"></p>
             </div>
         </article>
-        <article id="contributors">
-            <h1 id="contributorsTitle"><i>Work in progress...</i></h1>
+        <article id="credits">
         </article>
         <article id="licenses">
             <h2 id="appLicenseTitle"></h2>
@@ -62,25 +61,32 @@
     </main>
     <script>
         /** @param {string} id */
-        function select(id) {
+        function select(id, scroll = true) {
             const element = document.getElementById(id);
             const nav = document.getElementById(id+"-nav")
             /** @type {NodeListOf<HTMLDivElement>} */
             const allNavs = document.querySelectorAll("nav > div")
             if(element && nav) {
-                if(!nav.classList.toString().includes("selected"))
+                if(!nav.classList.toString().includes("selected") && scroll)
                     scrollToElement(element)
-                for(const anyNav of allNavs)
+                for(const anyNav of allNavs) if (anyNav !== nav)
                     anyNav.classList.remove("selected");
                 nav.classList.add("selected");
             }
         }
         /** @param {HTMLElement} element */
         function scrollToElement(element) {
-            element.parentElement.scrollLeft = element.offsetLeft
+            element.parentElement.scrollLeft = element.offsetLeft;
         }
         for(const element of document.querySelectorAll("nav > div")) {
             element.addEventListener("click", () => select(element.id.replace("-nav","")));
+            new IntersectionObserver((ratio) => {
+                if(ratio[0].intersectionRatio === 1)
+                    select(element.id.replace("-nav",""), false);
+            }, {
+                root: document.getElementsByTagName('main')[0],
+                threshold: 1
+            }).observe(document.getElementById(element.id.replace("-nav","")));
         }
     </script>
 </body>

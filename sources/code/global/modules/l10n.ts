@@ -264,16 +264,24 @@ class l10n {
 			description: "Please make sure you're connected to the internet."
 		},
 		aboutWindow: {
+			nav: {
+				about: "About",
+				credits: "Contributors",
+				licenses: "Licenses"
+			},
 			about: {
-				nav: "About",
 				appDescription: "Discord and Fosscord web client with privacy-focused features.",
 				appRepo: "GitHub Repository"
 			},
-			contributors: {
-				nav: "Contributors"
+			credits: {
+				people: {
+					author: "Author, maintainer and main developer.",
+					contributors: {
+						default: "Code contributor."
+					}
+				}
 			},
 			licenses: {
-				nav: "Licenses",
 				appLicenseTitle: "Application license",
 				appLicenseBody: "%s is a free software: you can use, modify and redistribute it under terms of MIT license, which should be distributed with this software.",
 				showLicense: "Show license",

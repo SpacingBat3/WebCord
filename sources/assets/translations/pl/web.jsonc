@@ -4,16 +4,21 @@
         "description": "Proszę sprawdzić połączenie z internetem."
     },
     "aboutWindow": {
+        "nav": {
+            "about": "O aplikacji",
+            "credits": "Zasługi",
+            "licenses": "Licencje"
+        },
         "about": {
-            "nav": "O aplikacji",
             "appDescription": "Klient Discord'a i Fosscord'a z funkcjami skupionymi na prywatności.",
             "appRepo": "Repozytorium GitHub"
         },
-        "contributors": {
-            "nav": "Współtwórcy"
+        "credits": {
+            "people": {
+                "author": "Autor, opiekun i główny deweloper aplikacji."
+            }
         },
         "licenses": {
-            "nav": "Licencje",
             "appLicenseTitle": "Licencja aplikacji",
             "appLicenseBody": "%s jest wolnym oprogramowaniem: możesz swobodnie modyfikować i rozpowszechniać to oprogramowanie zgodnie z warunkami licencji MIT, która powinna być dostarczona wraz z tym oprogramowaniem.",
             "showLicense": "Wyświetl licencję",
