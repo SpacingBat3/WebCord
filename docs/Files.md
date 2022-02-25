@@ -147,7 +147,7 @@ Here's more detailed description of what's been already discussed above:
 
   - `main.ts` – a preload script for `mainWindow`,
     basically loads `capturer.ts` and `cosmetic.ts` scripts described in
-    the previous section.
+    the next sections.
 
   - `settings.ts` – a front-end script for the WebCord's settings manager; it
     communicates via the IPC to load and fetch the configuration from the
@@ -158,6 +158,9 @@ Here's more detailed description of what's been already discussed above:
 
   - `about.ts` – it is responsible for loading the *About* window content based
     on the translation files and pre-definied HTML file structure.
+
+  - `capturer.ts` – communicates with screen capturer BrowserView to show window
+    list and send chosen source back to the Discord using IPC.
 
 ---
 
@@ -177,9 +180,8 @@ Here's more detailed description of what's been already discussed above:
 
 #### Renderer process modules (`renderer/modules/`)
 
-  - `capturer.ts` – contains the implementation of the
-    `desktopCapturer` interface, used for implementing a screen share support
-    for Discord.
+  - `capturer.ts` – sends the request to `main.ts` using IPC and waits for it
+    to respond with chosen source.
 
   - `cosmetic.ts` – does some cosmetic changes to the Discord
     website, removing from it some unnecesary content like the application

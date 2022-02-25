@@ -1,7 +1,7 @@
 import { commonCatches } from "./error";
 
 /**
- * Loads CSS styles from `${userdata}/styles` directory and observes their changes.
+ * Loads CSS styles from `${userdata}/Themes` directory and observes their changes.
  * 
  * On Windows and MacOS, entire directory is watched recursively for changes, so
  * new themes will apply immediatelly after they're updated. On other platforms,
