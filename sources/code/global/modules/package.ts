@@ -30,11 +30,11 @@ export interface PackageJsonProperties {
 	/** Application version. */
 	version: string,
 	/** Application author. */
-	author?: PersonAny,
+	author?: PersonLike,
     /** Application license. */
     license: string,
 	/** Array of application code contributors. */
-	contributors?: Array<PersonAny>,
+	contributors?: Array<PersonLike>,
 	/** Application homepage (`Readme.md` file). */
 	homepage?: string,
 	/** Application repository. */

@@ -5,7 +5,7 @@
 // Let's import some keys from the package.json:
 
 import { buildInfo } from '../global/global';
-import packageJson from '../global/modules/package';
+import packageJson, { Person } from '../global/modules/package';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path'
 import { ForgeConfigFile } from './forge.d';
@@ -144,7 +144,7 @@ const config: ForgeConfigFile = {
       config: {
         prerelease: getBuildID() === "devel",
         repository: {
-          owner: packageJson.data.author?.name ?? "SpacingBat3",
+          owner: packageJson.data.author ? new Person(packageJson.data.author).name : "SpacingBat3",
           name: "WebCord"
         },
         draft: getBuildID() === "release"

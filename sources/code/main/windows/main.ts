@@ -48,7 +48,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
         if (errorCode <= -100 && errorCode >= -199)
             // Show offline page on connection errors.
-            win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html')).catch(()=>{return;});
+            void win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
         else if (errorCode === -30) {
             // Ignore CSP errors.
             console.warn(colors.bold('[WARN]')+' A page "'+validatedURL+'" was blocked by CSP.')
@@ -58,15 +58,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearInterval(retry);
-                win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) })
-                    .catch(()=>{return;});
+                void win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) });
             }
         }, 1000);
     });
     win.webContents.once('did-finish-load', () => {
         console.debug("[PAGE] Starting to load the Discord page...")
         if (!startHidden) win.show();
-        setTimeout(() => {win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) }).catch(()=>{return;})}, 1500);
+        setTimeout(() => {void win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) })}, 1500);
     });
     if (mainWindowState.initState.isMaximized) win.maximize();
 
@@ -169,8 +168,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             return callback(returnValue);
         });
     }
-    win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/load.html'))
-        .catch(()=>{return;});
+    void win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/load.html'));
     win.setAutoHideMenuBar(configData.get().hideMenuBar);
     win.setMenuBarVisibility(!configData.get().hideMenuBar);
     // Add English to the spellchecker
@@ -303,8 +301,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // Load extensions for builds of type "devel".
     if(getBuildInfo().type === "devel")
-        loadChromiumExtensions(win.webContents.session)
-            .catch(()=>{return;})
+        void loadChromiumExtensions(win.webContents.session)
+            
 
     // Handle desktopCapturer functionality through experimental BrowserViews
     {
@@ -355,6 +353,5 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             });
         });
     }
-
     return win;
 }
