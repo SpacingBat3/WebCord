@@ -147,7 +147,7 @@ const config: ForgeConfigFile = {
           owner: packageJson.data.author ? new Person(packageJson.data.author).name : "SpacingBat3",
           name: "WebCord"
         },
-        draft: getBuildID() === "release"
+        draft: false
       }
     }
   ],
