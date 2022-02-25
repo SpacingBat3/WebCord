@@ -12,7 +12,8 @@ application no longer crashes when there's some syntax/type error in the
 translation files and loads the fallback strings instead.
 
 Other change introduced with this version was that English localization files
-were moved to `sources/code/modules/l10n.ts`, so their type 
+were moved to `sources/code/modules/l10n.ts`, so their type is always recent
+with the changes done to the default, fallback strings.
 
 ### How to translate?
 
@@ -35,7 +36,7 @@ folder names in `translations` folder are possible values returned by
 
 #### Supported file formats/extensions
 
-As of the translation format, WebCord is capable of understanding the two file
+As of the translation format, WebCord is capable of understanding these two file
 formats:
 
 - Regular JSON files.
@@ -80,10 +81,9 @@ JSONC parser supports following comment styles:
 4. Run `webcord --export-l10n={dir}`, where `{dir}` is a directory you've created
    in previous step.
 
-5. Copy reference strings to that folder and translate them, either following
-   [JSON standard][json] or JSONC file format if you want comments support.
-   Be aware that comments in regular JSON files (`*.json`) are treated as a
-   syntax error by WebCord.
+5. Translate string them, either following [JSON standard][json] or JSONC file
+   format if you want comments support. Be aware that comments in regular JSON
+   files (`*.json`) are treated as a syntax error by WebCord.
 
 6. If you're done with translating WebCord, you can test your translations by
    coping the folder that you previously made to

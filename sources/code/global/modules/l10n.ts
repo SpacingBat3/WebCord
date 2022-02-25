@@ -44,13 +44,13 @@ class l10n {
 		 */
 		let finalStrings: typeof this[T] | unknown = this[type];
 		/**
-		 * Translated strings in the user TranslatedStringsuage.
+		 * Translated strings in the native user language.
 		 * 
 		 * @todo
 		 * Make `localStrings` not overwrite `l10nStrings`
 		 * when it is of wrong type.
 		 */
-		let localStrings: Partial<unknown>;
+		let localStrings: unknown;
 
 		let internalStringsFile = path.resolve(getAppPath(), "sources/assets/translations/" + getLocale() + "/" + type.toString());
 		const externalStringsFile = path.resolve(path.dirname(getAppPath()), 'translations/' + getLocale() + "/" + type.toString());

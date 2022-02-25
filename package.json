@@ -54,7 +54,7 @@
     "@fontsource/roboto": "^4.5.1",
     "@fontsource/source-code-pro": "^4.5.1",
     "@fontsource/ubuntu": "^4.5.0",
-    "@spacingbat3/jsonc-parser": "^2.0.0",
+    "@spacingbat3/jsonc-parser": "^3.0.0",
     "@spacingbat3/kolor": "^1.0.1",
     "deepmerge-ts": "^1.1.3",
     "dompurify": "^2.3.1",
