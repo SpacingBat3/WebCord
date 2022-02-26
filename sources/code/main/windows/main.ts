@@ -6,7 +6,6 @@ import { discordFavicons, knownIstancesList } from '../../global/global';
 import packageJson from '../../global/modules/package';
 import { discordContentSecurityPolicy } from '../modules/csp';
 import l10n from "../../global/modules/l10n";
-import { getUserAgent } from '../../global/modules/agent';
 import { createHash } from 'crypto';
 import { resolve } from "path";
 import colors from '@spacingbat3/kolor';
@@ -58,14 +57,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearInterval(retry);
-                void win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) });
+                void win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href);
             }
         }, 1000);
     });
     win.webContents.once('did-finish-load', () => {
         console.debug("[PAGE] Starting to load the Discord page...")
         if (!startHidden) win.show();
-        setTimeout(() => {void win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href, { userAgent: getUserAgent(process.versions.chrome) })}, 1500);
+        setTimeout(() => {void win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href)}, 1500);
     });
     if (mainWindowState.initState.isMaximized) win.maximize();
 

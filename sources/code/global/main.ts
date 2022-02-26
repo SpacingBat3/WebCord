@@ -71,6 +71,10 @@ import { AppConfig } from '../main/modules/config';
 import colors from '@spacingbat3/kolor';
 import { resolve as resolvePath, relative } from 'path';
 import { major } from "semver";
+import { getUserAgent } from './modules/agent';
+
+// Set global user agent
+app.userAgentFallback = getUserAgent(process.versions.chrome);
 
 // Handle command line switches:
 
