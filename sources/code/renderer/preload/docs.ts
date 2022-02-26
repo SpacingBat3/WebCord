@@ -158,7 +158,7 @@ ipcRenderer.once('documentation-load', (_event, readmeFile:string) => {
         const docsHeader = document.getElementById(docsId);
         if(docsHeader) docsHeader.scrollIntoView(scrollOptions);
     }
-    ipcRenderer.send('documentation-load');
+    ipcRenderer.send('documentation-show');
 })
 
 document.addEventListener("readystatechange", () => {
