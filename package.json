@@ -40,6 +40,7 @@
     "@types/semver": "^7.3.8",
     "@types/source-map-support": "^0.5.3",
     "@types/spdx-expression-parse": "^3.0.1",
+    "@types/ws": "^8.5.1",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/experimental-utils": "latest",
     "@typescript-eslint/parser": "latest",
@@ -64,7 +65,8 @@
     "semver": "^7.3.5",
     "source-map-support": "^0.5.19",
     "spdx-expression-parse": "^3.0.1",
-    "twemoji-colr-font": "^0.0.4"
+    "twemoji-colr-font": "^0.0.4",
+    "ws": "^8.5.0"
   },
   "config": {
     "forge": "./sources/app/build/forge.js"

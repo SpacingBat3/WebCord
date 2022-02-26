@@ -129,7 +129,8 @@ class l10n {
 		windows: {
 			settings: "Settings",
 			about: "About",
-			docs: "Documentation"
+			docs: "Documentation",
+			invite: "Invite"
 		},
 		/** GTK / Terminal dialogs, warnings, errors etc. */
 		dialog: {

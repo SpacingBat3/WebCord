@@ -112,7 +112,6 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
         },
     );
-
     // (Device) permissions check/request handlers:
     {
         /** List of domains, urls or protocols accepted by permission handlers. */
@@ -302,7 +301,9 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Load extensions for builds of type "devel".
     if(getBuildInfo().type === "devel")
         void loadChromiumExtensions(win.webContents.session)
-            
+    
+    // WebSocket server
+    import('../modules/socket').then((socket) => socket.default(win)).catch(e => {console.error(e)});
 
     // Handle desktopCapturer functionality through experimental BrowserViews
     {

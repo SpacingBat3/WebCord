@@ -36,7 +36,7 @@ following list of the features:
 | Hide download buttons/popups | Hide elements reffering to official Discord client download link | ✅️ Done |
 | HTML-based *about* panel | Non-native window showing the information about the application, like licenses, versions or credits. | 2️⃣ ***Beta*** (it's actively improved) |
 | Custom Discord and WebCord styles | Allow styling Discord and WebCord with own themes. | 1️⃣ ***Alpha*** (Discord can be styled) |
-
+| Answer to invite URLs | Replies to guild invite links (like official Discord client). | ✅️ Done |
 
 <sub> **NOTE:** Please report bugs for the features listed above. If your issue
 describes a feature that is not on the list, you may consider opening a
