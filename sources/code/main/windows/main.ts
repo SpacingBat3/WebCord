@@ -332,23 +332,23 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     else
                         return null;
                 });
+                const autoResize = () => setImmediate(() => view.setBounds({
+                    ...win.getBounds(),
+                    x:0,
+                    y:0,
+                }));
                 ipcMain.once("closeCapturerView", (_event,data:unknown) => {
                     win.removeBrowserView(view);
+                    view.webContents.delete();
+                    win.removeListener("resize", autoResize);
                     resolvePromise(data);
                     lock = false;
                 })
                 win.setBrowserView(view);
                 void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
                 view.webContents.once("did-finish-load", () => {
-                    view.setBounds({
-                        ...win.getBounds(),
-                        x:0,
-                        y:0,
-                    });
-                    view.setAutoResize({
-                        width: true,
-                        height: true
-                    });
+                    autoResize();
+                    win.on("resize", autoResize);
                 })
             });
         });
