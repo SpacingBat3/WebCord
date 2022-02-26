@@ -1,7 +1,7 @@
 {
   "name": "webcord",
   "productName": "WebCord",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "A Discord and Fosscord client made with the Electron API.",
   "main": "sources/app/global/main.js",
   "scripts": {
