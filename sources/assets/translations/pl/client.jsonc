@@ -54,7 +54,8 @@
 	"windows": {
 		"about": "O aplikacji",
 		"settings": "Ustawienia",
-		"docs": "Dokumentacja"
+		"docs": "Dokumentacja",
+		"invite": "Zaproszenie"
 	},
 	/* Tłumaczenie dialogów (błędy, ostrzeżenia, aktualizacje itp.) */
 	"dialog": {
@@ -122,7 +123,7 @@
 			"group": {
 				"blockApi": {
 					"name": "Blokowanie API Discord'a",
-					"description": "Blokuje żądania API Discord'a w celu polepszenia prywatności.",
+					"description": "Blokuje żądania API Discord'a aby chronić prywatność użytkownika.",
 					"label": {
 						"science": "Blokuj znane żądania telemetrii. (<code>/science</code> i <code>/tracing</code>)",
 						"typingIndicator": "Blokuj wskaźnik wpisywania tekstu. (<code>/typing</code>)"
