@@ -29,10 +29,10 @@ alternative to the Discord client, which would be both customizable and improvin
 aspects like the security and privacy. As for now, some tweaks around 
 privacy has been implemented:
 
-  - Blocking third-party websites via customizable CSP,
-  - Blocking unnecesary services and tracers with custom CSP, like [Sentry],
+  - Blocking third-party websites via customizable CSP. \
+  - Blocking unnecesary services and tracers with custom CSP, like [Sentry]. \
   - Blocking known Discord tracing API requests (`/science` and `/tracing`)
-    by the default,
+    by the default. \
   - Optionally blocking typing indicator (`/typing`).
   
 Please note that many of the features I have plans for, haven't been implemented yet –
@@ -45,10 +45,10 @@ from being detected as third-party client. It also does a bit more to hide all t
 changes it makes:
 
   - Chrome/Chromium user-agent spoofing (Discord treats WebCord as the regular
-    browser),
+    browser). \
 
   - Spoofing some functions modifications as native (so Discord will treat the
-    same way as it wouldn't be touched by WebCord),
+    same way as it wouldn't be touched by WebCord). \
 
   - Hiding the content over removing it (so it can't be simply detected by
     watching the changes to the HTML code; Discord would need to also watch for
