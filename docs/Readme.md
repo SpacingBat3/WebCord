@@ -35,7 +35,7 @@ privacy has been implemented:
     by the default,
   - Optionally blocking typing indicator (`/typing`).
   
-Please note many features I have plans for hasn't been still implemented yet –
+Please note that many of the features I have plans for, haven't been implemented yet –
 you can find more about that [in this file](Features.md).
 
 WebCord takes a differend approach from most clients, as it isn't just a mod of
