@@ -26,14 +26,14 @@ developed with [Electron Forge][electron-forge].
 The main reason of the WebCord existence was previously creating a usable ARM
 alternative, but nowadays it's developement is more around making it *more open*
 alternative to the Discord client, which would be both customizable and improving in some
-aspects like the security and privacy. As for now, some tweaks around the
+aspects like the security and privacy. As for now, some tweaks around 
 privacy has been implemented:
 
-  - blocking third-party websites via customizable CSP,
-  - blocking unnecesary services and tracers with custom CSP, like [Sentry],
-  - blocking known Discord tracing API requests (`/science` and `/tracing`)
+  - Blocking third-party websites via customizable CSP,
+  - Blocking unnecesary services and tracers with custom CSP, like [Sentry],
+  - Blocking known Discord tracing API requests (`/science` and `/tracing`)
     by the default,
-  - optionally blocking typing indicator (`/typing`).
+  - Optionally blocking typing indicator (`/typing`).
   
 Please note many features I have plans for hasn't been still implemented yet –
 you can find more about that [in this file](Features.md).
@@ -41,16 +41,16 @@ you can find more about that [in this file](Features.md).
 WebCord takes a differend approach from most clients, as it isn't just a mod of
 the official client nor does it use the Discord API to be functional – it is
 currently based on the web version of the Discord, trying to protect the users
-from being detected as third-party client. It also does a bit more to hide all
-changes it mades:
+from being detected as third-party client. It also does a bit more to hide all the
+changes it makes:
 
   - Chrome/Chromium user-agent spoofing (Discord treats WebCord as the regular
     browser),
 
-  - spoofing some functions modifications as native (so Discord will treat the
+  - Spoofing some functions modifications as native (so Discord will treat the
     same way as it wouldn't be touched by WebCord),
 
-  - hiding the content over removing it (so it can't be simply detected by
+  - Hiding the content over removing it (so it can't be simply detected by
     watching the changes to the HTML code; Discord would need to also watch for
     the changes within the each of the elements style to detect client designed
     like that).
@@ -86,7 +86,7 @@ his code. Thanks to his work, this project could begin on its own.
 
 ## Wiki pages
 
-Because **Github Wiki Pages** of this project **are maintained by the community**,
+Because **Github Wiki Pages** of this project **is maintained by the community**,
 they should be considered as a potentially malicious or misleading source of the
 information. It is recommended to read the official documentation first before
 you will proceed reading the community-maintained Wiki pages.
