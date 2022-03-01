@@ -127,7 +127,6 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 	const contextMenu = Menu.buildFromTemplate([
 		{
 			label: strings.windows.about,
-			role: 'about',
 			click: () => showAboutPanel(parent)
 		},
 		{
@@ -281,7 +280,7 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
 		{
 			label: strings.help.groupName, role: 'help', submenu: [
 				// About
-				{ label: strings.windows.about, role: 'about', click: () => showAboutPanel(parent)},
+				{ label: strings.windows.about, click: () => showAboutPanel(parent)},
 				// Repository
 				{ label: strings.help.repo, click: () => shell.openExternal(webLink) },
 				// Documentation
