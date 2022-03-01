@@ -227,15 +227,15 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     });
 
     // Window Title
-
-    win.on('page-title-updated', (event: Event, title: string) => {
-        if (title.includes("Discord Test Client")) {
-            event.preventDefault();
+    win.on('page-title-updated', (event, title) => {
+        console.log(win.webContents.getURL());
+        event.preventDefault();
+        if (title.includes("Discord Test Client"))
             win.setTitle(app.getName() + " (Fosscord)")
-        } else if (title.includes("Discord")) {
-            event.preventDefault();
+        else if (title.includes("Discord") && !/[0-9]+/.test(win.webContents.getURL()))
             win.setTitle(title.replace("Discord",app.getName()));
-        }
+        else
+            win.setTitle(app.getName() + ' - ' + title);
     });
 
     /* Expose "did-stop-loading" event to preloads, it seems to be the most
