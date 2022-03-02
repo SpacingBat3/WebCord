@@ -41,7 +41,7 @@ WebCord takes a different approach from most clients, as it isn't just a mod of
 the official client nor does it use the Discord API to be functional – it is
 currently based on the web version of the Discord, trying to protect the users
 from being detected as third-party client. It also does a bit more to hide all
-changes it mades:
+changes it made:
 
   - Chrome/Chromium user-agent spoofing (Discord treats WebCord as the regular
     browser),
@@ -62,6 +62,12 @@ much about Electron and how to implement a Discord client with it by analysing
 his code. Thanks to his work, this project could begin on its own.
 
 ## Documentation:
+
+For the newcommers, I recommend to read at least FAQ (to fix common issues and
+not report them as *bugs*). You may also read features to know what has I claim
+my client to support or have implemented. It is strongly advised to read
+the application license as well.
+
 - [List of WebCord's features](Features.md)
 - [Frequently Asked Questions](FAQ.md)
   - *[Which file I should download?](FAQ.md#1-which-file-i-should-download)*
