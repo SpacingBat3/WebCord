@@ -131,11 +131,11 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 		},
 		{
 			label: strings.windows.docs,
-			click: () => loadDocsWindow(parent)
+			click: () => void loadDocsWindow(parent).catch(commonCatches.throw)
 		},
 		{
 			label: strings.help.bugs,
-			click: () => createGithubIssue()
+			click: () => void createGithubIssue().catch(commonCatches.throw)
 		},
 		{ type: 'separator' },
 		{
@@ -282,11 +282,11 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
 				// About
 				{ label: strings.windows.about, click: () => showAboutPanel(parent)},
 				// Repository
-				{ label: strings.help.repo, click: () => shell.openExternal(webLink) },
+				{ label: strings.help.repo, click: () => void shell.openExternal(webLink).catch(commonCatches.throw) },
 				// Documentation
-				{ label: strings.windows.docs, click: () => loadDocsWindow(parent) },
+				{ label: strings.windows.docs, click: () => void loadDocsWindow(parent).catch(commonCatches.throw) },
 				// Report a bug
-				{ label: strings.help.bugs, click: () => createGithubIssue() }
+				{ label: strings.help.bugs, click: () => void createGithubIssue().catch(commonCatches.throw) }
 			]
 		}
 	]);
