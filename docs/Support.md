@@ -24,10 +24,10 @@ usable for the macOS computers by not writing any platform-specific code that
 could cause the incompatibility with the Apple devices. However, I may not fix
 any of the reported issues that I won't be able to reproduce on other platforms.
 
-### Musl libc based Linux distributions
+### `musl` `libc` based Linux distributions
 
-Unfortunatelly, there's no official Electron release built under musl libc,
-althrough it might be possible to compile it, at least for some Electron
+Unfortunately, there's no official Electron release built under `musl` `libc`,
+although it might be possible to compile it, at least for some Electron
 releases. See [`electron/electron #9662`][issue9662] for further details.
 
 ### FreeBSD
@@ -35,10 +35,10 @@ releases. See [`electron/electron #9662`][issue9662] for further details.
 Currently Electron isn't officially supported on FreeBSD (see
 [`electron/electron #3797`][issue3797]).
 
-Electron was previously available in freshports, but now there're no Electron
-14+ releases here, so it doesn't seem to be maintaned here anymore. There's also
+Electron was previously available in `freshports`, but now there're no Electron
+14+ releases here, so it doesn't seem to be maintained here anymore. There's also
 [a GitHub repository][freebsd-repo] that seems to provide recent Electron
-binaries for FreeBSD, althrough I'm unsure whenever they're working fine with
+binaries for FreeBSD, although I'm unsure whenever they're working fine with
 WebCord or not – you can use them at your own responsibility.
 
 If you want to run WebCord under FreeBSD's Electron binary, you can install it
@@ -49,7 +49,7 @@ with WebCord's source code directory as the parameter:
 electron "/path/to/WebCord/"
 ```
 
-[repo]: https://github.com/SpacingBat3/WebCord "Github: SpacingBat3/WebCord"
+[repo]: https://github.com/SpacingBat3/WebCord "GitHub: SpacingBat3/WebCord"
 [issue3797]: https://github.com/electron/electron/issues/3797 "Add FreeBSD support to electron • Issue #3797 • electron/electron"
 [issue9662]: https://github.com/electron/electron/issues/9662 "musl libc support • Issue #9662 • electron/electron"
 [freebsd-repo]: https://github.com/tagattie/FreeBSD-Electron/releases "Releases • FreeBSD-Electron: Electron port for FreeBSD"

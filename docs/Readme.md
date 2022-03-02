@@ -14,31 +14,30 @@
 # WebCord
 
 [![Electron][badge1]][electron]
-[![Github downloads][badge2]](https://github.com/SpacingBat3/WebCord/releases "Releases")
+[![GitHub downloads][badge2]](https://github.com/SpacingBat3/WebCord/releases "Releases")
 [![Build][badge3]](https://github.com/SpacingBat3/WebCord/actions/workflows/build.yml "Build state")
 [![Pi-Apps badge][badge4]](https://github.com/Botspot/pi-apps "An app center with open source software for Raspberry Pi OS")
 [![Unofficial Debian repository][badge5]](https://itai-nelken.github.io/Webcord_debian-repo/ "Unofficial Debian repository")
 </div>
 
-A Discord and [Fosscord] web-based client made with the [Electron API][electron],
-developed with [Electron Forge][electron-forge].
+A Discord and [Fosscord] *API-less* client made with the [Electron][electron].
 
 The main reason of the WebCord existence was previously creating a usable ARM
-alternative, but nowadays it's developement is more around making it *more open*
-alternative to the Discord client, which would be both customizable and improving in some
-aspects like the security and privacy. As for now, some tweaks around the
-privacy has been implemented:
+alternative, but nowadays it's development is more around making it *more open*
+alternative to the Discord client, which would be both customisable and
+improving in some aspects like security and privacy. As for now, some tweaks
+around privacy has been implemented:
 
-  - blocking third-party websites via customizable CSP,
-  - blocking unnecesary services and tracers with custom CSP, like [Sentry],
+  - blocking third-party websites via customisable CSP,
+  - blocking unnecessary services and tracers with custom CSP, like [Sentry],
   - blocking known Discord tracing API requests (`/science` and `/tracing`)
     by the default,
   - optionally blocking typing indicator (`/typing`).
   
-Please note many features I have plans for hasn't been still implemented yet –
-you can find more about that [in this file](Features.md).
+Please note many features I have plans for hasn't been implemented yet – you can
+find more about that [in this file](Features.md).
 
-WebCord takes a differend approach from most clients, as it isn't just a mod of
+WebCord takes a different approach from most clients, as it isn't just a mod of
 the official client nor does it use the Discord API to be functional – it is
 currently based on the web version of the Discord, trying to protect the users
 from being detected as third-party client. It also does a bit more to hide all
@@ -47,8 +46,8 @@ changes it mades:
   - Chrome/Chromium user-agent spoofing (Discord treats WebCord as the regular
     browser),
 
-  - spoofing some functions modifications as native (so Discord will treat the
-    same way as it wouldn't be touched by WebCord),
+  - spoofing some functions modifications as native (so Discord should treat
+    them same way as they wouldn't be touched by WebCord),
 
   - hiding the content over removing it (so it can't be simply detected by
     watching the changes to the HTML code; Discord would need to also watch for
@@ -59,7 +58,7 @@ This project at first was a fork of the [Discord-Electron], but then eventually
 I had rewritten it as *Electron Discord Web App* project, which is currently
 called *WebCord* (to make that horribly long name a bit shorter 😉). However,
 because [@GyozaGuy](https://github.com/GyozaGuy) made his own project, I learnt
-much about Electron and how to implement a Discord client with it by analyzing
+much about Electron and how to implement a Discord client with it by analysing
 his code. Thanks to his work, this project could begin on its own.
 
 ## Documentation:
@@ -86,13 +85,14 @@ his code. Thanks to his work, this project could begin on its own.
 
 ## Wiki pages
 
-Because **Github Wiki Pages** of this project **are maintained by the community**,
-they should be considered as a potentially malicious or misleading source of the
-information. It is recommended to read the official documentation first before
-you will proceed reading the community-maintained Wiki pages.
+Because **GitHub Wiki Pages** of this project **are meant to be maintained by**
+**the community**, they should be considered as a potentially malicious or
+misleading source of the information. It is recommended to read the official
+documentation first before you will proceed reading the community-maintained
+Wiki pages.
 
 ## License
-This project is redistributed under the **[MIT License][license]**:
+This project is redistributed under the terms of **[MIT License][license]**:
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -118,7 +118,7 @@ This project is redistributed under the **[MIT License][license]**:
   [`contributors`][npm-docs] array in `package.json`.
 
 - If you want to translate strings in `lang` folder, please visit
-  [TRANSLATE.md](Translate.md).
+  [`Translate.md`](Translate.md).
 
 Never made a pull request before? Please refer to [this website][makepr].
 

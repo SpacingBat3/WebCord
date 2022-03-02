@@ -1,7 +1,7 @@
-## List of currently implemented (and planned) Webcord's features
+## List of currently implemented (and planned) WebCord's features
 
 Because WebCord is based on Discord Website and (unlike official client and
-client mods) does not use any of the Discord's propertiary Node.js C++ native
+client mods) does not use any of the Discord's proprietary Node.js C++ native
 modules nor fake itself as an official Discord client (but rather as a Chromium
 browser), it has similar features and limitations like Discord Web application.
 However, WebCord client is capable of doing some tweaks to it, implementing
@@ -9,21 +9,21 @@ following list of the features:
 
 | Name | Description | State / Notes |
 | --- | --- | --- |
-| Tray icon | Hiding aplication in the tray. | ✅️ Done |
+| Tray icon | Hiding application in the tray. | ✅️ Done |
 | Red badge (tray) | Display indicator at DM or mentions on tray icon. | ✅️ Done |
-| Custom CSP | Allow users to modify CSP to block unnecesarry websites. | ✅️ Done |
+| Custom CSP | Allow users to modify CSP to block unnecessary websites. | ✅️ Done |
 | Flash window on mentions | Flash window button to visually indicate mentions or DMs even with tray disabled. | ✅️ Done |
-| Custom dictonary languages | Customize the language set used for the autocompletition feature | ❌️ **TODO** |
+| Custom dictionary languages | Customize the language set used for the auto-completion feature | ❌️ **TODO** |
 | Translations | WebCord's localization support for multiple languages. | 2️⃣️ ***Beta*** |
 | Hiding the Discord's side bar | Switching the visibility state of side bar containing channel list. This makes WebCord working on the devices with the smaller screens, like e.g. PinePhone smartphones. | ✅️ Done |
-| Node.js-based WebCord extensions support | WebCord-specific addon implementation that allows for using Node dependencies. | ⚠️ **Will do** |
-| Chromium-based extensions support | Chromium browser addon support. | 1️⃣ ***Alpha*** (experimental implementation) |
-| Addon permisions management | Limits the permissions of the extensions for the security reasons. | ❌️ **TODO** |
+| Node.js based WebCord extensions support | WebCord-specific add-on implementation that allows for using Node dependencies. | ⚠️ **Will do** |
+| Chromium-based extensions support | Chromium browser add-on support. | 1️⃣ ***Alpha*** (experimental implementation) |
+| Add-on permissions management | Limits the permissions of the extensions for the security reasons. | ❌️ **TODO** |
 | Global shortcut for push-to-talk | Makes the shortcut for PTT globally available. | ❌️ **TODO** |
 | Block `/science` and `/tracing` API endpoints | Implement blocking of some known tracing methods in Discord. | ✅️ Done |
 | Block `/typing` API endpoint | Optionally block typing indicator. | ✅️ Done |
 | End-to-end message encryption. | Allow to encrypt the message in the box before it is send. | ❌️ **TODO** |
-| HTML-based settings menu | Web-based settings menu instead of GTK (menubar) ones. | 2️⃣ ***Beta*** (it's actively improved) |
+| HTML-based settings menu | Web-based settings menu instead of GTK (menu bar) ones. | 2️⃣ ***Beta*** (it's actively improved) |
 | `--version` / `-v` command-line flag | Prints application version to the console instead of running it. | ✅️ Done |
 | `--start-minized` / `-m` command-line flag | Starts application minimized in the tray. | ✅️ Done |
 | WebCord update notifications | Notifies the user whenever new WebCord version is out | ✅️ Done |
@@ -31,9 +31,9 @@ following list of the features:
 | `buildInfo.json` | Implement generating and parsing a JSON configuration file that contains the release information and build flags. | ✅️ Done | 
 | In-app documentation browser | Built-in Markdown reader for offline documentation files. | ✅️ Done |
 | Splash screen on load | Display animated splash screen before loading Discord. | ✅️ Done |
-| Permission management | Lets you dedide what Discord can do and what it can't. | ✅️ Done |
+| Permission management | Lets you decide what Discord can do and what it can't. | ✅️ Done |
 | Custom Discord instances | Allows to use different Discord instances, e.g. Fosscord. | 1️⃣ ***Alpha*** |
-| Hide download buttons/popups | Hide elements reffering to official Discord client download link | ✅️ Done |
+| Hide download buttons/popups | Hide elements referring to official Discord client download link | ✅️ Done |
 | HTML-based *about* panel | Non-native window showing the information about the application, like licenses, versions or credits. | 2️⃣ ***Beta*** (it's actively improved) |
 | Custom Discord and WebCord styles | Allow styling Discord and WebCord with own themes. | 1️⃣ ***Alpha*** (Discord can be styled) |
 | Answer to invite URLs | Replies to guild invite links (like official Discord client). | ✅️ Done |
@@ -90,7 +90,7 @@ as for now.
 
 #### 2. Chromium Extensions
 
-From version `3.0.0`, an experimenal Chromium extensions support has been
+From version `3.0.0`, an experimental Chromium extensions support has been
 implemented using Electron's [Chrome Extension Support][chrome-ext]. As Electron's
 implementation of Chromium extensions is far from the one in Chromium, a lot of
 the extensions may not be fully functional or not work at all.

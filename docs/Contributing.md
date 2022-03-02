@@ -4,7 +4,7 @@ This file describes in general the ways of contribution within the
 
 ## How do I report a bug or request a new feature?
 
-You can do this via the application's menubar or the tray menu. Application will
+You can do this via the application's menu bar or the tray menu. Application will
 then generate a link to the new GitHub issue with the pre-filled details about
 your operating system (you still need to describe the issue through, it doesn't
 automatically send a bug report for you). You can also report issues via the
@@ -13,7 +13,7 @@ project's GitHub repository.
 When creating a GitHub issue, please take a look:
 
   - if there're any similar issues (including the closed ones); if so, try to
-    describe your issue under that one or ask to reopen it to bring me attetion;
+    describe your issue under that one or ask to reopen it to bring me attention;
 
   - if your issue can be reproduced within the web version – fixing Discord
     bugs there isn't for now the priority of this project and could cause a
@@ -34,7 +34,7 @@ also encouraging to read the following parts of the documentation:
 
 ## How to translate WebCord?
 
-Please take a look at the [Translate.md](./Translate.md) file.
+Please take a look at the [`Translate.md`](./Translate.md) file.
 
 ## Other ways of the contribution:
 
@@ -45,5 +45,5 @@ You can also help to maintain this project by:
   - reviewing the WebCord's source code or pull requests and suggesting the
     changes.
 
-[`Build.md`]: Build.md
+[`Build.md`]: Build.med
 [`Flags.md`]: Flags.md

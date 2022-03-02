@@ -19,8 +19,6 @@
 [![Pi-Apps][badge4]](https://github.com/Botspot/pi-apps "Centrum aplikacji otwartoźródłowych dla Raspberry Pi OS.")
 [![Nieoficjalne repozytorium Debiana][badge5]](https://itai-nelken.github.io/Webcord_debian-repo/ "Nieoficjalne repozytorium WebCord dla Debian'a.")
 
-</div>
-
 Internetowy klient dla usługi Discord i instancji [Fosscord], oparty o
 [API Electron'a][electron] i rozwijany poprzez narzędzie
 [Electron Forge][electron-forge]. W większości (jeżeli nie w pełni)

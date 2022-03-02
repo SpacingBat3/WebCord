@@ -1,6 +1,6 @@
 ## WebCord's localization notes and tips
 
-This document will describe how to properly tranlate WebCord client to your
+This document will describe how to properly translate WebCord client to your
 language (if you feel more comfortable in using it in your native language
 rather than in English).
 
