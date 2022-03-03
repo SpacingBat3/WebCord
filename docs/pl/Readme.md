@@ -18,6 +18,7 @@
 [![Status][badge3]](https://github.com/SpacingBat3/Webcord/actions/workflows/build.yml "Status budowania")
 [![Pi-Apps][badge4]](https://github.com/Botspot/pi-apps "Centrum aplikacji otwartoźródłowych dla Raspberry Pi OS.")
 [![Nieoficjalne repozytorium Debiana][badge5]](https://itai-nelken.github.io/Webcord_debian-repo/ "Nieoficjalne repozytorium WebCord dla Debian'a.")
+</div>
 
 Internetowy klient dla usługi Discord i instancji [Fosscord], oparty o
 [API Electron'a][electron] i rozwijany poprzez narzędzie
@@ -119,10 +120,10 @@ Nigdy wcześniej nie stworzyłeś *Pull Request*'a? Koniecznie odwiedź
 [poniższą stronę][makepr] (chyba że nie znasz języka angielskiego 😁️).
 
 [badge1]: https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron
-[badge2]: https://img.shields.io/github/downloads/SpacingBat3/electron-discord-webapp/total.svg?label=Downloads&color=%236586B3
+[badge2]: https://img.shields.io/github/downloads/SpacingBat3/WebCord/total.svg?label=Downloads&color=%236586B3
 [badge3]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
-[badge4]: https://badgen.net/badge/Pi-Apps%3F/Yes!/c51a4a?icon=https%3A%2F%2Fraw.githubusercontent.com%2FBotspot%2Fpi-apps%2Fmaster%2Ficons%2Fvector%2Flogo.svg
-[badge5]: https://img.shields.io/endpoint?url=https%3A%2F%2Frunkit.io%2Fspacingbat3%2Fwebcord-debian-badge%2Fbranches%2Fmaster
+[badge4]: https://img.shields.io/endpoint?url=https%3A%2F%2Fwebcord-pi-apps-badge-sypgxsowx4mj.runkit.sh%2F
+[badge5]: https://img.shields.io/endpoint?url=https%3A%2F%2Fwebcord-debian-badge-toklg87kjpyo.runkit.sh%2F
 [sentry]: https://sentry.io "Monitorowanie i śledzenie błędów aplikacji."
 [discord-electron]: https://github.com/GyozaGuy/Discord-Electron "Aplikacja Electron'a dla Discorda zaprojektowana z myślą o systemach Linux."
 [npm-docs]: https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors "Pola na temat ludzi | Dokumentacja NPM"
