@@ -54,7 +54,7 @@ const messages = {
 async function getServer(port:number) {
     const {WebSocketServer} = await import("ws");
     return new Promise<Server<WebSocket>|null>((resolve) => {
-        const wss = new WebSocketServer({ port });
+        const wss = new WebSocketServer({ host: '127.0.0.1', port });
         wss.once('listening', () => resolve(wss));
         wss.once('error', () => resolve(null));
     }) 
