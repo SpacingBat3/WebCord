@@ -112,7 +112,7 @@ function generateAppContent(l10n:L10N["web"]["aboutWindow"], details:aboutWindow
     const repoElement = document.getElementById("appRepo");
     if(!nameElement || !versionElement || !repoElement) return;
     nameElement.innerText = details.appName + " ("+details.buildInfo.type+")";
-    versionElement.innerText = details.appVersion + (details.buildInfo.commit !== undefined ? "-"+details.buildInfo.commit.substring(0, 7) : "");
+    versionElement.innerText = 'v' + details.appVersion + (details.buildInfo.commit !== undefined ? "-"+details.buildInfo.commit.substring(0, 7) : "");
     (document.getElementById("logo") as HTMLImageElement).src = getAppIcon([256,192,128,96])
     
     if(repoElement.tagName === 'A')
