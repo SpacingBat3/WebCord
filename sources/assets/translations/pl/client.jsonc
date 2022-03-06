@@ -178,7 +178,8 @@
 			}
 		}
 	},
-	"misc":{
-		"singleInstance": "Przełączanie do istniejącego okna..."
+	"log":{
+		"singleInstance": "Przełączanie do istniejącego okna...",
+		"listenPort": "Nasłuchiwanie na porcie: %s."
 	}
 }

@@ -157,7 +157,7 @@ function main(): void {
 
 if (!singleInstance && !overwriteMain) {
     app.on('ready', () => {
-        console.log((new l10n()).client.misc.singleInstance);
+        console.log((new l10n()).client.log.singleInstance);
         app.quit();
     });
 } else {

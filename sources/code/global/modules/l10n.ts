@@ -254,9 +254,9 @@ class l10n {
 				}
 			}
 		},
-		/** Miscelaneous strings */
-		misc: {
-			singleInstance: "Switching to the existing window..."
+		log: {
+			singleInstance: "Switching to the existing window...",
+			listenPort: "Listening at port %s."
 		}
 	};
 	public web = {

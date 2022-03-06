@@ -1,9 +1,7 @@
 import { Server, WebSocket } from "ws";
-import { initWindow } from "./parent";
-import colors from "@spacingbat3/kolor";
-import { isJsonSyntaxCorrect } from "../../global/global";
 
-function wsLog(message:string, ...args:unknown[]) {
+async function wsLog(message:string, ...args:unknown[]) {
+    const colors = (await import("@spacingbat3/kolor")).default;
     console.log(colors.bold(colors.brightMagenta("[WebSocket]"))+" "+message,...args);
 }
 
@@ -53,7 +51,7 @@ const messages = {
 
 async function getServer(port:number) {
     const {WebSocketServer} = await import("ws");
-    return new Promise<Server<WebSocket>|null>((resolve) => {
+    return new Promise<Server<WebSocket>|null>(resolve => {
         const wss = new WebSocketServer({ host: '127.0.0.1', port });
         wss.once('listening', () => resolve(wss));
         wss.once('error', () => resolve(null));
@@ -61,19 +59,41 @@ async function getServer(port:number) {
 }
 
 export default async function startServer(window:Electron.BrowserWindow) {
+    const [
+        {isJsonSyntaxCorrect, knownIstancesList},
+        {initWindow},
+        {underscore},
+        L10N
+    ] = await Promise.all([
+        import("../../global/global"),
+        import("./parent"),
+        import("@spacingbat3/kolor").then(kolor => kolor.default),
+        import("../../global/modules/l10n").then(l10n => l10n.default)
+    ]);
+    const {listenPort} = new L10N().client.log;
     let wss = null, wsPort = 6463;
     for(const port of range(6463, 6472)) {
         wss = await getServer(port);
         if(wss !== null) {
-            wsLog("Listening at port: "+colors.underscore(port.toString()))
+            void wsLog(listenPort,underscore(port.toString()));
             wsPort = port;
             break;
         }
     }
     if(wss === null) return;
-    wss.on('connection', (wss) => {
+    let lock = false;
+    wss.on('connection', (wss, request) => {
+        const origin = request.headers.origin??'https://discord.com';
+        let known = false;
+        for(const instance in knownIstancesList) {
+            if(knownIstancesList[instance][1].origin === origin)
+                known = true;
+        }
+        if(!known) return;
         wss.send(JSON.stringify(messages.handShake));
-        wss.on('message', (data, isBinary) => {
+        wss.once('message', (data, isBinary) => {
+            if(lock) return;
+            lock = true;
             let parsedData:unknown = data;
             if(!isBinary)
                 parsedData = data.toString();
@@ -90,14 +110,14 @@ export default async function startServer(window:Electron.BrowserWindow) {
                     evt: null,
                     nonce: parsedData.nonce
                 }));
-                wsLog("Invite code: "+parsedData.args.code);
                 const child = initWindow("invite", window);
                 if(child === undefined) return;
-                void child.loadURL('https://discord.com/invite/'+parsedData.args.code);
+                void child.loadURL(origin+'/invite/'+parsedData.args.code);
                 child.webContents.once("did-finish-load", () => {
                     child.show();
                 });
                 child.webContents.once("will-navigate", () => {
+                    lock = false;
                     child.close();
                 })
                 /* Blocks requests to WebCord's WS, to prevent loops. */

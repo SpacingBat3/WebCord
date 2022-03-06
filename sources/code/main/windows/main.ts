@@ -228,7 +228,6 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
     // Window Title
     win.on('page-title-updated', (event, title) => {
-        console.log(win.webContents.getURL());
         event.preventDefault();
         if (title.includes("Discord Test Client"))
             win.setTitle(app.getName() + " (Fosscord)")

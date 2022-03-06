@@ -8,21 +8,13 @@ import { readFileSync, existsSync } from "fs";
 import * as spdxParse from "spdx-expression-parse";
 
 interface PersonObject {
-	
 	name: string,
-	
 	email?: string,
-	
 	url?: string;
 }
 
 export type PersonAny = string & PersonObject
 export type PersonLike = string | PersonObject
-
-export interface ContributorObject {
-	/** Non-standart property to define the contribution type (default: `other`). */
-	type?: 'translator' | 'developer' | 'icon-designer'
-}
 
 export interface PackageJsonProperties {
 	/** Node.js-friendly application name. */
@@ -50,6 +42,9 @@ export interface PackageJsonProperties {
     devDependencies?: Record<string, string>
 }
 
+/**
+ * Name says it well. A `RegExp` that *magically* splits string to Person values.
+ */
 const personMagic = /^((?:.*?(?=\s*(?:<[^ ]*>|\([^ ]*\)))|.*?))(?: <([^ ]*)>)? *(?:\((.*)\))?$/
 
 export class Person {
