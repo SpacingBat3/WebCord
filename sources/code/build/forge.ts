@@ -9,6 +9,7 @@ import packageJson, { Person } from '../global/modules/package';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path'
 import { ForgeConfigFile } from './forge.d';
+import { flipFuses, FuseVersion, FuseV1Options } from '@electron/fuses';
 
 const projectPath = resolve(__dirname, '../../..')
 
@@ -27,8 +28,13 @@ function getCommit():string | undefined {
   if(refsPath) return readFileSync(resolve(projectPath, '.git', refsPath)).toString().trim();
 }
 
+const env = {
+  asar: process.env.WEBCORD_ASAR?.toLowerCase(),
+  build: process.env.WEBCORD_BUILD?.toLocaleLowerCase()
+}
+
 function getBuildID() {
-  switch(process.env.WEBCORD_BUILD?.toLocaleLowerCase()) {
+  switch(env.build) {
     case "release":
     case "stable":
       return "release";
@@ -41,7 +47,7 @@ const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
   packagerConfig: {
     executableName: packageJson.data.name, // name instead of the productName
-    asar: process.env.WEBCORD_ASAR !== "false",
+    asar: env.asar !== "false",
     icon: iconFile, // used in Windows and MacOS binaries
     extraResource: [
       "LICENSE"
@@ -152,7 +158,7 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: async (_ForgeConfig, path:string) => {
+    packageAfterCopy: (_ForgeConfig, path:string) => {
       const buildConfig: buildInfo = {
         type: getBuildID(),
         commit: getBuildID() === "devel" ? getCommit() : undefined,
@@ -162,7 +168,16 @@ const config: ForgeConfigFile = {
       }
       writeFileSync(resolve(path, 'buildInfo.json'), JSON.stringify(buildConfig, null, 2))
       return Promise.resolve();
-    }
+    },
+    packageAfterExtract: (_ForgeConfig, path:string) =>
+      // Hardened Electron binary via Electron Fuses feature.
+      flipFuses(resolve(path, 'electron'), {
+        version: FuseVersion.V1,
+        [FuseV1Options.OnlyLoadAppFromAsar]: env.asar !== "false",
+        [FuseV1Options.RunAsNode]: false,
+        [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
+        [FuseV1Options.EnableNodeCliInspectArguments]: false
+      })
   }
 };
 module.exports = config;
