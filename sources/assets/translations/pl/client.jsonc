@@ -147,7 +147,7 @@
 			"group": {
 				"devel": {
 					"name": "Tryb programisty",
-					"description": "Zezwala na dostęp do narzędzi programisty i niedokończonych opcji. Uwaga: jeżeli po włączeniu tej aplikacji będą występować błędy, proszę aby ich nie zgłaszać autorom/-wi aplikacji!",
+					"description": "Zezwala na dostęp do narzędzi programisty i niedokończonych opcji. <b>Uwaga:</b> jeżeli po włączeniu tej aplikacji będą występować błędy, proszę aby ich nie zgłaszać autorom/-wi aplikacji!",
 					"label": "Włącz tryb programisty"
 				},
 				"csp": {
