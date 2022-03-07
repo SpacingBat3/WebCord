@@ -33,6 +33,17 @@ const env = {
   build: process.env.WEBCORD_BUILD?.toLocaleLowerCase()
 }
 
+function getElectronPath(platform:string) {
+  switch (platform) {
+    case "darwin":
+      return "Electron.app/Contents/MacOS/Electron"
+    case "win32":
+      return "electron.exe"
+    default:
+      return "electron"
+  }
+}
+
 function getBuildID() {
   switch(env.build) {
     case "release":
@@ -169,9 +180,9 @@ const config: ForgeConfigFile = {
       writeFileSync(resolve(path, 'buildInfo.json'), JSON.stringify(buildConfig, null, 2))
       return Promise.resolve();
     },
-    packageAfterExtract: (_ForgeConfig, path:string) =>
+    packageAfterExtract: (_ForgeConfig, path:string, _electronVersion: string, platform: string) =>
       // Hardened Electron binary via Electron Fuses feature.
-      flipFuses(resolve(path, 'electron'), {
+      flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
         [FuseV1Options.OnlyLoadAppFromAsar]: env.asar !== "false",
         [FuseV1Options.RunAsNode]: false,
