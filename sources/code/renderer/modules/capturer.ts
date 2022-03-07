@@ -1,7 +1,3 @@
-/*
- * Thanks, @WesselKroos!
- */
-
 import { ipcRenderer as ipc } from 'electron';
 
 interface EMediaStreamConstraints extends MediaStreamConstraints {
