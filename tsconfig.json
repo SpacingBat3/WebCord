@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        /* Fix CommonJS/ES6 interoperability issues */
+        "esModuleInterop": true,
         /* Whenever incremental compilation is enabled */
         "incremental": true,
         /* File containing saved information about incremental compilation */
