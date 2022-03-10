@@ -5,7 +5,7 @@
 import { resolve } from "path";
 import { parse } from "semver";
 import { readFileSync, existsSync } from "fs";
-import * as spdxParse from "spdx-expression-parse";
+import spdxParse from "spdx-expression-parse";
 
 interface PersonObject {
 	name: string,
