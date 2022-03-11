@@ -19,6 +19,8 @@ import { commonCatches } from './error';
  * @param updateInterval Object that indentifies currently running interval.
  */
 export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): Promise<void> {
+    const Config = new AppConfig();
+    const config = Config.get().update;
     // Do not execute when offline.
     if (!net.isOnline()) return;
     // When app is not ready, wait until it is ready.
@@ -58,10 +60,26 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
         icon: appInfo.icon,
         body: updateMsg
     };
-    if (showGui && (getBuildInfo()?.features?.updateNotifications ?? true)) {
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate()+7)
+    const ignored = (
+        config.notification.version === githubApi["tag_name"] &&
+        new Date(config.notification.till) < nextWeek
+    );
+    if (showGui && (getBuildInfo()?.features?.updateNotifications ?? true) && !ignored) {
         const notification = new Notification(updatePopup);
         notification.on('click', () => {
-            shell.openExternal(githubApi.html_url).catch(commonCatches.throw);
+            shell.openExternal(githubApi["html_url"]).catch(commonCatches.throw);
+        });
+        notification.on('close', () => {
+                Config.set({
+                    update: { 
+                        notification: {
+                            version: githubApi["tag_name"],
+                            till: (JSON.parse(JSON.stringify(nextWeek)) as string)
+                        }
+                    }
+                })
         });
         notification.show();
     }
