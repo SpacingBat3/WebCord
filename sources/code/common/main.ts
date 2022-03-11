@@ -84,7 +84,8 @@ let overwriteMain: (() => void | unknown) | undefined;
 
 {
     const renderLine = (parameter:string, description:string, length?:number) => {
-        const spaceBetween = (length ?? 30) - parameter.length;
+        // eslint-disable-next-line no-control-regex
+        const spaceBetween = (length ?? 30) - parameter.replace(/\x1B\[[^m]+m/g, '').length;
         return '  '+colors.green(parameter)+' '.repeat(spaceBetween)+colors.gray(description)+'\n'
     }
     const cmd = app.commandLine;
@@ -96,7 +97,7 @@ let overwriteMain: (() => void | unknown) | undefined;
             " " + colors.underscore("Options:") + "\n" +
             renderLine('--version  -V','Show current application version.')+
             renderLine('--start-minimized  -m','Hide application at first run.') +
-            renderLine('--export-l10n'+ '=' + colors.yellow('{dir}'), '          Export currently loaded translation files from') +
+            renderLine('--export-l10n'+ '=' + colors.yellow('{dir}'), 'Export currently loaded translation files from') +
             " ".repeat(32)+colors.gray("the application to the " + colors.yellow('{dir}') + " directory.\n")+
             renderLine('--verbose  -v', "Show debug messages.")
         );
