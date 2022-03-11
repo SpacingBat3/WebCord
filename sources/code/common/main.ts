@@ -72,6 +72,7 @@ import colors from '@spacingbat3/kolor';
 import { resolve as resolvePath, relative } from 'path';
 import { major } from "semver";
 import { getUserAgent } from './modules/agent';
+import { getBuildInfo } from '../main/modules/client';
 
 // Set global user agent
 app.userAgentFallback = getUserAgent(process.versions.chrome);
@@ -89,6 +90,17 @@ let overwriteMain: (() => void | unknown) | undefined;
         return '  '+colors.green(parameter)+' '.repeat(spaceBetween)+colors.gray(description)+'\n'
     }
     const cmd = app.commandLine;
+
+    // Mitigations to *unsafe* command-line switches
+    if (getBuildInfo().type !== "devel")
+        for(const cmdSwitch of [
+            "inspect-brk",
+            "inspect-port",
+            "inspect",
+            "inspect-publish-uid"
+        ]) if(cmd.hasSwitch(cmdSwitch))
+            cmd.removeSwitch(cmdSwitch);
+
     if (cmd.hasSwitch('help') || cmd.hasSwitch('h')) {
         console.log(
             "\n " + colors.bold(colors.blue(app.getName())) +
