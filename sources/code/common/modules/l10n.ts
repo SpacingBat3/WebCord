@@ -4,7 +4,7 @@ import JSONC from "@spacingbat3/jsonc-parser";
 import * as path from "path";
 import * as fs from "fs";
 import { deepmerge } from "deepmerge-ts";
-import { app } from "electron";
+import { app } from "electron/main";
 import { jsonOrJsonc, objectsAreSameType } from "../global";
 import { EventEmitter } from "events";
 import { getAppPath, getLocale, getName, showMessageBox } from "./electron";

@@ -3,10 +3,10 @@
  */
 
 import * as fs from "fs";
-import { app, BrowserWindow, screen } from "electron";
+import { app, BrowserWindow, screen } from "electron/main";
 import { resolve } from "path"
 import { appInfo } from "./client";
-import { objectsAreSameType, isJsonSyntaxCorrect } from "../../global/global";
+import { objectsAreSameType, isJsonSyntaxCorrect } from "../../common/global";
 import { deepmerge } from 'deepmerge-ts';
 
 const defaultAppConfig = {
@@ -44,7 +44,13 @@ const defaultAppConfig = {
         "notifications": false,
         "display-capture": true
     },
-    currentInstance: 0,
+    currentInstance: 0 as 0|1,
+    update: {
+        notification: {
+            version: "",
+            till: "",
+        },
+    }
 }
 
 class Config<T> {
@@ -134,15 +140,15 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
         let event = eventType
         if(eventType === "resize" && window.isMaximized())
             event = "maximize";
-        else if (eventType === "resize" && this.get()[this.windowName].isMaximized)
+        else if (eventType === "resize" && this.get()?.[this.windowName]?.isMaximized)
             event = "unmaximize";
         switch(event) {
             case "maximize":
             case "unmaximize":
                 this.set({
                     [this.windowName]: {
-                        width: this.get()[this.windowName].width,
-                        height: this.get()[this.windowName].height,
+                        width: this.get()?.[this.windowName]?.width ?? window.getNormalBounds().width,
+                        height: this.get()?.[this.windowName]?.height ?? window.getNormalBounds().height,
                         isMaximized: window.isMaximized()
                     }
                 })
@@ -184,11 +190,15 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
      constructor(windowName: string, path?: fs.PathLike, spaces?: number) {
         super(path,spaces);
         // Initialize class
+        const defaults = {
+            width: appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3),
+            height: appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3),
+        }
         this.windowName = windowName;
         this.defaultConfig = {
             [this.windowName]: {
-                width: appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3),
-                height: appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3),
+                width: defaults.width,
+                height: defaults.height,
                 isMaximized: false
             }
         }
@@ -201,9 +211,9 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
             this.write({...this.defaultConfig, ...this.get()})
         }
         this.initState = {
-            width: this.get()[this.windowName].width,
-            height: this.get()[this.windowName].height,
-            isMaximized: this.get()[this.windowName].isMaximized
+            width: this.get()?.[this.windowName]?.width ?? defaults.width,
+            height: this.get()?.[this.windowName]?.height ?? defaults.height,
+            isMaximized: this.get()?.[this.windowName]?.isMaximized ?? false
         }
     }
 }

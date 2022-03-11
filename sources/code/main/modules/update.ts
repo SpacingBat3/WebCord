@@ -5,10 +5,11 @@
 import { app, Notification, shell, net } from 'electron';
 import { appInfo, getBuildInfo } from './client';
 import fetch from 'electron-fetch';
-import l10n from '../../global/modules/l10n';
+import l10n from '../../common/modules/l10n';
 import * as semver from 'semver';
 import colors from '@spacingbat3/kolor';
 import { commonCatches } from './error';
+import { AppConfig } from './config';
 
 /**
  * Checks and notifies users about the updates.
@@ -31,7 +32,8 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     const repoName = appInfo.repository.name;
     let updateMsg: string, showGui = false;
     const githubApi:Record<string,string> = await (await fetch('https://api.github.com/repos/' + repoName + '/releases/latest')).json();
-    switch(semver.compare(githubApi.tag_name,app.getVersion())) {
+    if(githubApi["tag_name"] === undefined || githubApi["html_url"] === undefined) return;
+    switch(semver.compare(githubApi["tag_name"],app.getVersion())) {
         case 0:
             // Application version is the same as in tag
             updateMsg = strings.dialog.ver.recent;
@@ -39,7 +41,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
         case 1:
             showGui = true;
             updateMsg = strings.dialog.ver.update +
-                ' (v' + app.getVersion() + ' → v' + githubApi.tag_name.replace(/^v(.+)$/,'$1') + ')';
+                ' (v' + app.getVersion() + ' → v' + githubApi["tag_name"].replace(/^v(.+)$/,'$1') + ')';
             break;
         case -1:
             // Application is newer than remote version.
@@ -47,7 +49,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
                 updateMsg = strings.dialog.ver.devel
             else
                 updateMsg = strings.dialog.ver.downgrade +
-                    ' (v' + app.getVersion() + ' → v' + githubApi.tag_name.replace(/^v(.+)$/,'$1') + ')';
+                    ' (v' + app.getVersion() + ' → v' + githubApi["tag_name"].replace(/^v(.+)$/,'$1') + ')';
             break;
         default:
             // If version can't be parsed by semver.
@@ -69,9 +71,11 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     if (showGui && (getBuildInfo()?.features?.updateNotifications ?? true) && !ignored) {
         const notification = new Notification(updatePopup);
         notification.on('click', () => {
+            if(githubApi["html_url"] !== undefined)
             shell.openExternal(githubApi["html_url"]).catch(commonCatches.throw);
         });
         notification.on('close', () => {
+            if(githubApi["tag_name"] !== undefined)
                 Config.set({
                     update: { 
                         notification: {
@@ -83,7 +87,6 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
         });
         notification.show();
     }
-    if (updateInterval) {
+    if (updateInterval)
         clearInterval(updateInterval);
-    }
 }

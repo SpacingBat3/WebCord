@@ -1,25 +1,27 @@
 {
   "env": {
-    "browser": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:import/errors",
-    "plugin:import/warnings"
+    "plugin:import/recommended",
+    "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
   },
   "settings": {
-    "import/resolver": {
-      "typescript": {}
-    }
+    "import/core-modules": [
+      "electron/main",
+      "electron/common",
+      "electron/renderer"
+    ]
   },
   "rules": {
     "@typescript-eslint/no-unsafe-argument": "error",

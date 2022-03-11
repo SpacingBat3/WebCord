@@ -1,25 +1,23 @@
 {
+    "extends": "@tsconfig/node16-strictest/tsconfig.json",
     "compilerOptions": {
+        "moduleResolution": "Node",
         /* Whenever incremental compilation is enabled */
         "incremental": true,
         /* File containing saved information about incremental compilation */
         "tsBuildInfoFile": "sources/app/.build/info.json",
-        /* Whenever strict type checking is enabled */
-        "strict": true,
-        /* The way of implementing module imports by TypeScript */
-        "module": "CommonJS",
-        /* The way of resolving module names by TypeScript */
-        "moduleResolution": "node",
         /* Whenever sourcemaps should be made for emitted JavaScript files */
         "sourceMap": true,
         /* Directrory in which are placed all emitted files */
         "outDir": "sources/app",
         /* Whenever comments are emitted to files */
         "removeComments": true,
-        /* Ignore errors in dependencies. */
-        "skipLibCheck": true,
-        /* ECMAScript supported standard */
-        "target": "ES2021"
+        /* Replace a set of core libraries. */
+        "lib": ["ES2021", "DOM.Iterable"],
+        /* Limit module resolution to project's path only */
+        "typeRoots": ["./node_modules/@types"],
+        /* Use `tslib` for import helpers. */
+        "importHelpers": true
     },
     "include": [
         "sources/code/**/*.ts"

@@ -30,21 +30,17 @@ export function getUserAgent(chromeVersion: string, platform?: NodeJS.Platform):
 
 	const userAgentPlatfom = platform ?? process.platform;
 	let fakeUserAgent:string;
-	const OS = (typeof process.getSystemVersion === 'function' ? 
+	const osVersion = (typeof process.getSystemVersion === 'function' ? 
 			process.getSystemVersion() : 
 				(userAgentPlatfom === 'darwin' ?  '12.0' : os.release())
-		).split('.');
-	let osVersion: string, WOW64: string;
-
+		);
+	let WOW64: string;
 	switch (userAgentPlatfom) {
 		case 'darwin':
-			osVersion = OS[0] + '_' + OS[1];
-			if (OS[2] && OS[2] != "0") osVersion += '_' + OS[2];
-			fakeUserAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X ${osVersion}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
+			fakeUserAgent = `Mozilla/5.0 (Macintosh; Intel Mac OS X ${osVersion.replace('.','_')}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
 			break;
 		case 'win32':
-			osVersion = OS[0] + '.' + OS[1];
-			OS[0] == "10" ? WOW64 = "Win64; x64" : WOW64 = "WOW64";
+			osVersion.split('.')[0] === "10" ? WOW64 = "Win64; x64" : WOW64 = "WOW64";
 			fakeUserAgent = 'Mozilla/5.0 (Windows NT '+osVersion+'; '+WOW64+') AppleWebKit/537.36 (KHTML, like Gecko) Chrome/'+chromeVersion+' Safari/537.36';
 			break;
 		case 'android':

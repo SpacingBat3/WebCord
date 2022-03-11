@@ -3,21 +3,15 @@
  * @todo: Implement "Save changes" and "Cancel" buttons
  * @todo: Implement script inside WebCord
  */
-import { ipcRenderer } from "electron";
-import { HTMLChecklistForms, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup, wLog } from "../../global/global";
+import { ipcRenderer } from "electron/renderer";
+import { HTMLChecklistForms, HTMLRadioCustom, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup, wLog } from "../../common/global";
 import { sanitize } from 'dompurify';
-import DOMPurify = require("dompurify");
 
-type sanitizeConfig = DOMPurify.Config & {
-    RETURN_DOM_FRAGMENT?: false | undefined;
-    RETURN_DOM?: false | undefined
-}
-
-function isChecklistForms(arg: HTMLRadioForms|HTMLChecklistForms):arg is HTMLChecklistForms {
+function isChecklistForms(arg: HTMLRadioForms|HTMLChecklistForms|HTMLRadioCustom):arg is HTMLChecklistForms {
     return (arg as unknown as HTMLChecklistForms).id !== undefined
 }
 
-const sanitizeConfig: sanitizeConfig = {
+const sanitizeConfig = {
     // Allow tags that modifies text style and/or has a semantic meaning.
     ALLOWED_TAGS: ['b', 'i', 'u', 's', 'em', 'kbd', 'strong', 'code'],
     // Block every attribute
@@ -32,9 +26,9 @@ function fetchFromWebsite(this: HTMLInputElement) {
 
     let config:Record<string, unknown> = {};
 
-    config = {[dotArray[dotArray.length-1]]: value};
+    config = {[dotArray[dotArray.length-1]??0]: value};
     for(let n = dotArray.length-2; n >= 0; n--)
-        config = {[dotArray[n]]: config}
+        config = {[dotArray[n]??0]: config}
     console.log(config);
     ipcRenderer.send('settings-config-modified', config);
 }

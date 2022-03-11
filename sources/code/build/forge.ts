@@ -4,11 +4,11 @@
 
 // Let's import some keys from the package.json:
 
-import { buildInfo } from '../global/global';
-import packageJson, { Person } from '../global/modules/package';
+import type { buildInfo } from '../common/global';
+import packageJson, { Person } from '../common/modules/package';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path'
-import { ForgeConfigFile } from './forge.d';
+import type { ForgeConfigFile } from './forge.d';
 import { flipFuses, FuseVersion, FuseV1Options } from '@electron/fuses';
 
 const projectPath = resolve(__dirname, '../../..')
@@ -20,7 +20,7 @@ const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Netwo
 
 // Some custom functions
 
-function getCommit():string | undefined {
+function getCommit():string | void {
   const refsPath = readFileSync(resolve(projectPath, '.git/HEAD'))
     .toString()
     .split(': ')[1]
@@ -29,8 +29,8 @@ function getCommit():string | undefined {
 }
 
 const env = {
-  asar: process.env.WEBCORD_ASAR?.toLowerCase(),
-  build: process.env.WEBCORD_BUILD?.toLocaleLowerCase()
+  asar: process.env['WEBCORD_ASAR']?.toLowerCase(),
+  build: process.env['WEBCORD_BUILD']?.toLocaleLowerCase()
 }
 
 function getElectronPath(platform:string) {
@@ -172,9 +172,9 @@ const config: ForgeConfigFile = {
     packageAfterCopy: (_ForgeConfig, path:string) => {
       const buildConfig: buildInfo = {
         type: getBuildID(),
-        commit: getBuildID() === "devel" ? getCommit() : undefined,
+        commit: getBuildID() === "devel" ? getCommit()??undefined : undefined,
         features: {
-          updateNotifications: process.env.WEBCORD_UPDATE_NOTIFICATIONS !== "false"
+          updateNotifications: process.env['WEBCORD_UPDATE_NOTIFICATIONS'] !== "false"
         }
       }
       writeFileSync(resolve(path, 'buildInfo.json'), JSON.stringify(buildConfig, null, 2))

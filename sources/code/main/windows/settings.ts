@@ -1,19 +1,19 @@
-import { ipcMain } from "electron";
+import { ipcMain } from "electron/main";
 import { AppConfig } from '../modules/config';
-import { HTMLSettingsGroup, HTMLChecklistForms, HTMLChecklistOption, knownIstancesList, HTMLRadioForms } from '../../global/global';
+import { HTMLSettingsGroup, HTMLChecklistForms, HTMLChecklistOption, knownInstancesList, HTMLRadioForms } from '../../common/global';
 import { appInfo, getBuildInfo } from '../modules/client';
-import l10n from '../../global/modules/l10n';
+import l10n from '../../common/modules/l10n';
 import { initWindow } from "../modules/parent";
 
 const appConfig = new AppConfig();
 
 function instances2forms() {
 	const instanceForms:HTMLRadioForms[] = []
-	for(const instance in knownIstancesList)
+	for(const instance of knownInstancesList)
 		instanceForms.push({
-			label: knownIstancesList[instance][0],
-			value: parseInt(instance),
-			isChecked: appConfig.get().currentInstance === parseInt(instance)
+			label: instance[0],
+			value: knownInstancesList.indexOf(instance),
+			isChecked: appConfig.get().currentInstance === knownInstancesList.indexOf(instance)
 		})
 	return instanceForms
 }
@@ -41,7 +41,7 @@ function conf2html (config:AppConfig) {
 		cspChecklist.push({
 			label: stringGroup[1],
 			id: "csp.thirdparty."+stringGroup[0],
-			isChecked: (appConfig.get().csp.thirdparty as Record<string, boolean>)[stringGroup[0]]
+			isChecked: (appConfig.get().csp.thirdparty as Record<string, boolean>)[stringGroup[0]]??false
 		})
 	}
 	const csp: HTMLChecklistOption = {

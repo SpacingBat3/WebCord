@@ -1,5 +1,5 @@
 /* electron.ts – electron-specific functions made to work cross-platform. */
-import { app } from "electron";
+import { app } from "electron/main";
 import { existsSync } from "fs";
 import { resolve } from "path";
 

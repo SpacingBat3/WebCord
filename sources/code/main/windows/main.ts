@@ -1,11 +1,12 @@
 import { appInfo, getBuildInfo } from "../modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
-import { app, BrowserWindow, Tray, net, nativeImage, ipcMain, desktopCapturer, BrowserView } from "electron";
+import { app, BrowserWindow, Tray, net, ipcMain, desktopCapturer, BrowserView } from "electron/main";
+import { nativeImage } from "electron/common";
 import * as getMenu from '../modules/menu';
-import { discordFavicons, knownIstancesList } from '../../global/global';
-import packageJson from '../../global/modules/package';
+import { discordFavicons, knownInstancesList } from '../../common/global';
+import packageJson from '../../common/modules/package';
 import { discordContentSecurityPolicy } from '../modules/csp';
-import l10n from "../../global/modules/l10n";
+import type l10n from "../../common/modules/l10n";
 import { createHash } from 'crypto';
 import { resolve } from "path";
 import colors from '@spacingbat3/kolor';
@@ -57,14 +58,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearInterval(retry);
-                void win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href);
+                void win.loadURL(knownInstancesList[new AppConfig().get().currentInstance][1].href);
             }
         }, 1000);
     });
     win.webContents.once('did-finish-load', () => {
         console.debug("[PAGE] Starting to load the Discord page...")
         if (!startHidden) win.show();
-        setTimeout(() => {void win.loadURL(knownIstancesList[new AppConfig().get().currentInstance][1].href)}, 1500);
+        setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().get().currentInstance][1].href)}, 1500);
     });
     if (mainWindowState.initState.isMaximized) win.maximize();
 
@@ -115,7 +116,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     {
         /** List of domains, urls or protocols accepted by permission handlers. */
         const trustedURLs = [
-            knownIstancesList[new AppConfig().get().currentInstance][1].origin,
+            knownInstancesList[new AppConfig().get().currentInstance][1].origin,
             'devtools://'
         ];
         const permissionHandler = function (webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null {
@@ -196,13 +197,13 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     win.webContents.on('page-favicon-updated', (_event, favicons) => {
         const t = tray;
         // Convert from DataURL to RAW.
-        const faviconRaw = nativeImage.createFromDataURL(favicons[0]).toBitmap();
+        const faviconRaw = nativeImage.createFromDataURL(favicons[0]??"").toBitmap();
         // Hash discord favicon.
         const faviconHash = createHash('sha1').update(faviconRaw).digest('hex');
         // Stop execution when icon is same as the one set.
         if (faviconHash === setFavicon) return;
         // Stop code execution on Fosscord instances.
-        if (new URL(win.webContents.getURL()).origin !== knownIstancesList[0][1].origin) {
+        if (new URL(win.webContents.getURL()).origin !== knownInstancesList[0][1].origin) {
             setFavicon = faviconHash;
             t.setImage(appInfo.trayIcon);
             win.flashFrame(false);
@@ -292,7 +293,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         }
         // Custom Discord instance switch
         if("currentInstance" in object) {
-            void win.loadURL(knownIstancesList[config.get().currentInstance][1].href)
+            void win.loadURL(knownInstancesList[config.get().currentInstance][1].href)
         }
     });
 
@@ -349,6 +350,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     autoResize();
                     win.on("resize", autoResize);
                 })
+                return;
             });
         });
     }

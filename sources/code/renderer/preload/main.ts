@@ -1,9 +1,9 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer } from "electron/renderer";
 import { randomInt } from "crypto";
-import { getAppIcon, wLog } from "../../global/global";
+import { getAppIcon, wLog } from "../../common/global";
 import desktopCapturerPicker from "../modules/capturer";
 import preloadCosmetic from "../modules/cosmetic";
-import l10n from "../../global/modules/l10n";
+import l10n from "../../common/modules/l10n";
 
 /**
  * Generates a safe random key that is not present in the API.

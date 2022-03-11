@@ -1,4 +1,4 @@
-import {ipcRenderer as ipc} from "electron";
+import {ipcRenderer as ipc} from "electron/renderer";
 
 function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     const list = document.getElementById("capturer-list");
@@ -43,7 +43,6 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
         list.appendChild(item);
     }
 }
-
 window.addEventListener("load", () => {
     ipc.invoke("getDesktopCapturerSources").then((result:null|Electron.DesktopCapturerSource[]) => {
         if(result === null) {

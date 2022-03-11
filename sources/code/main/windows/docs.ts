@@ -4,11 +4,11 @@ async function handleEvents(docsWindow: Electron.BrowserWindow) {
     const [
         { existsSync },  // from "fs"
         { resolve },     // from "path"
-        { app, ipcMain } // from "electron"
+        { app, ipcMain } // from "electron/main"
     ] = await Promise.all([
         import("fs"),
         import("path"),
-        import("electron")
+        import("electron/main")
     ]);
     // Guess correct Readme.md file
     let readmeFile = 'docs/Readme.md';

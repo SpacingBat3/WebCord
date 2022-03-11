@@ -71,6 +71,11 @@ export interface HTMLRadioForms extends HTMLForms {
 	value: number;
 }
 
+export interface HTMLRadioCustom extends HTMLForms {
+	value: 'custom';
+	validator: (data:string) => boolean;
+}
+
 export interface HTMLChecklistOption extends HTMLOption {
 	type: 'checkbox';
 	forms: HTMLChecklistForms[];
@@ -79,7 +84,7 @@ export interface HTMLChecklistOption extends HTMLOption {
 export interface HTMLRadioOption extends HTMLOption {
 	type: 'radio';
 	id: string;
-	forms: HTMLRadioForms[];
+	forms: (HTMLRadioForms|HTMLRadioCustom)[];
 }
 
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
@@ -161,14 +166,14 @@ export const discordFavicons = {
 export const trustedProtocolRegExp = /^(https:|mailto:|tel:|sms:)$/;
 
 /** Known Discord instances, including the official ones. */
-export const knownIstancesList:Record<string,[string,URL]> = {
-	'0': ["Discord", new URL("https://discord.com/app")],
-	'1': ["Fosscord", new URL("https://dev.fosscord.com/app")]
-}
+export const knownInstancesList = [
+	["Discord", new URL("https://discord.com/app")],
+	["Fosscord", new URL("https://dev.fosscord.com/app")]
+] as const
 
 export interface buildInfo {
 	type: 'release' | 'devel',
-	commit?: string;
+	commit?: string | undefined;
 	features?: {
 		updateNotifications?: boolean;
 	}

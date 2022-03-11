@@ -3,7 +3,7 @@
  */
 
 import { ipcRenderer } from 'electron';
-import { wLog, knownIstancesList } from '../../global/global';
+import { wLog, knownInstancesList } from '../../common/global';
 /**
  * Gets list of the elements with `tagName` tag name that has any class assigned
  * which its name includes the `searchString`. This tries to replicate the
@@ -13,7 +13,6 @@ import { wLog, knownIstancesList } from '../../global/global';
  * This can be extremly useful when trying to tweak the sites whose class names
  * includes some part being randomly generated for each build/version.
  */
-
 function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, tagName: T) {
   const searchResult = new Set<string>();
   for (const container of document.getElementsByTagName<T>(tagName))
@@ -25,8 +24,8 @@ function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, 
 
 export default function preloadCosmetic(): void {
   let discordInstance = false
-  for(const instance in knownIstancesList)
-    if(window.location.origin === knownIstancesList[instance][1].origin) discordInstance = true;
+  for(const instance of knownInstancesList)
+    if(window.location.origin === instance[1].origin) discordInstance = true;
   // Cancel further code execution for non-Discord/non-Fosscord instance sites.
   if(!discordInstance) return;
   /*
@@ -39,12 +38,12 @@ export default function preloadCosmetic(): void {
       return;
     }
     // Get array of `div` elements
-    const classList = [findClass('listItem-', 'div'), findClass('scroller-', 'div'), findClass('sidebar-', 'div')]
+    const classList = [findClass('listItem-', 'div'), findClass('scroller-', 'div'), findClass('sidebar-', 'div')] as const
 
     if (classList[0].length === 1) {
-      ipcRenderer.send('cosmetic.hideElementByClass', 'div.'+classList[1][0]+' > div.'+classList[0][0])
+      ipcRenderer.send('cosmetic.hideElementByClass', 'div.'+(classList[1][0]??"")+' > div.'+(classList[0][0]??""))
       ipcRenderer.once('cosmetic.hideElementByClass', () => wLog("Successfully removed unnecesarry elements on website."));
-      ipcRenderer.send('cosmetic.sideBarClass', classList[2][0]);
+      ipcRenderer.send('cosmetic.sideBarClass', classList[2][0]??"");
       ipcRenderer.removeListener('webContents.did-stop-loading', removeUnneded)
     } else {
       wLog("COSMETIC: Couldn't find elements to remove, retrying on next event.");

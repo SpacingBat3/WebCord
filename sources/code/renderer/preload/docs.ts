@@ -1,10 +1,10 @@
 import { marked } from "marked"
 import { sanitize } from "dompurify";
-import { ipcRenderer } from "electron";
+import { ipcRenderer } from "electron/renderer";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import { pathToFileURL, fileURLToPath } from "url";
-import { trustedProtocolRegExp } from "../../global/global";
+import { trustedProtocolRegExp } from "../../common/global";
 import * as _hljsmodule from "highlight.js";
 
 const htmlFileUrl = document.URL
@@ -35,7 +35,7 @@ const menuHeader = document.createElement('p');
  * Handles URL clicks – it will open websites in default browser and load
  * markdown files instead of trying it to open.
  */
-function getId(url:string) {
+function getId(url:string): string | void {
     if (url.split('#').length > 1)
         return url.split('#')[1];
 }
@@ -58,7 +58,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
             if(new URL(link.href).protocol.match(trustedProtocolRegExp)) {
                 open(link.href)
             // Handle in-document links
-            } else if (link.href.startsWith(document.URL.split('#')[0]+'#')) {
+            } else if (link.href.startsWith(document.URL.replace(/#.*/, '')+'#')) {
                 const id = getId(link.href);
                 if (id) {
                     const element = document.getElementById(id)
@@ -138,7 +138,7 @@ ipcRenderer.once('documentation-load', (_event, readmeFile:string) => {
     mdHeader.appendChild(menu);
     mdHeader.appendChild(menuHeader);
     setBody(mdBody, mdHeader, readmeFile, mdArticle);
-    mdBody.getElementsByTagName('sub')[0].parentElement?.remove();
+    mdBody.getElementsByTagName('sub')[0]?.parentElement?.remove();
     document.body.appendChild(mdHeader);
     document.body.appendChild(mdArticle);
     menu.onclick = () => {
@@ -147,7 +147,7 @@ ipcRenderer.once('documentation-load', (_event, readmeFile:string) => {
             window.scroll(0,0);
             menuHeader.innerText = basename(readmeFile);
             setBody(mdBody, mdHeader, readmeFile, mdArticle);
-            mdBody.getElementsByTagName('sub')[0].parentElement?.remove();
+            mdBody.getElementsByTagName('sub')[0]?.parentElement?.remove();
         } else {
             scrollOptions = {behavior:'smooth'}
         }

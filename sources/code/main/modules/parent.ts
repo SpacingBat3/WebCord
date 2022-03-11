@@ -1,5 +1,5 @@
-import { app, BrowserWindow, session } from "electron";
-import l10n from "../../global/modules/l10n";
+import { app, BrowserWindow, session } from "electron/main";
+import l10n from "../../common/modules/l10n";
 import { appInfo, getBuildInfo } from "./client";
 import { resolve } from "path";
 
@@ -7,6 +7,13 @@ import { resolve } from "path";
 const popups = [
     "invite"
 ]
+
+function getPreload(isPopup: boolean, preload: string) {
+    if(!isPopup)
+        return {preload};
+    else
+        return {};
+}
 
 /**
  * Initializes the new `BrowserWindow` that will be a child of `mainWindow`.
@@ -29,10 +36,10 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
         icon: appInfo.icon,
         webPreferences: {
             session: wSession,
-            preload: !isPopup ? resolve(app.getAppPath(), 'sources/app/renderer/preload/'+name+'.js') : undefined,
             defaultFontFamily: {
                 standard: 'Arial' // `sans-serif` as default font.
-            }
+            },
+            ...getPreload(isPopup, resolve(app.getAppPath(), 'sources/app/renderer/preload/'+name+'.js')),
         },
         ...properties
     });

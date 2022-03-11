@@ -2,7 +2,8 @@
  * crash.ts – funtion/s to report a bug on GitHub.
  */
 
-import { app, shell } from "electron";
+import { app } from "electron/main";
+import { shell } from "electron/common"
 import { appInfo } from "./client"
 
 /**

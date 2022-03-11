@@ -1,9 +1,9 @@
-import { ipcRenderer as ipc } from "electron";
-import { buildInfo, getAppIcon } from "../../global/global";
-import { getAppPath } from "../../global/modules/electron";
+import { ipcRenderer as ipc } from "electron/renderer";
+import { buildInfo, getAppIcon } from "../../common/global";
+import { getAppPath } from "../../common/modules/electron";
 import { resolve } from "path";
-import L10N from "../../global/modules/l10n";
-import packageJson, { PackageJSON, Person } from "../../global/modules/package";
+import L10N from "../../common/modules/l10n";
+import packageJson, { PackageJSON, Person } from "../../common/modules/package";
 import { createHash } from "crypto";
 
 /**

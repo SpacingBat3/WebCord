@@ -21,7 +21,7 @@ const appConfig = new AppConfig()
 
 import { EventEmitter } from 'events';
 import { createGithubIssue } from './bug';
-import l10n from '../../global/modules/l10n';
+import l10n from '../../common/modules/l10n';
 import loadSettingsWindow from '../windows/settings';
 import loadDocsWindow from '../windows/docs';
 import showAboutPanel from '../windows/about';

@@ -63,7 +63,7 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
 }
 import { app, BrowserWindow, dialog, session, shell } from 'electron';
 import { promises as fs } from 'fs';
-import { trustedProtocolRegExp, SessionLatest, knownIstancesList } from './global';
+import { trustedProtocolRegExp, SessionLatest, knownInstancesList } from './global';
 import { checkVersion } from '../main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "../main/windows/main";
@@ -240,12 +240,13 @@ app.on('web-contents-created', (_event, webContents) => {
         }
         if (allowedProtocol) {
             const url = new URL(details.url);
-            if(url.host === knownIstancesList[config.currentInstance][1].host && url.pathname === '/popout')
+            const window = BrowserWindow.fromWebContents(webContents);
+            if(url.host === knownInstancesList[config.currentInstance][1].host && url.pathname === '/popout')
                 return {
                     action: 'allow',
                     overrideBrowserWindowOptions: {
                         autoHideMenuBar: true,
-                        parent: BrowserWindow.fromWebContents(webContents) ?? undefined,
+                        ...(window ? {BrowserWindow: window} : {}),
                         fullscreenable: false // not functional with 'children'
                     }
                 }

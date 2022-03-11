@@ -14,12 +14,12 @@ export async function loadStyles(webContents:Electron.WebContents) {
         { readFile, readdir },
         { watch, existsSync, mkdirSync },
         { resolve }
-     ] = await Promise.all([
-         import("electron"),
-         import("fs/promises"),
-         import("fs"),
-         import("path")
-     ]);
+    ] = await Promise.all([
+        import("electron/main"),
+        import("fs/promises"),
+        import("fs"),
+        import("path")
+    ]);
     const stylesDir = resolve(app.getPath("userData"),"Themes")
     if(!existsSync(stylesDir)) mkdirSync(stylesDir, {recursive:true});
     const callback = () => new Promise<Promise<string>[]>((callback, reject) => {
@@ -77,7 +77,7 @@ export async function loadChromiumExtensions(session:Electron.Session) {
         { existsSync, mkdirSync },
         { resolve }
     ] = await Promise.all([
-         import("electron"),
+         import("electron/main"),
          import("fs/promises"),
          import("fs"),
          import("path")

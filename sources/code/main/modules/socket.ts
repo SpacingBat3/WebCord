@@ -1,4 +1,4 @@
-import { Server, WebSocket } from "ws";
+import type { Server, WebSocket } from "ws";
 
 async function wsLog(message:string, ...args:unknown[]) {
     const colors = (await import("@spacingbat3/kolor")).default;
@@ -60,15 +60,15 @@ async function getServer(port:number) {
 
 export default async function startServer(window:Electron.BrowserWindow) {
     const [
-        {isJsonSyntaxCorrect, knownIstancesList},
+        {isJsonSyntaxCorrect, knownInstancesList: knownIstancesList},
         {initWindow},
         {underscore},
         L10N
     ] = await Promise.all([
-        import("../../global/global"),
+        import("../../common/global"),
         import("./parent"),
         import("@spacingbat3/kolor").then(kolor => kolor.default),
-        import("../../global/modules/l10n").then(l10n => l10n.default)
+        import("../../common/modules/l10n").then(l10n => l10n.default)
     ]);
     const {listenPort} = new L10N().client.log;
     let wss = null, wsPort = 6463;
@@ -85,8 +85,8 @@ export default async function startServer(window:Electron.BrowserWindow) {
     wss.on('connection', (wss, request) => {
         const origin = request.headers.origin??'https://discord.com';
         let known = false;
-        for(const instance in knownIstancesList) {
-            if(knownIstancesList[instance][1].origin === origin)
+        for(const instance of knownIstancesList) {
+            if(instance[1].origin === origin)
                 known = true;
         }
         if(!known) return;

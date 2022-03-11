@@ -5,7 +5,7 @@
 import { resolve } from "path";
 import { parse } from "semver";
 import { readFileSync, existsSync } from "fs";
-import * as spdxParse from "spdx-expression-parse";
+import spdxParse from "spdx-expression-parse";
 
 interface PersonObject {
 	name: string,
@@ -51,9 +51,9 @@ export class Person {
     /** Person name (can be either a nickname or full name). */
     public readonly name:string;
     /** Valid email of the person, e.g. <person@example.com>. */
-    public readonly email?:string;
+    public readonly email?:string|undefined;
     /** An URL to the person's webpage, e.g. <https://example.com/person>. */
-    public readonly url?:string;
+    public readonly url?:string|undefined;
     public toString():string {
         return (this.name !== "[Anonymous]" ? this.name : "")+
                (this.email ? " <" + this.email + ">" : "")+
@@ -135,7 +135,7 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
 
         // Check 2: 'contributors' is array of 'Person'
         if ((object as PackageJsonProperties).contributors instanceof Object)
-            for (const key of (object as Record<string, Array<unknown>>).contributors)
+            for (const key of (object as Record<string, Array<unknown>>)["contributors"]??[])
                 if (!this.isPerson(key)) return "Contributors field is of invalid type.";
     
         // Check 3: 'author' is 'Person' when definied

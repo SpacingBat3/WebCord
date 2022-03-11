@@ -1,4 +1,4 @@
-import { app, dialog } from "electron";
+import { app, dialog } from "electron/main";
 import colors from "@spacingbat3/kolor";
 
 export const commonCatches = {
@@ -84,7 +84,7 @@ export default function uncaughtExceptionHandler(): void {
                 if (line.match(RegExp("at.*\\(" + regexAppPath + ".*\\).*", 'g'))) {
                     let modifiedLine = line;
                     const tsRule = line.match(/\(\/.*\.ts.*\)/);
-                    if (tsRule)
+                    if (tsRule && tsRule[0])
                         modifiedLine = line.replace(tsRule[0].replace(new RegExp("\\((" + regexAppPath + "\\/).*\\)"), "$1"), "");
                     stackProcessed.push(modifiedLine);
                     stackColorProcessed.push(modifiedLine);
