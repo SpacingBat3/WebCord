@@ -8,13 +8,6 @@ const popups = [
     "invite"
 ]
 
-function getPreload(isPopup: boolean, preload: string) {
-    if(!isPopup)
-        return {preload};
-    else
-        return {};
-}
-
 /**
  * Initializes the new `BrowserWindow` that will be a child of `mainWindow`.
  * It will either create a such window or do nothing if it does already exists.
@@ -39,7 +32,9 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
             defaultFontFamily: {
                 standard: 'Arial' // `sans-serif` as default font.
             },
-            ...getPreload(isPopup, resolve(app.getAppPath(), 'sources/app/renderer/preload/'+name+'.js')),
+            ...( !isPopup ? { 
+                preload: resolve(app.getAppPath(), 'sources/app/renderer/preload/'+name+'.js')
+            } : {}),
         },
         ...properties
     });
