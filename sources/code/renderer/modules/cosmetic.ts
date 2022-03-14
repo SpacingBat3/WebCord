@@ -4,23 +4,7 @@
 
 import { ipcRenderer } from 'electron';
 import { wLog, knownInstancesList } from '../../common/global';
-/**
- * Gets list of the elements with `tagName` tag name that has any class assigned
- * which its name includes the `searchString`. This tries to replicate the
- * similar behaviour as the one achieved by the `.getElementsByClassName`
- * method, except it can allow for part of the class names as an input.
- * 
- * This can be extremly useful when trying to tweak the sites whose class names
- * includes some part being randomly generated for each build/version.
- */
-function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, tagName: T) {
-  const searchResult = new Set<string>();
-  for (const container of document.getElementsByTagName<T>(tagName))
-    for (const classString of container.classList)
-      if(classString.includes(searchString))
-        searchResult.add(classString);
-  return [...searchResult];
-}
+import { findClass } from './api';
 
 export default function preloadCosmetic(): void {
   let discordInstance = false
