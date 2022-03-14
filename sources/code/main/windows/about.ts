@@ -1,9 +1,7 @@
-//import { packageJson } from '../../global';
 import { app, ipcMain as ipc, screen } from 'electron';
 import packageJson from '../../common/modules/package';
 import { getBuildInfo } from '../modules/client';
 import { initWindow } from '../modules/parent';
-//import l10n from '../../global/modules/l10n';
 
 // "About" Panel:
 

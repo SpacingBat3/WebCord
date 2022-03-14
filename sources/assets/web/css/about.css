@@ -216,6 +216,7 @@ button {
 }
 
 div.dialog {
+    opacity: 0;
     position: absolute;
     display: flex;
     align-items: center;
@@ -225,11 +226,13 @@ div.dialog {
     left: 0;
     top: 0;
     background-color: #0005;
-    animation: showSmoothly 0.1s linear;
+    animation: fadeIn 0.1s ease forwards;
     -webkit-app-region: no-drag;
 }
 
 div.dialog > div {
+    opacity: 0;
+    transform: scale(0.88, 0.88);
     margin: 0px 20px;
     padding: 5px 16px;
     background-color: var(--color-bg-primary);
@@ -238,6 +241,7 @@ div.dialog > div {
     box-sizing: border-box;
     font-family: var(--font-code);
     font-size: 9pt;
+    animation: resize 0.2s ease forwards;
 }
 
 div.list {
@@ -247,12 +251,23 @@ div.list {
     padding: 0px 2px;
 }
 
-@keyframes showSmoothly {
-    0% {
+@keyframes fadeIn {
+    from  {
         opacity: 0;
     }
-    100% {
+    to {
         opacity: 1;
+    }
+}
+
+@keyframes resize {
+    from {
+        opacity: 0;
+        transform: scale(0.88, 0.88);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1, 1);
     }
 }
 

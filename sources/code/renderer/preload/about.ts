@@ -38,9 +38,8 @@ function addContributor(person: Person, role?: string) {
     const container = document.createElement('div');
     const description = document.createElement('div');
     
-    getUserAvatar(person)
-        .then(avatar => container.appendChild(avatar))
-        .finally(() => container.appendChild(description));
+    void getUserAvatar(person)
+        .then(avatar => container.prepend(avatar));
     
     container.classList.add("contributor");
 
@@ -67,7 +66,7 @@ function addContributor(person: Person, role?: string) {
         roleElement.innerText = role;
         description.appendChild(roleElement);
     }
-
+    container.appendChild(description);
     document.getElementById("credits")?.appendChild(container);
 }
 
@@ -81,6 +80,14 @@ interface aboutWindowDetails {
     appRepo: string|undefined;
     buildInfo: buildInfo;
     responseId: number;
+}
+
+function event2promise<C extends EventTarget>(emitter:C, channel:Parameters<C["addEventListener"]>[0]) {
+    return new Promise<void>(
+        (resolve) => emitter.addEventListener(
+            channel, () => resolve(), { once: true }
+        )
+    );
 }
 
 function showAppLicense() {
@@ -98,10 +105,21 @@ function showAppLicense() {
                 content.innerText = license.replace(/(?<!\n)\n(?!\n)/g,' ');
                 dialog.appendChild(content);
                 document.getElementById("licenses")?.appendChild(dialog);
+                const animations = [...dialog.getAnimations(), ...content.getAnimations()];
+                for (const animation of animations)
+                    animation.persist();
                 dialog.addEventListener('click', () => {
-                    dialog.remove()
-                    locks.dialog = false;
-                });
+                    const promises = [];
+                    for (const animation of animations) {
+                        animation.reverse();
+                        promises.push(event2promise(animation, "finish"));
+                    }
+                    Promise.allSettled(promises).finally(() => {
+                        dialog.remove();
+                        content.remove();
+                        locks.dialog = false;
+                    });
+                }, { once: true });
             });
     }
 }
@@ -161,8 +179,8 @@ function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], name:string) {
 
 // Continue only on the local sites.
 if(window.location.protocol !== "file:") {
-    console.error("If you're seeing this, you probably have just messed something within the application. Congratulations!")
-    throw new URIError("Loaded website is not a local page!")
+    console.error("If you're seeing this, you probably have just messed something within the application. Congratulations!");
+    throw new URIError("Loaded website is not a local page!");
 }
 
 // Get app details and inject them into the page
