@@ -17,6 +17,7 @@
 [![GitHub downloads][badge2]](https://github.com/SpacingBat3/WebCord/releases "Releases")
 [![Build][badge3]](https://github.com/SpacingBat3/WebCord/actions/workflows/build.yml "Build state")
 [![Pi-Apps badge][badge4]](https://github.com/Botspot/pi-apps "An app center with open source software for Raspberry Pi OS")
+[![Pi-Ware badge][badge6]](https://github.com/piware14/pi-ware "An alternative store to Pi-Apps.")
 [![Unofficial Debian repository][badge5]](https://itai-nelken.github.io/Webcord_debian-repo/ "Unofficial Debian repository")
 </div>
 
@@ -133,6 +134,7 @@ Never made a pull request before? Please refer to [this website][makepr].
 [badge3]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
 [badge4]: https://img.shields.io/endpoint?url=https%3A%2F%2Fwebcord-pi-apps-badge-sypgxsowx4mj.runkit.sh%2F
 [badge5]: https://img.shields.io/endpoint?url=https%3A%2F%2Fwebcord-debian-badge-toklg87kjpyo.runkit.sh%2F
+[badge6]: https://img.shields.io/endpoint?url=https%3A%2F%2Fwebcord-pi-apps-badge-sypgxsowx4mj.runkit.sh%2F%3Fbadge%3Dpi-ware&logo=raspberrypi
 [Sentry]: https://sentry.io "Application Monitoring and Error Tracking Software"
 [Discord-Electron]: https://github.com/GyozaGuy/Discord-Electron "An Electron Discord app designed for use on Linux systems."
 [npm-docs]: https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors "People Fields | NPM Documentation"
