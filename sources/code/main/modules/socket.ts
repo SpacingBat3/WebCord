@@ -5,6 +5,7 @@ async function wsLog(message:string, ...args:unknown[]) {
     console.log(colors.bold(colors.brightMagenta("[WebSocket]"))+" "+message,...args);
 }
 
+/** Generates an inclusive range (as `Array`) from `start` to `end`. */
 function range(start:number,end:number) {
     return Array.from({length:end-start+1}, (_v,k) => start+k);
 }
@@ -24,23 +25,35 @@ interface InviteResponse {
 function isInviteResponse(data:unknown): data is InviteResponse {
     if(!(data instanceof Object))
         return false;
-    if(typeof (data as InviteResponse).cmd !== 'string')
+    if((data as Partial<InviteResponse>)?.cmd !== "INVITE_BROWSER")
         return false;
-    if(typeof (data as InviteResponse).args.code !== 'string')
+    if(typeof (data as Partial<InviteResponse>)?.args?.code !== 'string')
         return false;
-    if(typeof (data as InviteResponse).cmd !== 'string')
+    if(typeof (data as Partial<InviteResponse>)?.nonce !== 'string')
         return false;
     return true;
 }
 
 const messages = {
+    /**
+     * A fake, hard-coded Discord command to spoof the presence of
+     * official Discord client (which makes browser to actually start a
+     * communication with the WebCord).
+     */
     handShake: {
+        /** Message command. */
         cmd:"DISPATCH",
+        /** Message data. */
         data:{
+            /** Message scheme version. */
             v: 1,
+            /** Client properties. */
             config:{
+                /** Discord CDN host (hard-coded for `dicscord.com` instance). */
                 cdn_host: "cdn.discordapp.com",
+                /** API endpoint (hard-coded for `dicscord.com` instance). */
                 api_endpoint: "//discord.com/api",
+                /** Client type. Can be (probably) `production` or `canary`. */
                 environment: "production"
             }
         },
@@ -49,6 +62,12 @@ const messages = {
     }
 }
 
+/** 
+ * Tries to reserve the server at given port.
+ * 
+ * @returns `Promise`, which always resolves (either to `Server<WebSocket>` on
+ *          success or `null` on failure).
+ */
 async function getServer(port:number) {
     const {WebSocketServer} = await import("ws");
     return new Promise<Server<WebSocket>|null>(resolve => {
@@ -58,6 +77,15 @@ async function getServer(port:number) {
     }) 
 }
 
+/**
+ * Tries to start a WebSocket server at given port range. If it suceed, it will
+ * listen to the browser requests which are meant to be sent to official
+ * Discord client.
+ * 
+ * Currently it supports only the invitation link requests.
+ * 
+ * @param window Parent window for invitation popup.
+ */
 export default async function startServer(window:Electron.BrowserWindow) {
     const [
         {isJsonSyntaxCorrect, knownInstancesList: knownIstancesList},
@@ -100,7 +128,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
             if(isJsonSyntaxCorrect(parsedData as string))
                 parsedData = JSON.parse(parsedData as string);
             if(isInviteResponse(parsedData)) {
-                /* Replies to browser, so it finds communication successful. */
+                // Replies to browser, so it finds the communication successful.
                 wss.send(JSON.stringify({
                     cmd: parsedData.cmd,
                     data: {
@@ -120,7 +148,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
                     lock = false;
                     child.close();
                 })
-                /* Blocks requests to WebCord's WS, to prevent loops. */
+                // Blocks requests to WebCord's WS, to prevent loops.
                 child.webContents.session.webRequest.onBeforeRequest({
                     urls: ['ws://127.0.0.1:'+wsPort.toString()+'/*']
                 }, (_details,callback) => callback({cancel: true}));
