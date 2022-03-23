@@ -25,10 +25,9 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
 async function parseImports(cssString: string):Promise<string> {
     const anyImport = /^@import .+?$/gm;
     if(!anyImport.test(cssString)) return cssString;
-    let theme = cssString;
     const promises:Promise<string>[] = [];
     for (const singleImport of cssString.match(anyImport)??[]) {
-        const matches = singleImport.match(/^@import (?:url\()?["']([^"']*)["']/);
+        const matches = singleImport.match(/^@import (?:(?:url\()?["']?([^"']*)["']?)/);
         if(matches === null || matches.length < 2) break;
         const file = matches[1] as string;
         promises.push(fetchOrRead(file)
@@ -38,14 +37,14 @@ async function parseImports(cssString: string):Promise<string> {
                 else
                     return data.read.then(data => data.toString());
             })
-            .then(content => theme = theme.replace(singleImport, content))
+            .then(content => cssString = cssString.replace(singleImport, content))
         );
     }
     await Promise.allSettled(promises);
-    if(anyImport.test(theme)) {
-        return parseImports(theme);
+    if(anyImport.test(cssString)) {
+        return parseImports(cssString);
     }
-    return theme;
+    return cssString;
 }
 
 /**
@@ -89,12 +88,13 @@ export async function loadStyles(webContents:Electron.WebContents) {
                                 webContents.once("did-finish-load", () => fsWatch.close());
                             }
                         }
-                            
                         Promise.all(promises).then(dataArray => {
                             const themeIDs:Promise<string>[] = []
                             for(const data of dataArray)
                                 themeIDs.push(
                                     parseImports(data.toString())
+                                        // Makes all CSS variables `!important` (should fix most styles).
+                                        .then(data => data.replaceAll(/^(\s*--(?!.*!important).*);$/mg, '$1 !important;'))
                                         .then(data => webContents.insertCSS(data, {cssOrigin: 'author'}))
                                 );
                             callback(themeIDs);
