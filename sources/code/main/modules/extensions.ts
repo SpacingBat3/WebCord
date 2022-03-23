@@ -93,8 +93,11 @@ export async function loadStyles(webContents:Electron.WebContents) {
                             for(const data of dataArray)
                                 themeIDs.push(
                                     parseImports(data.toString())
-                                        // Makes all CSS variables `!important` (should fix most styles).
-                                        .then(data => data.replaceAll(/^(\s*--(?!.*!important).*);$/mg, '$1 !important;'))
+                                        /* Makes all CSS variables and color /
+                                         * backround properties `!important`
+                                         * (this should fix most styles).
+                                         */
+                                        .then(data => data.replaceAll(/^(\s*(?:--|background|color)(?!.*!important).*);$/mg, '$1 !important;'))
                                         .then(data => webContents.insertCSS(data, {cssOrigin: 'author'}))
                                 );
                             callback(themeIDs);
