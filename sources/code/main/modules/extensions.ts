@@ -1,5 +1,53 @@
 import { commonCatches } from "./error";
 
+async function fetchOrRead(file:string, signal?:AbortSignal) {
+    const [
+        { readFile },
+        fetch
+    ] = await Promise.all([
+        import("fs/promises"),
+        import("electron-fetch").then(fetch => fetch.default)
+    ]);
+
+    const url = new URL(file);
+    if(url.protocol === "file:")
+        return { read: readFile(url.pathname, {signal}) }
+    else
+        return { download: fetch(url.href, (signal ? {signal} : {})) }
+}
+
+/**
+ * A function that recursively patses `@import` CSS statements, so they can be
+ * understand for Electron on CSS instertion.
+ * 
+ * **Experimental** – it is unknown if that would work properly for all themes.
+ */
+async function parseImports(cssString: string):Promise<string> {
+    const anyImport = /^@import .+?$/gm;
+    if(!anyImport.test(cssString)) return cssString;
+    let theme = cssString;
+    const promises:Promise<string>[] = [];
+    for (const singleImport of cssString.match(anyImport)??[]) {
+        const matches = singleImport.match(/^@import (?:url\()?["']([^"']*)["']/);
+        if(matches === null || matches.length < 2) break;
+        const file = matches[1] as string;
+        promises.push(fetchOrRead(file)
+            .then(data => {
+                if (data.download)
+                    return data.download.then(data => data.text());
+                else
+                    return data.read.then(data => data.toString());
+            })
+            .then(content => theme = theme.replace(singleImport, content))
+        );
+    }
+    await Promise.allSettled(promises);
+    if(anyImport.test(theme)) {
+        return parseImports(theme);
+    }
+    return theme;
+}
+
 /**
  * Loads CSS styles from `${userdata}/Themes` directory and observes their changes.
  * 
@@ -45,7 +93,10 @@ export async function loadStyles(webContents:Electron.WebContents) {
                         Promise.all(promises).then(dataArray => {
                             const themeIDs:Promise<string>[] = []
                             for(const data of dataArray)
-                                themeIDs.push(webContents.insertCSS(data.toString(), {cssOrigin: 'user'}))
+                                themeIDs.push(
+                                    parseImports(data.toString())
+                                        .then(data => webContents.insertCSS(data, {cssOrigin: 'author'}))
+                                );
                             callback(themeIDs);
                         }).catch(reason => reject(reason));
                     })
