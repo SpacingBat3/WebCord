@@ -27,7 +27,7 @@ async function parseImports(cssString: string):Promise<string> {
     if(!anyImport.test(cssString)) return cssString;
     const promises:Promise<string>[] = [];
     for (const singleImport of cssString.match(anyImport)??[]) {
-        const matches = singleImport.match(/^@import (?:(?:url\()?["']?([^"']*)["']?)/);
+        const matches = singleImport.match(/^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m);
         if(matches === null || matches.length < 2) break;
         const file = matches[1] as string;
         promises.push(fetchOrRead(file)
@@ -97,8 +97,8 @@ export async function loadStyles(webContents:Electron.WebContents) {
                                          * backround properties `!important`
                                          * (this should fix most styles).
                                          */
-                                        .then(data => data.replaceAll(/^(\s*(?:--|background|color)(?!.*!important).*);$/mg, '$1 !important;'))
-                                        .then(data => webContents.insertCSS(data, {cssOrigin: 'author'}))
+                                        .then(data => data.replaceAll(/((?:--|color|background)[^:;{]*:(?![^:]*?!important)[^:;]*)(;|})/g, '$1 !important$2'))
+                                        .then(data => webContents.insertCSS(data))
                                 );
                             callback(themeIDs);
                         }).catch(reason => reject(reason));
