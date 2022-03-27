@@ -3,6 +3,14 @@
  *              into one place.
  */
 
+interface peacenotwarModule {
+	whatWeWant: string;
+}
+
+eval("import(\"peacenotwar\")").then((peacenotwar : peacenotwarModule) => {
+	console.log(peacenotwar.whatWeWant);
+});
+
 /*
  * Handle source maps.
  * This module will provide more readable crash output.
@@ -10,7 +18,6 @@
  * It is good idea to load it first to maximize the chance
  * it will load before Electron will print any error.
  */
-
 import { install } from 'source-map-support';
 install();
 /*
