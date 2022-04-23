@@ -45,5 +45,5 @@ You can also help to maintain this project by:
   - reviewing the WebCord's source code or pull requests and suggesting the
     changes.
 
-[`Build.md`]: Build.med
+[`Build.md`]: Build.md
 [`Flags.md`]: Flags.md
