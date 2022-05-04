@@ -59,7 +59,7 @@ export async function loadStyles(webContents:Electron.WebContents) {
     const [
         { app },
         { readFile, readdir },
-        { watch, existsSync, mkdirSync },
+        { watch, existsSync, mkdirSync, statSync },
         { resolve }
     ] = await Promise.all([
         import("electron/main"),
@@ -73,39 +73,35 @@ export async function loadStyles(webContents:Electron.WebContents) {
         // Read CSS module directories.
         readdir(stylesDir)
             .then(paths => {
-                // Read directories containing CSS files. 
-                for(const directory of paths) readdir(resolve(stylesDir,directory))
-                    .then(paths => {
-                        const promises:Promise<Buffer>[] = [];
-                        if(paths.includes("index.css")) {
-                            const index = resolve(stylesDir,directory,"index.css")
-                            promises.push(readFile(index));
-                            if(process.platform !== "win32" && process.platform !== "darwin") {
-                                const fsWatch = watch(index);
-                                fsWatch.once("change", () => {
-                                    webContents.reload();
-                                })
-                                webContents.once("did-finish-load", () => fsWatch.close());
-                            }
+                const promises:Promise<Buffer>[] = [];
+                for(const path of paths) {
+                    const index = resolve(stylesDir,path);
+                    if (/^.+\.theme\.css$/.test(path) && statSync(index).isFile()) {
+                        promises.push(readFile(index));
+                        if(process.platform !== "win32" && process.platform !== "darwin") {
+                            const fsWatch = watch(index);
+                            fsWatch.once("change", () => {
+                                webContents.reload();
+                            })
+                            webContents.once("did-finish-load", () => fsWatch.close());
                         }
-                        Promise.all(promises).then(dataArray => {
-                            const themeIDs:Promise<string>[] = []
-                            for(const data of dataArray)
-                                themeIDs.push(
-                                    parseImports(data.toString())
-                                        /* Makes all CSS variables and color /
-                                         * backround properties `!important`
-                                         * (this should fix most styles).
-                                         */
-                                        .then(data => data.replaceAll(/((?:--|color|background)[^:;{]*:(?![^:]*?!important)[^:;]*)(;|})/g, '$1 !important$2'))
-                                        .then(data => webContents.insertCSS(data))
-                                );
-                            callback(themeIDs);
-                        }).catch(reason => reject(reason));
-                    })
-                    .catch(reason => reject(reason))
-            })
-            .catch(reason => reject(reason))
+                    }
+                }
+                Promise.all(promises).then(dataArray => {
+                    const themeIDs:Promise<string>[] = []
+                    for(const data of dataArray)
+                        themeIDs.push(
+                            parseImports(data.toString())
+                                /* Makes all CSS variables and color /
+                                 * backround properties `!important`
+                                 * (this should fix most styles).
+                                 */
+                                .then(data => data.replaceAll(/((?:--|color|background)[^:;{]*:(?![^:]*?!important)[^:;]*)(;|})/g, '$1 !important$2'))
+                                .then(data => webContents.insertCSS(data))
+                        );
+                    callback(themeIDs);
+                }).catch(reason => reject(reason));
+            }).catch(reason => reject(reason));
     });
     if(process.platform === "win32" || process.platform === "darwin")
         watch(stylesDir, {recursive:true}).once("change", () => {

@@ -81,12 +81,26 @@ broken, so don't expect you will be able to use them as you intent to.
 
 #### 1. Custom Discord Styles
 
-From version `3.0.0`, WebCord is capable of styling Discord pages, yet the
-implementation is still very limited and most of existing themes are not
-functional yet.
+Since version `3.0.0`, WebCord is capable of styling Discord pages – unlike
+browser extensions like Stylus it does that without injecting any HTML elements
+to the page, to be more difficult to detect the modifications. On the other hand,
+the injected stylesheets can be easily overwritten by Discord CSS for some
+properties, which could be prevented with the `!important` rule. Moreover, using
+`@import` keyword for referencing an another CSS stylesheet wouldn't work at all
+as well and needed to be resolved before injection. That is why the
+implementation up to WebCord `3.1.3` was so problematic and didn't play well
+with most already pre-made Discord themes.
 
-You can apply themes by creating a file in `{userData}/Themes/{theme name}/index.css`
-as for now.
+However, it is now greatly improved in `master` branch – most themes, which does
+not rely on remote content like images and fonts should be now mostly
+functional, since WebCord is now capable of resolving `@import` statements and
+fixing the themes on the fly to make Chromium render them correctly. The only
+issue now is to allow styles to provide their own Content Security Policy in
+order to allow loading the remote content needed for scripts to function
+properly.
+
+Currently WebCord loads CSS themes from `{userData}/Themes/` directory when
+they ends with `.theme.css` extension, like most BetterDiscord themes does.
 
 #### 2. Chromium Extensions
 
