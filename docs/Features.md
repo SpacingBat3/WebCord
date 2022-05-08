@@ -91,12 +91,12 @@ as well and needed to be resolved before injection. That is why the
 implementation up to WebCord `3.1.3` was so problematic and didn't play well
 with most already pre-made Discord themes.
 
-However, it is now greatly improved in `master` branch – most themes, which does
-not rely on remote content like images and fonts should be now mostly
-functional, since WebCord is now capable of resolving `@import` statements and
-fixing the themes on the fly to make Chromium render them correctly. The only
-issue now is to allow styles to provide their own Content Security Policy in
-order to allow loading the remote content needed for scripts to function
+However, it is now greatly improved since `3.1.4` release – most themes, which
+does not rely on remote content like images and fonts, should be now mostly
+functional, since WebCord is currently capable of resolving `@import` statements
+and fixing the themes on the fly to make Chromium render them correctly. The
+only issue now is to allow styles to provide their own Content Security Policy
+in order to allow loading the remote content needed for scripts to function
 properly.
 
 Currently WebCord loads CSS themes from `{userData}/Themes/` directory when
@@ -104,10 +104,14 @@ they ends with `.theme.css` extension, like most BetterDiscord themes does.
 
 #### 2. Chromium Extensions
 
-From version `3.0.0`, an experimental Chromium extensions support has been
-implemented using Electron's [Chrome Extension Support][chrome-ext]. As Electron's
-implementation of Chromium extensions is far from the one in Chromium, a lot of
-the extensions may not be fully functional or not work at all.
+From version `3.0.0`, WebCord can load unpacked Chromium extensions using
+Electron's [Chrome Extension Support][chrome-ext]. Since Electron
+implementation of Chromium extensions is far from the one in Chromium (which is
+due to the fact Electron removes a lot of browser-specific code in Chromium's
+code), a lot of extensions may not be fully functional or not work at all.
+
+This is why a WebCord-specific implementation of the extensions is considered to
+be done in the future.
 
 You can load Chromium extensions by extracting them from `.crx` archive to
 `{userData}/Extensions/Chromium/{extension name}/` folder.

@@ -49,9 +49,9 @@ const messages = {
             v: 1,
             /** Client properties. */
             config:{
-                /** Discord CDN host (hard-coded for `dicscord.com` instance). */
+                /** Discord CDN host (hard-coded for `discord.com` instance). */
                 cdn_host: "cdn.discordapp.com",
-                /** API endpoint (hard-coded for `dicscord.com` instance). */
+                /** API endpoint (hard-coded for `discord.com` instance). */
                 api_endpoint: "//discord.com/api",
                 /** Client type. Can be (probably) `production` or `canary`. */
                 environment: "production"
@@ -78,9 +78,9 @@ async function getServer(port:number) {
 }
 
 /**
- * Tries to start a WebSocket server at given port range. If it suceed, it will
- * listen to the browser requests which are meant to be sent to official
- * Discord client.
+ * Tries to start a WebSocket server at given port range. If this process
+ * has succeed, it will start listening to the browser requests which are meant
+ * to be sent to official Discord client.
  * 
  * Currently it supports only the invitation link requests.
  * 
@@ -128,7 +128,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
             if(isJsonSyntaxCorrect(parsedData as string))
                 parsedData = JSON.parse(parsedData as string);
             if(isInviteResponse(parsedData)) {
-                // Replies to browser, so it finds the communication successful.
+                // Replies to the browser, so it finds the communication successful.
                 wss.send(JSON.stringify({
                     cmd: parsedData.cmd,
                     data: {
