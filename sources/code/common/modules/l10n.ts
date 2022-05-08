@@ -61,7 +61,6 @@ class l10n {
 
 		let internalStringsFile = path.resolve(getAppPath(), "sources/translations/" + getLocale() + "/" + type.toString())+".json";
 		const externalStringsFile = path.resolve(path.dirname(getAppPath()), 'translations/' + getLocale() + "/" + type.toString())+".json";
-		console.log(internalStringsFile);
 		/* Handle unofficial translations */
 
 		if (!existsSync(internalStringsFile))
