@@ -1,13 +1,8 @@
-/* 
- * Oficjalne polskie tłumaczenie WebCorda! :)
- */
 {
-	/* Zasobnik systemowy */
 	"tray":{
 		"toggle": "Przełącz", 
 		"quit": "Zakończ"
 	},
-	/* Menu kontekstowe (prawego przycisku myszy) */
 	"context":{
 		"copy": "Kopiuj",
 		"paste": "Wklej",
@@ -17,7 +12,6 @@
 		"copyURLText": "Kopiuj tekst linku",
 		"inspectElement": "Zbadaj"
 	},
-	/* Pasek menu (Plik, Edycja, Widok itp.) */
 	"menubar":{
 		"enabled": "Włączony",
 		"file": {
@@ -50,14 +44,12 @@
 			"mobileMode": "Ukryj pasek boczny"
 		}
 	},
-	/* Tłumaczenia tytułów okien. */
 	"windows": {
 		"about": "O aplikacji",
 		"settings": "Ustawienia",
 		"docs": "Dokumentacja",
 		"invite": "Zaproszenie"
 	},
-	/* Tłumaczenie dialogów (błędy, ostrzeżenia, aktualizacje itp.) */
 	"dialog": {
 		"common": {
 			"error": "Błąd",
@@ -90,18 +82,13 @@
 		"externalApp": {
 			"title": "Otwieranie linku w programie zewnętrznym.",
 			"message": "Strona usiłuje przekierować link o innym źródle pochodzenia do aplikacji zewnętrznej. Kontynuować mimo tego?"
-		},
-		"hideMenuBar": "Ponieważ włączyłeś blokadę paska menu, przy następnym uruchomieniu aplikacji nie będziesz miał do niego dostępu – chyba, że naciśniesz klawisz [ALT], aby przełączyć tymczasowo jego ukrycie."
+		}
 	},
-	/* Menu pomocy (na pasku menu i częściowo w menu ikony zasobnika systemowego). */
 	"help":{
 		"groupName": "Pomoc",
 		"repo": "Repozytorium",
-		"bugs": "Zgłoś błąd",
-		"contributors": "Autorzy i osoby wnoszące wkład:",
-		"credits": "Podziękowania dla GyozaGuy za jego aplikację webową dla Discorda – była dobrym źródłem do dokształcenia się z Elektrona i z jego powiązań z Discordem."
+		"bugs": "Zgłoś błąd"
 	},
-	/* Tłumaczenie dla okna ustawień. */
 	"settings": {
 		"basic": {
 			"name": "Podstawowe",

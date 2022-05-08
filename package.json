@@ -3,7 +3,7 @@
   "productName": "WebCord",
   "version": "3.1.4",
   "description": "A Discord and Fosscord client made with the Electron API.",
-  "main": "sources/app/common/main.js",
+  "main": "app/code/common/main.js",
   "scripts": {
     "test": "tsc && eslint --ext .ts .",
     "lint": "eslint --ext .ts .",
@@ -12,7 +12,7 @@
     "package": "tsc && electron-forge package",
     "make": "tsc && electron-forge make",
     "publish": "tsc && electron-forge publish",
-    "clean:linux": "rm sources/app/*.js*"
+    "clean:linux": "rm -R app/"
   },
   "author": {
     "name": "SpacingBat3",
@@ -57,7 +57,6 @@
     "@fontsource/roboto": "^4.5.1",
     "@fontsource/source-code-pro": "^4.5.1",
     "@fontsource/ubuntu": "^4.5.0",
-    "@spacingbat3/jsonc-parser": "^3.0.0",
     "@spacingbat3/kolor": "^2.0.1",
     "deepmerge-ts": "^4.0.0",
     "dompurify": "^2.3.6",
@@ -72,7 +71,7 @@
     "ws": "^8.5.0"
   },
   "config": {
-    "forge": "./sources/app/build/forge.js"
+    "forge": "./app/code/build/forge.js"
   },
   "private": true
 }

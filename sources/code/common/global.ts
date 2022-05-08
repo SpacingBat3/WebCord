@@ -139,17 +139,6 @@ export const discordFavicons = {
 	return true;
 }
 
-/** Resolves the path to either a JSON file or JSONC.
- * 
- * @param fileNoExtension Path to file, except without the extension.
- */
- export function jsonOrJsonc(fileNoExtension: string): string {
-	if (existsSync(fileNoExtension + '.jsonc'))
-		return fileNoExtension + '.jsonc';
-	else
-		return fileNoExtension + '.json';
-}
-
 /**
  * Allowed protocol list.
  * 

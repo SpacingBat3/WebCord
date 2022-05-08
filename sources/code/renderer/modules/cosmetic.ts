@@ -35,5 +35,5 @@ export default function preloadCosmetic(): void {
     }
   };
   ipcRenderer.on("webContents.did-stop-loading", removeUnneded);
-  window.addEventListener("load", () => ipcRenderer.send("cosmetic.load"), {once: true})
+  window.addEventListener("load", () => ipcRenderer.send("cosmetic.load"), {once: true});
 }

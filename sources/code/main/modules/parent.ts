@@ -33,7 +33,7 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
                 standard: 'Arial' // `sans-serif` as default font.
             },
             ...( !isPopup ? { 
-                preload: resolve(app.getAppPath(), 'sources/app/renderer/preload/'+name+'.js')
+                preload: resolve(app.getAppPath(), 'app/code/renderer/preload/'+name+'.js')
             } : {}),
         },
         ...properties

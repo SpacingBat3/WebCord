@@ -13,6 +13,7 @@
 
 import { install } from 'source-map-support';
 install();
+
 /*
  * Handle "crashes".
  * 
@@ -23,7 +24,6 @@ install();
  * is less likely to to crash while offering more usefull
  * information).
  */
-
 import crash, {commonCatches} from '../main/modules/error';
 crash();
 
@@ -98,9 +98,11 @@ let overwriteMain: (() => void | unknown) | undefined;
             "inspect-port",
             "inspect",
             "inspect-publish-uid"
-        ]) if(cmd.hasSwitch(cmdSwitch))
+        ]) if(cmd.hasSwitch(cmdSwitch)) 
+        {
+            console.info("Unsafe switch detected: '--"+cmdSwitch+"'! It will be removed from Chromium's cmdline…")
             cmd.removeSwitch(cmdSwitch);
-
+        }
     if (cmd.hasSwitch('help') || cmd.hasSwitch('h')) {
         console.log(
             "\n " + colors.bold(colors.blue(app.getName())) +

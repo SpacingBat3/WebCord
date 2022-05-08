@@ -179,8 +179,6 @@ if (t.twitch)
 
 if (t.paypal)
     csp += "; child-src 'self' https://checkout.paypal.com"; // PayPal
-
-
 /**
  * Content Security Policy header.
  * 

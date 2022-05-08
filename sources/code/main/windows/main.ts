@@ -37,7 +37,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         icon: appInfo.icon,
         show: false,
         webPreferences: {
-            preload: app.getAppPath() + "/sources/app/renderer/preload/main.js",
+            preload: resolve(app.getAppPath(), "app/code/renderer/preload/main.js"),
             nodeIntegration: false,
             devTools: true, // Too usefull to be blocked.
             defaultFontFamily: {
@@ -323,7 +323,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 });
                 const view = new BrowserView({
                     webPreferences: {
-                        preload: resolve(app.getAppPath(), "sources/app/renderer/preload/capturer.js")
+                        preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js")
                     }
                 });
                 ipcMain.handleOnce("getDesktopCapturerSources", (event) => {
