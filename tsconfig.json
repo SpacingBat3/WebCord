@@ -19,7 +19,11 @@
         /* Use `tslib` for import helpers. */
         "importHelpers": true,
         /* Allow for JSON imports */
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        /* Enforce consistent casing for imported module names */
+        "forceConsistentCasingInFileNames": true,
+        /* Use *nix end-of-line character for emitted files */
+        "newLine": "lf"
     },
     "include": [
         "sources/code/**/*.ts"
