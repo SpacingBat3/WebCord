@@ -1,7 +1,7 @@
 import type { Server, WebSocket } from "ws";
+import colors from "@spacingbat3/kolor";
 
-async function wsLog(message:string, ...args:unknown[]) {
-    const colors = (await import("@spacingbat3/kolor")).default;
+function wsLog(message:string, ...args:unknown[]) {
     console.log(colors.bold(colors.brightMagenta("[WebSocket]"))+" "+message,...args);
 }
 
@@ -10,26 +10,68 @@ function range(start:number,end:number) {
     return Array.from({length:end-start+1}, (_v,k) => start+k);
 }
 
-interface InviteResponse {
+interface Response {
     /** Response type/command. */
-    cmd: "INVITE_BROWSER",
+    cmd: string,
     /** Response arguments. */
-    args:{
-        /** An invitation code. */
-        code: string
-    },
+    args: Record<string,unknown>,
     /** Nonce indentifying the communication. */
     nonce: string;
 }
 
-function isInviteResponse(data:unknown): data is InviteResponse {
+interface InviteResponse extends Response {
+    /** A request to show the invite request within the Discord client. */
+    cmd: "INVITE_BROWSER",
+    args:{
+        /** An invitation code. */
+        code: string
+    }
+}
+
+interface AuthorizationResponse extends Response {
+    /** A request to return the authorization details to the WS client. */
+    cmd:"AUTHORIZE",
+    args:{
+        scopes: string[],
+        /** An application's client_id. */
+        client_id: string
+    },
+    nonce: string;
+}
+
+function isResponse(data:unknown): data is Response {
     if(!(data instanceof Object))
         return false;
-    if((data as Partial<InviteResponse>)?.cmd !== "INVITE_BROWSER")
+    if(typeof(data as Partial<Response>)?.cmd !== 'string')
         return false;
-    if(typeof (data as Partial<InviteResponse>)?.args?.code !== 'string')
+    if(typeof(data as Partial<Response>)?.args !== 'object')
         return false;
-    if(typeof (data as Partial<InviteResponse>)?.nonce !== 'string')
+    if(typeof (data as Partial<Response>)?.nonce !== 'string')
+        return false;
+    return true;
+}
+
+function isInviteResponse(data:unknown): data is InviteResponse {
+    if(!isResponse(data))
+        return false;
+    if(data.cmd !== "INVITE_BROWSER")
+        return false;
+    if(!('code' in data.args) || typeof data.args['code'] !== 'string')
+        return false;
+    return true;
+}
+
+function isAuthorizationResponse(data:unknown): data is AuthorizationResponse {
+    if(!isResponse(data))
+        return false;
+    if(data.cmd !== "AUTHORIZE")
+        return false;
+    if(!('scopes' in data.args) || !Array.isArray(data.args['scopes']))
+        return false;
+    for(const scope of data.args['scopes'])
+        if(typeof scope !== "string")
+            return false;
+    if(!('client_id' in data.args) || typeof data.args['client_id'] !== 'string')
         return false;
     return true;
 }
@@ -120,14 +162,14 @@ export default async function startServer(window:Electron.BrowserWindow) {
         if(!known) return;
         wss.send(JSON.stringify(messages.handShake));
         wss.once('message', (data, isBinary) => {
-            if(lock) return;
-            lock = true;
             let parsedData:unknown = data;
             if(!isBinary)
                 parsedData = data.toString();
             if(isJsonSyntaxCorrect(parsedData as string))
                 parsedData = JSON.parse(parsedData as string);
+            // Invite response handling
             if(isInviteResponse(parsedData)) {
+                if(lock) return; lock = true;
                 // Replies to the browser, so it finds the communication successful.
                 wss.send(JSON.stringify({
                     cmd: parsedData.cmd,
@@ -153,6 +195,18 @@ export default async function startServer(window:Electron.BrowserWindow) {
                     urls: ['ws://127.0.0.1:'+wsPort.toString()+'/*']
                 }, (_details,callback) => callback({cancel: true}));
             }
+            // RPC response handling
+            else if(isAuthorizationResponse(parsedData))
+                void wsLog("Received RPC authorization request, but "+colors.bold("RPC is not implemented yet")+".");
+            // Unknown response error
+            else if(isResponse(parsedData))
+                console.error("[WS] Request of type: '"+parsedData.cmd+"' is currently not supported.");
+            // Unknown text message error
+            else if(!isBinary)
+                console.error("[WS] Could not handle the packed text data: '"+data.toString()+"'.");
+            // Unknown binary data transfer error
+            else
+                console.error("[WS] Unknown data transfer (not text).");
         })
     })
 }
