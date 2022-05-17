@@ -41,9 +41,6 @@ langDialog.once('show-error', (localizedStrings: string) => {
  * 
  * In other situations, an error message will occur and fallback strings will be used instead. 
  */
-
-console.log("test")
-
 class l10n {
 	private loadFile<T extends keyof typeof defaultTranslations>(type: T): typeof defaultTranslations[T] {
 		/**

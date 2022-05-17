@@ -36,3 +36,27 @@ export function findClass<T extends keyof HTMLElementTagNameMap>(searchString: s
                 searchResult.add(classString);
     return [...searchResult];
 }
+
+/**
+ * A function that allows the access to the Discord API without the need of
+ * sharing the user token to the untrusted scripts. Currently at
+ * **Work-in-Progress** state.
+ * 
+ * @param method
+ * @param apiVersion 
+ * @param endpoint
+ */
+export function sendRequest(method:'POST'|'GET', apiVersion: 6|7|8|9|10, endpoint:string, body?: XMLHttpRequestBodyInit) {
+    const request = new XMLHttpRequest();
+    request.open(method,new URL(document.URL).origin+'/api/v'+apiVersion.toString()+endpoint);
+    window.addEventListener('load', () => {
+        const token = window.localStorage.getItem('token');
+        if(token !== null) {
+            request.setRequestHeader('Authorization', token);
+            request.send(body);
+        } else {
+            request.abort();
+            return;
+        }
+    });    
+}
