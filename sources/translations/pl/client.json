@@ -1,172 +1,172 @@
 {
-	"tray":{
-		"toggle": "Przełącz", 
-		"quit": "Zakończ"
-	},
-	"context":{
-		"copy": "Kopiuj",
-		"paste": "Wklej",
-		"cut": "Wytnij",
-		"dictionaryAdd": "Dodaj do słownika",
-		"copyURL": "Kopiuj adres linku",
-		"copyURLText": "Kopiuj tekst linku",
-		"inspectElement": "Zbadaj"
-	},
-	"menubar":{
-		"enabled": "Włączony",
-		"file": {
-			"groupName":"Plik",
-			"quit":"Zakończ",
-			"relaunch":"Uruchom ponownie",
-			"addon": {
-				"groupName": "Rozszerzenia",
-				"loadNode": "Załaduj dodatek Node.js",
-				"loadChrome": "Załaduj dodatek Chrome"
-			}
-		},
-		"edit": {
-			"groupName": "Edycja",
-			"undo": "Cofnij",
-			"redo": "Ponów"
-		},
-		"view": {
-			"groupName": "Widok",
-			"reload": "Odśwież",
-			"forceReload": "Wymuś odświeżanie",
-			"devTools": "Narzędzia deweloperskie",
-			"resetZoom": "Resetuj rozmiar",
-			"zoomIn": "Powiększ",
-			"zoomOut": "Pomniejsz",
-			"fullScreen": "Przełącz pełny ekran"
-		},
-		"window": {
-			"groupName": "Okno",
-			"mobileMode": "Ukryj pasek boczny"
-		}
-	},
-	"windows": {
-		"about": "O aplikacji",
-		"settings": "Ustawienia",
-		"docs": "Dokumentacja",
-		"invite": "Zaproszenie"
-	},
-	"dialog": {
-		"common": {
-			"error": "Błąd",
-			"warning": "Uwaga",
-			"continue": "&Kontynuuj",
-			"yes": "&Tak",
-			"no": "&Nie",
-			"source": "Źródło"
-		},
-		"ver": {
-			"updateBadge": "[ZMIANY]",
-			"updateTitle": "Dostęna aktualizacja!",
-			"update": "Dostępna nowa wersja programu!",
-			"recent": "Aplikacja jest w najnowszej wersji!",
-			"devel": "Korzystasz z wersji rozwojowej aplikacji.",
-			"downgrade": "Wersja produkcyjna aplikacji jest nowsza niż stabilna!"
-		},
-		"permission": {
-			"request": {
-				"denied": "%s: Żądanie uprawnień do elementu „%s” odrzucone."
-			},
-			"check": {
-				"denied": "%s: Sprawdzenie uprawnień do elementu „%s” odrzucone."
-			}
-		},
-		"mod": {
-			"nodeExt": "Dodatek Node.js WebCorda",
-			"crx": "Rozszerzenie Chrome/Chromium"
-		},
-		"externalApp": {
-			"title": "Otwieranie linku w programie zewnętrznym.",
-			"message": "Strona usiłuje przekierować link o innym źródle pochodzenia do aplikacji zewnętrznej. Kontynuować mimo tego?"
-		}
-	},
-	"help":{
-		"groupName": "Pomoc",
-		"repo": "Repozytorium",
-		"bugs": "Zgłoś błąd"
-	},
-	"settings": {
-		"basic": {
-			"name": "Podstawowe",
-			"group": {
-				"menuBar": {
-					"name": "Pasek menu",
-					"description": "Zmienia ustawienia widoczności natywnego paska menu.",
-					"label": "Ukrywaj automatycznie pasek menu (klawisz <kbd>ALT</kbd> przełącza widoczność)."
-				},
-				"tray": {
-					"name": "Zasobnik systemowy",
-					"description": "Zmienia ustawienia widoczności ikony w zasobniku systemowym.",
-					"label": "Wyłącz funcję ukrywania okna do zasobnika systemowego."
-				}
-			}
-		},
-		"privacy": {
-			"name": "Prywatność",
-			"group": {
-				"blockApi": {
-					"name": "Blokowanie API Discord'a",
-					"description": "Blokuje żądania API Discord'a aby chronić prywatność użytkownika.",
-					"label": {
-						"science": "Blokuj znane żądania telemetrii. (<code>/science</code> i <code>/tracing</code>)",
-						"typingIndicator": "Blokuj wskaźnik wpisywania tekstu. (<code>/typing</code>)"
-					}
-				},
-				"permissions": {
-					"name": "Uprawnienia",
-					"description": "Zezwala bądź blokuje żądania i sprawdzenia uprawnień przez stronę Discord'a. Pozostałe uprawnienia są automatycznie blokowane przez klient.",
-					"label": {
-						"camera": "Kamera",
-						"microphone": "Mikrofon",
-						"fullscreen": "Pełny ekran",
-						"desktopCapture": "Nagrywanie ekranu",
-						"notifications": "Powiadomienia"
-					}
-				}
-			}
-		},
-		"advanced": {
-			"name": "Zaawansowane",
-			"group": {
-				"devel": {
-					"name": "Tryb programisty",
-					"description": "Zezwala na dostęp do narzędzi programisty i niedokończonych opcji. <b>Uwaga:</b> jeżeli po włączeniu tej aplikacji będą występować błędy, proszę aby ich nie zgłaszać autorom/-wi aplikacji!",
-					"label": "Włącz tryb programisty"
-				},
-				"csp": {
-					"name": "Polityka bezpieczeństwa treści",
-					"extends": {
-						"thirdparty": {
-							"name":"Witryny firm trzecich",
-							"description": "Ustala listę witryn firm trzecich dopuszczonych do wczytywania treści na stronie internetowej.",
-							"list": {
-								"gifProviders": "Dostawcy GIF–ów"
-							}
-						},
-						"enable": {
-							"description": "Zmienia, czy aplikacja powinna zastosować się do własnej Polityki Bezpieczeństwa Treści, czy zamiast tego korzystać z nagłówka Discord'a.",
-							"label": "Korzystaj z nagłówka CSP aplikacji."
-						}
-					}
-				},
-				"crossOrigin": {
-					"name": "Zachowanie przy przekierowaniach",
-					"description": "Określa zachowanie aplikacji na przekierowania do witryn o innym pochodzeniu. <b>To ustawnienie ma wpływ na bezpieczeństwo</b>.",
-					"label": "Zawsze ostrzegaj przy przekierowaniach między różnymi domenami do zewnętrznych aplikacji."
-				},
-				"instance": {
-					"name": "Instancje Discord'a",
-					"description": "Wybierz instancję Discord'a, z którą WebCord powinien się łączyć. <b>Eksperymentalne</b>, ponieważ implementacja Fosscord'a nie jest w pełni dokończona."
-				}
-			}
-		}
-	},
-	"log":{
-		"singleInstance": "Przełączanie do istniejącego okna...",
-		"listenPort": "Nasłuchiwanie na porcie: %s."
-	}
+    "tray": {
+        "toggle": "Przełącz",
+        "quit": "Zakończ"
+    },
+    "context": {
+        "copy": "Kopiuj",
+        "paste": "Wklej",
+        "cut": "Wytnij",
+        "dictionaryAdd": "Dodaj do słownika",
+        "copyURL": "Kopiuj adres linku",
+        "copyURLText": "Kopiuj tekst linku",
+        "inspectElement": "Zbadaj"
+    },
+    "menubar": {
+        "enabled": "Włączony",
+        "file": {
+            "groupName": "Plik",
+            "quit": "Zakończ",
+            "relaunch": "Uruchom ponownie",
+            "addon": {
+                "groupName": "Rozszerzenia",
+                "loadNode": "Załaduj dodatek Node.js",
+                "loadChrome": "Załaduj dodatek Chrome"
+            }
+        },
+        "edit": {
+            "groupName": "Edycja",
+            "undo": "Cofnij",
+            "redo": "Ponów"
+        },
+        "view": {
+            "groupName": "Widok",
+            "reload": "Odśwież",
+            "forceReload": "Wymuś odświeżanie",
+            "devTools": "Narzędzia deweloperskie",
+            "resetZoom": "Resetuj rozmiar",
+            "zoomIn": "Powiększ",
+            "zoomOut": "Pomniejsz",
+            "fullScreen": "Przełącz pełny ekran"
+        },
+        "window": {
+            "groupName": "Okno",
+            "mobileMode": "Ukryj pasek boczny"
+        }
+    },
+    "windows": {
+        "about": "O aplikacji",
+        "settings": "Ustawienia",
+        "docs": "Dokumentacja",
+        "invite": "Zaproszenie"
+    },
+    "dialog": {
+        "common": {
+            "error": "Błąd",
+            "warning": "Uwaga",
+            "continue": "&Kontynuuj",
+            "yes": "&Tak",
+            "no": "&Nie",
+            "source": "Źródło"
+        },
+        "ver": {
+            "updateBadge": "[ZMIANY]",
+            "updateTitle": "Dostęna aktualizacja!",
+            "update": "Dostępna nowa wersja programu!",
+            "recent": "Aplikacja jest w najnowszej wersji!",
+            "devel": "Korzystasz z wersji rozwojowej aplikacji.",
+            "downgrade": "Wersja produkcyjna aplikacji jest nowsza niż stabilna!"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: Żądanie uprawnień do elementu „%s” odrzucone."
+            },
+            "check": {
+                "denied": "%s: Sprawdzenie uprawnień do elementu „%s” odrzucone."
+            }
+        },
+        "mod": {
+            "nodeExt": "Dodatek Node.js WebCorda",
+            "crx": "Rozszerzenie Chrome/Chromium"
+        },
+        "externalApp": {
+            "title": "Otwieranie linku w programie zewnętrznym.",
+            "message": "Strona usiłuje przekierować link o innym źródle pochodzenia do aplikacji zewnętrznej. Kontynuować mimo tego?"
+        }
+    },
+    "help": {
+        "groupName": "Pomoc",
+        "repo": "Repozytorium",
+        "bugs": "Zgłoś błąd"
+    },
+    "settings": {
+        "basic": {
+            "name": "Podstawowe",
+            "group": {
+                "menuBar": {
+                    "name": "Pasek menu",
+                    "description": "Zmienia ustawienia widoczności natywnego paska menu.",
+                    "label": "Ukrywaj automatycznie pasek menu (klawisz <kbd>ALT</kbd> przełącza widoczność)."
+                },
+                "tray": {
+                    "name": "Zasobnik systemowy",
+                    "description": "Zmienia ustawienia widoczności ikony w zasobniku systemowym.",
+                    "label": "Wyłącz funcję ukrywania okna do zasobnika systemowego."
+                }
+            }
+        },
+        "privacy": {
+            "name": "Prywatność",
+            "group": {
+                "blockApi": {
+                    "name": "Blokowanie API Discord'a",
+                    "description": "Blokuje żądania API Discord'a aby chronić prywatność użytkownika.",
+                    "label": {
+                        "science": "Blokuj znane żądania telemetrii. (<code>/science</code> i <code>/tracing</code>).",
+                        "typingIndicator": "Blokuj wskaźnik wpisywania tekstu. (<code>/typing</code>)."
+                    }
+                },
+                "permissions": {
+                    "name": "Uprawnienia",
+                    "description": "Zezwala bądź blokuje żądania i sprawdzenia uprawnień przez stronę Discord'a. Pozostałe uprawnienia są automatycznie blokowane przez klient.",
+                    "label": {
+                        "camera": "Kamera",
+                        "microphone": "Mikrofon",
+                        "fullscreen": "Pełny ekran",
+                        "desktopCapture": "Nagrywanie ekranu",
+                        "notifications": "Powiadomienia"
+                    }
+                }
+            }
+        },
+        "advanced": {
+            "name": "Zaawansowane",
+            "group": {
+                "devel": {
+                    "name": "Tryb programisty",
+                    "description": "Zezwala na dostęp do narzędzi programisty i niedokończonych opcji. <b>Uwaga:</b> jeżeli po włączeniu tej aplikacji będą występować błędy, proszę aby ich nie zgłaszać autorom/-wi aplikacji!",
+                    "label": "Włącz tryb programisty"
+                },
+                "csp": {
+                    "name": "Polityka bezpieczeństwa treści",
+                    "extends": {
+                        "thirdparty": {
+                            "name": "Witryny firm trzecich",
+                            "description": "Ustala listę witryn firm trzecich dopuszczonych do wczytywania treści na stronie internetowej.",
+                            "list": {
+                                "gifProviders": "Dostawcy GIF–ów"
+                            }
+                        },
+                        "enable": {
+                            "description": "Zmienia, czy aplikacja powinna zastosować się do własnej Polityki Bezpieczeństwa Treści, czy zamiast tego korzystać z nagłówka Discord'a.",
+                            "label": "Korzystaj z nagłówka CSP aplikacji"
+                        }
+                    }
+                },
+                "crossOrigin": {
+                    "name": "Zachowanie przy przekierowaniach.",
+                    "description": "Określa zachowanie aplikacji na przekierowania do witryn o innym pochodzeniu. <b>To ustawnienie ma wpływ na bezpieczeństwo</b>.",
+                    "label": "Zawsze ostrzegaj przy przekierowaniach między różnymi domenami do zewnętrznych aplikacji."
+                },
+                "instance": {
+                    "name": "Instancje Discord'a",
+                    "description": "Wybierz instancję Discord'a, z którą WebCord powinien się łączyć. <b>Eksperymentalne</b>, ponieważ implementacja Fosscord'a nie jest w pełni dokończona."
+                }
+            }
+        }
+    },
+    "log": {
+        "singleInstance": "Przełączanie do istniejącego okna...",
+        "listenPort": "Nasłuchiwanie na porcie: %s."
+    }
 }
