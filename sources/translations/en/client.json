@@ -65,7 +65,7 @@
             "update": "New application version is available!",
             "recent": "Application is up-to-date!",
             "devel": "You're using the non-production build.",
-            "downgrade": "Your production build is to newer than stable!"
+            "downgrade": "Your production build is newer than stable!"
         },
         "permission": {
             "request": {
@@ -81,7 +81,7 @@
         },
         "externalApp": {
             "title": "Opening link in external app",
-            "message": "A website tries to redirect link with the different origin to the external application. Continue anyway?"
+            "message": "A website tries to redirect the link with the different origin to the external application. Continue anyway?"
         }
     },
     "help": {
