@@ -161,7 +161,15 @@
 				"instance": {
 					"name": "Instancje Discord'a",
 					"description": "Wybierz instancję Discord'a, z którą WebCord powinien się łączyć. <b>Eksperymentalne</b>, ponieważ implementacja Fosscord'a nie jest w pełni dokończona."
-				}
+				},
+                "optimize": {
+                    "name": "Optymalizacja klienta",
+                    "description": "Próbuje wykryć sprzęt i oprogramowanie aby zastosować flagi do silnika Chromium, które <b>mogą</b> polepszyć funkcjonalność i wydajność Elektron'a. <b>Eksperymentalne</b>, gdyż jest powód, dla którego Chromium nie stosuje tych flag samodzielnie.",
+                    "checklist": {
+                        "gpu": "Optymalizuj klient wobec obecnie aktywnej karty graficznej.",
+                        "os": "Usprawnij integrację WebCord'a z obecnym systemem operacyjnym."
+                    }
+                }
 			}
 		}
 	},

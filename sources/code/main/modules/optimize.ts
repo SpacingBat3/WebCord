@@ -4,6 +4,9 @@
 
 import { app } from 'electron/main';
 
+/** Whenever the current process is ran on *nix. */
+const isUnix = process.platform !== 'win32' && process.platform !== 'darwin';
+
 interface partialGPU {
     gpuDevice: {
         active: boolean,
@@ -19,7 +22,7 @@ function hasGPUDevices(object: unknown):object is partialGPU {
     for(const device of (object as partialGPU).gpuDevice) {
         if(!('active' in device) || typeof device.active !== 'boolean')
             return false
-        if(!('driverVendor' in device) || typeof device.active !== 'string')
+        if(!('driverVendor' in device) || typeof device.driverVendor !== 'string')
             return false
     }   
     return true
@@ -38,11 +41,11 @@ export async function getRecommendedGPUFlags() {
     /**
      * Tries to guess the best GL backend for the current desktop enviroment
      * to use as native instead of ANGLE.
-     * It is `desktop` by default (all platforms) and `egl` for wayland (linux).
+     * It is `desktop` by default (all platforms) and `egl` for wayland (*nix).
      */
     let desktopGl:"desktop"|"egl";
 
-    if(process.platform === "linux" && process.env["XDG_SESSION_TYPE"] === "wayland")
+    if(isUnix && process.env["XDG_SESSION_TYPE"] === "wayland")
         desktopGl = "egl"
     else
         desktopGl = "desktop"
@@ -77,4 +80,37 @@ export async function getRecommendedGPUFlags() {
             }
             break;
         }
+    return flags;
+}
+
+/**
+ * An experimental function to return information about recommended flags to
+ * improve the app's integration within the OS.
+ * 
+ * This is currently used only for Wayland to enable screen recording and use
+ * native Wayland over XWayland to display window
+ * (see {@link getRecommendedGPUFlags} for GPU optimizations for Wayland).
+ */
+export function getRedommendedOSFlags() {
+    const flags: ([string]|[string,string])[] = [];
+    if(isUnix) {
+        switch (process.env['XDG_SESSION_TYPE']?.toLowerCase()) {
+            case "wayland":
+                flags.push(
+                    ["enable-features","UseOzonePlatform,WebRTCPipeWireCapturer"+(
+                        process.env['XDG_CURRENT_DESKTOP']?.toLowerCase()
+                            .includes("gnome") ? ",WaylandWindowDecorations" : ""
+                    )],
+                    ["ozone-platform","wayland"]
+                );
+                break;
+            case "x11":
+                break;
+            default:
+                flags.push(
+                    ["ozone-platform-hint", "auto"]
+                )
+        }
+    }
+    return flags;
 }

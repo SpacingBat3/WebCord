@@ -50,6 +50,10 @@ const defaultAppConfig = {
             version: "",
             till: "",
         },
+    },
+    useRecommendedFlags: {
+        gpu: false,
+        os: false
     }
 }
 

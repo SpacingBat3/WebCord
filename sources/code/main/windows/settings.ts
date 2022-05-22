@@ -180,6 +180,24 @@ function conf2html (config:AppConfig) {
 					id: 'devel',
 					isChecked: config.get().devel
 				}],
+			},
+			{
+				// Developer mode
+				name: lang.advanced.group.optimize.name,
+				description: lang.advanced.group.optimize.description,
+				type: 'checkbox',
+				forms: [
+					{
+						label: lang.advanced.group.optimize.checklist.gpu,
+						id: 'useRecommendedFlags.gpu',
+						isChecked: config.get().useRecommendedFlags.gpu
+					},
+					{
+						label: lang.advanced.group.optimize.checklist.os,
+						id: 'useRecommendedFlags.os',
+						isChecked: config.get().useRecommendedFlags.os
+					}
+				],
 			}
 		]
 	}

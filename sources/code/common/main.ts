@@ -73,6 +73,7 @@ import { resolve as resolvePath, relative } from 'path';
 import { major } from "semver";
 import { getUserAgent } from './modules/agent';
 import { getBuildInfo } from '../main/modules/client';
+import { getRecommendedGPUFlags, getRedommendedOSFlags } from '../main/modules/optimize';
 
 // Set global user agent
 app.userAgentFallback = getUserAgent(process.versions.chrome);
@@ -150,7 +151,29 @@ let overwriteMain: (() => void | unknown) | undefined;
         };
     }
 }
+{
+    const applyFlags = (name:string, value?:string) => {
+        if(name === "enable-features" && value !== undefined
+            && app.commandLine.getSwitchValue(name) !== "")
+                value = app.commandLine.getSwitchValue(name)+','+value
+        app.commandLine.appendSwitch(name, value);
+        console.debug("[OPTIMIZE] Applying flag: --"+name+(value ? '='+value : ''))
+    }
+    // Apply recommended GPU flags if user has opt for them.
+    if(new AppConfig().get().useRecommendedFlags.gpu)
+        getRecommendedGPUFlags().then(flags => {
+            for(const flag of flags) if(!app.isReady()) {
+                applyFlags(flag[0], flag[1]);
+            } else
+                console.warn("Flag '--"+flag[0]+(flag[1] ? '='+flag[1] : '')+"' won't be assigned to Chromium's cmdline, since app is already ready!")
+        }).catch(error => {
+            console.error(error);
+        })
 
+    if(new AppConfig().get().useRecommendedFlags.os)
+        for(const flag of getRedommendedOSFlags())
+            applyFlags(flag[0], flag[1]);
+}
 // Some variable declarations
 
 const singleInstance = app.requestSingleInstanceLock();

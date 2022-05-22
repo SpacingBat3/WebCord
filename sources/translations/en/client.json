@@ -80,7 +80,7 @@
             "crx": "Chrome/Chromium Extension"
         },
         "externalApp": {
-            "title": "Opening link in external app.",
+            "title": "Opening link in external app",
             "message": "A website tries to redirect link with the different origin to the external application. Continue anyway?"
         }
     },
@@ -154,13 +154,21 @@
                     }
                 },
                 "crossOrigin": {
-                    "name": "Cross-origin redirection behavior.",
+                    "name": "Cross-origin redirection behavior",
                     "description": "Controls the actions on cross-origin redirections. <b>This affects application security</b>.",
                     "label": "Always warn user about cross-origin redirections to external applications."
                 },
                 "instance": {
-                    "name": "Discord instance.",
+                    "name": "Discord instance",
                     "description": "Selects the instance to which Webcord should connect. <b>Experimental<b> as Fosscord implementation is not fully finished yet."
+                },
+                "optimize": {
+                    "name": "Client optimizations",
+                    "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by itself.",
+                    "checklist": {
+                        "gpu": "Optimize the client for the currently active graphics card.",
+                        "os": "Improve WebCord's integration within the operating system."
+                    }
                 }
             }
         }
