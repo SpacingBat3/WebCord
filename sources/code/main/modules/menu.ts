@@ -6,8 +6,7 @@ import {
 	Menu,
 	Tray,
 	shell,
-	clipboard,
-	ipcMain
+	clipboard
 } from 'electron';
 
 import {
@@ -30,16 +29,14 @@ import { commonCatches } from './error';
 const sideBar = new EventEmitter();
 const devel = getBuildInfo().type === 'devel';
 
-ipcMain.once('cosmetic.sideBarClass', (_event, className:string) => {
-	sideBar.on('hide', (contents: Electron.WebContents) => {
-		console.debug("[EVENT] Hiding menu bar...")
-		contents.insertCSS("."+className+"{ width: 0px !important; }").then(cssKey => {
-			sideBar.once('show', () => {
-				console.debug("[EVENT] Showing menu bar...")
-				contents.removeInsertedCSS(cssKey).catch(commonCatches.throw)
-			});
-		}).catch(commonCatches.print)
-	});
+sideBar.on('hide', (contents: Electron.WebContents) => {
+	console.debug("[EVENT] Hiding menu bar...")
+	contents.insertCSS("div[class|=sidebar]{ width: 0px !important; }").then(cssKey => {
+		sideBar.once('show', () => {
+			console.debug("[EVENT] Showing menu bar...")
+			contents.removeInsertedCSS(cssKey).catch(commonCatches.throw)
+		});
+	}).catch(commonCatches.print)
 });
 
 let wantQuit = false;

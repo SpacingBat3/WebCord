@@ -238,37 +238,17 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             win.setTitle(app.getName() + ' - ' + title);
     });
 
-    /* Expose "did-stop-loading" event to preloads, it seems to be the most
-     * precise way of watching for the changes within Discord's DOM.
-     */
-    ipcMain.on("cosmetic.load", (event) => {
-        const callback = () => {
-            if(!win.webContents.getURL().startsWith("https:")) return;
-            console.debug("[IPC] Exposing a 'did-stop-loading' event...");
-            event.reply("webContents.did-stop-loading");
-        }
-        win.webContents.once("did-stop-loading", callback);
-        win.webContents.once("did-navigate", () => {
-            win.webContents.removeListener("did-stop-loading", callback);
-        });
-    });
-
-    ipcMain.on("cosmetic.hideElementByClass", (event, cssRule:string) => {
-        void win.webContents.insertCSS(cssRule+':nth-last-child(2) > *, '+cssRule+':nth-last-child(3) > * { display:none; }')
-        event.reply("cosmetic.hideElementByClass");
-    })
-
-    // Animate menu
-    ipcMain.on('cosmetic.sideBarClass', (_event, className:string) => {
-        console.debug("[CSS] Injecting a CSS for sidebar animation...")
-        void win.webContents.insertCSS("."+className+"{ transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);}")
-    });
-
     // Insert custom css styles:
 
     win.webContents.on('did-finish-load', () => {
         if(new URL(win.webContents.getURL()).protocol === "https:") {
             loadStyles(win.webContents)
+                .catch(commonCatches.print);
+            import("fs")
+                .then(fs => fs.promises.readFile)
+                .then(read => read(resolve(app.getAppPath(), "sources/assets/web/css/discord.css")))
+                .then(buffer => buffer.toString())
+                .then(data => win.webContents.insertCSS(data))
                 .catch(commonCatches.print);
         }
     });

@@ -2,7 +2,6 @@ import { contextBridge, ipcRenderer } from "electron/renderer";
 import { generateSafeKey } from "../modules/api";
 import { getAppIcon, wLog } from "../../common/global";
 import desktopCapturerPicker from "../modules/capturer";
-import preloadCosmetic from "../modules/cosmetic";
 import l10n from "../../common/modules/l10n";
 
 /**
@@ -10,12 +9,12 @@ import l10n from "../../common/modules/l10n";
  * by the Context Bridge.
  */
 const contextBridgeApiKey = generateSafeKey();
-/*
- * Cosmetic script uses that to hide the Discord's download popup on fresh
- * installations.
- */
-preloadCosmetic();
 contextBridge.exposeInMainWorld(contextBridgeApiKey,desktopCapturerPicker);
+
+/*
+ * Hide orange popup about downloading the application.
+ */
+window.addEventListener("load", () => window.localStorage.setItem('hideNag', 'true'));
 
 if (window.location.protocol === 'file:') {
     window.addEventListener("load", () => {

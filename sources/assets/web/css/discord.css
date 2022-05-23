@@ -1,0 +1,50 @@
+/* Animate side bar on resize. */
+div[class|=sidebar] {
+    transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hide Discord elements. */
+div[class|=scroller] > div[class|=listItem]:nth-last-child(2) > *,
+div[class|=scroller] > div[class|=listItem]:nth-last-child(3) > * {
+    display: none !important;
+}
+
+/* Assign 'rainbow' color to my nickname! */
+img[src*="423864076095979522"] ~ h2 > span > span {
+    animation: rainbow linear 10s infinite;        
+}
+
+.theme-dark {
+    --rb: 75%
+}
+
+.theme-light {
+    --rb: 35%
+}
+
+@keyframes rainbow {
+    0% {
+        color: hsl(0, 100%, var(--rb));
+    }
+    15% {
+        color: hsl(39, 100%, calc(var(--rb) - 5%));
+    }
+    30% {
+        color: hsl(60, 100%, calc(var(--rb) - 10%));
+    }
+    45% {
+        color: hsl(120, 100%, calc(var(--rb) - 5%));
+    }
+    60% {
+        color: hsl(240, 100%, calc(var(--rb) + 6%));
+    }
+    75% {
+        color: hsl(275, 100%, calc(var(--rb) + 4%));
+    }
+    90% {
+        color: hsl(300, 100%, calc(var(--rb) + 2%));
+    }
+    100% {
+        color: hsl(360, 100%, var(--rb));
+    }
+}
