@@ -157,7 +157,7 @@ let overwriteMain: (() => void | unknown) | undefined;
             && app.commandLine.getSwitchValue(name) !== "")
                 value = app.commandLine.getSwitchValue(name)+','+value
         app.commandLine.appendSwitch(name, value);
-        console.debug("[OPTIMIZE] Applying flag: --"+name+(value ? '='+value : ''))
+        console.debug("[OPTIMIZE] Applying flag: %s...",'--'+name+(value ? '='+value : ""))
     }
     // Apply recommended GPU flags if user has opt for them.
     if(new AppConfig().get().useRecommendedFlags.gpu)
@@ -165,14 +165,13 @@ let overwriteMain: (() => void | unknown) | undefined;
             for(const flag of flags) if(!app.isReady()) {
                 applyFlags(flag[0], flag[1]);
             } else
-                console.warn("Flag '--"+flag[0]+(flag[1] ? '='+flag[1] : '')+"' won't be assigned to Chromium's cmdline, since app is already ready!")
+                console.warn("Flag '--"+flag[0]+(flag[1] ? '='+flag[1] : '')+"' won't be assigned to Chromium's cmdline, since app is already 'ready'!")
         }).catch(error => {
             console.error(error);
         })
 
-    if(new AppConfig().get().useRecommendedFlags.os)
-        for(const flag of getRedommendedOSFlags())
-            applyFlags(flag[0], flag[1]);
+    for(const flag of getRedommendedOSFlags())
+        applyFlags(flag[0], flag[1]);
 }
 // Some variable declarations
 

@@ -166,8 +166,7 @@
                     "name": "Client optimizations",
                     "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by itself.",
                     "checklist": {
-                        "gpu": "Optimize the client for the currently active graphics card.",
-                        "os": "Improve WebCord's integration within the operating system."
+                        "gpu": "Optimize the client for the currently active graphics card."
                     }
                 }
             }

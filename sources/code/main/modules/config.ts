@@ -52,8 +52,7 @@ const defaultAppConfig = {
         },
     },
     useRecommendedFlags: {
-        gpu: false,
-        os: false
+        gpu: false
     }
 }
 

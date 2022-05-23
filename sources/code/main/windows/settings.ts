@@ -191,11 +191,6 @@ function conf2html (config:AppConfig) {
 						label: lang.advanced.group.optimize.checklist.gpu,
 						id: 'useRecommendedFlags.gpu',
 						isChecked: config.get().useRecommendedFlags.gpu
-					},
-					{
-						label: lang.advanced.group.optimize.checklist.os,
-						id: 'useRecommendedFlags.os',
-						isChecked: config.get().useRecommendedFlags.os
 					}
 				],
 			}

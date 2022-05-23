@@ -88,28 +88,20 @@ export async function getRecommendedGPUFlags() {
  * improve the app's integration within the OS.
  * 
  * This is currently used only for Wayland to enable screen recording and use
- * native Wayland over XWayland to display window
+ * recommended flags for native Wayland if `--ozone-platform=wayland` is used
  * (see {@link getRecommendedGPUFlags} for GPU optimizations for Wayland).
  */
 export function getRedommendedOSFlags() {
     const flags: ([string]|[string,string])[] = [];
     if(isUnix) {
-        switch (process.env['XDG_SESSION_TYPE']?.toLowerCase()) {
-            case "wayland":
-                flags.push(
-                    ["enable-features","UseOzonePlatform,WebRTCPipeWireCapturer"+(
-                        process.env['XDG_CURRENT_DESKTOP']?.toLowerCase()
-                            .includes("gnome") ? ",WaylandWindowDecorations" : ""
-                    )],
-                    ["ozone-platform","wayland"]
-                );
-                break;
-            case "x11":
-                break;
-            default:
-                flags.push(
-                    ["ozone-platform-hint", "auto"]
-                )
+        if(process.argv.includes("--ozone-platform=wayland")) {
+            flags.push(
+                ["enable-features","UseOzonePlatform,WebRTCPipeWireCapturer,WaylandWindowDecorations"]
+            );
+        } else if(process.env["XDG_SESSION_TYPE"] === "wayland") {
+            flags.push(
+                ["enable-features","WebRTCPipeWireCapturer"]
+            )
         }
     }
     return flags;

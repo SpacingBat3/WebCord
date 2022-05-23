@@ -296,40 +296,54 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 // Fail when client has denied the permission to the capturer.
                 if(!configData.get().permissions["display-capture"])
                     return new Error("Permission denied.")
-                lock = true;
+                lock = !app.commandLine.getSwitchValue("enable-features")
+                    .includes("WebRTCPipeWireCapturer") ||
+                    process.env["XDG_SESSION_TYPE"] !== "wayland";
                 const sources = desktopCapturer.getSources({
-                    types: ["screen", "window"],
-                    fetchWindowIcons: true
+                    types: lock ? ["screen", "window"] : ["screen"],
+                    fetchWindowIcons: lock
                 });
-                const view = new BrowserView({
-                    webPreferences: {
-                        preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js")
-                    }
-                });
-                ipcMain.handleOnce("getDesktopCapturerSources", (event) => {
-                    if(event.sender === view.webContents)
-                        return sources;
-                    else
-                        return null;
-                });
-                const autoResize = () => setImmediate(() => view.setBounds({
-                    ...win.getBounds(),
-                    x:0,
-                    y:0,
-                }));
-                ipcMain.once("closeCapturerView", (_event,data:unknown) => {
-                    win.removeBrowserView(view);
-                    view.webContents.delete();
-                    win.removeListener("resize", autoResize);
-                    resolvePromise(data);
-                    lock = false;
-                })
-                win.setBrowserView(view);
-                void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
-                view.webContents.once("did-finish-load", () => {
-                    autoResize();
-                    win.on("resize", autoResize);
-                })
+                if(lock) {
+                    const view = new BrowserView({
+                        webPreferences: {
+                            preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js")
+                        }
+                    });
+                    ipcMain.handleOnce("getDesktopCapturerSources", (event) => {
+                        if(event.sender === view.webContents)
+                            return sources;
+                        else
+                            return null;
+                    });
+                    const autoResize = () => setImmediate(() => view.setBounds({
+                        ...win.getBounds(),
+                        x:0,
+                        y:0,
+                    }));
+                    ipcMain.once("closeCapturerView", (_event,data:unknown) => {
+                        win.removeBrowserView(view);
+                        view.webContents.delete();
+                        win.removeListener("resize", autoResize);
+                        resolvePromise(data);
+                        lock = false;
+                    })
+                    win.setBrowserView(view);
+                    void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
+                    view.webContents.once("did-finish-load", () => {
+                        autoResize();
+                        win.on("resize", autoResize);
+                    })
+                } else {
+                    sources.then(sources => resolvePromise({
+                        audio: false,
+                        video: {
+                            mandatory: {
+                                chromeMediaSource: 'desktop',
+                                chromeMediaSourceId: sources[0]?.id
+                            }
+                        }
+                    })).catch(error => console.error(error));
+                }
                 return;
             });
         });
