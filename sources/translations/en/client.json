@@ -161,7 +161,7 @@
                 },
                 "instance": {
                     "name": "Discord instance",
-                    "description": "Selects the instance WebCord should connect to. (<b>Experimental</b> as the Fosscord implementation is not fully finished yet.)"
+                    "description": "Selects the instance WebCord should connect to. <b>Experimental</b> as the Fosscord implementation is not fully finished yet."
                 },
                 "optimize": {
                     "name": "Client optimizations",
