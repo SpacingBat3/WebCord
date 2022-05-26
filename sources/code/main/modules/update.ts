@@ -8,7 +8,7 @@ import { appInfo, getBuildInfo } from './client';
 import fetch from 'electron-fetch';
 import l10n from '../../common/modules/l10n';
 import * as semver from 'semver';
-import colors from '@spacingbat3/kolor';
+import kolor from '@spacingbat3/kolor';
 import { commonCatches } from './error';
 import { AppConfig } from './config';
 
@@ -56,7 +56,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
             // If version can't be parsed by semver.
             throw new Error("Couldn't compare versions while doing an update");
     }
-    console.log(colors.bold(colors.blue(strings.dialog.ver.updateBadge)) + ' ' + updateMsg);
+    console.log(kolor.bold(kolor.blue(strings.dialog.ver.updateBadge)) + ' ' + updateMsg);
 
     const updatePopup:Electron.NotificationConstructorOptions = {
         title: app.getName() + ": " + strings.dialog.ver.updateTitle,

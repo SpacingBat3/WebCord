@@ -9,7 +9,7 @@ import { discordContentSecurityPolicy } from '../modules/csp';
 import type l10n from "../../common/modules/l10n";
 import { createHash } from 'crypto';
 import { resolve } from "path";
-import colors from '@spacingbat3/kolor';
+import kolor from '@spacingbat3/kolor';
 import { loadChromiumExtensions, loadStyles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 
@@ -51,10 +51,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             void win.loadFile(resolve(app.getAppPath(), 'sources/assets/web/html/404.html'));
         else if (errorCode === -30) {
             // Ignore CSP errors.
-            console.warn(colors.bold('[WARN]')+' A page "'+validatedURL+'" was blocked by CSP.')
+            console.warn(kolor.bold('[WARN]')+' A page "'+validatedURL+'" was blocked by CSP.')
             return;
         }
-        console.error(colors.bold('[ERROR]')+' '+errorDescription+' ('+(errorCode*-1).toString()+')');
+        console.error(kolor.bold('[ERROR]')+' '+errorDescription+' ('+(errorCode*-1).toString()+')');
         const retry = setInterval(() => {
             if (retry && net.isOnline()) {
                 clearInterval(retry);

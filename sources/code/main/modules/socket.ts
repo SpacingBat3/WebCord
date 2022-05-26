@@ -1,8 +1,8 @@
 import type { Server, WebSocket } from "ws";
-import colors from "@spacingbat3/kolor";
+import kolor from "@spacingbat3/kolor";
 
 function wsLog(message:string, ...args:unknown[]) {
-    console.log(colors.bold(colors.brightMagenta("[WebSocket]"))+" "+message,...args);
+    console.log(kolor.bold(kolor.brightMagenta("[WebSocket]"))+" "+message,...args);
 }
 
 /** Generates an inclusive range (as `Array`) from `start` to `end`. */
@@ -197,7 +197,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
             }
             // RPC response handling
             else if(isAuthorizationResponse(parsedData))
-                void wsLog("Received RPC authorization request, but "+colors.bold("RPC is not implemented yet")+".");
+                void wsLog("Received RPC authorization request, but "+kolor.bold("RPC is not implemented yet")+".");
             // Unknown response error
             else if(isResponse(parsedData))
                 console.error("[WS] Request of type: '"+parsedData.cmd+"' is currently not supported.");

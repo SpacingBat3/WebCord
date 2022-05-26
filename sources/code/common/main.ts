@@ -69,7 +69,7 @@ import { checkVersion } from '../main/modules/update';
 import l10n from './modules/l10n';
 import createMainWindow from "../main/windows/main";
 import { AppConfig } from '../main/modules/config';
-import colors from '@spacingbat3/kolor';
+import kolor from '@spacingbat3/kolor';
 import { resolve as resolvePath, relative } from 'path';
 import { major } from "semver";
 import { getUserAgent } from './modules/agent';
@@ -89,7 +89,7 @@ let overwriteMain: (() => void | unknown) | undefined;
     const renderLine = (parameter:string, description:string, length?:number) => {
         // eslint-disable-next-line no-control-regex
         const spaceBetween = (length ?? 30) - parameter.replace(/\x1B\[[^m]+m/g, '').length;
-        return '  '+colors.green(parameter)+' '.repeat(spaceBetween)+colors.gray(description)+'\n'
+        return '  '+kolor.green(parameter)+' '.repeat(spaceBetween)+kolor.gray(description)+'\n'
     }
     const cmd = app.commandLine;
 
@@ -107,14 +107,14 @@ let overwriteMain: (() => void | unknown) | undefined;
         }
     if (cmd.hasSwitch('help') || cmd.hasSwitch('h')) {
         console.log(
-            "\n " + colors.bold(colors.blue(app.getName())) +
-            " – Privacy focused Discord client made with " + colors.bold(colors.white(colors.blueBg("TypeScript"))) + " and " + colors.bold(colors.blackBg(colors.cyan("Electron"))) + '.\n\n' +
-            " " + colors.underscore("Usage:") + " " + colors.red(process.argv0) + colors.green(" [option]\n\n") +
-            " " + colors.underscore("Options:") + "\n" +
+            "\n " + kolor.bold(kolor.blue(app.getName())) +
+            " – Privacy focused Discord client made with " + kolor.bold(kolor.white(kolor.blueBg("TypeScript"))) + " and " + kolor.bold(kolor.blackBg(kolor.cyan("Electron"))) + '.\n\n' +
+            " " + kolor.underscore("Usage:") + " " + kolor.red(process.argv0) + kolor.green(" [option]\n\n") +
+            " " + kolor.underscore("Options:") + "\n" +
             renderLine('--version  -V','Show current application version.')+
             renderLine('--start-minimized  -m','Hide application at first run.') +
-            renderLine('--export-l10n'+ '=' + colors.yellow('{dir}'), 'Export currently loaded translation files from') +
-            " ".repeat(32)+colors.gray("the application to the " + colors.yellow('{dir}') + " directory.\n")+
+            renderLine('--export-l10n'+ '=' + kolor.yellow('{dir}'), 'Export currently loaded translation files from') +
+            " ".repeat(32)+kolor.gray("the application to the " + kolor.yellow('{dir}') + " directory.\n")+
             renderLine('--verbose  -v', "Show debug messages.")
         );
         app.exit();
@@ -142,8 +142,8 @@ let overwriteMain: (() => void | unknown) | undefined;
                 app.quit();
             }).catch((err:NodeJS.ErrnoException) => {
                 console.error(
-                    '\n⛔️ ' + colors.red(colors.bold(err.code ?? err.name)) + ' ' + (err.syscall ?? "") + ': ' +
-                        (err.path ? colors.blue(colors.underscore(relative(process.cwd(),err.path))) + ': ' : '') +
+                    '\n⛔️ ' + kolor.red(kolor.bold(err.code ?? err.name)) + ' ' + (err.syscall ?? "") + ': ' +
+                        (err.path ? kolor.blue(kolor.underscore(relative(process.cwd(),err.path))) + ': ' : '') +
                         err.message.replace((err.code ?? '') + ': ', '')
                             .replace(', ' + (err.syscall ?? '') + " '" + (err.path ?? '') + "'", '') + '.\n'
                 );

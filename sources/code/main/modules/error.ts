@@ -1,5 +1,5 @@
 import { app, dialog } from "electron/main";
-import colors from "@spacingbat3/kolor";
+import kolor from "@spacingbat3/kolor";
 
 export const commonCatches = {
     print: (reason:unknown) => {
@@ -18,7 +18,7 @@ export const commonCatches = {
 
 async function handleWithGUI(wasReady:boolean, name:string, message:string, stack:string, stackColor:string, error:Error&NodeJS.ErrnoException) {
     if(!app.isReady()) await app.whenReady();
-    if(wasReady) console.error('\n' + colors.red(colors.bold(name)) + colors.blue(message) + stackColor);
+    if(wasReady) console.error('\n' + kolor.red(kolor.bold(name)) + kolor.blue(message) + stackColor);
     dialog.showMessageBoxSync({
         title: name,
         message: error.message + stack,
@@ -89,7 +89,7 @@ export default function uncaughtExceptionHandler(): void {
                     stackProcessed.push(modifiedLine);
                     stackColorProcessed.push(modifiedLine);
                 } else {
-                    stackColorProcessed.push(colors.gray(line));
+                    stackColorProcessed.push(kolor.gray(line));
                 }
             }
             if (error.message !== "")
