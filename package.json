@@ -46,7 +46,7 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/experimental-utils": "latest",
     "@typescript-eslint/parser": "latest",
-    "electron": "^18.0.1",
+    "electron": "^19.0.1",
     "electron-forge-maker-appimage": "github:SpacingBat3/electron-forge-maker-appimage",
     "eslint": "latest",
     "eslint-import-resolver-typescript": "latest",
