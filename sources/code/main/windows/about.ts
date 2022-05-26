@@ -1,4 +1,4 @@
-import { app, ipcMain as ipc, screen } from 'electron';
+import { app, ipcMain as ipc, screen } from 'electron/main';
 import packageJson from '../../common/modules/package';
 import { getBuildInfo } from '../modules/client';
 import { initWindow } from '../modules/parent';

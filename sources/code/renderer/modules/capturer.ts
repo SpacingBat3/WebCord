@@ -1,4 +1,4 @@
-import { ipcRenderer as ipc } from 'electron';
+import { ipcRenderer as ipc } from 'electron/renderer';
 
 interface EMediaStreamConstraints extends MediaStreamConstraints {
     audio?: boolean | EMediaTrackConstraints;

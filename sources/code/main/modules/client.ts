@@ -2,7 +2,7 @@
  * Declarations used between multiple files (main scripts only)
  */
 
-import { app } from 'electron';
+import { app } from 'electron/main';
 import { resolve } from 'path';
 import { buildInfo, isBuildInfo } from '../../common/global';
 import packageJson, { Person } from '../../common/modules/package';

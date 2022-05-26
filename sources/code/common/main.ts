@@ -61,7 +61,8 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
         }).catch(commonCatches.print)
     }
 }
-import { app, BrowserWindow, dialog, session, shell } from 'electron';
+import { app, BrowserWindow, dialog, session } from 'electron/main';
+import { shell } from 'electron/common';
 import { promises as fs } from 'fs';
 import { trustedProtocolRegExp, SessionLatest, knownInstancesList } from './global';
 import { checkVersion } from '../main/modules/update';

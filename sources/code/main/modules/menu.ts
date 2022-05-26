@@ -1,13 +1,8 @@
 /*
  * menus – OS native menus (tray menu, context menu, menu bar etc.)
  */
-import {
-	app,
-	Menu,
-	Tray,
-	shell,
-	clipboard
-} from 'electron';
+import { app, Menu, Tray } from 'electron/main';
+import { shell, clipboard } from 'electron/common';
 
 import {
 	getBuildInfo,
