@@ -33,11 +33,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a armv7l
 
-    - name: Publish artifacts (ia32)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish -- -a ia32
-
   windows:
     runs-on: windows-latest
     steps:

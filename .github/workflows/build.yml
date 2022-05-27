@@ -32,9 +32,6 @@ jobs:
     - name: Test build (armv7l)
       run: npm run package -- -a armv7l
 
-    - name: Test build (ia32)
-      run: npm run package -- -a ia32
-
   windows:
     continue-on-error: true
     runs-on: windows-latest
