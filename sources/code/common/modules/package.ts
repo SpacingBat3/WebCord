@@ -19,9 +19,11 @@ export type PersonLike = string | PersonObject
 export interface PackageJsonProperties {
 	/** Node.js-friendly application name. */
 	name: string,
-	/** Application version. */
+    /** Node package description. */
+    description: string,
+	/** Node package version, must be parsable by `semver`. */
 	version: string,
-	/** Application author. */
+	/** Node package author. */
 	author?: PersonLike,
     /** Application license. */
     license: string,
@@ -143,8 +145,8 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
             if (!this.isPerson((object as PackageJsonProperties).author))
                 return "Author field is of invalid type.";
     
-        // Check 4: 'name', 'license' and 'homepage' are strings.
-        for (const stringKey of ['name', 'license'])
+        // Check 4: 'name', 'description' and 'license' are strings.
+        for (const stringKey of ['name', 'description', 'license'])
             if (typeof ((object as { [key: string]: string; })[stringKey]) !== 'string')
                 return "'"+stringKey+"' is not assignable to type 'string'.";
         

@@ -1,10 +1,11 @@
 import { ipcRenderer as ipc } from "electron/renderer";
-import { buildInfo, getAppIcon } from "../../common/global";
+import { buildInfo, getAppIcon, sanitizeConfig } from "../../common/global";
 import { getAppPath } from "../../common/modules/electron";
 import { resolve } from "path";
 import L10N from "../../common/modules/l10n";
 import packageJson, { PackageJSON, Person } from "../../common/modules/package";
 import { createHash } from "crypto";
+import { sanitize } from "dompurify";
 
 /**
  * Fetches user avatar by making the requests to both GitHub and Gravatar
@@ -159,18 +160,22 @@ function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], name:string) {
     for (const packName in packageJson.data.dependencies) {
         if(packName.startsWith('@spacingbat3/')) continue;
         const {data} = new PackageJSON(
-            ["author", "license"],
+            ["author", "license", "version", "description"],
             resolve(getAppPath(), "node_modules/"+packName+"/package.json")
         )
         const npmLink = document.createElement("a");
         const title = document.createElement("h3");
         const copy = document.createElement("p");
-        npmLink.href = "https://www.npmjs.com/package/"+packName;
+        npmLink.title = data.description.match(/^[^.]*\.?/)?.[0] ?? "";
+        npmLink.href = "https://www.npmjs.com/package/"+packName+"/v/"+data.version;
         npmLink.relList.add("noreferrer");
         npmLink.target = "_blank";
-        title.innerText = packName;
-        copy.innerText = "© " +
-            new Person(data.author ?? '"'+l10n.licenses.packageAuthors.replace("%s", packName)+'"').name + " " + l10n.licenses.licensedUnder.replace("%s",data.license)
+        title.innerHTML = sanitize(packName+" <small>v"+data.version+"</small>", sanitizeConfig);
+        copy.innerHTML = sanitize("© " +
+            new Person(data.author ?? '"'+l10n.licenses.packageAuthors
+                .replace("%s", packName)+'"').name + " " +
+                l10n.licenses.licensedUnder.replace("%s","<code>"+data.license+"</code>")
+        , sanitizeConfig)
         npmLink.appendChild(title);
         document.getElementById("licenses")?.appendChild(npmLink);
         document.getElementById("licenses")?.appendChild(copy);

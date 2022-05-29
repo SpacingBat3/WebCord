@@ -142,9 +142,9 @@ export const discordFavicons = {
 /**
  * Allowed protocol list.
  * 
- * For security reasons, `shell.openExternal()` should not be used for any type
- * of the link, as this may allow potential attackers to compromise host or even
- * execute arbitary commands.
+ * For security reasons, `shell.openExternal()` should not be used for every
+ * link protocol handling, as this may allow potential attackers to compromise
+ * host or even execute arbitary commands.
  * 
  * This way, we can also force the usage of the secure links variants where
  * applicable and block *insecure* and unencrypted protocols.
@@ -219,4 +219,16 @@ export type SessionLatest = Electron.Session & {
 	 * range `>=14.1.0 && <15.0.0 || >=15.1.0`.
 	 */
 	setDevicePermissionHandler: (handler: (()=>boolean)|null)=>void;
+}
+
+
+/**
+ * A sanitizer configuration that allows only for tags that modifies the code
+ * formatting.
+ */
+ export const sanitizeConfig = {
+    // Allow tags that modifies text style and/or has a semantic meaning.
+    ALLOWED_TAGS: ['b', 'i', 'u', 's', 'em', 'kbd', 'strong', 'code', 'small'],
+    // Block every attribute
+    ALLOWED_ATTR: []
 }

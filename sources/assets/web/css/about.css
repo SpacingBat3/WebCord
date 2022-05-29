@@ -115,6 +115,10 @@ h1 ~ h2 {
 }
 #licenses h3 {
     color: var(--color-link);
+    vertical-align: bottom;
+}
+#licenses h3 > small {
+    font-size: calc(var(--font-size-factor) * 0.8);
 }
 hr {
     width: calc(100% - 4px);

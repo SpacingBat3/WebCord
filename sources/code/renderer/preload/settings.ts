@@ -4,18 +4,12 @@
  * @todo: Implement script inside WebCord
  */
 import { ipcRenderer } from "electron/renderer";
-import { HTMLChecklistForms, HTMLRadioCustom, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup, wLog } from "../../common/global";
+import type { HTMLChecklistForms, HTMLRadioCustom, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup } from "../../common/global";
+import { wLog, sanitizeConfig } from "../../common/global";
 import { sanitize } from 'dompurify';
 
 function isChecklistForms(arg: HTMLRadioForms|HTMLChecklistForms|HTMLRadioCustom):arg is HTMLChecklistForms {
     return (arg as unknown as HTMLChecklistForms).id !== undefined
-}
-
-const sanitizeConfig = {
-    // Allow tags that modifies text style and/or has a semantic meaning.
-    ALLOWED_TAGS: ['b', 'i', 'u', 's', 'em', 'kbd', 'strong', 'code'],
-    // Block every attribute
-    ALLOWED_ATTR: []
 }
 
 function fetchFromWebsite(this: HTMLInputElement) {
