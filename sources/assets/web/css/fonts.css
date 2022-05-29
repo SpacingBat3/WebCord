@@ -10,18 +10,18 @@
 @import url('../../../../node_modules/@fontsource/ubuntu/400.css');
 @import url('../../../../node_modules/@fontsource/ubuntu/400-italic.css');
 
-/** Source Code Pro: regular, bold, italic, bold+italic **/
-@import url('../../../../node_modules/@fontsource/source-code-pro/700.css');
-@import url('../../../../node_modules/@fontsource/source-code-pro/700-italic.css');
-@import url('../../../../node_modules/@fontsource/source-code-pro/400.css');
-@import url('../../../../node_modules/@fontsource/source-code-pro/400-italic.css');
+/** Fira Code: regular, bold, italic, bold+italic **/
+@import url('../../../../node_modules/@fontsource/fira-code/700.css');
+@import url('../../../../node_modules/@fontsource/fira-code/700-italic.css');
+@import url('../../../../node_modules/@fontsource/fira-code/400.css');
+@import url('../../../../node_modules/@fontsource/fira-code/400-italic.css');
 
-/** Twemoji: **/
+/** Twemoji **/
 @import url('../../../../node_modules/twemoji-colr-font/twemoji.css');
 
 :root {
     --font-primary: 'Roboto',Arial,sans-serif, Twemoji;
     --font-display: 'Ubuntu',Arial,sans-serif, Twemoji;
-    --font-code: 'Source Code Pro',Courier,monospace, Twemoji;
+    --font-code: 'Fira Code',Courier,monospace, Twemoji;
     --font-headline: var(--font-display);
 }
