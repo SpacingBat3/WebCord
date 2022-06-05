@@ -100,6 +100,11 @@ function conf2html (config:AppConfig) {
 						label: lang.privacy.group.blockApi.label.typingIndicator,
 						id: 'blockApi.typingIndicator',
 						isChecked: config.get().blockApi.typingIndicator
+					},
+					{
+						label: lang.privacy.group.blockApi.label.fingerprinting,
+						id: 'blockApi.fingerprinting',
+						isChecked: config.get().blockApi.fingerprinting
 					}
 				]
 			},

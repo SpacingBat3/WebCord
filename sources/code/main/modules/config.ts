@@ -36,6 +36,7 @@ const defaultAppConfig = {
     blockApi: {
         typingIndicator: false,
         science: true,
+        fingerprinting: true
     },
     permissions: {
         "video": false,

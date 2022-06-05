@@ -113,7 +113,8 @@
                     "description": "Blokuje żądania API Discord'a aby chronić prywatność użytkownika.",
                     "label": {
                         "science": "Blokuj znane żądania telemetrii (<code>/science</code> i <code>/tracing</code>).",
-                        "typingIndicator": "Blokuj wskaźnik wpisywania tekstu (<code>/typing</code>)."
+                        "typingIndicator": "Blokuj wskaźnik wpisywania tekstu (<code>/typing</code>).",
+                        "fingerprinting": "Blokuj identyfikację klienta poprzez skrypt <code>api.js</code>."
                     }
                 },
                 "permissions": {

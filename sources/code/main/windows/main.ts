@@ -90,6 +90,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     win.webContents.session.webRequest.onBeforeRequest(
         {
             urls: [
+                'https://*/cdn-cgi/bm/cv/*/api.js',
                 'https://*/api/*/science',
                 'https://*/api/*/channels/*/typing',
                 'https://*/api/*/track'
@@ -97,16 +98,22 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         },
         (details, callback) => {
 
-            const configData = (new AppConfig()).get();
-            const cancel = configData.blockApi.science || configData.blockApi.typingIndicator;
+            const configData = (new AppConfig()).get().blockApi;
+            
+            const cancel = configData.science ||
+                configData.typingIndicator ||
+                configData.fingerprinting;
+
             const url = new URL(details.url);
 
             if (cancel) console.debug('[API] Blocking ' + url.pathname);
 
             if (url.pathname.endsWith('/science') || url.pathname.endsWith('/track'))
-                callback({ cancel: configData.blockApi.science });
+                callback({ cancel: configData.science });
             else if (url.pathname.endsWith('/typing'))
-                callback({ cancel: configData.blockApi.typingIndicator });
+                callback({ cancel: configData.typingIndicator });
+            else if (url.pathname.endsWith('/api.js'))
+                callback({ cancel: configData.fingerprinting });
             else
                 callback({ cancel: false });
 
