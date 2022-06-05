@@ -1,27 +1,25 @@
-/**
+/*
  * This is a file containing all of the types declarations used to determine the
  * correct type for each property in config, as well as enable autocompletition
  * for some of the text editors supporting it.
  * 
- * I put it in separate file to make `config.ts` mainly focused on Electron Forge
+ * I put it in separate file to make `forge.ts` mainly focused on Electron Forge
  * configuration.
- * 
- * @todo Reenable snap and flatpak builds when I succeed to have them working fine.
  */
 
 // Forge types
 
-import { ForgeConfig, ForgePlatform } from '@electron-forge/shared-types';
+import type { ForgeConfig, ForgePlatform } from '@electron-forge/shared-types';
 
 // Maker config types
 
-import { MakerDebConfig } from "@electron-forge/maker-deb/dist/Config";
+import type { MakerDebConfig } from "@electron-forge/maker-deb/dist/Config";
 //import { MakerSnapConfig } from "@electron-forge/maker-snap/dist/Config";
 //import { MakerFlatpakConfig } from "@electron-forge/maker-flatpak/dist/Config";
-import { MakerRpmConfig } from "@electron-forge/maker-rpm/dist/Config";
-import { MakerZIPConfig } from "@electron-forge/maker-zip/dist/MakerZIP";
-import { MakerAppImageConfig } from "electron-forge-maker-appimage/dist/src/Config";
-import { MakerDMGConfig } from "@electron-forge/maker-dmg/dist/Config";
+import type { MakerRpmConfig } from "@electron-forge/maker-rpm/dist/Config";
+import type { MakerZIPConfig } from "@electron-forge/maker-zip/dist/MakerZIP";
+import type { MakerAppImageConfig } from "@reforged/maker-appimage/types/config";
+import type { MakerDMGConfig } from "@electron-forge/maker-dmg/dist/Config";
 
 // Publisher config types
 
@@ -48,7 +46,7 @@ interface MPBase {
 // Maker types
 
 interface MakerAppImage extends MPBase {
-  name: "electron-forge-maker-appimage",
+  name: "@reforged/maker-appimage",
   config?: MakerAppImageConfig
 }
 

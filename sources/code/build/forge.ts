@@ -29,7 +29,7 @@ function getCommit():string | void {
 }
 
 const env = {
-  asar: process.env['WEBCORD_ASAR']?.toLowerCase(),
+  asar: process.env['WEBCORD_ASAR']?.toLowerCase() !== "false",
   build: process.env['WEBCORD_BUILD']?.toLocaleLowerCase()
 }
 
@@ -58,7 +58,7 @@ const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
   packagerConfig: {
     executableName: packageJson.data.name, // name instead of the productName
-    asar: env.asar !== "false",
+    asar: env.asar,
     icon: iconFile, // used in Windows and MacOS binaries
     extraResource: [
       "LICENSE"
@@ -92,13 +92,12 @@ const config: ForgeConfigFile = {
       }
     },
     {
-      name: "electron-forge-maker-appimage",
+      name: "@reforged/maker-appimage",
       config: {
         options: {
           icon: iconFile + ".png",
           genericName: desktopGeneric,
-          categories: desktopCategories,
-          compression: "gzip" // "xz" is too slow for the Electron AppImages
+          categories: desktopCategories
         }
       }
     },
@@ -136,7 +135,9 @@ const config: ForgeConfigFile = {
       }
     },
     */
-    /*{
+    /* Flatpaks are disabled until they will work out-of-the-box with
+       GitHub Actions
+    {
       name: "@electron-forge/maker-flatpak",
       config: {
         options: {
@@ -184,10 +185,10 @@ const config: ForgeConfigFile = {
       // Hardened Electron binary via Electron Fuses feature.
       flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
-        [FuseV1Options.OnlyLoadAppFromAsar]: env.asar !== "false",
-        [FuseV1Options.RunAsNode]: false,
-        [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
-        [FuseV1Options.EnableNodeCliInspectArguments]: false
+        [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,
+        [FuseV1Options.RunAsNode]: getBuildID() === "devel",
+        [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: getBuildID() === "devel",
+        [FuseV1Options.EnableNodeCliInspectArguments]: getBuildID() === "devel"
       })
   }
 };
