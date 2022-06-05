@@ -42,7 +42,11 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             devTools: true, // Too usefull to be blocked.
             defaultFontFamily: {
                 standard: 'Arial' // `sans-serif` as default font.
-            }
+            },
+            enableWebSQL: false,
+            webgl: false,
+            safeDialogs: true,
+            autoplayPolicy: "user-gesture-required"
         }
     });
     win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
