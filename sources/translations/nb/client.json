@@ -1,0 +1,179 @@
+{
+    "menubar": {
+        "view": {
+            "reload": "Last inn igjen",
+            "devTools": "Veksle utviklerverktøy",
+            "resetZoom": "Faktisk størrelse",
+            "groupName": "Vis",
+            "zoomIn": "Forstørr",
+            "forceReload": "Påtving gjeninnlasting",
+            "zoomOut": "Forminsk",
+            "fullScreen": "Veksle fullskjermsvisning"
+        },
+        "file": {
+            "quit": "Avslutt",
+            "addon": {
+                "loadNode": "Last inn node-utvidelse",
+                "loadChrome": "Last inn Chrome-utvidelse",
+                "groupName": "Utvidelser"
+            },
+            "groupName": "Fil",
+            "relaunch": "Start igjen"
+        },
+        "edit": {
+            "undo": "Angre",
+            "groupName": "Rediger",
+            "redo": "Gjenta"
+        },
+        "enabled": "Påskrudd",
+        "window": {
+            "groupName": "Vindu",
+            "mobileMode": "Skjul sidefelt"
+        }
+    },
+    "tray": {
+        "toggle": "Veksle",
+        "quit": "Avslutt"
+    },
+    "context": {
+        "paste": "Lim inn",
+        "cut": "Klipp ut",
+        "copy": "Kopier",
+        "dictionaryAdd": "Legg til i lokal ordliste",
+        "copyURL": "Kopier lenkeadresse",
+        "copyURLText": "Kopier lenketekst",
+        "inspectElement": "Inspiser"
+    },
+    "dialog": {
+        "common": {
+            "warning": "Advarsel",
+            "continue": "&Fortsett",
+            "yes": "&Ja",
+            "no": "&Nei",
+            "source": "Kilde",
+            "error": "Feil"
+        },
+        "ver": {
+            "updateTitle": "Oppgradering tilgjengelig.",
+            "update": "Ny programversjon tilgjengelig.",
+            "recent": "Nyeste utgave av programmet er i bruk.",
+            "devel": "Du bruker et utviklingsbygg.",
+            "downgrade": "Din versjon er nyere enn den stabile versjonen.",
+            "updateBadge": "[OPPGRADER]"
+        },
+        "permission": {
+            "check": {
+                "denied": "%s: Tilgangssjekk for %s ble avslått."
+            },
+            "request": {
+                "denied": "%s: Tilgangsforespørsel til %s ble ikke innvilget."
+            }
+        },
+        "mod": {
+            "nodeExt": "WebCord-Node.js-tillegg",
+            "crx": "Chrome/Chromium-utvidelse"
+        },
+        "externalApp": {
+            "message": "La en nettside videresende lenken med forskjellig opphav til det eksterne programmet?",
+            "title": "Åpner lenke i eksternt program"
+        }
+    },
+    "help": {
+        "groupName": "Hjelp",
+        "bugs": "Rapporter en feil",
+        "repo": "Kodelager"
+    },
+    "settings": {
+        "basic": {
+            "group": {
+                "tray": {
+                    "name": "Systemkurv",
+                    "description": "Endrer ikonets synlighet i systemkurven.",
+                    "label": "Skru av sfunksjonalitet for skjuling av vindu til systemkurven."
+                },
+                "menuBar": {
+                    "name": "Menyfelt",
+                    "description": "Endrer synlighetsinnstillinger for det innebygde menyfeltet",
+                    "label": "Skjul menyfeltet automatisk (<kbd>Alt</kbd>-tasten endrer synlighet)."
+                }
+            },
+            "name": "Grunnleggende"
+        },
+        "privacy": {
+            "name": "Personvern",
+            "group": {
+                "blockApi": {
+                    "name": "Blokkering av Discord-API",
+                    "label": {
+                        "typingIndicator": "Blokkering av skrivingsindikator (<code>/typing</code>)",
+                        "science": "Blokkerer kjente telemetri-endepunkter (<code>/science</code> og <code>/tracing</code>)."
+                    },
+                    "description": "Blokkerer Discord-API-forespørsler for bedret personvern."
+                },
+                "permissions": {
+                    "label": {
+                        "camera": "Kamera",
+                        "desktopCapture": "Skrivebordsopptak",
+                        "microphone": "Mikrofon",
+                        "notifications": "Merknader",
+                        "fullscreen": "Fullskjermsvisning."
+                    },
+                    "name": "Tilganger",
+                    "description": "Tillater eller avslår tilgangssjekker og -forespørsler fra Discord-nettsiden. Merk at andre tilganger ikke er opplistet her, og blokkeres automatisk av WebCord."
+                }
+            }
+        },
+        "advanced": {
+            "group": {
+                "csp": {
+                    "extends": {
+                        "enable": {
+                            "description": "Veksler når programmet skal se bort fra Discord sine hoder som angir praksis for innholdssikkerhet, og isteden sette sin egen CSP av sikkerhetshensyn og i personvernsøyemed.",
+                            "label": "Bruk programmets praksis for innholdssikkerhet"
+                        },
+                        "thirdparty": {
+                            "description": "Setter en liste over tredjepartsnettsider som tillates å koble til eller vise innhold.",
+                            "name": "Tredjepartsnettsider",
+                            "list": {
+                                "gifProviders": "GIF-tilbydere"
+                            }
+                        }
+                    },
+                    "name": "Praksis for innholdssikkerhet"
+                },
+                "crossOrigin": {
+                    "name": "Adferd for videresendelse på tvers av opphav",
+                    "description": "Kontrollerer handlinger for videresendelser for flerfoldige opphav. <b>Dette har innvirkning på programsikkerheten</b>.",
+                    "label": "Alltid advar brukeren om videresendelser på tvers av opphav til eksterne programmer."
+                },
+                "instance": {
+                    "description": "Velger instansen WebCord skal koble til. <b>Eksperimentelt</b>, siden Fosscord-implementasjonen ikke er ferdigstilt enda.",
+                    "name": "Discord-instans"
+                },
+                "optimize": {
+                    "checklist": {
+                        "gpu": "Optimaliser klienten for det grafikkortet som er aktivt."
+                    },
+                    "name": "Klient-optimaliseringer",
+                    "description": "Prøver å oppdage brukerens maskin- og programvare for å legge til egendefinerte flagg i Chromium-motoren som <b>kan</b> forbedre Electron-ytelsen, eller funksjonaliteten. <b>Eksperimentelt</b>, siden det er en grunn til at Chromium ikke bruker disse flaggene selv."
+                },
+                "devel": {
+                    "label": "Skru på utviklingsmodus",
+                    "name": "Utviklingsmodus",
+                    "description": "Skrur på tilgang til verktøy og uferdige innstillinger som antagelig ikke fungerer eller er farlige å bruke. <b>Ansvarsfraskrivelse</b>: Programvedlikeholderne er ikke ansvarlige for feil eller problemer etter at dette skrus på. Ikke rapporter dem."
+                }
+            },
+            "name": "Avansert"
+        }
+    },
+    "log": {
+        "listenPort": "Lytter til port %s.",
+        "singleInstance": "Bytter til det eksisterende vinduet …"
+    },
+    "windows": {
+        "invite": "Invitasjon",
+        "about": "Om",
+        "docs": "Dokumentasjon",
+        "settings": "Innstillinger"
+    }
+}
