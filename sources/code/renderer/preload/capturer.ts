@@ -58,7 +58,11 @@ window.addEventListener("load", () => {
                             throw new Error('Source with id: "' + (id ?? '[null]') + '" does not exist!');
                         }
                         ipc.send("closeCapturerView", {
-                            audio: false,
+                            audio: process.platform === "win32" ? {
+                                mandatory: {
+                                    chromeMediaSource: 'desktop'
+                                }
+                            } : false,
                             video: {
                                 mandatory: {
                                     chromeMediaSource: 'desktop',

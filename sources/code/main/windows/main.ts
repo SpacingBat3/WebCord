@@ -346,7 +346,11 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     })
                 } else {
                     sources.then(sources => resolvePromise({
-                        audio: false,
+                        audio: process.platform === "win32" ? {
+                            mandatory: {
+                                chromeMediaSource: 'desktop'
+                            }
+                        } : false,
                         video: {
                             mandatory: {
                                 chromeMediaSource: 'desktop',

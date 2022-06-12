@@ -8,7 +8,7 @@ interface EMediaStreamConstraints extends MediaStreamConstraints {
 interface EMediaTrackConstraints extends MediaTrackConstraints {
     mandatory: {
         chromeMediaSource: string;
-        chromeMediaSourceId: string;
+        chromeMediaSourceId?: string;
     };
 }
 
