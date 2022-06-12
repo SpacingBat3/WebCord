@@ -34,7 +34,11 @@ also encouraging to read the following parts of the documentation:
 
 ## How to translate WebCord?
 
-Please take a look at the [`Translate.md`](./Translate.md) file.
+Currently WebCord has moved its translation to its [Weblate instance][weblate].
+It includes the current state of the translation project, instructions and
+limitations. You are free to translate it *the old way* (by doing a PR), yet
+Weblate changes might be pulled earlier in order to avoid conflicts on Weblate
+side.
 
 ## Other ways of the contribution:
 
@@ -47,3 +51,4 @@ You can also help to maintain this project by:
 
 [`Build.md`]: Build.md
 [`Flags.md`]: Flags.md
+[weblate]: https://hosted.weblate.org/projects/spacingbat3-webcord

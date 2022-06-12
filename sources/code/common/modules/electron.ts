@@ -1,4 +1,4 @@
-/* electron.ts – electron-specific functions made to work cross-platform. */
+/* electron.ts – electron-specific functions made to work independently of its process. */
 import { app } from "electron/main";
 import { existsSync } from "fs";
 import { resolve } from "path";
@@ -43,7 +43,10 @@ export function getLocale(): string {
 		return navigator.language;
 }
 
-/** The current application name. Cross-process safe method. */
+/**
+ * The current application name (fallbacks to `the application` on renderer
+ * process). Cross-process safe method.
+ * */
 export function getName(): string {
 	if (process.type === 'browser')
 		return app.getName();

@@ -121,13 +121,9 @@ This project is redistributed under the terms of **[MIT License][license]**:
 
 ## Want to contribute to my project?
 
-- If you want to improve my code, make a Pull Request and add yourself to the 
-  [`contributors`][npm-docs] array in `package.json`.
-
-- If you want to translate strings in `lang` folder, please visit
-  [`Translate.md`](Translate.md).
-
-Never made a pull request before? Please refer to [this website][makepr].
+Please take a look at [`Contributing.md`](./Contributing.md) – it describes more
+about ways of giving your help to improve quality of WebCord. And for some tasks
+you don't even need to be familiar with programming at all!
 
 [badge1]: https://img.shields.io/github/package-json/dependency-version/SpacingBat3/WebCord/dev/electron?color=%236CB2BF&label=Electron
 [badge2]: https://img.shields.io/github/downloads/SpacingBat3/WebCord/total.svg?label=Downloads&color=%236586B3
