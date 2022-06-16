@@ -309,7 +309,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     return new Error("Permission denied.")
                 lock = !app.commandLine.getSwitchValue("enable-features")
                     .includes("WebRTCPipeWireCapturer") ||
-                    process.env["XDG_SESSION_TYPE"] !== "wayland";
+                    process.env["XDG_SESSION_TYPE"] !== "wayland" ||
+                    process.platform === "win32";
                 const sources = desktopCapturer.getSources({
                     types: lock ? ["screen", "window"] : ["screen"],
                     fetchWindowIcons: lock
@@ -346,11 +347,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                     })
                 } else {
                     sources.then(sources => resolvePromise({
-                        audio: process.platform === "win32" ? {
-                            mandatory: {
-                                chromeMediaSource: 'desktop'
-                            }
-                        } : false,
+                        audio: false,
                         video: {
                             mandatory: {
                                 chromeMediaSource: 'desktop',
