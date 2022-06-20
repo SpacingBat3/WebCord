@@ -1,1 +1,22 @@
-{}
+{
+    "aboutWindow": {
+        "nav": {
+            "about": "Über",
+            "credits": "Mitwirkende",
+            "licenses": "Lizenzen"
+        },
+        "about": {
+            "appDescription": "Discord- und Fosscord-Webclient mit datenschutzfreundlichen Funktionen.",
+            "appRepo": "GitHub-Repository"
+        },
+        "credits": {
+            "people": {
+                "author": "Autor, Maintainer und Hauptentwickler."
+            }
+        }
+    },
+    "offline": {
+        "title": "Es kann keine Verbindung zu Discord hergestellt werden.",
+        "description": "Bitte stelle sicher, dass du mit dem Internet verbunden sind."
+    }
+}
