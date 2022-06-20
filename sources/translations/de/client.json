@@ -168,7 +168,7 @@
                     "checklist": {
                         "gpu": "Optimiere den Client für deine derzeitige Grafikkarte."
                     },
-                    "description": "Versucht, die Benutzersoftware und -hardware zu erkennen, um benutzerdefinierte Einstellungen auf die Chromium-Engine anzuwenden, die <b>die Leistung oder Funktionalität von Electron verbessern könnten. <b>Experimentell</b>, es gibt einen Grund, warum Chromium diese Einstellungen nicht von haus aus anwendet."
+                    "description": "Versucht, die Benutzersoftware und -hardware zu erkennen, um benutzerdefinierte Einstellungen auf die Chromium-Engine anzuwenden, die die Leistung oder Funktionalität von Electron verbessern <b>könnten</b>. <b>Experimentell</b>, es gibt einen Grund, warum Chromium diese Einstellungen nicht von haus aus anwendet."
                 }
             }
         }
