@@ -11,8 +11,20 @@
         },
         "credits": {
             "people": {
-                "author": "Autor, Maintainer und Hauptentwickler."
+                "author": "Autor, Maintainer und Hauptentwickler.",
+                "contributors": {
+                    "default": "Code-Mitwirkender."
+                }
             }
+        },
+        "licenses": {
+            "appLicenseBody": "%s ist eine freie Software: DU kannst sie unter den Bedingungen der MIT-Lizenz, die mit dieser Software kommt, verwenden, verändern und weitergeben.",
+            "showLicense": "Lizenz anzeigen",
+            "thirdPartyLicensesTitle": "Lizenzen von Drittanbietern",
+            "thirdPartyLicensesBody": "%s hängt von der folgenden Software von Drittanbietern ab:",
+            "licensedUnder": "unter %s-Lizenz",
+            "packageAuthors": "%s Autoren",
+            "appLicenseTitle": "Anwendungslizenz"
         }
     },
     "offline": {
