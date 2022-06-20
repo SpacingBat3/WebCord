@@ -161,7 +161,7 @@
                 },
                 "instance": {
                     "name": "Instancje Discord'a",
-                    "description": "Wybierz instancję Discord'a, z którą WebCord powinien się łączyć. <b>Eksperymentalne</b>, ponieważ implementacja Fosscord'a nie jest w pełni dokończona."
+                    "description": "Wybierz instancję, z którą WebCord powinien się łączyć. <b>Eksperymentalne</b>, ponieważ implementacja Fosscord'a nie jest w pełni dokończona."
                 },
                 "optimize": {
                     "name": "Optymalizacja klienta",
