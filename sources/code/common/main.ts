@@ -114,8 +114,12 @@ let overwriteMain: (() => void | unknown) | undefined;
             renderLine('--version  -V','Show current application version.')+
             renderLine('--start-minimized  -m','Hide application at first run.') +
             renderLine('--export-l10n'+ '=' + kolor.yellow('{dir}'), 'Export currently loaded translation files from') +
-            " ".repeat(32)+kolor.gray("the application to the " + kolor.yellow('{dir}') + " directory.\n")+
-            renderLine('--verbose  -v', "Show debug messages.")
+            " ".repeat(32)+kolor.gray("the application to the ") + kolor.yellow('{dir}') + kolor.gray(" directory.\n")+
+            renderLine('--verbose  -v', "Show debug messages."),
+            renderLine(
+                '--gpu-info'+ '=' + kolor.yellow('basic') + kolor.blue('|') + kolor.yellow('complete'),
+                "Shows GPU information as JS object."
+            )
         );
         app.exit();
     }
@@ -151,6 +155,23 @@ let overwriteMain: (() => void | unknown) | undefined;
             });
         };
     }
+    if (cmd.hasSwitch('gpu-info')) {
+        const param = cmd.getSwitchValue('gpu-info')
+        switch(param) {
+            case "basic":
+            case "complete":
+                app.getGPUInfo(param)
+                    .then(info => {
+                        console.log("GPU information object:");
+                        console.dir(info);
+                    })
+                    .then(() => app.exit())
+                    .catch(commonCatches.throw);
+                break;
+            default:
+                throw new Error("Flag 'gpu-info' should contain parameter of type '\"basic\"|\"complete\"'.")
+        }
+    }
 }
 {
     const applyFlags = (name:string, value?:string) => {
@@ -182,7 +203,7 @@ let l10nStrings: l10n["client"], updateInterval: NodeJS.Timeout | undefined;
 
 function main(): void {
     if (overwriteMain) {
-        // Execute flag-specific function for ready application.
+        // Execute flag-specific functions for ready application.
         overwriteMain();
     } else {
         // Run app normally
