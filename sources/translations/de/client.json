@@ -61,13 +61,15 @@
             "recent": "Anwendung ist aktuell!",
             "devel": "Du verwendest den Nicht-Produktions-Build.",
             "updateTitle": "Update verfügbar!",
-            "update": "Eine neue Version der Anwendung ist verfügbar!"
+            "update": "Eine neue Version der Anwendung ist verfügbar!",
+            "downgrade": "Dein Produktions-Build ist neuer als Stabil!"
         },
         "mod": {
             "crx": "Chrome/Chromium-Erweiterung"
         },
         "externalApp": {
-            "title": "Link in externer Anwendung öffnen"
+            "title": "Link in externer Anwendung öffnen",
+            "message": "Eine Website versucht, den Link mit einem anderen Ursprung auf eine externe Anwendung umzuleiten. Trotzdem weitermachen?"
         }
     },
     "help": {
@@ -80,7 +82,8 @@
             "group": {
                 "menuBar": {
                     "name": "Menüleiste",
-                    "description": "Ändert die Sichtbarkeitseinstellungen der nativen Menüleiste."
+                    "description": "Ändert die Sichtbarkeitseinstellungen der nativen Menüleiste.",
+                    "label": "Menüleiste automatisch ausblenden (<kbd>ALT</kbd> Taste schaltet die Sichtbarkeit um)."
                 },
                 "tray": {
                     "description": "Ändert die Sichtbarkeit des Symbols in der Taskleiste."
