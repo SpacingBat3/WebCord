@@ -25,8 +25,8 @@ export function generateSafeKey () {
  * similar behaviour as the one achieved by the `.getElementsByClassName`
  * method, except it can allow for part of the class names as an input.
  * 
- * This can be extremly useful when trying to tweak the sites whose class names
- * includes some part being randomly generated for each build/version.
+ * This can be extremly useful when trying to tweak the elements whose class
+ * names includes some part being randomly generated for each build/version.
  */
 export function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, tagName: T) {
     const searchResult = new Set<string>();

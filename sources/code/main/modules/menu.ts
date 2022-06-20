@@ -36,15 +36,6 @@ sideBar.on('hide', (contents: Electron.WebContents) => {
 
 let wantQuit = false;
 
-function paste(contents:Electron.WebContents) {
-	const contentTypes = clipboard.availableFormats().toString();
-	//Workaround: fix pasting the images.
-	if(contentTypes.includes('image/') && contentTypes.includes('text/html'))
-		clipboard.writeImage(clipboard.readImage());
-
-	contents.paste();
-}
-
 // Contex Menu with spell checker
 
 export function context(parent: Electron.BrowserWindow): void {
@@ -57,7 +48,7 @@ export function context(parent: Electron.BrowserWindow): void {
 			{ 
 				label: strings.context.paste,
 				enabled: clipboard.availableFormats().length !== 0 && params.editFlags.canPaste,
-				click: () => paste(parent.webContents)
+				role: 'paste'
 			},
 			{ type: 'separator' }
 		];
@@ -218,11 +209,7 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
 			{ type: 'separator' },
 			{ label: strings.context.cut, role: 'cut' },
 			{ label: strings.context.copy, role: 'copy' },
-			{ 
-				label: strings.context.paste, accelerator: 'CmdOrCtrl+V',
-				registerAccelerator: false,
-				click: () => paste(parent.webContents)
-			}
+			{ label: strings.context.paste, role: 'paste' }
 		]},
 		// View
 		{

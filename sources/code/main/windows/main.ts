@@ -360,5 +360,9 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             });
         });
     }
+    ipcMain.on('paste-workaround', () => {
+        console.debug("[Clipboard] Applying workaround to the image...");
+        win.webContents.paste();
+    });
     return win;
 }
