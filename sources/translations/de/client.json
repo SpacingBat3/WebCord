@@ -1,1 +1,91 @@
-{}
+{
+    "context": {
+        "cut": "Ausschneiden",
+        "copyURL": "Link Adresse kopieren",
+        "copyURLText": "Link Text kopieren",
+        "inspectElement": "Untersuchen",
+        "copy": "Kopieren",
+        "paste": "Einfügen"
+    },
+    "menubar": {
+        "enabled": "Aktiviert",
+        "file": {
+            "groupName": "Datei",
+            "quit": "Schließen",
+            "addon": {
+                "groupName": "Erweiterungen",
+                "loadChrome": "Chrome-Erweiterung laden"
+            },
+            "relaunch": "Neu starten"
+        },
+        "edit": {
+            "groupName": "Bearbeiten",
+            "undo": "Rückgängig machen"
+        },
+        "view": {
+            "reload": "Neu laden",
+            "forceReload": "Neuladen erzwingen",
+            "resetZoom": "Tatsächliche Größe",
+            "zoomIn": "Vergrößern",
+            "fullScreen": "Vollbild umschalten",
+            "groupName": "Ansicht",
+            "devTools": "Entwickler-Tools umschalten",
+            "zoomOut": "Verkleinern"
+        },
+        "window": {
+            "groupName": "Fenster",
+            "mobileMode": "Seitenleiste ausblenden"
+        }
+    },
+    "windows": {
+        "settings": "Einstellungen",
+        "about": "Über",
+        "invite": "Einladen",
+        "docs": "Dokumentation"
+    },
+    "tray": {
+        "toggle": "Umschalten",
+        "quit": "Schließen"
+    },
+    "dialog": {
+        "common": {
+            "error": "Fehler",
+            "warning": "Warnung",
+            "continue": "&Weiter",
+            "yes": "&Ja",
+            "no": "&Nein",
+            "source": "Quelle"
+        },
+        "ver": {
+            "updateBadge": "[UPDATE]",
+            "recent": "Anwendung ist aktuell!",
+            "devel": "Du verwendest den Nicht-Produktions-Build.",
+            "updateTitle": "Update verfügbar!",
+            "update": "Eine neue Version der Anwendung ist verfügbar!"
+        },
+        "mod": {
+            "crx": "Chrome/Chromium-Erweiterung"
+        },
+        "externalApp": {
+            "title": "Link in externer Anwendung öffnen"
+        }
+    },
+    "help": {
+        "groupName": "Hilfe",
+        "repo": "Repository",
+        "bugs": "Einen Fehler melden"
+    },
+    "settings": {
+        "basic": {
+            "group": {
+                "menuBar": {
+                    "name": "Menüleiste",
+                    "description": "Ändert die Sichtbarkeitseinstellungen der nativen Menüleiste."
+                },
+                "tray": {
+                    "description": "Ändert die Sichtbarkeit des Symbols in der Taskleiste."
+                }
+            }
+        }
+    }
+}
