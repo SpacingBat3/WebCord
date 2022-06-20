@@ -149,7 +149,7 @@
                         },
                         "enable": {
                             "label": "In-App-Sicherheitsrichtlinie für Inhalte verwenden",
-                            "description": "Schaltet um, ob die Anwendung Discord's Richtlinie zur Inhaltssicherheit ignorieren und den Client seine eigene CSP für Datenschutz- und Sicherheitsbelange festlegen lassen soll."
+                            "description": "Schaltet um, ob die Anwendung Discord's Richtlinie zur Inhaltssicherheit ignorieren und den Client eine eigene für Datenschutz- und Sicherheitsbelange festlegen lassen soll."
                         }
                     },
                     "name": "Richtlinie zur Inhaltssicherheit"
