@@ -1,6 +1,6 @@
 {
     "offline": {
-        "title": "Nie można połączyć z usługą Discord'a.",
+        "title": "Nie można połączyć z usługą Discord.",
         "description": "Proszę sprawdzić połączenie z internetem."
     },
     "aboutWindow": {
@@ -10,12 +10,15 @@
             "licenses": "Licencje"
         },
         "about": {
-            "appDescription": "Klient Discord'a i Fosscord'a z funkcjami skupionymi na prywatności.",
+            "appDescription": "Klient dla usług Discord i Fosscord z funkcjami skupionymi na prywatności.",
             "appRepo": "Repozytorium GitHub"
         },
         "credits": {
             "people": {
-                "author": "Autor, opiekun i główny deweloper aplikacji."
+                "author": "Autor, opiekun i główny deweloper aplikacji.",
+                "contributors": {
+                    "default": "Współtwórca kodu."
+                }
             }
         },
         "licenses": {
