@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron/renderer";
 import { clipboard } from "electron/common";
-import { generateSafeKey } from "../modules/api";
+import { generateSafeKey, navigate } from "../modules/api";
 import { getAppIcon, wLog } from "../../common/global";
 import desktopCapturerPicker from "../modules/capturer";
 import l10n from "../../common/modules/l10n";
@@ -49,5 +49,12 @@ if (window.location.protocol === 'file:') {
     );
 }
 ipcRenderer.send('api-exposed', contextBridgeApiKey);
+
+/*
+ * Handle WebSocket Server IPC communication 
+ */
+ipcRenderer.on("navigate", (_event, path:string) => {
+    navigate(path);
+})
 
 wLog("Everything has been preloaded successfully!");

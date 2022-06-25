@@ -293,7 +293,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         void loadChromiumExtensions(win.webContents.session)
     
     // WebSocket server
-    import('../modules/socket').then((socket) => socket.default(win)).catch(e => {console.error(e)});
+    import('../modules/socket')
+        .then(socket => socket.default)
+        .then(startServer => startServer(win))
+        .catch(commonCatches.print);
 
     // Handle desktopCapturer functionality through experimental BrowserViews
     {

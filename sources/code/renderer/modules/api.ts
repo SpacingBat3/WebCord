@@ -60,3 +60,12 @@ export function sendRequest(method:'POST'|'GET', apiVersion: 6|7|8|9|10, endpoin
         }
     });    
 }
+
+
+export function navigate(path:string) {
+    // Push new state to history.
+    history.pushState({}, '', path);
+    // "Reload" history so Discord/Chromium can properly handle it.
+    window.addEventListener('popstate', () => history.forward(), {once: true});
+    history.back();
+}

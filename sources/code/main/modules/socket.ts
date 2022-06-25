@@ -10,68 +10,76 @@ function range(start:number,end:number) {
     return Array.from({length:end-start+1}, (_v,k) => start+k);
 }
 
-interface Response {
+interface Response<C extends string, T extends string|never> {
     /** Response type/command. */
-    cmd: string,
+    cmd: C,
     /** Response arguments. */
-    args: Record<string,unknown>,
+    args: ResponseArgs<C, T>,
     /** Nonce indentifying the communication. */
     nonce: string;
 }
 
-interface InviteResponse extends Response {
-    /** A request to show the invite request within the Discord client. */
-    cmd: "INVITE_BROWSER",
-    args:{
-        /** An invitation code. */
-        code: string
+type ResponseArgs<C extends string, T extends string|never> = C extends "INVITE_BROWSER" ? {
+    /** An invitation code. */
+    code: string;
+} : C extends "AUTHORIZE" ? {
+    scopes: string[];
+    /** An application's client_id. */
+    client_id: string;
+} : C extends "DEEP_LINK" ? T extends string ? {
+    type: T;
+    params: ResponseParams<T>;
+} : {
+    type: string;
+    params: Record<string,unknown>;
+} : Record<string,unknown>;
+
+type ResponseParams<T extends string> = T extends "CHANNEL" ? {
+    guildId: string;
+    channelId?: string;
+    search: string;
+    fingerprint: string;
+} : Record<string,unknown>;
+
+type typeofResult = "string" | "number" | "bigint" | "boolean" | "object" |
+    "function" | "undefined";
+type typeofResolved<T extends typeofResult> =  T extends "string" ? string :
+    T extends "number" ? number : T extends "bigint" ? bigint :
+    T extends "boolean" ? boolean : T extends "object" ? object|null :
+    T extends "function" ? (...args:unknown[])=>unknown :
+    T extends "undefined" ? undefined : unknown;
+/**
+ * Generic response checker, assumes Discord will do requests of certain type
+ * based on `cmd` and `argsType` values.
+ */
+function isResponse<C,T>(data:unknown, cmd?: C&string, argsType?: T&string): data is Response<C extends string ? C : string,T extends string ? T : never> {
+    function checkRecord<T extends (string|number|symbol)[], X extends typeofResult>(record:Record<string|number|symbol, unknown>,keys:T,arg:X): record is Record<T[number],typeofResolved<X>> {
+        for(const key of keys)
+            if(typeof record[key] !== arg)
+                return false
+        return true
     }
-}
-
-interface AuthorizationResponse extends Response {
-    /** A request to return the authorization details to the WS client. */
-    cmd:"AUTHORIZE",
-    args:{
-        scopes: string[],
-        /** An application's client_id. */
-        client_id: string
-    },
-    nonce: string;
-}
-
-function isResponse(data:unknown): data is Response {
     if(!(data instanceof Object))
         return false;
-    if(typeof(data as Partial<Response>)?.cmd !== 'string')
-        return false;
-    if(typeof(data as Partial<Response>)?.args !== 'object')
-        return false;
-    if(typeof (data as Partial<Response>)?.nonce !== 'string')
-        return false;
-    return true;
-}
-
-function isInviteResponse(data:unknown): data is InviteResponse {
-    if(!isResponse(data))
-        return false;
-    if(data.cmd !== "INVITE_BROWSER")
-        return false;
-    if(!('code' in data.args) || typeof data.args['code'] !== 'string')
-        return false;
-    return true;
-}
-
-function isAuthorizationResponse(data:unknown): data is AuthorizationResponse {
-    if(!isResponse(data))
-        return false;
-    if(data.cmd !== "AUTHORIZE")
-        return false;
-    if(!('scopes' in data.args) || !Array.isArray(data.args['scopes']))
-        return false;
-    for(const scope of data.args['scopes'])
-        if(typeof scope !== "string")
+    if(cmd) {
+        if((data as Partial<Response<string,never>>)?.cmd !== cmd)
             return false;
-    if(!('client_id' in data.args) || typeof data.args['client_id'] !== 'string')
+    } else {
+        if(typeof(data as Partial<Response<string,never>>)?.cmd !== "string")
+            return false;
+    }
+    if(typeof(data as Partial<Response<string,never>>)?.args !== 'object')
+            return false;
+    if(argsType && typeof (data as Partial<Response<"DEEP_LINK",typeof argsType>>)?.args?.params === 'object')
+        switch(argsType) {
+            case "CHANNEL":
+                if(!checkRecord(
+                    (data as Response<"DEEP_LINK","CHANNEL">)?.args?.params,
+                    ["guildId", "channelId", "search", "fingerprint"], "string"
+                ) && (data as Response<"DEEP_LINK","CHANNEL">)?.args?.params?.channelId !== undefined)
+                    return false;
+        }      
+    if(typeof (data as Partial<Response<string,never>>)?.nonce !== 'string')
         return false;
     return true;
 }
@@ -168,7 +176,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
             if(isJsonSyntaxCorrect(parsedData as string))
                 parsedData = JSON.parse(parsedData as string);
             // Invite response handling
-            if(isInviteResponse(parsedData)) {
+            if(isResponse(parsedData, "INVITE_BROWSER")) {
                 if(lock) return; lock = true;
                 // Replies to the browser, so it finds the communication successful.
                 wss.send(JSON.stringify({
@@ -194,13 +202,29 @@ export default async function startServer(window:Electron.BrowserWindow) {
                 child.webContents.session.webRequest.onBeforeRequest({
                     urls: ['ws://127.0.0.1:'+wsPort.toString()+'/*']
                 }, (_details,callback) => callback({cancel: true}));
+            // Path redirection requests
+            } else if(isResponse(parsedData, "DEEP_LINK", "CHANNEL")) {
+                const path = parsedData.args.params.channelId !== undefined ?
+                    "/channels/"+parsedData.args.params.guildId+"/"+parsedData.args.params.channelId :
+                    "/channels/"+parsedData.args.params.guildId;
+                window.webContents.send("navigate", path);
+                window.show();
+                wss.send(JSON.stringify({
+                    cmd: parsedData.cmd,
+                    data: null,
+                    evt: null,
+                    nonce: parsedData.nonce
+                }));
             }
             // RPC response handling
-            else if(isAuthorizationResponse(parsedData))
+            else if(isResponse(parsedData, "AUTHORIZATION"))
                 void wsLog("Received RPC authorization request, but "+kolor.bold("RPC is not implemented yet")+".");
             // Unknown response error
-            else if(isResponse(parsedData))
-                console.error("[WS] Request of type: '"+parsedData.cmd+"' is currently not supported.");
+            else if(isResponse(parsedData)) {
+                const type = typeof parsedData.args["type"] === "string" ?
+                    parsedData.cmd+':'+parsedData.args["type"] : parsedData.cmd;
+                console.error("[WS] Request of type: '"+type+"' is currently not supported.");
+            }
             // Unknown text message error
             else if(!isBinary)
                 console.error("[WS] Could not handle the packed text data: '"+data.toString()+"'.");
