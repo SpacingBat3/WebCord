@@ -31,7 +31,6 @@ function conf2html (config:AppConfig) {
 		['twitch', 'Twitch'],
 		['streamable', 'Streamable'],
 		['vimeo', 'Vimeo'],
-		['funimation', 'Funimation'],
 		['audius', 'Audius'],
 		['soundcloud', 'SoundCloud'],
 		['reddit', 'Reddit']

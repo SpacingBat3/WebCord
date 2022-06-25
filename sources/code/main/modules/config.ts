@@ -29,7 +29,6 @@ const defaultAppConfig = {
             paypal: true,
             audius: true,
             algolia: true,
-            funimation: true,
             reddit: true
         }
     },
@@ -54,7 +53,8 @@ const defaultAppConfig = {
     },
     useRecommendedFlags: {
         gpu: false
-    }
+    },
+    webgl: true
 }
 
 class Config<T> {

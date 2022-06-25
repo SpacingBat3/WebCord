@@ -1,191 +1,180 @@
-/* csp.ts – Content Security Policy generation */
+import { AppConfig } from "./config";
 
-import { AppConfig } from './config';
-const t = (new AppConfig()).get().csp.thirdparty;
+const cspKeys = [
+    "default-src",
+    "script-src",
+    "worker-src",
+    "connect-src",
+    "style-src",
+    "img-src",
+    "font-src",
+    "media-src",
+    "frame-src",
+    "child-src"
+] as const
 
-/* === Default + script === */
+type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 
-let csp = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.discordapp.com/animations/";
-
-if (t.hcaptcha)
-    csp += " https://*.hcaptcha.com https://hcaptcha.com";
-
-if (t.paypal)
-    csp += " https://www.paypalobjects.com https://checkout.paypal.com";
-
-if (t.spotify)
-    csp += " https://open.scdn.co";
-
-if (t.reddit)
-    csp += " https://www.redditstatic.com";
-
-if (t.twitter)
-    csp += " https://abs.twimg.com/web-video-player/";
-
-if (t.twitch)
-    csp += " https://static.twitchcdn.net/assets/";
-
-if (t.vimeo)
-    csp += " https://f.vimeocdn.com/p/";
-
-/* === Worker scripts === */
-
-csp += "; worker-src 'self'";
-
-if (t.twitch)
-    csp += " blob: https://player.twitch.tv";
-
-/* === Style === */
-
-csp += "; style-src 'self' 'unsafe-inline' https://cdn.discordapp.com";
-
-if (t.hcaptcha)
-    csp += " https://*.hcaptcha.com https://hcaptcha.com";
-
-if (t.reddit)
-    csp += " https://www.redditstatic.com";
-
-if (t.twitch)
-    csp += " https://static.twitchcdn.net/assets/";
-
-if (t.vimeo)
-    csp += " https://f.vimeocdn.com/p/";
-
-/* === Images === */
-
-csp += "; img-src 'self' blob: data: https://*.discordapp.net https://*.discordapp.com https://*.discord.com";
-
-if (t.spotify)
-    csp += " https://open.scdn.co";
-
-if (t.youtube)
-    csp += " https://i.ytimg.com https://*.youtube.com";
-
-if (t.gif) {
-    csp += " https://i.imgur.com https://*.gfycat.com https://media.tenor.co";
-    csp += " https://media.tenor.com https://c.tenor.com https://*.giphy.com";
+export default class CSP {
+    private value: cspObject;
+    private string2object(value: string) {
+        const raw = value.split(/;\s+/);
+        const record = {} as cspObject;
+        for(const element of raw) {
+            const [rule, value] = element.split(new RegExp('(?<='+cspKeys.join('|')+')\\s+'));
+            if(rule === undefined || value === undefined) return;
+            if(cspKeys.includes(rule as keyof typeof record))
+                record[rule as keyof typeof record] = value;
+        }
+        return record;
+    }
+    public toString() {
+        const stringFragments:string[] = [];
+        for(const [key,value] of Object.entries(this.value))
+            stringFragments.push(key+' '+value);
+        return stringFragments.join('; ');
+    }
+    public toObject() {
+        return this.value;
+    }
+    public static merge(...policies:CSP[]):CSP {
+        let partial: cspObject = {};
+        for(const policy of policies) {
+            const policyObject = policy.toObject();
+            if(Object.entries(partial).length === 0)
+                partial = policyObject;
+            else {
+                const keys = new Set([...Object.keys(partial), ...Object.keys(policyObject)]) as Set<keyof cspObject>;
+                for(const key of keys) if(key in policyObject)
+                    if(key in partial)
+                        partial[key] += ' '+(policyObject[key] as string);
+                    else
+                        partial[key] = policyObject[key];
+            }
+        }
+        return new CSP(partial);
+    }
+    constructor(value: string|cspObject) {
+        if(typeof value !== "string")
+            this.value = value;
+        else {
+            this.value = this.string2object(value) ?? { "default-src": "'self'" };
+        }
+    }
 }
-if (t.paypal)
-    csp += " https://checkout.paypal.com";
 
-if (t.hcaptcha)
-    csp += " https://*.hcaptcha.com https://hcaptcha.com";
+const csp = {
+    base: new CSP({
+        "default-src": "'self'",
+        "script-src": "'self' 'unsafe-eval' 'unsafe-inline' "+
+            "https://cdn.discordapp.com/animations/",
+        "worker-src": "'self'",
+        "style-src": "'self' 'unsafe-inline' https://cdn.discordapp.com",
+        "img-src": "'self' blob: data: https://*.discordapp.net "+
+            "https://*.discordapp.com https://*.discord.com",
+        "connect-src": "'self' https://status.discordapp.com "+
+            "https://status.discord.com https://discordapp.com https://discord.com "+
+            "https://cdn.discordapp.com https://media.discordapp.net "+
+            "https://router.discordapp.net wss://*.discord.gg "+
+            "https://best.discord.media https://latency.discord.media "+
+            "wss://*.discord.media",
+        "media-src": "'self' blob: https://*.discordapp.net https://*.discord.com "+
+            "https://*.discordapp.com",
+        "frame-src": "https://discordapp.com/domain-migration "+
+            "https://*.discordsays.com https://*.watchanimeattheoffice.com",
+    }),
+    algolia: new CSP({
+        "connect-src": "https://*.algolianet.com https://*.algolia.net"
+    }),
+    audius: new CSP({ "frame-src": "https://audius.co/embed/" }),
+    gif: new CSP ({
+        'img-src': "https://i.imgur.com https://*.gfycat.com "+
+            "https://media.tenor.co https://media.tenor.com "+
+            "https://c.tenor.com https://*.giphy.com",
+        "media-src": "https://i.imgur.com https://*.gfycat.com "+
+            "https://media.tenor.co https://media.tenor.com "+
+            "https://c.tenor.com https://*.giphy.com",
+    }),
+    hcaptcha: new CSP({
+        "script-src": "https://*.hcaptcha.com https://hcaptcha.com",
+        "style-src": "https://*.hcaptcha.com https://hcaptcha.com",
+        "img-src": "https://*.hcaptcha.com https://hcaptcha.com",
+        "connect-src": "https://*.hcaptcha.com https://hcaptcha.com",
+        "frame-src": "https://*.hcaptcha.com https://hcaptcha.com",
+    }),
+    paypal: new CSP({
+        "script-src": "https://www.paypalobjects.com https://checkout.paypal.com",
+        "img-src": "https://checkout.paypal.com",
+        "frame-src": "https://checkout.paypal.com",
+        "child-src": "'self' https://checkout.paypal.com"
 
-if (t.reddit)
-    csp += " https://www.redditstatic.com";
-
-if (t.twitter)
-    csp += " https://pbs.twimg.com/ext_tw_video_thumb/";
-
-if (t.twitch)
-    csp += " https://static-cdn.jtvnw.net/jtv_user_pictures/";
-
-if (t.vimeo)
-    csp += " https://i.vimeocdn.com"
-
-/* === Connect === */
-
-csp += "; connect-src 'self' https://status.discordapp.com https://status.discord.com";
-csp += " https://discordapp.com https://discord.com https://cdn.discordapp.com";
-csp += " https://media.discordapp.net https://router.discordapp.net wss://*.discord.gg";
-csp += " https://best.discord.media https://latency.discord.media wss://*.discord.media";
-
-if (t.hcaptcha) 
-    csp += " https://*.hcaptcha.com https://hcaptcha.com";
-
-if (t.spotify)
-    csp += " wss://dealer.spotify.com https://api.spotify.com";
-
-if (t.twitch) 
-    csp += " https://api.twitch.tv/v5/channels/";
-
-if (t.algolia)
-    csp += " https://*.algolianet.com https://*.algolia.net";
-
-if (t.youtube)
-    csp += " https://*.googlevideo.com";
-
-if (t.reddit)
-    csp += " https://v.redd.it";
-
-if (t.twitter)
-    csp += " https://api.twitter.com/1.1/guest/activate.json https://api.twitter.com/1.1/videos/tweet/config/ https://video.twimg.com/ext_tw_video/";
-
-if (t.twitch)
-    csp += " https://gql.twitch.tv/gql https://spade.twitch.tv/track https://static.twitchcdn.net/assets/ https://usher.ttvnw.net/api/channel/hls/ https://*.hls.ttvnw.net/v1/playlist/ https://*.hls.ttvnw.net/v1/segment/";
-
-if (t.vimeo)
-    csp += " https://fresnel.vimeocdn.com/add/ https://24vod-adaptive.akamaized.net/";
-
-/* === Media === */
-
-csp += "; media-src 'self' blob: https://*.discordapp.net https://*.discord.com https://*.discordapp.com";
-
-if (t.gif) {
-    csp += " https://*.gfycat.com https://*.giphy.com https://i.imgur.com";
-    csp += " https://media.tenor.co https://media.tenor.com https://c.tenor.com";
+    }),
+    reddit: new CSP({
+        "script-src": "https://www.redditstatic.com",
+        "img-src": "https://www.redditstatic.com",
+        "connect-src": "https://v.redd.it",
+        "media-src": "https://v.redd.it",
+        "frame-src": "https://www.redditmedia.com/mediaembed/"
+    }),
+    soundcloud: new CSP({ "frame-src": "https://w.soundcloud.com/player/" }),
+    spotify: new CSP({
+        "script-src": "https://open.scdn.co",
+        "img-src": "https://open.scdn.co https://i.scdn.co/",
+        "connect-src": "wss://dealer.spotify.com https://api.spotify.com",
+        "frame-src": "https://open.spotify.com/embed/"
+    }),
+    streamable: new CSP({ "media-src": "https://streamable.com" }),
+    twitch: new CSP({
+        "script-src": "https://static.twitchcdn.net/assets/",
+        "worker-src": "blob: https://player.twitch.tv",
+        "style-src": "https://static.twitchcdn.net/assets/",
+        "img-src": "https://static-cdn.jtvnw.net/jtv_user_pictures/",
+        "connect-src": "https://api.twitch.tv/v5/channels/ "+
+            "https://gql.twitch.tv/gql https://spade.twitch.tv/track "+
+            "https://static.twitchcdn.net/assets/ "+
+            "https://usher.ttvnw.net/api/channel/hls/ "+
+            "https://*.hls.ttvnw.net/v1/playlist/ "+
+            "https://*.hls.ttvnw.net/v1/segment/",
+        "frame-src": "https://player.twitch.tv"
+    }),
+    twitter: new CSP({
+        "script-src": "https://abs.twimg.com/web-video-player/",
+        "img-src": "https://pbs.twimg.com/ext_tw_video_thumb/",
+        "connect-src": "https://api.twitter.com/1.1/guest/activate.json "+
+            "https://api.twitter.com/1.1/videos/tweet/config/ "+
+            "https://video.twimg.com/ext_tw_video/",
+        "media-src": "https://twitter.com/i/videos/tweet/",
+        "frame-src": "https://twitter.com/i/videos/tweet/"
+    }),
+    vimeo: new CSP({
+        "script-src": "https://f.vimeocdn.com/p/",
+        "style-src": "https://f.vimeocdn.com/p/",
+        "img-src": "https://i.vimeocdn.com",
+        "connect-src": "https://fresnel.vimeocdn.com/add/ "+
+            "https://24vod-adaptive.akamaized.net/",
+        "media-src": "https://vod-progressive.akamaized.net",
+        "frame-src": "https://player.vimeo.com"
+    }),
+    youtube: new CSP({
+        "img-src": "https://i.ytimg.com https://*.youtube.com",
+        "connect-src": "https://*.googlevideo.com",
+        "media-src": "https://*.youtube.com",
+        "frame-src": "https://www.youtube.com/embed/"
+    })
 }
-if (t.streamable)
-    csp += " https://streamable.com";
 
-if (t.youtube)
-    csp += " https://*.youtube.com";
+let cache: CSP | undefined;
 
-if (t.twitter)
-    csp += " https://twitter.com/i/videos/tweet/";
-
-if (t.reddit)
-    csp += " https://v.redd.it";
-
-if (t.vimeo)
-    csp += " https://vod-progressive.akamaized.net";
-
-/* === Frame === */
-
-csp += "; frame-src https://discordapp.com/domain-migration discord:";
-csp += " https://*.discordsays.com https://*.watchanimeattheoffice.com";
-
-if (t.hcaptcha)
-    csp += " https://*.hcaptcha.com https://hcaptcha.com";
-
-if (t.paypal)
-    csp += " https://checkout.paypal.com";
-
-if (t.vimeo)
-    csp += " https://player.vimeo.com";
-
-if (t.youtube)
-    csp += " https://www.youtube.com/embed/";
-
-if (t.soundcloud)
-    csp += " https://w.soundcloud.com/player/";
-
-if (t.audius)
-    csp += " https://audius.co/embed/";
-
-if (t.spotify)
-    csp += " https://open.spotify.com/embed/";
-
-if (t.reddit)
-    csp += " https://www.redditmedia.com/mediaembed/";
-
-if (t.twitter)
-    csp += " https://twitter.com/i/videos/tweet/";
-
-if (t.twitch)
-    csp += " https://player.twitch.tv";
-
-/* === Child === */
-
-if (t.paypal)
-    csp += "; child-src 'self' https://checkout.paypal.com"; // PayPal
-/**
- * Content Security Policy header.
- * 
- * Contains a whitelist of the websites that WebCord is allowed to connect.
- * By defaults, all Discord and thirdparty websites declared there are
- * allowed to connect.
- * 
- * This can be configured in settings.
- */
-export const discordContentSecurityPolicy = csp;
+export function getWebCordCSP() {
+    const policies: CSP[] = [csp.base], keys: string[] = [];
+    const config = new AppConfig().get().csp.thirdparty;
+    type parties = keyof typeof config;
+    for(const key in config) if(config[key as parties]) {
+        policies.push(csp[key as parties]);
+        keys.push(key);
+    }
+    if(cache && Object.keys(cache.toObject()).join() === keys.join())
+        return cache;
+    else
+        return cache = CSP.merge(...policies);
+}

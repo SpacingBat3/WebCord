@@ -5,7 +5,7 @@ import { nativeImage } from "electron/common";
 import * as getMenu from '../modules/menu';
 import { discordFavicons, knownInstancesList } from '../../common/global';
 import packageJson from '../../common/modules/package';
-import { discordContentSecurityPolicy } from '../modules/csp';
+import { getWebCordCSP } from '../modules/csp';
 import type l10n from "../../common/modules/l10n";
 import { createHash } from 'crypto';
 import { resolve } from "path";
@@ -44,7 +44,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
                 standard: 'Arial' // `sans-serif` as default font.
             },
             enableWebSQL: false,
-            webgl: false,
+            webgl: configData.get().webgl,
             safeDialogs: true,
             autoplayPolicy: "user-gesture-required"
         }
@@ -80,7 +80,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         if (configData.get().csp.enabled) {
             console.debug("[CSP] Overwritting Discord CSP.");
             headersOverwrite = {
-                'Content-Security-Policy': [discordContentSecurityPolicy]
+                'Content-Security-Policy': [getWebCordCSP().toString()]
             }
         }
         callback({
