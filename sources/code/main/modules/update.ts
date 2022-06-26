@@ -14,10 +14,7 @@ import { AppConfig } from './config';
 
 /**
  * Checks and notifies users about the updates.
- * 
- * @param strings Object containing language strings.
- * @param devel Boolean to detect whenever app is packaged.
- * @param appIcon Path to application icon.
+ *
  * @param updateInterval Object that indentifies currently running interval.
  */
 export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): Promise<void> {
