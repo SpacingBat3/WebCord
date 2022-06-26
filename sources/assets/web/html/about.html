@@ -36,16 +36,17 @@
             </div>
             <hr>
             <div class="list">
-                <h3>Electron</h3>
-                <p id="electron"></p>
+                <h3>Electron / Chromium / Node</h3>
+                <p id="versions"></p>
+            </div>
+            
+            <div class="list">
+                <h3 id="featuresTitle"></h3>
+                <p id="features"></p>
             </div>
             <div class="list">
-                <h3>Chromium</h3>
-                <p id="chrome"></p>
-            </div>
-            <div class="list">
-                <h3>Node.js</h3>
-                <p id="node"></p>
+                <h3 id="checksumTitle"></h3>
+                <p id="checksum"></p>
             </div>
         </article>
         <article id="credits">
@@ -68,7 +69,7 @@
             const allNavs = document.querySelectorAll("nav > div")
             if(element && nav) {
                 if(!nav.classList.toString().includes("selected") && scroll)
-                    scrollToElement(element)
+                    scrollToElement(element);
                 for(const anyNav of allNavs) if (anyNav !== nav)
                     anyNav.classList.remove("selected");
                 nav.classList.add("selected");

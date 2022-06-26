@@ -9,7 +9,7 @@ function catchAndThrowErrors (error:unknown) {
 }
 
 /** The current application directory. Cross-process safe method. */
-export function getAppPath(): string {
+export function getAppPath() {
 	if (process.type === 'browser')
 		return app.getAppPath();
 	else {
@@ -36,7 +36,7 @@ export function showMessageBox(options: Electron.MessageBoxOptions): void {
 }
 
 /** The current application locale. Cross-process safe method. */
-export function getLocale(): string {
+export function getLocale() {
 	if (process.type === 'browser')
 		return app.getLocale();
 	else
@@ -47,9 +47,28 @@ export function getLocale(): string {
  * The current application name (fallbacks to `the application` on renderer
  * process). Cross-process safe method.
  * */
-export function getName(): string {
+export function getName() {
 	if (process.type === 'browser')
 		return app.getName();
 	else
 		return 'the application';
+}
+
+/**
+ * Get hash of current `app.asar` file in given algorithm.
+ */
+export async function getAppHash(algorithm = 'sha512', encoding:BufferEncoding = 'hex') {
+	const [
+		{ stat, readFile },
+		{ createHash }
+	] = await Promise.all([
+		import("fs/promises"),
+		import("crypto")
+	]);
+	const file = getAppPath();
+	if((await stat(file)).isFile())
+		return readFile(file)
+			.then(buffer => createHash(algorithm).update(buffer).digest())
+			.then(buffer => buffer.toString(encoding));
+	return;
 }

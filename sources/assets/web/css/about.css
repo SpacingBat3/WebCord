@@ -187,6 +187,10 @@ div.person {
     background-color: #fff1;
 }
 
+#closebutton:active {
+    background-color: #fff3;
+}
+
 img.profilePicture {
     border-radius: 100%;
 }

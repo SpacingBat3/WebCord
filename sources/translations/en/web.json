@@ -6,12 +6,15 @@
     "aboutWindow": {
         "nav": {
             "about": "About",
-            "credits": "Contributors",
+            "credits": "Credits",
             "licenses": "Licenses"
         },
         "about": {
             "appDescription": "Discord and Fosscord web client with privacy-focused features.",
-            "appRepo": "GitHub Repository"
+            "appRepo": "GitHub Repository",
+            "featuresTitle": "Build flags",
+            "featuresDefault": "Default",
+            "checksumTitle": "Checksum"
         },
         "credits": {
             "people": {

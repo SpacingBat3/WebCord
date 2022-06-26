@@ -11,7 +11,10 @@
         },
         "about": {
             "appDescription": "Klient Discord'a i Fosscord'a z funkcjami skupionymi na prywatności.",
-            "appRepo": "Repozytorium GitHub"
+            "appRepo": "Repozytorium GitHub",
+            "featuresTitle": "Flagi budowania",
+            "featuresDefault": "Domyślne",
+            "checksumTitle": "Suma kontrolna"
         },
         "credits": {
             "people": {
