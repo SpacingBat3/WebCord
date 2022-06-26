@@ -1,0 +1,180 @@
+{
+    "context": {
+        "cut": "Ausschneiden",
+        "copyURL": "Link Adresse kopieren",
+        "copyURLText": "Link Text kopieren",
+        "inspectElement": "Untersuchen",
+        "copy": "Kopieren",
+        "paste": "Einfügen",
+        "dictionaryAdd": "Dem lokalen Wörterbuch hinzufügen"
+    },
+    "menubar": {
+        "enabled": "Aktiviert",
+        "file": {
+            "groupName": "Datei",
+            "quit": "Schließen",
+            "addon": {
+                "groupName": "Erweiterungen",
+                "loadChrome": "Chrome-Erweiterung laden",
+                "loadNode": "Lade Node.js erweiterung"
+            },
+            "relaunch": "Neu starten"
+        },
+        "edit": {
+            "groupName": "Bearbeiten",
+            "undo": "Rückgängig machen",
+            "redo": "Wiederherstellen"
+        },
+        "view": {
+            "reload": "Neu laden",
+            "forceReload": "Neuladen erzwingen",
+            "resetZoom": "Tatsächliche Größe",
+            "zoomIn": "Vergrößern",
+            "fullScreen": "Vollbild ein-/ausblenden",
+            "groupName": "Ansicht",
+            "devTools": "Entwickler-Tools umschalten",
+            "zoomOut": "Verkleinern"
+        },
+        "window": {
+            "groupName": "Fenster",
+            "mobileMode": "Seitenleiste ausblenden"
+        }
+    },
+    "windows": {
+        "settings": "Einstellungen",
+        "about": "Über",
+        "invite": "Einladen",
+        "docs": "Dokumentation"
+    },
+    "tray": {
+        "toggle": "Umschalten",
+        "quit": "Schließen"
+    },
+    "dialog": {
+        "common": {
+            "error": "Fehler",
+            "warning": "Warnung",
+            "continue": "&Weiter",
+            "yes": "&Ja",
+            "no": "&Nein",
+            "source": "Quelle"
+        },
+        "ver": {
+            "updateBadge": "[UPDATE]",
+            "recent": "Anwendung ist aktuell!",
+            "devel": "Du verwendest den Nicht-Produktions-Build.",
+            "updateTitle": "Update verfügbar!",
+            "update": "Eine neue Version der Anwendung ist verfügbar!",
+            "downgrade": "Dein Produktions-Build ist neuer als Stabil!"
+        },
+        "mod": {
+            "crx": "Chrome/Chromium-Erweiterung",
+            "nodeExt": "WebCord Node.js Erweiterung"
+        },
+        "externalApp": {
+            "title": "Link in externer Anwendung öffnen",
+            "message": "Eine Website versucht, den Link mit einem anderen Ursprung auf eine externe Anwendung umzuleiten. Trotzdem weitermachen?"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: Berechtigungsanforderung an %s abgelehnt."
+            },
+            "check": {
+                "denied": "%s: Berechtigungsprüfung auf %s abgelehnt."
+            }
+        }
+    },
+    "help": {
+        "groupName": "Hilfe",
+        "repo": "Repository",
+        "bugs": "Einen Fehler melden"
+    },
+    "settings": {
+        "basic": {
+            "group": {
+                "menuBar": {
+                    "name": "Menüleiste",
+                    "description": "Ändert die Sichtbarkeitseinstellungen der nativen Menüleiste.",
+                    "label": "Menüleiste automatisch ausblenden (<kbd>ALT</kbd> Taste schaltet die Sichtbarkeit um)."
+                },
+                "tray": {
+                    "description": "Ändert die Sichtbarkeit des Symbols in der Taskleiste.",
+                    "label": "Deaktiviere das Ausblenden des Fensters in der Taskleiste.",
+                    "name": "Taskleiste"
+                }
+            },
+            "name": "Grundlegend"
+        },
+        "privacy": {
+            "name": "Datenschutz",
+            "group": {
+                "blockApi": {
+                    "name": "Discord-API-Blockierung",
+                    "description": "Blockiert Discord-API-Anfragen, um die Privatsphäre zu schützen.",
+                    "label": {
+                        "typingIndicator": "Tippanzeige blockieren (<code>/schreiben</code>).",
+                        "fingerprinting": "Fingerprinting Blockieren <code>api.js</code> script.",
+                        "science": "Blockiere bekannte Datensammler (<code>/science</code> und <code>/tracing</code>)."
+                    }
+                },
+                "permissions": {
+                    "name": "Berechtigungen",
+                    "description": "Erlaubt oder verweigert die Berechtigungsprüfungen und anfragen von der Discord-Website. Bitte beachte, dass andere hier nicht aufgeführte Berechtigungen automatisch von WebCord blockiert werden.",
+                    "label": {
+                        "camera": "Kamera",
+                        "microphone": "Mikrofon",
+                        "notifications": "Benachrichtigungen",
+                        "fullscreen": "Vollbild",
+                        "desktopCapture": "Bildschirmaufnahme"
+                    }
+                }
+            }
+        },
+        "advanced": {
+            "name": "Fortgeschritten",
+            "group": {
+                "devel": {
+                    "name": "Entwicklermodus",
+                    "description": "Ermöglicht den Zugriff auf unfertige Optionen, die möglicherweise fehlerhaft sein könnten. <b>Haftungsausschluss</b>: Wir sind nicht für Fehler oder Probleme verantwortlich, nachdem diese Option aktiviert wurde - bitte melde diese nicht!",
+                    "label": "Entwicklermodus aktivieren"
+                },
+                "csp": {
+                    "extends": {
+                        "thirdparty": {
+                            "list": {
+                                "gifProviders": "GIF-Anbieter"
+                            },
+                            "description": "Erstellt eine Liste der Drittanbieter-websites, die eine Verbindung herstellen oder Inhalte anzeigen dürfen.",
+                            "name": "Drittanbieter-websites"
+                        },
+                        "enable": {
+                            "label": "In-App-Sicherheitsrichtlinie für Inhalte verwenden",
+                            "description": "Schaltet um, ob die Anwendung Discord's Richtlinie zur Inhaltssicherheit ignorieren und den Client eine eigene für Datenschutz- und Sicherheitsbelange festlegen lassen soll."
+                        }
+                    },
+                    "name": "Richtlinie zur Inhaltssicherheit"
+                },
+                "crossOrigin": {
+                    "label": "Warne den Benutzer immer vor herkunftsübergreifenden Umleitungen zu externen Anwendungen.",
+                    "description": "Steuert die Aktionen bei herkunftsübergreifenden Umleitungen. <b>Dies ändert die Anwendungssicherheit</b>.",
+                    "name": "Herkunftsübergreifendes Weiterleitungsverhalten"
+                },
+                "instance": {
+                    "name": "Discord-Instanz",
+                    "description": "Wählt die Instanz aus, mit der sich WebCord verbinden soll. <b>Experimentell</b>, da die Fosscord-Implementierung noch nicht vollständig abgeschlossen ist."
+                },
+                "optimize": {
+                    "name": "Client-Optimierungen",
+                    "checklist": {
+                        "gpu": "Optimiere den Client für deine derzeitige Grafikkarte."
+                    },
+                    "description": "Versucht, die Benutzersoftware und -hardware zu erkennen, um benutzerdefinierte Einstellungen auf die Chromium-Engine anzuwenden, die die Leistung oder Funktionalität von Electron verbessern <b>könnten</b>. <b>Experimentell</b>, es gibt einen Grund, warum Chromium diese Einstellungen nicht von haus aus anwendet."
+                }
+            }
+        }
+    },
+    "log": {
+        "singleInstance": "Wechsel zum vorhandenen Fenster...",
+        "listenPort": "Lauschen an Port %s."
+    }
+}
