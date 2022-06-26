@@ -1,6 +1,5 @@
 import { marked } from "marked"
 import { sanitize } from "dompurify";
-import { ipcRenderer } from "electron/renderer";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import { pathToFileURL, fileURLToPath } from "url";
@@ -121,46 +120,61 @@ function fixImages(container:HTMLElement) {
     
     // Remove badges (they require an internet connection).
     for(const image of container.getElementsByTagName('img'))
-        if(image.src.startsWith('https:')&&image.parentElement&&image.parentElement.parentElement&&image.parentElement.parentElement.tagName === "P") {
+        if(image.src.startsWith('https:') && image?.parentElement?.parentElement?.tagName === "P") {
             image.parentElement.parentElement.remove();
             break;
         }
 }
 
-ipcRenderer.once('documentation-load', (_event, readmeFile:string) => {
-    const mdHeader = document.createElement('header');
-    const mdArticle = document.createElement('article');
-    const mdBody = document.createElement('div');
-    mdArticle.appendChild(mdBody);
-    mdHeader.id = "markdown-header";
-    mdBody.id = "markdown-body";
-    menuHeader.innerText = basename(readmeFile);
-    mdHeader.appendChild(menu);
-    mdHeader.appendChild(menuHeader);
-    setBody(mdBody, mdHeader, readmeFile, mdArticle);
-    mdBody.getElementsByTagName('sub')[0]?.parentElement?.remove();
-    document.body.appendChild(mdHeader);
-    document.body.appendChild(mdArticle);
-    menu.onclick = () => {
-        let scrollOptions:ScrollIntoViewOptions|undefined;
-        if(!menuHeader.innerText.includes('Readme.md')) {
-            window.scroll(0,0);
-            menuHeader.innerText = basename(readmeFile);
-            setBody(mdBody, mdHeader, readmeFile, mdArticle);
-            mdBody.getElementsByTagName('sub')[0]?.parentElement?.remove();
-        } else {
-            scrollOptions = {behavior:'smooth'}
-        }
-        let docsId = 'documentation';
-        if(navigator.language === 'pl')
-            docsId = 'dokumentacja-w-większości-jeszcze-nie-przetłumaczona';
-
-        const docsHeader = document.getElementById(docsId);
-        if(docsHeader) docsHeader.scrollIntoView(scrollOptions);
-    }
-    ipcRenderer.send('documentation-show');
-})
-
 document.addEventListener("readystatechange", () => {
-    if(document.readyState === "interactive") ipcRenderer.send('documentation-load');
+    if(document.readyState === "interactive")
+        import("electron/renderer")
+            .then(electron => electron.ipcRenderer)
+            .then(ipc => ipc.invoke('documentation-load'))
+            .then((readmeFile:string) => {
+                const mdHeader = document.createElement('header');
+                const mdArticle = document.createElement('article');
+                const mdBody = document.createElement('div');
+                mdArticle.appendChild(mdBody);
+                mdHeader.id = "markdown-header";
+                mdBody.id = "markdown-body";
+                menuHeader.innerText = basename(readmeFile);
+                mdHeader.appendChild(menu);
+                mdHeader.appendChild(menuHeader);
+                setBody(mdBody, mdHeader, readmeFile, mdArticle);
+                mdBody.getElementsByTagName('sub')[0]?.parentElement?.remove();
+                document.body.appendChild(mdHeader);
+                document.body.appendChild(mdArticle);
+                menu.onclick = () => {
+                    let scrollOptions:ScrollIntoViewOptions|undefined;
+                    if(!menuHeader.innerText.includes('Readme.md')) {
+                        window.scroll(0,0);
+                        menuHeader.innerText = basename(readmeFile);
+                        setBody(mdBody, mdHeader, readmeFile, mdArticle);
+                        mdBody.getElementsByTagName('sub')[0]?.parentElement?.remove();
+                    } else {
+                        scrollOptions = {behavior:'smooth'}
+                    }
+                    let docsId = 'documentation';
+                    if(navigator.language === 'pl')
+                        docsId = 'dokumentacja-w-większości-jeszcze-nie-przetłumaczona';
+            
+                    const docsHeader = document.getElementById(docsId);
+                    if(docsHeader) docsHeader.scrollIntoView(scrollOptions);
+                }
+                ;
+            })
+            .finally(() => {
+                void import("electron/renderer")
+                    .then(electron => electron.ipcRenderer)
+                    .then(ipc => ipc.send('documentation-show'))
+            })
+            .catch(error => {
+                if(error instanceof Error)
+                    throw error;
+                else if(typeof error === "string")
+                    throw new Error(error);
+                else
+                    console.error(error);
+            })
 });

@@ -15,13 +15,13 @@ async function handleEvents(docsWindow: Electron.BrowserWindow) {
     if(existsSync(resolve(app.getAppPath(), 'docs', app.getLocale(), 'Readme.md')))
         readmeFile = 'docs/'+app.getLocale()+'/Readme.md'
     ipcMain.removeAllListeners('documentation-load')
-    ipcMain.on('documentation-load', (event) => {
+    ipcMain.handle('documentation-load', () => {
         ipcMain.once('documentation-show', () => {
             if(!docsWindow.isDestroyed()) {
                 docsWindow.show();
             }
         })
-        event.reply('documentation-load', resolve(app.getAppPath(), readmeFile));
+        return resolve(app.getAppPath(), readmeFile);
     })
 }
 
