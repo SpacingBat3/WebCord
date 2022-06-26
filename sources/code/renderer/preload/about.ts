@@ -1,6 +1,6 @@
 import { ipcRenderer as ipc } from "electron/renderer";
 import { buildInfo, getAppIcon, sanitizeConfig } from "../../common/global";
-import { getAppPath } from "../../common/modules/electron";
+import { getAppPath, getAppHash } from "../../common/modules/electron";
 import { resolve } from "path";
 import L10N from "../../common/modules/l10n";
 import packageJson, { PackageJSON, Person } from "../../common/modules/package";
@@ -102,7 +102,6 @@ function showAppLicense() {
                 const dialog = document.createElement('div');
                 const content = document.createElement('div');
                 dialog.classList.add('dialog');
-                console.log(license.replace(/\n(!=[^\n])/g,' '));
                 content.innerText = license.replace(/(?<!\n)\n(?!\n)/g,' ');
                 dialog.appendChild(content);
                 document.getElementById("licenses")?.appendChild(dialog);
@@ -125,11 +124,12 @@ function showAppLicense() {
     }
 }
 
-function generateAppContent(l10n:L10N["web"]["aboutWindow"], details:aboutWindowDetails) {
+async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromise: Promise<aboutWindowDetails>) {
     const nameElement = document.getElementById("appName");
     const versionElement = document.getElementById("appVersion");
     const repoElement = document.getElementById("appRepo");
     if(!nameElement || !versionElement || !repoElement) return;
+    const details = await detailsPromise;
     nameElement.innerText = details.appName + " ("+details.buildInfo.type+")";
     versionElement.innerText = 'v' + details.appVersion + (details.buildInfo.commit !== undefined ? "-"+details.buildInfo.commit.substring(0, 7) : "");
     (document.getElementById("logo") as HTMLImageElement).src = getAppIcon([256,192,128,96])
@@ -142,20 +142,39 @@ function generateAppContent(l10n:L10N["web"]["aboutWindow"], details:aboutWindow
         if(element) 
             element.innerText = l10n.about[id as keyof typeof l10n.about]
     }
-    for (const id of ['electron', 'chrome', 'node']) {
-        const element = document.getElementById(id);
-        if(element)
-            element.innerText = process.versions[id as keyof typeof process.versions]??"unknown"
+    const [features, versions, checksum] = [
+        document.getElementById("features"),
+        document.getElementById("versions"),
+        document.getElementById("checksum")
+    ];
+    if(versions)
+        versions.innerText = process.versions.electron+' / '+
+            process.versions.chrome+' / '+process.versions.node
+    if(features) {
+        for(const [key, value] of Object.entries(details.buildInfo.features ?? {}))
+            if(value)
+                if(features.innerText === "")
+                    features.innerText = key;
+                else
+                    features.innerText += ','+key;
+        if(features.innerHTML === "") {
+            features.innerText = l10n.about.featuresDefault;
+            features.style.fontStyle = "italic";
+        }
     }
+    if(checksum) checksum.innerText = (await getAppHash('sha256', "base64")) ?? 'N/A'
 }
 
-function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], name:string) {
+function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promise<aboutWindowDetails>) {
     const packageJson = new PackageJSON(["dependencies", "devDependencies"]);
     for (const id of Object.keys(l10n.licenses).filter((value)=>value.match(/^(?:licensedUnder|packageAuthors)$/) === null)) {
         const element = document.getElementById(id)
         if(element) 
-            element.innerText = l10n.licenses[id as keyof typeof l10n.licenses]
-                .replace("%s",name);
+            void details
+                .then(details => details.appName)
+                .then(name => element.innerText = l10n.licenses[id as keyof typeof l10n.licenses]
+                    .replace("%s",name)
+                );
     }
     for (const packName in packageJson.data.dependencies) {
         if(packName.startsWith('@spacingbat3/')) continue;
@@ -188,39 +207,36 @@ if(window.location.protocol !== "file:") {
     throw new URIError("Loaded website is not a local page!");
 }
 
-// Get app details and inject them into the page
-window.addEventListener("load", () => {
-    ipc.send("about.getDetails");
-    const close = document.getElementById("closebutton");
-    if (close)
-        close.addEventListener("click", () => {
-            ipc.send("about.close");
-        }, {once:true});
-    else
-        throw new Error("Couldn't find element with 'closebutton' id.");
-});
-
-ipc.on("about.getDetails", (_event, details:aboutWindowDetails) => {
+window.addEventListener("DOMContentLoaded", () => {
     const l10n = new L10N().web.aboutWindow;
     // Header sections names
     for(const div of document.querySelectorAll<HTMLDivElement>("nav > div")) {
         const content = div.querySelector<HTMLDivElement>("div.content");
         if(content) content.innerText = l10n.nav[div.id.replace("-nav","") as keyof typeof l10n.nav]
     }
-    generateAppContent(l10n, details);
-    {
-        if(packageJson.data.author)
-            addContributor(new Person(packageJson.data.author), l10n.credits.people.author)
-        for (const person of packageJson.data.contributors??[]) {
-            const safePerson = new Person(person);
-            let translation:string = l10n.credits.people.contributors.default;
-            if(safePerson.name in l10n.credits.people.contributors)
-                translation = l10n.credits.people.contributors[safePerson.name as keyof typeof l10n.credits.people.contributors];
-            addContributor(safePerson, translation);
-        }
+    // Get app details and inject them into the page
+    const details = ipc.invoke("about.getDetails") as Promise<aboutWindowDetails>;
+    generateAppContent(l10n, details).catch(e => {
+        if(e instanceof Error)
+            throw e;
+        else if(typeof e === "string")
+            throw new Error(e);
+        else
+            console.error(e);
+    });
+    generateLicenseContent(l10n, details);
+        
+    // Generate "credits"
+    if(packageJson.data.author)
+        addContributor(new Person(packageJson.data.author), l10n.credits.people.author)
+    for (const person of packageJson.data.contributors??[]) {
+        const safePerson = new Person(person);
+        let translation:string = l10n.credits.people.contributors.default;
+        if(safePerson.name in l10n.credits.people.contributors)
+            translation = l10n.credits.people.contributors[safePerson.name as keyof typeof l10n.credits.people.contributors];
+        addContributor(safePerson, translation);
     }
-    generateLicenseContent(l10n, details.appName);
-    // Initialize license button
+    // Initialize "show license" button
     document.getElementById("showLicense")?.addEventListener("click", () => {
         for(const animation of document.getElementById("showLicense")?.getAnimations()??[]) {
             setTimeout(showAppLicense,100);
@@ -233,5 +249,9 @@ ipc.on("about.getDetails", (_event, details:aboutWindowDetails) => {
         }
     })
     document.body.style.display = "initial";
-    ipc.send("about.readyToShow");
+    // Initialize close button
+    document.getElementById("closebutton")?.addEventListener("click", () => {
+        ipc.send("about.close");
+    }, {once:true});
+    window.addEventListener("load", () => ipc.send("about.readyToShow"), {once: true});
 });

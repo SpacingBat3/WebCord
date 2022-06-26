@@ -43,7 +43,7 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
         list.appendChild(item);
     }
 }
-window.addEventListener("load", () => {
+window.addEventListener("DOMContentLoaded", () => {
     ipc.invoke("getDesktopCapturerSources").then((result:null|Electron.DesktopCapturerSource[]) => {
         if(result === null) {
             ipc.send("closeCapturerView", new Error("Unknown sources list."));

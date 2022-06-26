@@ -10,8 +10,11 @@
             "licenses": "Licencje"
         },
         "about": {
-            "appDescription": "Klient dla usług Discord i Fosscord z funkcjami skupionymi na prywatności.",
-            "appRepo": "Repozytorium GitHub"
+            "appDescription": "Klient dla usług Discord i Fosscord z funkcjami skupionymi na prywatności..",
+            "appRepo": "Repozytorium GitHub",
+            "featuresTitle": "Flagi budowania",
+            "featuresDefault": "Domyślne",
+            "checksumTitle": "Suma kontrolna"
         },
         "credits": {
             "people": {

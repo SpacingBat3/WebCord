@@ -12,9 +12,7 @@
 
 /** Fira Code: regular, bold, italic, bold+italic **/
 @import url('../../../../node_modules/@fontsource/fira-code/700.css');
-@import url('../../../../node_modules/@fontsource/fira-code/700-italic.css');
 @import url('../../../../node_modules/@fontsource/fira-code/400.css');
-@import url('../../../../node_modules/@fontsource/fira-code/400-italic.css');
 
 /** Twemoji **/
 @import url('../../../../node_modules/twemoji-colr-font/twemoji.css');

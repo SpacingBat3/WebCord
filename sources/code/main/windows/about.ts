@@ -19,6 +19,12 @@ export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.
         frame: false,
         modal: true
     });
+    const appDetails = {
+        appName: app.getName(),
+        appVersion: app.getVersion(),
+        buildInfo: getBuildInfo(),
+        appRepo: packageJson.data.homepage
+    };
     if(aboutPanel === undefined) return;
     ipc.once("about.close", () => {
         if(!aboutPanel.isDestroyed()) aboutPanel.close();
@@ -27,20 +33,12 @@ export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.
         if(!aboutPanel.isDestroyed())
             aboutPanel.show();
     });
-    ipc.on("about.getDetails", (event) => {
-        if(!aboutPanel.isDestroyed())
-            event.reply("about.getDetails", {
-                appName: app.getName(),
-                appVersion: app.getVersion(),
-                buildInfo: getBuildInfo(),
-                appRepo: packageJson.data.homepage
-            });
-    });
+    ipc.handle("about.getDetails", () => appDetails);
     aboutPanel.once("close", () => {
         ipc.removeAllListeners("showAppLicense");
-        ipc.removeAllListeners("about.getDetails");
         ipc.removeAllListeners("about.readyToShow");
         ipc.removeAllListeners("about.close");
+        ipc.removeHandler("about.getDetails");
     });
     return aboutPanel;
 }
