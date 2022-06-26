@@ -16,7 +16,10 @@ const cspKeys = [
 type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 
 export default class CSP {
-    private value: cspObject;
+    private values: {
+        object: cspObject,
+        string: string
+    };
     private string2object(value: string) {
         const raw = value.split(/;\s+/);
         const record = {} as cspObject;
@@ -28,14 +31,17 @@ export default class CSP {
         }
         return record;
     }
-    public toString() {
+    private object2string(object: cspObject) {
         const stringFragments:string[] = [];
-        for(const [key,value] of Object.entries(this.value))
+        for(const [key,value] of Object.entries(object))
             stringFragments.push(key+' '+value);
         return stringFragments.join('; ');
     }
     public toObject() {
-        return this.value;
+        return this.values.object;
+    }
+    public toString() {
+        return this.values.string;
     }
     public static merge(...policies:CSP[]):CSP {
         let partial: cspObject = {};
@@ -56,10 +62,15 @@ export default class CSP {
     }
     constructor(value: string|cspObject) {
         if(typeof value !== "string")
-            this.value = value;
-        else {
-            this.value = this.string2object(value) ?? { "default-src": "'self'" };
-        }
+            this.values = {
+                object: value,
+                string: this.object2string(value)
+            }
+        else
+            this.values = {
+                object: this.string2object(value) ?? { "default-src": "'self'" },
+                string: this.object2string(this.string2object(value) ?? { "default-src": "'self'" })
+             }
     }
 }
 
@@ -163,18 +174,20 @@ const csp = {
     })
 }
 
-let cache: CSP | undefined;
-
-export function getWebCordCSP() {
-    const policies: CSP[] = [csp.base], keys: string[] = [];
+let cache: {configValues: string, result:CSP} | undefined;
+export function getWebCordCSP(additionalPolicies: CSP[]|[] = []) {
+    const policies: CSP[] = [csp.base, ...additionalPolicies];
     const config = new AppConfig().get().csp.thirdparty;
     type parties = keyof typeof config;
+    if(cache && cache.configValues === Object.values(config).join())
+        return cache.result;
     for(const key in config) if(config[key as parties]) {
         policies.push(csp[key as parties]);
-        keys.push(key);
     }
-    if(cache && Object.keys(cache.toObject()).join() === keys.join())
-        return cache;
-    else
-        return cache = CSP.merge(...policies);
+    const result = CSP.merge(...policies);
+    cache = {
+        configValues: Object.values(config).join(),
+        result: result
+    }
+    return cache.result;
 }
