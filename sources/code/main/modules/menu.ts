@@ -175,14 +175,8 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
 					click: () => {
 						const newArgs:string[] = [];
 						for (const arg of process.argv) {
-							let willBreak = false;
-							for (const sw of ['start-minimized', 'm'])
-								if(arg.includes('-') && arg.endsWith(sw)) {
-									willBreak = true;
-									break;
-								}
-							if (willBreak) break;
-							newArgs.push(arg);
+							if(!/^--?(?:start-minimized|m)$/.test(arg))
+								newArgs.push(arg);
 						}
 						newArgs.shift();
 						app.relaunch({
