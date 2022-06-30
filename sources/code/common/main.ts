@@ -228,16 +228,7 @@ if (!singleInstance && !overwriteMain) {
         }
     });
     app.on('ready', main);
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) main();
-    });
 }
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
 
 // Global `webContents` defaults for hardened security
 app.on('web-contents-created', (_event, webContents) => {
