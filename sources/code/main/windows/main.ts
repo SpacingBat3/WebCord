@@ -1,6 +1,6 @@
 import { appInfo, getBuildInfo } from "../modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
-import { app, BrowserWindow, Tray, net, ipcMain, desktopCapturer, BrowserView } from "electron/main";
+import { app, BrowserWindow, net, ipcMain, desktopCapturer, BrowserView } from "electron/main";
 import { nativeImage } from "electron/common";
 import * as getMenu from '../modules/menu';
 import { discordFavicons, knownInstancesList } from '../../common/global';
@@ -16,11 +16,6 @@ import { commonCatches } from "../modules/error";
 const configData = new AppConfig();
 
 export default function createMainWindow(startHidden: boolean, l10nStrings: l10n["client"]): BrowserWindow {
-
-    // Some variable declarations
-
-    let tray: Tray;
-
     // Check the window state
 
     const mainWindowState = new WinStateKeeper('mainWindow');
@@ -194,19 +189,17 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     }
 
     // Keep window state
-
     mainWindowState.watchState(win);
 
     // Load all menus:
-
     getMenu.context(win);
-    if (!configData.get().disableTray) tray = getMenu.tray(win);
+    const tray = !configData.get().disableTray ? getMenu.tray(win) : null;
     getMenu.bar(packageJson.data.repository.url, win);
 
     // "Red dot" icon feature
     let setFavicon: string | undefined;
     win.webContents.on('page-favicon-updated', (_event, favicons) => {
-        const t = tray;
+        if(!tray) return;
         // Convert from DataURL to RAW.
         const faviconRaw = nativeImage.createFromDataURL(favicons[0]??"").toBitmap();
         // Hash discord favicon.
@@ -216,7 +209,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         // Stop code execution on Fosscord instances.
         if (new URL(win.webContents.getURL()).origin !== knownInstancesList[0][1].origin) {
             setFavicon = faviconHash;
-            t.setImage(appInfo.trayIcon);
+            tray.setImage(appInfo.trayIcon);
             win.flashFrame(false);
             return;
         }
@@ -224,14 +217,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         // Compare hashes.
         if (!configData.get().disableTray) {
             if(faviconHash === discordFavicons.default) {
-                t.setImage(appInfo.trayIcon);
+                tray.setImage(appInfo.trayIcon);
                 win.flashFrame(false);
             } else if(faviconHash.startsWith('4')) {
-                t.setImage(appInfo.trayUnread);
+                tray.setImage(appInfo.trayUnread);
                 win.flashFrame(false);
             } else {
                 console.debug("[Mention] Hash: "+faviconHash)
-                t.setImage(appInfo.trayPing);
+                tray.setImage(appInfo.trayPing);
                 win.flashFrame(true);
             }
             setFavicon = faviconHash;
