@@ -34,8 +34,6 @@ sideBar.on('hide', (contents: Electron.WebContents) => {
 	}).catch(commonCatches.print)
 });
 
-let wantQuit = false;
-
 // Contex Menu with spell checker
 
 export function context(parent: Electron.BrowserWindow): void {
@@ -128,7 +126,6 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 		{
 			label: strings.tray.quit,
 			click: function () {
-				wantQuit = true;
 				app.quit();
 			}
 		}
@@ -137,12 +134,16 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 	tray.setToolTip(app.getName());
 	tray.on("click", toogleVisibility);
 	// Exit to the tray
-	parent.on('close', (event) => {
-		if (!wantQuit) {
-			event.preventDefault();
-			parent.hide();
-		}
-	});
+	{
+		let willQuit = false;
+		app.once('will-quit', () => willQuit = true);
+		parent.on('close', (event) => {
+			if (!willQuit) {
+				event.preventDefault();
+				parent.hide();
+			}
+		});
+	}
 	return tray;
 }
 
@@ -172,7 +173,6 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
 					label: strings.menubar.file.relaunch,
 					accelerator: 'CmdOrCtrl+Alt+R',
 					click: () => {
-						wantQuit = true;
 						const newArgs:string[] = [];
 						for (const arg of process.argv) {
 							let willBreak = false;
@@ -196,7 +196,6 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
 					label: strings.menubar.file.quit,
 					accelerator: 'CmdOrCtrl+Q',
 					click: () => {
-						wantQuit = true;
 						app.quit();
 					}
 				}
