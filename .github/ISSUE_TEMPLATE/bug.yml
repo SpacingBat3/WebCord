@@ -20,7 +20,9 @@ body:
           required: true
         - label: |
             I can confirm that this is not an issue with the Discord website,
-            but it is a problem specific to the WebCord itself.
+            but it is a problem specific to the WebCord itself. I have tested
+            if this bug occurs on Chromium/Chrome or any other Chromium-based
+            browser that uses unpatched/upstream Chromium engine.
         - label: |
             I have tried running the build from the `master` branch and it does
             not have any fixes implemented according to my issue.
@@ -29,7 +31,8 @@ body:
             features.
         - label: |
             I have found a workaround to mitigate or temporarily fix this issue
-            (please write it in *Additional context* section).
+            in affected releases (please write it in *Additional context* section
+            below).
 
   - type: dropdown
     id: platform
@@ -42,6 +45,7 @@ body:
         - 🐧️ Linux
     validations:
       required: true
+      multiple: true
       
   - type: dropdown
     id: architecture
@@ -58,6 +62,7 @@ body:
         - aarch64 (64-bit ARM)
     validations:
       required: true
+      multiple: true
 
   - type: input
     id: electron_version
@@ -73,8 +78,9 @@ body:
     id: app_version
     attributes:
       label: Application version
-      description: On which application version you have encountered this bug?
-      placeholder: e.g. v2.0.0-beta5
+      description: | 
+        On which application version or versions you have encountered this bug?
+      placeholder: e.g. v3.3.0
     validations:
       required: true
 
