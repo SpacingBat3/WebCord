@@ -39,13 +39,13 @@ body:
     attributes:
       label: Operating System / Platform
       description: On which operating system you have encountered this issue?
+      multiple: true
       options:
         - 🪟️ Windows
         - 🍎️ MacOS
         - 🐧️ Linux
     validations:
       required: true
-      multiple: true
       
   - type: dropdown
     id: architecture
@@ -55,6 +55,7 @@ body:
         What type of the operating system you were using?
         Is it for Intel/AMD processors or ARM single-board computers and devices?
         Is it designed for the 32-bit instruction set or the 64-bit ones?
+      multiple: true
       options:
         - ia32 (32-bit Intel/AMD)
         - x64 (64-bit Intel/AMD)
@@ -62,7 +63,6 @@ body:
         - aarch64 (64-bit ARM)
     validations:
       required: true
-      multiple: true
 
   - type: input
     id: electron_version
