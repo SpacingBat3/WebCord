@@ -136,7 +136,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 	// Exit to the tray
 	{
 		let willQuit = false;
-		app.once('will-quit', () => willQuit = true);
+		app.once('before-quit', () => willQuit = true);
 		parent.on('close', (event) => {
 			if (!willQuit) {
 				event.preventDefault();
