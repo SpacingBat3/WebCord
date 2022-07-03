@@ -41,7 +41,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             enableWebSQL: false,
             webgl: configData.get().webgl,
             safeDialogs: true,
-            autoplayPolicy: "user-gesture-required"
+            autoplayPolicy: "no-user-gesture-required"
         }
     });
     win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
