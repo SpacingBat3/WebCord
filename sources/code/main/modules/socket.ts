@@ -149,7 +149,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
         import("../../common/modules/l10n").then(l10n => l10n.default)
     ]);
     const {listenPort} = new L10N().client.log;
-    let wss = null, wsPort = 6463;
+    let wss: Server<WebSocket> | null = null, wsPort = 6463;
     for(const port of range(6463, 6472)) {
         wss = await getServer(port);
         if(wss !== null) {
