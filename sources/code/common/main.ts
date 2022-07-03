@@ -73,11 +73,18 @@ import kolor from '@spacingbat3/kolor';
 import { resolve as resolvePath, relative } from 'path';
 import { major } from "semver";
 import { getUserAgent } from './modules/agent';
-import { getBuildInfo } from '../main/modules/client';
+import { getBuildInfo } from './modules/client';
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from '../main/modules/optimize';
 
 // Set global user agent
 app.userAgentFallback = getUserAgent(process.versions.chrome);
+
+// Set AppUserModelID on Windows
+{
+    const {AppUserModelId} = getBuildInfo()
+    if(process.platform === "win32" && AppUserModelId)
+        app.setAppUserModelId(AppUserModelId);
+}
 
 // Handle command line switches:
 

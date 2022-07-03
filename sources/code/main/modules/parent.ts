@@ -1,6 +1,6 @@
 import { app, BrowserWindow, session } from "electron/main";
 import l10n from "../../common/modules/l10n";
-import { appInfo, getBuildInfo } from "./client";
+import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { resolve } from "path";
 
 /** A list of popup windows (i.e. non-local ones). */

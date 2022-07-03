@@ -4,7 +4,7 @@
 
 import { app, Notification, net } from 'electron/main';
 import { shell } from 'electron/common';
-import { appInfo, getBuildInfo } from './client';
+import { appInfo, getBuildInfo } from '../../common/modules/client';
 import fetch from 'electron-fetch';
 import l10n from '../../common/modules/l10n';
 import * as semver from 'semver';

@@ -1,4 +1,4 @@
-import { appInfo, getBuildInfo } from "../modules/client";
+import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
 import { app, BrowserWindow, net, ipcMain, desktopCapturer, BrowserView } from "electron/main";
 import { nativeImage } from "electron/common";

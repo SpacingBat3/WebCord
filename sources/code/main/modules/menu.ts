@@ -7,7 +7,7 @@ import { shell, clipboard } from 'electron/common';
 import {
 	getBuildInfo,
 	appInfo
-} from './client';
+} from '../../common/modules/client';
 
 import { AppConfig } from './config';
 

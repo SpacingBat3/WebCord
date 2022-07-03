@@ -4,7 +4,7 @@
 
 import { app } from "electron/main";
 import { shell } from "electron/common"
-import { appInfo } from "./client"
+import { appInfo } from "../../common/modules/client"
 
 /**
  * Generates a link to new GitHub issue, based on `bug_report.md`

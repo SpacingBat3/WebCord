@@ -5,7 +5,7 @@
 import * as fs from "fs";
 import { app, BrowserWindow, screen } from "electron/main";
 import { resolve } from "path"
-import { appInfo } from "./client";
+import { appInfo } from "../../common/modules/client";
 import { objectsAreSameType, isJsonSyntaxCorrect } from "../../common/global";
 import { deepmerge } from 'deepmerge-ts';
 

@@ -1,6 +1,6 @@
 import { app, ipcMain as ipc, screen } from 'electron/main';
 import packageJson from '../../common/modules/package';
-import { getBuildInfo } from '../modules/client';
+import { getBuildInfo } from '../../common/modules/client';
 import { initWindow } from '../modules/parent';
 
 // "About" Panel:

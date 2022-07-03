@@ -161,8 +161,10 @@ export const knownInstancesList = [
 ] as const
 
 export interface buildInfo {
-	type: 'release' | 'devel',
+	type: 'release' | 'devel';
 	commit?: string | undefined;
+	/** @platform win32 */
+	AppUserModelId?: string;
 	features?: {
 		updateNotifications?: boolean;
 	}
@@ -183,9 +185,8 @@ export function isBuildInfo(object: unknown): object is buildInfo {
 			return false;
 	}
 	// #4 If object contains 'commit' property, it should be of type 'string'.
-	if (Object.prototype.hasOwnProperty.call(object, 'commit'))
-		if (!(typeof (object as buildInfo).commit === 'string'))
-			return false;
+	if (!(typeof (object as buildInfo).commit === 'string'))
+		return false;
 
 	/** List of valid properties for the `.features` object. */
 	const features = ['updateNotifications']
@@ -199,6 +200,9 @@ export function isBuildInfo(object: unknown): object is buildInfo {
 				if(typeof (object as {features:Record<string,unknown>}).features[property] !== "boolean")
 					return false;
 
+	// #6 On Windows, AppUserModelID should be of 'string' type
+	if (process.platform === "win32" && !(typeof (object as buildInfo)?.AppUserModelId === 'string'))
+		return false;
 	return true;
 }
 

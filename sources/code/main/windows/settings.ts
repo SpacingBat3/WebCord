@@ -1,7 +1,7 @@
 import { ipcMain } from "electron/main";
 import { AppConfig } from '../modules/config';
 import { HTMLSettingsGroup, HTMLChecklistForms, HTMLChecklistOption, knownInstancesList, HTMLRadioForms } from '../../common/global';
-import { appInfo, getBuildInfo } from '../modules/client';
+import { appInfo, getBuildInfo } from '../../common/modules/client';
 import l10n from '../../common/modules/l10n';
 import { initWindow } from "../modules/parent";
 
