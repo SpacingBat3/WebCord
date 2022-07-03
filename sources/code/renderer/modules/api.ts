@@ -6,7 +6,9 @@
 import { randomInt } from "crypto";
 
 /**
- * Generates a random key that can safely be used as global variable name.
+ * Generates a random key of `window` that can safely be used as global variable
+ * name in DOM scripts (both in means of beaing hard to detect and by not using
+ * the already existing key name).
  */
 export function generateSafeKey () {
     const charset = 'abcdefghijklmnoprstuwxyzABCDEFGHIJKLMNOPRSTUWXYZ';
@@ -27,6 +29,9 @@ export function generateSafeKey () {
  * 
  * This can be extremly useful when trying to tweak the elements whose class
  * names includes some part being randomly generated for each build/version.
+ * 
+ * **Currently unused in the code itself, reserved for WebCord's future API for
+ * the extensions.**
  */
 export function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, tagName: T) {
     const searchResult = new Set<string>();
@@ -41,6 +46,9 @@ export function findClass<T extends keyof HTMLElementTagNameMap>(searchString: s
  * A function that allows the access to the Discord API without the need of
  * sharing the user token to the untrusted scripts. Currently at
  * **Work-in-Progress** state.
+ * 
+ * Currently unused in the code itself, reserved for WebCord's future API for
+ * the extensions.**
  * 
  * @param method
  * @param apiVersion 
@@ -61,7 +69,10 @@ export function sendRequest(method:'POST'|'GET', apiVersion: 6|7|8|9|10, endpoin
     });    
 }
 
-
+/**
+ * Allows to navigate to the given path without reloading the entire Discord
+ * page. In WebCord, this is used to handle `DEEP_LINK` requets.
+ */
 export function navigate(path:string) {
     // Push new state to history.
     history.pushState({}, '', path);
