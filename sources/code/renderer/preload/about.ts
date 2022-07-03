@@ -185,7 +185,7 @@ function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promis
         const npmLink = document.createElement("a");
         const title = document.createElement("h3");
         const copy = document.createElement("p");
-        npmLink.title = data.description.match(/^[^.]*\.?/)?.[0] ?? "";
+        npmLink.title = data.description.match(/^(?:.(?!\. ))*.\.?/)?.[0] ?? "";
         npmLink.href = "https://www.npmjs.com/package/"+packName+"/v/"+data.version;
         npmLink.relList.add("noreferrer");
         npmLink.target = "_blank";
