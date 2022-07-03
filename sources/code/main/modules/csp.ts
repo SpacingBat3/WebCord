@@ -13,6 +13,8 @@ const cspKeys = [
     "child-src"
 ] as const
 
+const cspKeysRegExp = new RegExp('(?<='+cspKeys.join('|')+')\\s+');
+
 type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 
 export default class CSP {
@@ -24,7 +26,7 @@ export default class CSP {
         const raw = value.split(/;\s+/);
         const record = {} as cspObject;
         for(const element of raw) {
-            const [rule, value] = element.split(new RegExp('(?<='+cspKeys.join('|')+')\\s+'));
+            const [rule, value] = element.split(cspKeysRegExp);
             if(rule === undefined || value === undefined) return;
             if(cspKeys.includes(rule as keyof typeof record))
                 record[rule as keyof typeof record] = value;
@@ -32,10 +34,9 @@ export default class CSP {
         return record;
     }
     private object2string(object: cspObject) {
-        const stringFragments:string[] = [];
-        for(const [key,value] of Object.entries(object))
-            stringFragments.push(key+' '+value);
-        return stringFragments.join('; ');
+        return Object.entries(object)
+            .map(entry => entry.join(' '))
+            .join('; ');
     }
     public toObject() {
         return this.values.object;
@@ -68,8 +69,8 @@ export default class CSP {
             }
         else
             this.values = {
-                object: this.string2object(value) ?? { "default-src": "'self'" },
-                string: this.object2string(this.string2object(value) ?? { "default-src": "'self'" })
+                object: this.string2object(value) ?? {},
+                string: this.object2string(this.string2object(value) ?? {})
              }
     }
 }
@@ -176,18 +177,25 @@ const csp = {
 
 let cache: {configValues: string, result:CSP} | undefined;
 export function getWebCordCSP(additionalPolicies: CSP[]|[] = []) {
-    const policies: CSP[] = [csp.base, ...additionalPolicies];
     const config = new AppConfig().get().csp.thirdparty;
     type parties = keyof typeof config;
+    type cspFilter = (value:CSP|undefined) => value is CSP;
     if(cache && cache.configValues === Object.values(config).join())
         return cache.result;
-    for(const key in config) if(config[key as parties]) {
-        policies.push(csp[key as parties]);
-    }
-    const result = CSP.merge(...policies);
     cache = {
         configValues: Object.values(config).join(),
-        result: result
+        result: CSP.merge(
+            csp.base,
+            ...Object.keys(config)
+                .map((key) => {
+                    if(config[key as parties])
+                        return csp[key as parties]
+                    else
+                        return undefined
+                })
+                .filter(((value) => value !== undefined) as cspFilter),
+            ...additionalPolicies
+        )
     }
     return cache.result;
 }
