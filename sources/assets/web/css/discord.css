@@ -48,3 +48,12 @@ img[src*="423864076095979522"] ~ h2 > span > span {
         color: hsl(360, 100%, var(--rb));
     }
 }
+
+/* Mobile interface tweaks */
+@media screen and (max-width: 480px) {
+    div.expression-picker-chat-input-button:nth-child(1),
+    div.expression-picker-chat-input-button:nth-child(2),
+    div.expression-picker-chat-input-button:nth-child(3) {
+        display: none;
+    }
+}
