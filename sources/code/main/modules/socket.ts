@@ -19,7 +19,8 @@ interface Response<C extends string, T extends string|never> {
     nonce: string;
 }
 
-type ResponseArgs<C extends string, T extends string|never> = C extends "INVITE_BROWSER" ? {
+type ResponseArgs<C extends string, T extends string|never> =
+C extends "INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER" ? {
     /** An invitation code. */
     code: string;
 } : C extends "AUTHORIZE" ? {
@@ -52,20 +53,22 @@ type typeofResolved<T extends typeofResult> =  T extends "string" ? string :
  * Generic response checker, assumes Discord will do requests of certain type
  * based on `cmd` and `argsType` values.
  */
-function isResponse<C,T>(data:unknown, cmd?: C&string, argsType?: T&string): data is Response<C extends string ? C : string,T extends string ? T : never> {
+function isResponse<C,T>(data:unknown, cmd?: C&string|(C&string)[], argsType?: T&string): data is Response<C extends string ? C : string,T extends string ? T : never> {
     function checkRecord<T extends (string|number|symbol)[], X extends typeofResult>(record:Record<string|number|symbol, unknown>,keys:T,arg:X): record is Record<T[number],typeofResolved<X>> {
         for(const key of keys)
             if(typeof record[key] !== arg)
                 return false
         return true
     }
+    if(typeof (data as Partial<Response<string,never>>)?.cmd !== "string")
+        return false;
     if(!(data instanceof Object))
         return false;
-    if(cmd) {
+    if(typeof cmd === "string") {
         if((data as Partial<Response<string,never>>)?.cmd !== cmd)
             return false;
-    } else {
-        if(typeof(data as Partial<Response<string,never>>)?.cmd !== "string")
+    } else if(Array.isArray(cmd)) {
+        if(!cmd.includes((data as unknown as Response<string,never>).cmd as C&string))
             return false;
     }
     if(typeof(data as Partial<Response<string,never>>)?.args !== 'object')
@@ -176,8 +179,12 @@ export default async function startServer(window:Electron.BrowserWindow) {
             if(isJsonSyntaxCorrect(parsedData as string))
                 parsedData = JSON.parse(parsedData as string);
             // Invite response handling
-            if(isResponse(parsedData, "INVITE_BROWSER")) {
-                if(lock) return; lock = true;
+            if(isResponse(parsedData, ["INVITE_BROWSER", "GUILD_TEMPLATE_BROWSER"] as ("INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER")[])) {
+                if(lock) {
+                    console.debug('Blocked request "'+parsedData.cmd+'" (WSS locked).')
+                    return;
+                }
+                lock = true;
                 // Replies to the browser, so it finds the communication successful.
                 wss.send(JSON.stringify({
                     cmd: parsedData.cmd,
@@ -188,16 +195,22 @@ export default async function startServer(window:Electron.BrowserWindow) {
                     evt: null,
                     nonce: parsedData.nonce
                 }));
-                const child = initWindow("invite", window);
+                const winProperties = parsedData.cmd === "GUILD_TEMPLATE_BROWSER" ?
+                    {width: 960} : {}
+                const child = initWindow("invite", window, winProperties);
                 if(child === undefined) return;
-                void child.loadURL(origin+'/invite/'+parsedData.args.code);
+                const path = parsedData.cmd === "INVITE_BROWSER" ?
+                    "/invite/" : parsedData.cmd === "GUILD_TEMPLATE_BROWSER" ?
+                    "/template/" : null;
+                if(path !== null)
+                    void child.loadURL(origin+path+parsedData.args.code);
+                else
+                    throw new TypeError('WSS handled wrong request type: "'+parsedData.cmd+'".')
                 child.webContents.once("did-finish-load", () => {
                     child.show();
                 });
-                child.webContents.once("will-navigate", () => {
-                    lock = false;
-                    child.close();
-                })
+                child.webContents.once("will-navigate", () => child.close());
+                child.once("closed", () => lock = false);
                 // Blocks requests to WebCord's WS, to prevent loops.
                 child.webContents.session.webRequest.onBeforeRequest({
                     urls: ['ws://127.0.0.1:'+wsPort.toString()+'/*']
@@ -224,6 +237,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
                 const type = typeof parsedData.args["type"] === "string" ?
                     parsedData.cmd+':'+parsedData.args["type"] : parsedData.cmd;
                 console.error("[WS] Request of type: '"+type+"' is currently not supported.");
+                console.debug("Request received by server:", JSON.stringify(parsedData,undefined,4));
             }
             // Unknown text message error
             else if(!isBinary)
