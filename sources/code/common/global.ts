@@ -13,16 +13,16 @@ import { resolve } from "path";
  */
 
 export function wLog(msg: string): void {
-	console.log("%c[WebCord]", 'color: #69A9C1', msg);
+  console.log("%c[WebCord]", "color: #69A9C1", msg);
 }
 
 export function isJsonSyntaxCorrect(string: string) {
-	try {
-		JSON.parse(string);
-	} catch {
-		return false;
-	}
-	return true;
+  try {
+    JSON.parse(string);
+  } catch {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -72,71 +72,59 @@ export interface HTMLRadioForms extends HTMLForms {
 }
 
 export interface HTMLRadioCustom extends HTMLForms {
-	value: 'custom';
+	value: "custom";
 	validator: (data:string) => boolean;
 }
 
 export interface HTMLChecklistOption extends HTMLOption {
-	type: 'checkbox';
+	type: "checkbox";
 	forms: HTMLChecklistForms[];
 }
 
 export interface HTMLRadioOption extends HTMLOption {
-	type: 'radio';
+	type: "radio";
 	id: string;
 	forms: (HTMLRadioForms|HTMLRadioCustom)[];
 }
 
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
 export const discordFavicons = {
-	/** Default favicon (without *blue dot* indicator). */
-    default: '25522cef7e234ab001bbbc85c7a3f477b996e20b'
+  /** Default favicon (without *blue dot* indicator). */
+  default: "25522cef7e234ab001bbbc85c7a3f477b996e20b"
 };
 
 /**
- * A generic TypeGuard, used to deeply check if `object` has same type as another
- * `object` (useful when one of the objects has known type that is non-primitive).
+ * A generic TypeGuard, used to deeply check if `object` can be merged with another
+ * `object` without loosing the existing type structure.
  * 
  * @param object1 An object to check the type of.
- * 
  * @param object2 An object used for the type comparasion.
  */
- export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
+export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
 
-	// False when parameters are not objects.
-	if(!(object1 instanceof Object && object2 instanceof Object)) return false;
+  // False when parameters are not objects.
+  if(!(object1 instanceof Object && object2 instanceof Object)) return false;
 	
-	// True when parameters are exactly same objects.
-	if(JSON.stringify(object1) === JSON.stringify(object2)) return true;
-	
-	// Assume objects are itterable (even if that's a lie).
-	const obj1 = (object1 as Record<string,unknown>), obj2 = (object2 as Record<string,unknown>);
-	
-	// Check if keys are the same in both of the objects at current tree level.
-	const keyArray1:string[] = [], keyArray2:string[] = [];
-    for (const key1 in obj1) keyArray1.push(key1);
-    for (const key2 in obj2) keyArray2.push(key2);
-	if (keyArray1.sort().toString() !== keyArray2.sort().toString()) return false;
+  // True when parameters are exactly same objects.
+  if(JSON.stringify(object1) === JSON.stringify(object2)) return true;
 
-	// If so, compare every single property type of these two objects.
-	for (const key of keyArray1) {
-
-		// Check again if object has the property.
-		if(Object.prototype.hasOwnProperty.call(obj1,key)&&Object.prototype.hasOwnProperty.call(obj2,key))
-			
-			if (Array.isArray(obj1[key])&&Array.isArray(obj2[key])) {
-				// Ignore array type checking.
-				break;
-			} else if (obj1[key] instanceof Object && obj2[key] instanceof Object) {
-				// When properties are objects, start this test for the next tree level.
-				const test = objectsAreSameType(obj1[key], obj2[key])
-				if(!test) return false;
-			} else if ((typeof(obj1[key]) !== typeof(obj2[key]))) {
-				return false;
-			}
-	}
-	// If that still executes, it means that passed all tests.
-	return true;
+  const results = Object.keys({...object1,...object2}).map(key => {
+    if(key in object1 && key in object2) {
+      const key1:unknown = object1[key as keyof unknown], key2:unknown = object2[key as keyof unknown]
+      if(typeof key1 === typeof key2) {
+        if(typeof key1 === "object") {
+          if(Array.isArray(key1)&&Array.isArray(key2))
+            return true;
+          else
+            return objectsAreSameType(key1,key2);
+        }
+        return true;
+      }
+      return false;
+    }
+    return true;
+  })
+  return !results.includes(false);
 }
 
 /**
@@ -156,12 +144,12 @@ export const trustedProtocolRegExp = /^(https:|mailto:|tel:|sms:)$/;
 
 /** Known Discord instances, including the official ones. */
 export const knownInstancesList = [
-	["Discord", new URL("https://discord.com/app")],
-	["Fosscord", new URL("https://dev.fosscord.com/app")]
+  ["Discord", new URL("https://discord.com/app")],
+  ["Fosscord", new URL("https://dev.fosscord.com/app")]
 ] as const
 
 export interface buildInfo {
-	type: 'release' | 'devel';
+	type: "release" | "devel";
 	commit?: string | undefined;
 	/** @platform win32 */
 	AppUserModelId?: string;
@@ -171,49 +159,49 @@ export interface buildInfo {
 }
 
 export function isBuildInfo(object: unknown): object is buildInfo {
-	// #1 Element is object.
-	if (!(object instanceof Object))
-		return false;
-	// #2 Object has 'type' property.
-	if (!Object.prototype.hasOwnProperty.call(object, 'type')) return false;
-	// #3 'type' property contains 'release' and 'devel' strings.
-	switch ((object as buildInfo).type) {
-		case 'release':
-		case 'devel':
-			break;
-		default:
-			return false;
-	}
-	// #4 If object contains 'commit' property, it should be of type 'string'.
-	if (!(typeof (object as buildInfo).commit === 'string'))
-		return false;
+  // #1 Element is object.
+  if (!(object instanceof Object))
+    return false;
+  // #2 Object has 'type' property.
+  if (!Object.prototype.hasOwnProperty.call(object, "type")) return false;
+  // #3 'type' property contains 'release' and 'devel' strings.
+  switch ((object as buildInfo).type) {
+    case "release":
+    case "devel":
+      break;
+    default:
+      return false;
+  }
+  // #4 If object contains 'commit' property, it should be of type 'string'.
+  if (!(typeof (object as buildInfo).commit === "string"))
+    return false;
 
-	/** List of valid properties for the `.features` object. */
-	const features = ['updateNotifications']
-	// #5 If object contains the 'features' property, it should be an object.
-	if (Object.prototype.hasOwnProperty.call(object, 'features'))
-		if (!((object as buildInfo).features instanceof Object))
-			return false;
-		else for(const property of features)
-			// #6 `features` properties are of type `boolean`.
-			if(Object.prototype.hasOwnProperty.call((object as {features:Record<string, unknown>}).features, property))
-				if(typeof (object as {features:Record<string,unknown>}).features[property] !== "boolean")
-					return false;
+  /** List of valid properties for the `.features` object. */
+  const features = ["updateNotifications"]
+  // #5 If object contains the 'features' property, it should be an object.
+  if (Object.prototype.hasOwnProperty.call(object, "features"))
+    if (!((object as buildInfo).features instanceof Object))
+      return false;
+    else for(const property of features)
+    // #6 `features` properties are of type `boolean`.
+      if(Object.prototype.hasOwnProperty.call((object as {features:Record<string, unknown>}).features, property))
+        if(typeof (object as {features:Record<string,unknown>}).features[property] !== "boolean")
+          return false;
 
-	// #6 On Windows, AppUserModelID should be of 'string' type
-	if (process.platform === "win32" && !(typeof (object as buildInfo)?.AppUserModelId === 'string'))
-		return false;
-	return true;
+  // #6 On Windows, AppUserModelID should be of 'string' type
+  if (process.platform === "win32" && !(typeof (object as buildInfo)?.AppUserModelId === "string"))
+    return false;
+  return true;
 }
 
 export function getAppIcon(sizes:number[]) {
-	const defaultPath = resolve(getAppPath(), "sources/assets/icons/app.png")
-	if(existsSync(defaultPath))
-		return defaultPath;
-	for (const size of sizes)
-		if(existsSync("/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png"))
-			return "/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png";
-	return "";
+  const defaultPath = resolve(getAppPath(), "sources/assets/icons/app.png")
+  if(existsSync(defaultPath))
+    return defaultPath;
+  for (const size of sizes)
+    if(existsSync("/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png"))
+      return "/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png";
+  return "";
 }
 
 export type SessionLatest = Electron.Session & {
@@ -230,9 +218,9 @@ export type SessionLatest = Electron.Session & {
  * A sanitizer configuration that allows only for tags that modifies the code
  * formatting.
  */
- export const sanitizeConfig = {
-    // Allow tags that modifies text style and/or has a semantic meaning.
-    ALLOWED_TAGS: ['b', 'i', 'u', 's', 'em', 'kbd', 'strong', 'code', 'small'],
-    // Block every attribute
-    ALLOWED_ATTR: []
+export const sanitizeConfig = {
+  /** Allow tags that modifies text style and/or has a semantic meaning. */
+  ALLOWED_TAGS: ["b", "i", "u", "s", "em", "kbd", "strong", "code", "small"],
+  /** Block every attribute */
+  ALLOWED_ATTR: []
 }
