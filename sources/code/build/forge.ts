@@ -4,14 +4,17 @@
 
 // Let's import some keys from the package.json:
 
-import type { buildInfo } from '../common/global';
-import packageJson, { Person } from '../common/modules/package';
-import { readFileSync, writeFileSync } from 'fs';
-import { resolve } from 'path'
-import type { ForgeConfigFile } from './forge.d';
-import { flipFuses, FuseVersion, FuseV1Options } from '@electron/fuses';
+import type { buildInfo } from "../common/global";
+import packageJson, { Person } from "../common/modules/package";
+import { readFileSync, writeFileSync } from "fs";
+import { resolve } from "path"
+import type { ForgeConfigFile } from "./forge.d";
+import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
-const projectPath = resolve(__dirname, '../../..')
+const projectPath = resolve(__dirname, "../../..")
+const AppUserModelId = process.env["WEBCORD_WIN32_APPID"];
+const FlatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
+  "io.github.spacingbat3.webcord";
 
 // Global variables in the config:
 const iconFile = "sources/assets/icons/app";
@@ -21,16 +24,16 @@ const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Netwo
 // Some custom functions
 
 function getCommit():string | void {
-  const refsPath = readFileSync(resolve(projectPath, '.git/HEAD'))
+  const refsPath = readFileSync(resolve(projectPath, ".git/HEAD"))
     .toString()
-    .split(': ')[1]
+    .split(": ")[1]
     ?.trim();
-  if(refsPath) return readFileSync(resolve(projectPath, '.git', refsPath)).toString().trim();
+  if(refsPath) return readFileSync(resolve(projectPath, ".git", refsPath)).toString().trim();
 }
 
 const env = {
-  asar: process.env['WEBCORD_ASAR']?.toLowerCase() !== "false",
-  build: process.env['WEBCORD_BUILD']?.toLocaleLowerCase()
+  asar: process.env["WEBCORD_ASAR"]?.toLowerCase() !== "false",
+  build: process.env["WEBCORD_BUILD"]?.toLocaleLowerCase()
 }
 
 function getElectronPath(platform:string) {
@@ -135,12 +138,11 @@ const config: ForgeConfigFile = {
       }
     },
     */
-    /* Flatpaks are disabled until they will work out-of-the-box with
-       GitHub Actions
     {
       name: "@electron-forge/maker-flatpak",
       config: {
         options: {
+          id: FlatpakId,
           files: [
             [
               projectPath+"/docs",
@@ -154,7 +156,7 @@ const config: ForgeConfigFile = {
           icon: iconFile + ".png"
         }
       }
-    }*/
+    }
   ],
   publishers: [
     {
@@ -170,19 +172,20 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: (_ForgeConfig, path:string) => {
+    packageAfterCopy: (_ForgeConfig, path:string, _electronVersion: string, platform: string) => {
       const buildConfig: buildInfo = {
+        ...(platform === "win32" && AppUserModelId ? { AppUserModelId } : {}),
         type: getBuildID(),
         commit: getBuildID() === "devel" ? getCommit()??undefined : undefined,
         features: {
-          updateNotifications: process.env['WEBCORD_UPDATE_NOTIFICATIONS'] !== "false"
+          updateNotifications: process.env["WEBCORD_UPDATE_NOTIFICATIONS"] !== "false"
         }
       }
-      writeFileSync(resolve(path, 'buildInfo.json'), JSON.stringify(buildConfig, null, 2))
+      writeFileSync(resolve(path, "buildInfo.json"), JSON.stringify(buildConfig, null, 2))
       return Promise.resolve();
     },
+    // Hardened Electron binary via Electron Fuses feature.
     packageAfterExtract: (_ForgeConfig, path:string, _electronVersion: string, platform: string) =>
-      // Hardened Electron binary via Electron Fuses feature.
       flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
         [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,

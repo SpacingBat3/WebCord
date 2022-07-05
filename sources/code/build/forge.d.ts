@@ -9,13 +9,13 @@
 
 // Forge types
 
-import type { ForgeConfig, ForgePlatform } from '@electron-forge/shared-types';
+import type { ForgeConfig, ForgePlatform } from "@electron-forge/shared-types";
 
 // Maker config types
 
 import type { MakerDebConfig } from "@electron-forge/maker-deb/dist/Config";
 //import { MakerSnapConfig } from "@electron-forge/maker-snap/dist/Config";
-//import { MakerFlatpakConfig } from "@electron-forge/maker-flatpak/dist/Config";
+import type { MakerFlatpakConfig } from "@electron-forge/maker-flatpak/dist/Config";
 import type { MakerRpmConfig } from "@electron-forge/maker-rpm/dist/Config";
 import type { MakerZIPConfig } from "@electron-forge/maker-zip/dist/MakerZIP";
 import type { MakerAppImageConfig } from "@reforged/maker-appimage/types/config";
@@ -63,12 +63,12 @@ interface MakerRpm extends MPBase {
 /*interface MakerSnap extends MPBase {
   name: "@electron-forge/maker-snap",
   config?: MakerSnapConfig
-}
+}*/
 
 interface MakerFlatpak extends MPBase {
   name: "@electron-forge/maker-flatpak",
   config?: MakerFlatpakConfig
-}*/
+}
 
 interface MakerZIP extends MPBase {
   name: "@electron-forge/maker-zip",
@@ -91,7 +91,7 @@ interface PublisherGitHub extends MPBase {
 
 export type ForgeConfigFile = Redeclare<Partial<ForgeConfig>, {
   makers?: (
-    MakerZIP | MakerAppImage | MakerDeb | MakerRpm | MakerDMG //| MakerSnap | MakerFlatpak
+    MakerZIP | MakerAppImage | MakerDeb | MakerRpm | MakerDMG | MakerFlatpak //| MakerSnap
   )[];
   publishers?: (
     PublisherGitHub
