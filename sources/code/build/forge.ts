@@ -33,7 +33,7 @@ function getCommit():string | void {
 
 const env = {
   asar: process.env["WEBCORD_ASAR"]?.toLowerCase() !== "false",
-  build: process.env["WEBCORD_BUILD"]?.toLocaleLowerCase()
+  build: process.env["WEBCORD_BUILD"]?.toLowerCase()
 }
 
 function getElectronPath(platform:string) {
@@ -124,7 +124,7 @@ const config: ForgeConfigFile = {
           categories: desktopCategories
         }
       }
-    },
+    }
     /* Snaps are disabled until maker will be fixed to work without the
        multipass.
     {
@@ -138,25 +138,6 @@ const config: ForgeConfigFile = {
       }
     },
     */
-    {
-      name: "@electron-forge/maker-flatpak",
-      config: {
-        options: {
-          id: FlatpakId,
-          files: [
-            [
-              projectPath+"/docs",
-              "/share/docs/"+packageJson.data.name
-            ],
-            [
-              projectPath+"/LICENSE",
-              "/share/licenses/"+packageJson.data.name+"/LICENSE.txt"
-            ]
-          ],
-          icon: iconFile + ".png"
-        }
-      }
-    }
   ],
   publishers: [
     {
@@ -195,4 +176,40 @@ const config: ForgeConfigFile = {
       })
   }
 };
+
+/*
+ * Since `maker-flatpak` is still silently failing, giving at normal
+ * circumstances an inadequate information about the error itself (only useless
+ * exit code), it is why I have it disabled by the default. Simply, I don't want
+ * to cause a confusion just because someone has not added a flathub repository
+ * for their user-wide Flathub environment.
+ * 
+ * It will stay as it is untill either official maker will resolve this or my
+ * own maker implementation will be mature enough to be released.
+ */
+if(process.env["WEBCORD_FLATPAK"]?.toLowerCase() === "true")
+  config.makers?.push({
+    name: "@electron-forge/maker-flatpak",
+    config: {
+      options: {
+        id: FlatpakId,
+        genericName: desktopGeneric,
+        categories: desktopCategories,
+        runtimeVersion: "21.08",
+        baseVersion: "21.08",
+        files: [
+          [
+            projectPath+"/docs",
+            "/share/docs/"+packageJson.data.name
+          ],
+          [
+            projectPath+"/LICENSE",
+            "/share/licenses/"+packageJson.data.name+"/LICENSE.txt"
+          ]
+        ],
+        icon: iconFile + ".png"
+      }
+    }
+  })
+
 module.exports = config;

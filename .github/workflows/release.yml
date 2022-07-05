@@ -8,7 +8,8 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     env:
-      WEBCORD_BUILD: Release
+      WEBCORD_BUILD: RELEASE
+      WEBCORD_FLATPAK: 'TRUE'
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@master
