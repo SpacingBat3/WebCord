@@ -12,21 +12,21 @@ import * as __clientJSON from "../../../translations/en/client.json";
 import * as __webJSON from "../../../translations/en/web.json";
 
 const defaultTranslations = {
-	client: __clientJSON,
-	web: __webJSON
+  client: __clientJSON,
+  web: __webJSON
 }
 
 const langDialog = new EventEmitter();
 
-langDialog.once('show-error', (localizedStrings: string) => {
-	showMessageBox({
-		title: "Error loading translations for locale: '" + getLocale().toLocaleUpperCase() + "'!",
-		type: "error",
-		message: "An error occured while loading 'strings' from file: '" +
+langDialog.once("show-error", (localizedStrings: string) => {
+  showMessageBox({
+    title: "Error loading translations for locale: '" + getLocale().toLocaleUpperCase() + "'!",
+    type: "error",
+    message: "An error occured while loading 'strings' from file: '" +
 			localizedStrings + "'. " +
 			"Please make sure that the file syntax is correct!\n\n" +
 			"This will lead to " + getName() + " use English strings instead."
-	});
+  });
 });
 
 /**
@@ -42,49 +42,49 @@ langDialog.once('show-error', (localizedStrings: string) => {
  * In other situations, an error message will occur and fallback strings will be used instead. 
  */
 class l10n {
-	private loadFile<T extends keyof typeof defaultTranslations>(type: T): typeof defaultTranslations[T] {
-		/**
+  private loadFile<T extends keyof typeof defaultTranslations>(type: T): typeof defaultTranslations[T] {
+    /**
 		 * Computed strings (mixed localized and fallback object)
 		 */
-		let finalStrings: typeof defaultTranslations[T] | unknown = defaultTranslations[type];
-		/**
+    let finalStrings: typeof defaultTranslations[T] | unknown = defaultTranslations[type];
+    /**
 		 * Translated strings in the native user language.
 		 * 
 		 * @todo
 		 * Make `localStrings` not overwrite `l10nStrings`
 		 * when it is of wrong type.
 		 */
-		let localStrings: unknown;
+    let localStrings: unknown;
 
-		let internalStringsFile = path.resolve(getAppPath(), "sources/translations/" + getLocale() + "/" + type.toString())+".json";
-		const externalStringsFile = path.resolve(path.dirname(getAppPath()), 'translations/' + getLocale() + "/" + type.toString())+".json";
-		/* Handle unofficial translations */
+    let internalStringsFile = path.resolve(getAppPath(), "sources/translations/" + getLocale() + "/" + type.toString())+".json";
+    const externalStringsFile = path.resolve(path.dirname(getAppPath()), "translations/" + getLocale() + "/" + type.toString())+".json";
+    /* Handle unofficial translations */
 
-		if (!existsSync(internalStringsFile))
-			internalStringsFile = externalStringsFile;
+    if (!existsSync(internalStringsFile))
+      internalStringsFile = externalStringsFile;
 
-		if (process.type === 'browser' && !app.isReady()) console.warn(
-			"[WARN] Electron may fail loading localized strings,\n" +
+    if (process.type === "browser" && !app.isReady()) console.warn(
+      "[WARN] Electron may fail loading localized strings,\n" +
 			"       because the app hasn't still emitted the 'ready' event!\n" +
 			"[WARN] In this case, English strings will be used as a fallback.\n"
-		);
-		if (existsSync(internalStringsFile)) {
-			localStrings = JSON.parse(readFileSync(internalStringsFile).toString());
-			finalStrings = deepmerge(defaultTranslations[type], localStrings);
-		}
-		if (objectsAreSameType(finalStrings, defaultTranslations[type])) {
-			return finalStrings;
-		} else {
-			langDialog.emit('show-error', internalStringsFile);
-			return defaultTranslations[type];
-		}
-	}
-	public client;
-	public web;
-	constructor() {
-		this.client = this.loadFile('client');
-		this.web = this.loadFile('web');
-	}
+    );
+    if (existsSync(internalStringsFile)) {
+      localStrings = JSON.parse(readFileSync(internalStringsFile).toString());
+      finalStrings = deepmerge(defaultTranslations[type], localStrings);
+    }
+    if (objectsAreSameType(finalStrings, defaultTranslations[type])) {
+      return finalStrings;
+    } else {
+      langDialog.emit("show-error", internalStringsFile);
+      return defaultTranslations[type];
+    }
+  }
+  public client;
+  public web;
+  constructor() {
+    this.client = this.loadFile("client");
+    this.web = this.loadFile("web");
+  }
 }
 
 export default l10n;

@@ -11,14 +11,14 @@ import { randomInt } from "crypto";
  * the already existing key name).
  */
 export function generateSafeKey () {
-    const charset = 'abcdefghijklmnoprstuwxyzABCDEFGHIJKLMNOPRSTUWXYZ';
-    let key = '';
-    while(key === '' || key in window) {
-        key = '';
-        for(let i=0; i<=randomInt(4,32); i++)
-            key += charset.charAt(randomInt(charset.length-1));
-    }
-    return key;
+  const charset = "abcdefghijklmnoprstuwxyzABCDEFGHIJKLMNOPRSTUWXYZ";
+  let key = "";
+  while(key === "" || key in window) {
+    key = "";
+    for(let i=0; i<=randomInt(4,32); i++)
+      key += charset.charAt(randomInt(charset.length-1));
+  }
+  return key;
 }
 
 /**
@@ -34,12 +34,12 @@ export function generateSafeKey () {
  * the extensions.**
  */
 export function findClass<T extends keyof HTMLElementTagNameMap>(searchString: string, tagName: T) {
-    const searchResult = new Set<string>();
-    for (const container of document.getElementsByTagName<T>(tagName))
-        for (const classString of container.classList)
-            if(classString.includes(searchString))
-                searchResult.add(classString);
-    return [...searchResult];
+  const searchResult = new Set<string>();
+  for (const container of document.getElementsByTagName<T>(tagName))
+    for (const classString of container.classList)
+      if(classString.includes(searchString))
+        searchResult.add(classString);
+  return [...searchResult];
 }
 
 /**
@@ -54,19 +54,19 @@ export function findClass<T extends keyof HTMLElementTagNameMap>(searchString: s
  * @param apiVersion 
  * @param endpoint
  */
-export function sendRequest(method:'POST'|'GET', apiVersion: 6|7|8|9|10, endpoint:string, body?: XMLHttpRequestBodyInit) {
-    const request = new XMLHttpRequest();
-    request.open(method,new URL(document.URL).origin+'/api/v'+apiVersion.toString()+endpoint);
-    window.addEventListener('load', () => {
-        const token = window.localStorage.getItem('token');
-        if(token !== null) {
-            request.setRequestHeader('Authorization', token);
-            request.send(body);
-        } else {
-            request.abort();
-            return;
-        }
-    });    
+export function sendRequest(method:"POST"|"GET", apiVersion: 6|7|8|9|10, endpoint:string, body?: XMLHttpRequestBodyInit) {
+  const request = new XMLHttpRequest();
+  request.open(method,new URL(document.URL).origin+"/api/v"+apiVersion.toString()+endpoint);
+  window.addEventListener("load", () => {
+    const token = window.localStorage.getItem("token");
+    if(token !== null) {
+      request.setRequestHeader("Authorization", token);
+      request.send(body);
+      return;
+    }
+    request.abort();
+    return;
+  });
 }
 
 /**
@@ -74,9 +74,9 @@ export function sendRequest(method:'POST'|'GET', apiVersion: 6|7|8|9|10, endpoin
  * page. In WebCord, this is used to handle `DEEP_LINK` requets.
  */
 export function navigate(path:string) {
-    // Push new state to history.
-    history.pushState({}, '', path);
-    // "Reload" history so Discord/Chromium can properly handle it.
-    window.addEventListener('popstate', () => history.forward(), {once: true});
-    history.back();
+  // Push new state to history.
+  history.pushState({}, "", path);
+  // "Reload" history so Discord/Chromium can properly handle it.
+  window.addEventListener("popstate", () => history.forward(), {once: true});
+  history.back();
 }
