@@ -22,7 +22,7 @@ jobs:
 
     - name: Setup Flatpak
       run: |
-        sudo apt install flatpak flatpak-builder elfutils -y
+        sudo apt install flatpak flatpak-builder elfutils clang -y
         flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
     - name: Publish artifacts (x64)
