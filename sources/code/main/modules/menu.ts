@@ -2,7 +2,7 @@
  * menus – OS native menus (tray menu, context menu, menu bar etc.)
  */
 import { app, Menu, Tray } from "electron/main";
-import { shell, clipboard } from "electron/common";
+import { shell, clipboard, nativeImage } from "electron/common";
 
 import {
   getBuildInfo,
@@ -95,7 +95,11 @@ export function context(parent: Electron.BrowserWindow): void {
 
 export function tray(parent: Electron.BrowserWindow): Electron.Tray {
   const strings = (new l10n()).client;
-  const tray = new Tray(appInfo.trayIcon);
+  let trayIcon = nativeImage.createFromPath(appInfo.trayIcon);
+  // Resize icon on MacOS when its height is longer than 22 pixels.
+  if(process.platform === "darwin" && trayIcon.getSize().height > 22)
+    trayIcon = trayIcon.resize({height: 22});
+  const tray = new Tray(trayIcon);
   function toogleVisibility() {
     if(parent.isVisible() && parent.isFocused()) {
       parent.hide();
