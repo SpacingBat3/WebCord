@@ -19,9 +19,11 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Add Flathub repository
-      run: flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-
+    - name: Setup Flatpak
+      run: |
+        sudo apt install flatpak flatpak-builder elfutils -y
+        flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  
     - name: Publish artifacts (x64)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
