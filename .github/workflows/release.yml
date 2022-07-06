@@ -20,9 +20,12 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Setup Clang
+      uses: egor-tensin/setup-clang@v1
+
     - name: Setup Flatpak
       run: |
-        sudo apt install flatpak flatpak-builder elfutils clang -y
+        sudo apt install flatpak flatpak-builder elfutils -y
         flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   
     - name: Publish artifacts (x64)
