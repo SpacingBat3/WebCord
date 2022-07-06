@@ -35,7 +35,19 @@
     "camelcase": "error",
     "valid-typeof": "error",
     "guard-for-in": "error",
+    "no-await-in-loop": "error",
+    "no-unmodified-loop-condition": "error",
+    "eqeqeq": "error",
+    "no-constant-binary-expression": "error",
+    "@typescript-eslint/consistent-type-assertions": ["error", {
+      "assertionStyle": "as",
+      "objectLiteralTypeAssertions": "never"
+    }],
+    "@typescript-eslint/no-meaningless-void-operator": ["error", {
+      "checkNever": true
+    }],
     "@typescript-eslint/no-unsafe-argument": "error",
+    "@typescript-eslint/prefer-string-starts-ends-with": "error",
     "@typescript-eslint/no-unsafe-assignment": "error",
     "@typescript-eslint/no-unsafe-call": "error",
     "@typescript-eslint/no-unsafe-member-access": "error",

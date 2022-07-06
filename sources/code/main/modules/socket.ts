@@ -154,9 +154,10 @@ export default async function startServer(window:Electron.BrowserWindow) {
   const {listenPort} = new L10N().client.log;
   let wss: Server<WebSocket> | null = null, wsPort = 6463;
   for(const port of range(6463, 6472)) {
+    // eslint-disable-next-line no-await-in-loop
     wss = await getServer(port);
     if(wss !== null) {
-      void wsLog(listenPort,underscore(port.toString()));
+      wsLog(listenPort,underscore(port.toString()));
       wsPort = port;
       break;
     }
@@ -231,7 +232,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
       }
       // RPC response handling
       else if(isResponse(parsedData, "AUTHORIZATION"))
-        void wsLog("Received RPC authorization request, but "+kolor.bold("RPC is not implemented yet")+".");
+        wsLog("Received RPC authorization request, but "+kolor.bold("RPC is not implemented yet")+".");
       // Unknown response error
       else if(isResponse(parsedData)) {
         const type = typeof parsedData.args["type"] === "string" ?

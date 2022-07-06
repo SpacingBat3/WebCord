@@ -24,7 +24,7 @@ export default class CSP {
     };
   private string2object(value: string) {
     const raw = value.split(/;\s+/);
-    const record = {} as cspObject;
+    const record: cspObject = {};
     for(const element of raw) {
       const [rule, value] = element.split(cspKeysRegExp);
       if(rule === undefined || value === undefined) return;

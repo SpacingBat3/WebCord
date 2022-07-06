@@ -229,10 +229,10 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
     const packageJSON: unknown = JSON.parse(readFileSync(file).toString());
     if (!this.isPackageJsonComplete(packageJSON))
       throw new TypeError("While parsing `package.json`: "+this.checkPackageJsonComplete(packageJSON));
-    const newObj = ({} as Pick<PackageJsonProperties, T[number]>)
+    const newObj: Partial<Pick<PackageJsonProperties, T[number]>> = {}
     for (const key of Array.from(new Set(keys)))
       (newObj as Record<string,unknown>)[key] = packageJSON[key]
-    this.data = newObj;
+    this.data = newObj as Pick<PackageJsonProperties, T[number]>;
   }
 }
 
