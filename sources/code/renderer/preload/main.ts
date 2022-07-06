@@ -20,20 +20,28 @@ window.addEventListener("load", () => window.localStorage.setItem("hideNag", "tr
 /*
  * Workaround for clipboard content.
  */
-document.addEventListener("paste", (event) => {
-  const contentTypes = clipboard.availableFormats() as [string, string];
-  if(contentTypes.length === 2 && contentTypes[0].startsWith("image/") && contentTypes[1] === "text/html") {
-    console.debug("[WebCord] Applying clipboard workaround to the image…")
-    // Electron will somehow sort the clipboard to parse it correctly.
-    clipboard.write({
-      image: clipboard.readImage(),
-      html: clipboard.readHTML()
-    })
-    // Retry event, cancel other events.
-    event.stopImmediatePropagation();
-    ipcRenderer.send("paste-workaround")
-  }
-}, true);
+{
+  let lock = true;
+  document.addEventListener("paste", (event) => {
+    const contentTypes = clipboard.availableFormats() as [string, string];
+    if(contentTypes.length === 2 && contentTypes[0].startsWith("image/") &&
+        contentTypes[1] === "text/html" && lock) {
+      console.debug("[WebCord] Applying clipboard workaround to the image…")
+      lock = false;
+      // Electron will somehow sort the clipboard to parse it correctly.
+      clipboard.write({
+        image: clipboard.readImage(),
+        html: clipboard.readHTML()
+      })
+      // Retry event, cancel other events.
+      event.stopImmediatePropagation();
+      ipcRenderer.send("paste-workaround")
+      return;
+    }
+    lock = true;
+    return;
+  }, true);
+}
 
 if (window.location.protocol === "file:") {
   window.addEventListener("load", () => {
