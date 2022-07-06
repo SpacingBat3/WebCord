@@ -5,10 +5,11 @@
 
 /*
  * Handle source maps.
+ * 
  * This module will provide more readable crash output.
  * 
- * It is good idea to load it first to maximize the chance
- * it will load before Electron will print any error.
+ * It is good idea to load it first to maximize the chance it will load before
+ * Electron will print any error.
  */
 
 import { install } from "source-map-support";
@@ -17,12 +18,10 @@ install();
 /*
  * Handle "crashes".
  * 
- * This module should be loaded and initalized before
- * any other part of the code is executed (to maximize
- * the chance WebCord errors will be properly handled)
- * and after source map support (as source map support
- * is less likely to to crash while offering more usefull
- * information).
+ * This module should be loaded and initalized before any other part of the code
+ * is executed (to maximize the chance WebCord errors will be properly handled)
+ * and after source map support (as source map support is less likely to crash
+ * while offering more useful information).
  */
 import crash, {commonCatches} from "../main/modules/error";
 crash();
@@ -188,7 +187,7 @@ let overwriteMain: (() => void | unknown) | undefined;
     app.commandLine.appendSwitch(name, value);
     console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value ? "="+value : ""))
   }
-  // Apply recommended GPU flags if user has opt for them.
+  // Apply recommended GPU flags if user had opt in for them.
   if(new AppConfig().get().useRecommendedFlags.gpu)
     getRecommendedGPUFlags().then(flags => {
       for(const flag of flags) if(!app.isReady()) {
