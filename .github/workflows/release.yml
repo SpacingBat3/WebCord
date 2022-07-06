@@ -10,6 +10,7 @@ jobs:
     env:
       WEBCORD_BUILD: RELEASE
       WEBCORD_FLATPAK: 'TRUE'
+      DEBUG: '*'
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@master
@@ -41,6 +42,9 @@ jobs:
 
   windows:
     runs-on: windows-latest
+    env:
+      WEBCORD_BUILD: RELEASE
+      DEBUG: '*'
     steps:
     - uses: actions/checkout@v2       
     - uses: actions/setup-node@master
@@ -52,24 +56,24 @@ jobs:
 
     - name: Publish artifacts (x64)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish
 
     - name: Publish artifacts (arm64)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a arm64
 
     - name: Publish artifacts (ia32)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a ia32
 
   macos:
     runs-on: macos-latest
+    env:
+      WEBCORD_BUILD: RELEASE
+      DEBUG: '*'
     steps:
     - uses: actions/checkout@v2       
     - uses: actions/setup-node@master
@@ -81,12 +85,10 @@ jobs:
 
     - name: Publish artifacts (x64)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish
 
     - name: Publish artifacts (arm64)
       env:
-        WEBCORD_BUILD: Release
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run publish -- -a arm64
