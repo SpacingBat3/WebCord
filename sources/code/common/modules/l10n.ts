@@ -10,10 +10,12 @@ import { getAppPath, getLocale, getName, showMessageBox } from "./electron";
 // Import fallback translations that will be statically typed.
 import * as __clientJSON from "../../../translations/en/client.json";
 import * as __webJSON from "../../../translations/en/web.json";
+import * as __settingsJSON from "../../../translations/en/settings.json";
 
 const defaultTranslations = {
   client: __clientJSON,
-  web: __webJSON
+  web: __webJSON,
+  settings: __settingsJSON
 }
 
 const langDialog = new EventEmitter();
@@ -63,7 +65,7 @@ class l10n {
     if (!existsSync(internalStringsFile))
       internalStringsFile = externalStringsFile;
 
-    if (process.type === "browser" && !app.isReady()) console.warn(
+    if (process.type === "browser" && process.platform === "win32" && !app.isReady()) console.warn(
       "[WARN] Electron may fail loading localized strings,\n" +
 			"       because the app hasn't still emitted the 'ready' event!\n" +
 			"[WARN] In this case, English strings will be used as a fallback.\n"
@@ -79,11 +81,13 @@ class l10n {
       return defaultTranslations[type];
     }
   }
-  public client;
-  public web;
+  public readonly client;
+  public readonly web;
+  public readonly settings;
   constructor() {
     this.client = this.loadFile("client");
     this.web = this.loadFile("web");
+    this.settings = this.loadFile("settings");
   }
 }
 
