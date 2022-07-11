@@ -1,10 +1,7 @@
-/**
+/*
  * HTML Settings preloader script
- * @todo: Implement "Save changes" and "Cancel" buttons
- * @todo: Implement script inside WebCord
  */
 import { ipcRenderer } from "electron/renderer";
-//import type { HTMLChecklistForms, HTMLRadioCustom, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup } from "../../common/global";
 import type { htmlConfig } from "../../main/windows/settings";
 import type { ConfigElement } from "../../main/modules/config";
 import { getBuildInfo } from "../../common/modules/client";
@@ -16,10 +13,6 @@ type keys = <T>(o:T) => (keyof T)[];
 type generatedConfigGeneric = Record<string,ConfigElement&Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>;
 
 const buildType = getBuildInfo().type;
-
-/*function isChecklistForms(arg: HTMLRadioForms|HTMLChecklistForms|HTMLRadioCustom):arg is HTMLChecklistForms {
-  return (arg as unknown as HTMLChecklistForms).id !== undefined
-}*/
 
 function fetchFromWebsite(this: HTMLInputElement) {
 
@@ -134,75 +127,6 @@ function createForm(form:CheckBoxForm|RadioForm){
   inputForm.appendChild(inputLabel);
   return inputForm;
 }
-
-/*
-function generateSettingsOld(optionsGroups: HTMLSettingsGroup[]) {
-  // Clear old config (so this function can be executed multiple times).
-  document.body.innerHTML = "";
-  // Generate a list of the settings from given configuration
-  for (const group of optionsGroups) {
-    // Title of the settings group, e.g. "Advanced"
-    const h1 = document.createElement("h1");
-
-    // Makes sure title is appended first
-    h1.innerHTML = sanitize(group.title, sanitizeConfig);
-    document.body.appendChild(h1);
-
-    for (const option of group.options) {
-      const h2 = document.createElement("h2");
-      const pDesc = document.createElement("p");
-      const checklistContainer = document.createElement("form");
-
-      // Title for various options, e.g. "Disable tray"
-      h2.innerHTML = sanitize(option.name, sanitizeConfig);
-      pDesc.className = "description";
-      pDesc.innerHTML = sanitize(option.description, sanitizeConfig);
-      checklistContainer.className = "settingsContainer";
-
-      // Hide all elements when option is set as hidden
-      if(option.hidden === true) {
-        h2.style.display = "none";
-        pDesc.style.display = "none";
-        checklistContainer.style.display = "none";
-      }
-
-      // A list of check boxes for a single opiton.
-      for (const checklist of option.forms) {
-        const inputForm = document.createElement("fieldset");
-        const inputTag = document.createElement("input");
-        const inputLabel = document.createElement("label");
-
-        inputTag.type = option.type;
-        if(isChecklistForms(checklist))
-          inputTag.name = inputTag.id = checklist.id;
-        else {
-          inputTag.name = (option as HTMLRadioOption).id;
-          inputTag.value = checklist.value.toString();
-        }
-        inputTag.checked = checklist.isChecked;
-
-        if(checklist.description) {
-          inputTag.title = checklist.description;
-          inputLabel.title = checklist.description;
-        }
-        inputTag.addEventListener("change", fetchFromWebsite);
-
-        inputLabel.innerHTML = sanitize(checklist.label+(inputTag.title !== "" ? " 🛈" : ""));
-        if(isChecklistForms(checklist))
-          inputLabel.setAttribute("for", checklist.id);
-
-
-        inputForm.appendChild(inputTag);
-        inputForm.appendChild(inputLabel);
-        checklistContainer.appendChild(inputForm);
-      }
-      document.body.appendChild(h2);
-      document.body.appendChild(pDesc);
-      document.body.appendChild(checklistContainer);
-    }
-  }
-}
-*/
 
 window.addEventListener("load", () => {
   void ipcRenderer.invoke("settings-generate-html", "ready-to-render")

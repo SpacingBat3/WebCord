@@ -25,68 +25,6 @@ export function isJsonSyntaxCorrect(string: string) {
   return true;
 }
 
-/**
- * Configuration format that can be used to generate a configuration interface
- * for WebCord's settings manager.
- */
-
-export interface HTMLSettingsGroup {
-	/** Title of the settings section. (General, Advanced etc.) */
-    title: string;
-	/** Array of the settings groups in the section. */
-    options: (HTMLChecklistOption|HTMLRadioOption)[]
-}
-
-interface HTMLOption {
-	/** Name of the specific configuration entry (e.g. Tray icon). */
-	name: string;
-	/** Long description of the configuration entry (e.g. Controls the tray apperance) */
-	description: string;
-	/** Whenever this configuration part is visible. */
-	hidden?: boolean;
-	/** Type of the inputs used in the `forms` property. */
-	type: string;
-	/** An array of inputs of the same type that are used for the configuration. */
-	forms: HTMLForms[];
-}
-
-interface HTMLForms {
-	/** A label describing the single checkbox. */
-	label: string;
-	/** Description that will be visible on mouse hover. */
-	description?: string;
-	/** Whenever forms are selected. */
-	isChecked: boolean;
-}
-
-export interface HTMLChecklistForms extends HTMLForms {
-	/**
-	 * An element id used for the indentification of the settings
-	 * entries to get / update its values.
-	 */
-	id: string;
-}
-
-export interface HTMLRadioForms extends HTMLForms {
-	value: number;
-}
-
-export interface HTMLRadioCustom extends HTMLForms {
-	value: "custom";
-	validator: (data:string) => boolean;
-}
-
-export interface HTMLChecklistOption extends HTMLOption {
-	type: "checkbox";
-	forms: HTMLChecklistForms[];
-}
-
-export interface HTMLRadioOption extends HTMLOption {
-	type: "radio";
-	id: string;
-	forms: (HTMLRadioForms|HTMLRadioCustom)[];
-}
-
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
 export const discordFavicons = {
   /** Default favicon (without *blue dot* indicator). */
