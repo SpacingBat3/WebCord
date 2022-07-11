@@ -199,6 +199,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   // "Red dot" icon feature
   let setFavicon: string | undefined;
   win.webContents.on("page-favicon-updated", (_event, favicons) => {
+    let icon: NativeImage;
     if(!tray) return;
     // Convert from DataURL to RAW.
     const faviconRaw = nativeImage.createFromDataURL(favicons[0]??"").toBitmap();
@@ -209,7 +210,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Stop code execution on Fosscord instances.
     if (new URL(win.webContents.getURL()).origin !== knownInstancesList[0][1].origin) {
       setFavicon = faviconHash;
-      tray.setImage(appInfo.trayIcon);
+      icon = nativeImage.createFromPath(appInfo.trayIcon);
       win.flashFrame(false);
       return;
     }
@@ -217,15 +218,21 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Compare hashes.
     if (!configData.get().disableTray) {
       if(faviconHash === discordFavicons.default) {
-        tray.setImage(appInfo.trayIcon);
+        icon = nativeImage.createFromPath(appInfo.trayIcon);
         win.flashFrame(false);
       } else if(faviconHash.startsWith("4")) {
-        tray.setImage(appInfo.trayUnread);
+        icon = nativeImage.createFromPath(appInfo.trayUnread);
         win.flashFrame(false);
       } else {
-        console.debug("[Mention] Hash: "+faviconHash)
-        tray.setImage(appInfo.trayPing);
+        console.debug("[Mention] Hash: "+faviconHash);
+        icon = nativeImage.createFromPath(appInfo.trayPing);
         win.flashFrame(true);
+      }
+      if(tray) {
+        // Resize icon on MacOS when its height is longer than 22 pixels.
+        if(process.platform === "darwin" && icon.getSize().height > 22)
+          icon.resize({height:22});
+        tray.setImage(icon);
       }
       setFavicon = faviconHash;
     }
