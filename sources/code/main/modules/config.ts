@@ -17,10 +17,10 @@ type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reserv
 
 export type ConfigElement = Partial<Record<checkListKeys,boolean>> | {
   radio: number,
-  type: string[],
+  type: string,
 } | {
   dropdown: number
-  type: string[],
+  type: string,
 } | {
   input: string|number
 } | {
@@ -82,7 +82,7 @@ const defaultAppConfig = {
       },
       currentInstance: {
         radio: 0 as 0|1,
-        type: knownInstancesList.map(value => value[0])
+        type: knownInstancesList.map(value => value[0]).join("|")
       },
       devel: {
         enabled: false

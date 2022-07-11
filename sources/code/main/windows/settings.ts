@@ -14,15 +14,14 @@ type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"]
 }
 
 function generateConfig (config:AppConfig) {
-  const lang = (new l10n()).settings;
-  const appConfig = deepmerge((new l10n()).settings, config.get().settings);
+  const appConfig = deepmerge(config.get().settings, (new l10n()).settings);
   const finalConfig: Partial<generatedConfig> = appConfig as object;
   const websitesThirdParty = [
     ["algolia", "Algolia"],
     ["spotify", "Spotify"],
     ["hcaptcha", "hCaptcha"],
     ["paypal", "PayPal"],
-    ["gif", lang.advanced.cspThirdParty.labels.gif],
+    ["gif", appConfig.advanced.cspThirdParty.labels.gif],
     ["youtube", "YouTube"],
     ["twitter", "Twitter"],
     ["twitch", "Twitch"],
@@ -44,17 +43,18 @@ function generateConfig (config:AppConfig) {
 }
 
 export type htmlConfig = [
-  generatedConfig["general"],
-  generatedConfig["privacy"],
-  generatedConfig["advanced"]
+  ["general", generatedConfig["general"]],
+  ["privacy", generatedConfig["privacy"]],
+  ["advanced", generatedConfig["advanced"]]
 ]
 
 export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electron.BrowserWindow|void {
   const config = generateConfig(new AppConfig());
+  console.log(config.advanced.currentInstance.type)
   const htmlConfig:htmlConfig = [
-    config.general,
-    config.privacy,
-    config.advanced
+    ["general", config.general],
+    ["privacy", config.privacy],
+    ["advanced", config.advanced]
   ]
   if(!parent.isVisible()) parent.show();
   const settingsWindow = initWindow("settings", parent, {
@@ -65,6 +65,9 @@ export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electr
   ipcMain.handle("settings-generate-html", () => {
     if(!settingsWindow.isDestroyed()) settingsWindow.show();
     return htmlConfig;
+  })
+  settingsWindow.once("closed", () => {
+    ipcMain.removeHandler("settings-generate-html")
   })
   return settingsWindow;
 }

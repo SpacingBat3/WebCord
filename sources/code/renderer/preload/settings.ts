@@ -4,7 +4,7 @@
  * @todo: Implement script inside WebCord
  */
 import { ipcRenderer } from "electron/renderer";
-import type { HTMLChecklistForms, HTMLRadioCustom, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup } from "../../common/global";
+//import type { HTMLChecklistForms, HTMLRadioCustom, HTMLRadioForms, HTMLRadioOption, HTMLSettingsGroup } from "../../common/global";
 import type { htmlConfig } from "../../main/windows/settings";
 import type { ConfigElement } from "../../main/modules/config";
 import { getBuildInfo } from "../../common/modules/client";
@@ -17,9 +17,9 @@ type generatedConfigGeneric = Record<string,ConfigElement&Record<"name"|"descrip
 
 const buildType = getBuildInfo().type;
 
-function isChecklistForms(arg: HTMLRadioForms|HTMLChecklistForms|HTMLRadioCustom):arg is HTMLChecklistForms {
+/*function isChecklistForms(arg: HTMLRadioForms|HTMLChecklistForms|HTMLRadioCustom):arg is HTMLChecklistForms {
   return (arg as unknown as HTMLChecklistForms).id !== undefined
-}
+}*/
 
 function fetchFromWebsite(this: HTMLInputElement) {
 
@@ -32,19 +32,20 @@ function fetchFromWebsite(this: HTMLInputElement) {
   config = {[dotArray[dotArray.length-1]??0]: value};
   for(let n = dotArray.length-2; n >= 0; n--)
     config = {[dotArray[n]??0]: config}
-  console.log(config);
-  ipcRenderer.send("settings-config-modified", config);
+  console.dir({settings: config});
+  ipcRenderer.send("settings-config-modified", {settings: config});
 }
 
 function generateSettings(optionsGroups: htmlConfig) {
   // Clear old config (so this function can be executed multiple times).
   document.body.innerHTML = "";
-  optionsGroups.map(group => {
+  optionsGroups.map(groupArray => {
+    const [groupId, group] = groupArray;
     const h1 = document.createElement("h1");
     h1.innerHTML = sanitize(group.name, sanitizeConfig);
     document.body.appendChild(h1);
     (Object.keys)(group).map(settingKey => {
-      if(settingKey !== "name" && settingKey !== "devel" || settingKey === buildType) {
+      if(settingKey !== "name" && settingKey !== buildType) {
         const setting = (group as unknown as generatedConfigGeneric)[settingKey]
         if(setting) {
           const h2 = document.createElement("h2");
@@ -52,16 +53,19 @@ function generateSettings(optionsGroups: htmlConfig) {
           const formContainer = document.createElement("form");
 
           h2.innerHTML = sanitize(setting.name);
+          pDesc.classList.add("description");
           pDesc.innerHTML = sanitize(setting.description);
           formContainer.classList.add("settingsContainer");
 
           if("radio" in setting) {
-            setting.type.map(value => {
+            const types = setting.type.split("|")
+            types.map(value => {
               formContainer.appendChild(createForm({
                 type: "radio",
-                id: settingKey,
-                isChecked: value === setting.type[setting.radio],
-                label: value
+                id: groupId+"."+settingKey+".radio",
+                isChecked: value === types[setting.radio],
+                label: value,
+                value: types.indexOf(value).toString()
               }))
             })
           } else if(!("dropdown" in setting || "input" in setting || "keybind" in setting)) {
@@ -69,7 +73,7 @@ function generateSettings(optionsGroups: htmlConfig) {
               if(key !== "name" && key !== "description" && key !== "labels" && setting[key] !== undefined) {
                 formContainer.appendChild(createForm({
                   type:"checkbox",
-                  id: settingKey+"."+key,
+                  id: groupId+"."+settingKey+"."+key,
                   isChecked: setting[key] as boolean,
                   label: setting.labels[key] ?? "N/A"
                 }));
@@ -87,17 +91,39 @@ function generateSettings(optionsGroups: htmlConfig) {
   })
 }
 
-function createForm(form:{type: "checkbox"|"radio", id: string, label:string, isChecked: boolean, description?: string}){
+interface CommonForm {
+  id: string;
+  label:string;
+  isChecked: boolean;
+  description?: string;
+}
+
+interface CheckBoxForm extends CommonForm {
+  type: "checkbox";
+}
+
+interface RadioForm extends CommonForm {
+  type: "radio";
+  value: string;
+}
+
+function createForm(form:CheckBoxForm|RadioForm){
   const inputForm = document.createElement("fieldset");
   const inputTag = document.createElement("input");
   const inputLabel = document.createElement("label");
   inputTag.type = form.type;
   inputTag.name = form.id;
   inputTag.checked = form.isChecked;
-  if(form.type === "checkbox"){
-    inputTag.id = form.id;
-    inputLabel.setAttribute("for", inputTag.id);
+  switch(form.type){
+    case "checkbox":
+      inputTag.id = form.id;
+      break;
+    case "radio":
+      inputTag.id = form.id+form.value;
+      inputTag.value = form.value;
+      break;
   }
+  inputLabel.setAttribute("for", inputTag.id)
   if(form.description) {
     inputTag.title = form.description
     inputLabel.title = form.description
@@ -109,7 +135,7 @@ function createForm(form:{type: "checkbox"|"radio", id: string, label:string, is
   return inputForm;
 }
 
-/** @deprecated */
+/*
 function generateSettingsOld(optionsGroups: HTMLSettingsGroup[]) {
   // Clear old config (so this function can be executed multiple times).
   document.body.innerHTML = "";
@@ -176,12 +202,12 @@ function generateSettingsOld(optionsGroups: HTMLSettingsGroup[]) {
     }
   }
 }
-
-ipcRenderer.on("settings-generate-html", (_event, args: htmlConfig) => {
-  generateSettings(args);
-  wLog("Settings preloaded!");
-});
+*/
 
 window.addEventListener("load", () => {
-  ipcRenderer.send("settings-generate-html", "ready-to-render");
+  void ipcRenderer.invoke("settings-generate-html", "ready-to-render")
+    .then((args:htmlConfig) => {
+      generateSettings(args);
+      wLog("Settings preloaded!");
+    });
 });

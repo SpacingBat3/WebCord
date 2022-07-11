@@ -177,7 +177,7 @@ const csp = {
 
 let cache: {configValues: string, result:CSP} | undefined;
 export function getWebCordCSP(additionalPolicies: CSP[]|[] = []) {
-  const config = new AppConfig().get().csp.thirdparty;
+  const config = new AppConfig().get().settings.advanced.cspThirdParty;
     type parties = keyof typeof config;
     type cspFilter = (value:CSP|undefined) => value is CSP;
     if(cache && cache.configValues === Object.values(config).join())
