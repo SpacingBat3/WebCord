@@ -4,7 +4,7 @@
 
 import * as fs from "fs";
 import { app, BrowserWindow, screen } from "electron/main";
-import { resolve } from "path"
+import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
 import { objectsAreSameType, isJsonSyntaxCorrect, knownInstancesList } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
@@ -30,7 +30,7 @@ export type ConfigElement = Partial<Record<checkListKeys,boolean>> | {
 const test = {} as unknown as ConfigElement;
 
 if("radio" in test)
-  test.radio
+  test.radio;
 
 export interface AppConfigBase {
   settings: Record<string, Record<string, ConfigElement>>,
@@ -104,7 +104,7 @@ const defaultAppConfig = {
       till: "",
     },
   }
-}
+};
 
 class Config<T> {
   /** Default configuration values. */
@@ -131,7 +131,7 @@ class Config<T> {
   /** Returns the entire parsed configuration file in form of the JavaScript object. */
   public get(): typeof this.defaultConfig {
     const parsedConfig:unknown = JSON.parse(fs.readFileSync(this.path).toString());
-    const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig)
+    const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig);
     if(objectsAreSameType(mergedConfig, this.defaultConfig))
       return mergedConfig;
     else
@@ -153,7 +153,7 @@ class Config<T> {
  */
 export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigBase ? typeof defaultAppConfig : never> {
   protected override defaultConfig = defaultAppConfig;
-  protected override path: fs.PathLike = resolve(app.getPath("userData"), "config.json")
+  protected override path: fs.PathLike = resolve(app.getPath("userData"), "config.json");
   /**
    * Initializes the main application configuration and provides the way of controling it,
    * using `get`, `set` and `getProperty` public methods.
@@ -169,8 +169,8 @@ export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigB
     else {
       // If config is not a valid JSON file, remove it.
       if(!isJsonSyntaxCorrect(fs.readFileSync(this.path).toString()))
-        fs.rmSync(this.path)
-      this.write({...this.defaultConfig, ...this.get()})
+        fs.rmSync(this.path);
+      this.write({...this.defaultConfig, ...this.get()});
     }
   }
 }
@@ -182,7 +182,7 @@ type windowStatus = {
 }
 
 export class WinStateKeeper extends Config<Record<string, windowStatus>> {
-  protected override path: fs.PathLike = resolve(app.getPath("userData"),"windowState.json")
+  protected override path: fs.PathLike = resolve(app.getPath("userData"),"windowState.json");
   private windowName: string;
   /**
    * An object containing width and height of the window watched by `WinStateKeeper`
@@ -190,7 +190,7 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
   public initState: Readonly<windowStatus>;
   private setState(window: BrowserWindow, eventType?: string) {
     // Workaround: fix `*maximize` events being detected as `resize`:
-    let event = eventType
+    let event = eventType;
     if(eventType === "resize" && window.isMaximized())
       event = "maximize";
     else if (eventType === "resize" && this.get()?.[this.windowName]?.isMaximized)
@@ -204,7 +204,7 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
             height: this.get()?.[this.windowName]?.height ?? window.getNormalBounds().height,
             isMaximized: window.isMaximized()
           }
-        })
+        });
         break;
       default:
         this.set({
@@ -246,7 +246,7 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
     const defaults = {
       width: appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3),
       height: appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3),
-    }
+    };
     this.windowName = windowName;
     this.defaultConfig = {
       [this.windowName]: {
@@ -254,19 +254,19 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
         height: defaults.height,
         isMaximized: false
       }
-    }
+    };
     if (!fs.existsSync(this.path))
       this.write(this.defaultConfig);
     else {
       // If config is not a valid JSON file, remove it.
       if(!isJsonSyntaxCorrect(fs.readFileSync(this.path).toString()))
-        fs.rmSync(this.path)
-      this.write({...this.defaultConfig, ...this.get()})
+        fs.rmSync(this.path);
+      this.write({...this.defaultConfig, ...this.get()});
     }
     this.initState = {
       width: this.get()?.[this.windowName]?.width ?? defaults.width,
       height: this.get()?.[this.windowName]?.height ?? defaults.height,
       isMaximized: this.get()?.[this.windowName]?.isMaximized ?? false
-    }
+    };
   }
 }

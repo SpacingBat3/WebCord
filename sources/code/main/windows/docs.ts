@@ -13,16 +13,16 @@ async function handleEvents(docsWindow: Electron.BrowserWindow) {
   // Guess correct Readme.md file
   let readmeFile = "docs/Readme.md";
   if(existsSync(resolve(app.getAppPath(), "docs", app.getLocale(), "Readme.md")))
-    readmeFile = "docs/"+app.getLocale()+"/Readme.md"
-  ipcMain.removeAllListeners("documentation-load")
+    readmeFile = "docs/"+app.getLocale()+"/Readme.md";
+  ipcMain.removeAllListeners("documentation-load");
   ipcMain.handle("documentation-load", () => {
     ipcMain.once("documentation-show", () => {
       if(!docsWindow.isDestroyed()) {
         docsWindow.show();
       }
-    })
+    });
     return resolve(app.getAppPath(), readmeFile);
-  })
+  });
 }
 
 export default async function loadDocsWindow(parent: Electron.BrowserWindow) {

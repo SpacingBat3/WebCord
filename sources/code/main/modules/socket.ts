@@ -57,8 +57,8 @@ function isResponse<C,T>(data:unknown, cmd?: C&string|(C&string)[], argsType?: T
   function checkRecord<T extends (string|number|symbol)[], X extends typeofResult>(record:Record<string|number|symbol, unknown>,keys:T,arg:X): record is Record<T[number],typeofResolved<X>> {
     for(const key of keys)
       if(typeof record[key] !== arg)
-        return false
-    return true
+        return false;
+    return true;
   }
   if(typeof (data as Partial<Response<string,never>>)?.cmd !== "string")
     return false;
@@ -114,7 +114,7 @@ const messages = {
     evt: "READY",
     nonce: null
   }
-}
+};
 /** 
  * Tries to reserve the server at given port.
  * 
@@ -127,7 +127,7 @@ async function getServer(port:number) {
     const wss = new WebSocketServer({ host: "127.0.0.1", port });
     wss.once("listening", () => resolve(wss));
     wss.once("error", () => resolve(null));
-  })
+  });
 }
 
 /**
@@ -182,7 +182,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
       // Invite response handling
       if(isResponse(parsedData, ["INVITE_BROWSER", "GUILD_TEMPLATE_BROWSER"] as ("INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER")[])) {
         if(lock) {
-          console.debug('Blocked request "'+parsedData.cmd+'" (WSS locked).')
+          console.debug('Blocked request "'+parsedData.cmd+'" (WSS locked).');
           return;
         }
         lock = true;
@@ -197,7 +197,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
           nonce: parsedData.nonce
         }));
         const winProperties = parsedData.cmd === "GUILD_TEMPLATE_BROWSER" ?
-          {width: 960} : {}
+          {width: 960} : {};
         const child = initWindow("invite", window, winProperties);
         if(child === undefined) return;
         const path = parsedData.cmd === "INVITE_BROWSER" ?
@@ -206,7 +206,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
         if(path !== null)
           void child.loadURL(origin+path+parsedData.args.code);
         else
-          throw new TypeError('WSS handled wrong request type: "'+parsedData.cmd+'".')
+          throw new TypeError('WSS handled wrong request type: "'+parsedData.cmd+'".');
         child.webContents.once("did-finish-load", () => {
           child.show();
         });
@@ -246,6 +246,6 @@ export default async function startServer(window:Electron.BrowserWindow) {
       // Unknown binary data transfer error
       else
         console.error("[WS] Unknown data transfer (not text).");
-    })
-  })
+    });
+  });
 }

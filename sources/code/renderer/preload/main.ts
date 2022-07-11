@@ -26,16 +26,16 @@ window.addEventListener("load", () => window.localStorage.setItem("hideNag", "tr
     const contentTypes = clipboard.availableFormats() as [string, string];
     if(contentTypes.length === 2 && contentTypes[0].startsWith("image/") &&
         contentTypes[1] === "text/html" && lock) {
-      console.debug("[WebCord] Applying clipboard workaround to the image…")
+      console.debug("[WebCord] Applying clipboard workaround to the image…");
       lock = false;
       // Electron will somehow sort the clipboard to parse it correctly.
       clipboard.write({
         image: clipboard.readImage(),
         html: clipboard.readHTML()
-      })
+      });
       // Retry event, cancel other events.
       event.stopImmediatePropagation();
-      ipcRenderer.send("paste-workaround")
+      ipcRenderer.send("paste-workaround");
       return;
     }
     lock = true;
@@ -45,7 +45,7 @@ window.addEventListener("load", () => window.localStorage.setItem("hideNag", "tr
 
 if (window.location.protocol === "file:") {
   window.addEventListener("load", () => {
-    const element = document.getElementById("logo")
+    const element = document.getElementById("logo");
     if(element && element.tagName === "IMG")
       (element as HTMLImageElement).src = getAppIcon([512,256,192]);
   });
@@ -63,6 +63,6 @@ ipcRenderer.send("api-exposed", contextBridgeApiKey);
  */
 ipcRenderer.on("navigate", (_event, path:string) => {
   navigate(path);
-})
+});
 
 wLog("Everything has been preloaded successfully!");

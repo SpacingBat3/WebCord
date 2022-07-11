@@ -44,7 +44,7 @@ export function getUserAgent(chromeVersion: string, platform?: NodeJS.Platform):
       fakeUserAgent = "Mozilla/5.0 (Windows NT "+osVersion+"; "+WOW64+") AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+" Safari/537.36";
       break;
     case "android":
-      fakeUserAgent = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+" Mobile Safari/537.36"
+      fakeUserAgent = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+" Mobile Safari/537.36";
       break;
     default:
       fakeUserAgent = "Mozilla/5.0 (X11; "+os.type()+" "+getAgentArch()+") AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+" Safari/537.36";

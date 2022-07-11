@@ -110,7 +110,7 @@ export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
 
   const results = Object.keys({...object1,...object2}).map(key => {
     if(key in object1 && key in object2) {
-      const key1:unknown = object1[key as keyof unknown], key2:unknown = object2[key as keyof unknown]
+      const key1:unknown = object1[key as keyof unknown], key2:unknown = object2[key as keyof unknown];
       if(typeof key1 === typeof key2) {
         if(typeof key1 === "object") {
           if(Array.isArray(key1)&&Array.isArray(key2))
@@ -123,7 +123,7 @@ export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
       return false;
     }
     return true;
-  })
+  });
   return !results.includes(false);
 }
 
@@ -146,7 +146,7 @@ export const trustedProtocolRegExp = /^(https:|mailto:|tel:|sms:)$/;
 export const knownInstancesList = [
   ["Discord", new URL("https://discord.com/app")],
   ["Fosscord", new URL("https://dev.fosscord.com/app")]
-] as const
+] as const;
 
 export interface buildInfo {
 	type: "release" | "devel";
@@ -177,7 +177,7 @@ export function isBuildInfo(object: unknown): object is buildInfo {
     return false;
 
   /** List of valid properties for the `.features` object. */
-  const features = ["updateNotifications"]
+  const features = ["updateNotifications"];
   // #5 If object contains the 'features' property, it should be an object.
   if (Object.prototype.hasOwnProperty.call(object, "features"))
     if (!((object as buildInfo).features instanceof Object))
@@ -195,7 +195,7 @@ export function isBuildInfo(object: unknown): object is buildInfo {
 }
 
 export function getAppIcon(sizes:number[]) {
-  const defaultPath = resolve(getAppPath(), "sources/assets/icons/app.png")
+  const defaultPath = resolve(getAppPath(), "sources/assets/icons/app.png");
   if(existsSync(defaultPath))
     return defaultPath;
   for (const size of sizes)
@@ -223,4 +223,4 @@ export const sanitizeConfig = {
   ALLOWED_TAGS: ["b", "i", "u", "s", "em", "kbd", "strong", "code", "small"],
   /** Block every attribute */
   ALLOWED_ATTR: []
-}
+};

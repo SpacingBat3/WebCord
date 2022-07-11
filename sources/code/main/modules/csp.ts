@@ -11,7 +11,7 @@ const cspKeys = [
   "media-src",
   "frame-src",
   "child-src"
-] as const
+] as const;
 
 const cspKeysRegExp = new RegExp("(?<="+cspKeys.join("|")+")\\s+");
 
@@ -66,12 +66,12 @@ export default class CSP {
       this.values = {
         object: value,
         string: this.object2string(value)
-      }
+      };
     else
       this.values = {
         object: this.string2object(value) ?? {},
         string: this.object2string(this.string2object(value) ?? {})
-      }
+      };
   }
 }
 
@@ -173,7 +173,7 @@ const csp = {
     "media-src": "https://*.youtube.com",
     "frame-src": "https://www.youtube.com/embed/"
   })
-}
+};
 
 let cache: {configValues: string, result:CSP} | undefined;
 export function getWebCordCSP(additionalPolicies: CSP[]|[] = []) {
@@ -189,13 +189,13 @@ export function getWebCordCSP(additionalPolicies: CSP[]|[] = []) {
         ...Object.keys(config)
           .map((key) => {
             if(config[key as parties])
-              return csp[key as parties]
+              return csp[key as parties];
             else
-              return undefined
+              return undefined;
           })
           .filter(((value) => value !== undefined) as cspFilter),
         ...additionalPolicies
       )
-    }
+    };
     return cache.result;
 }

@@ -18,7 +18,7 @@ function isMediaStreamConstrains(object:unknown): object is EMediaStreamConstrai
     if(!(child in object))
       return false;
     else {
-      const testValue = (object as EMediaStreamConstraints)[child as keyof EMediaStreamConstraints]
+      const testValue = (object as EMediaStreamConstraints)[child as keyof EMediaStreamConstraints];
       switch (typeof testValue) {
         case "boolean":
           break;
@@ -42,5 +42,5 @@ export default function desktopCapturerPicker(): Promise<EMediaStreamConstraints
         reject(result);
       }
     }).catch((reason:unknown) => reject(reason));
-  })
+  });
 }

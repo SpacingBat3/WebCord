@@ -23,7 +23,7 @@ import type { MakerDMGConfig } from "@electron-forge/maker-dmg/dist/Config";
 
 // Publisher config types
 
-import { PublisherGitHubConfig } from "@electron-forge/publisher-github/dist/Config"
+import { PublisherGitHubConfig } from "@electron-forge/publisher-github/dist/Config";
 
 type Redeclare<I, M> = Omit<I, keyof M> & M;
 

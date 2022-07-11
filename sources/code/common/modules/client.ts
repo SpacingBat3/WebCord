@@ -13,13 +13,13 @@ export function getBuildInfo(): buildInfo {
     const data = readFileSync(resolve(getAppPath(), "buildInfo.json"));
     let buildInfo:unknown = JSON.parse(data.toString());
     if(process.platform === "win32" && buildInfo instanceof Object)
-      buildInfo = {...buildInfo, ...{AppUserModelId: appInfo.id.win32}}
+      buildInfo = {...buildInfo, ...{AppUserModelId: appInfo.id.win32}};
     if (isBuildInfo(buildInfo))
-      return buildInfo
+      return buildInfo;
     else
-      return { type: "devel" }
+      return { type: "devel" };
   } catch {
-    return { type: "devel" }
+    return { type: "devel" };
   }
 }
 

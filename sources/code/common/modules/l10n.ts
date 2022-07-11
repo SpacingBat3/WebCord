@@ -16,7 +16,7 @@ const defaultTranslations = {
   client: __clientJSON,
   web: __webJSON,
   settings: __settingsJSON
-}
+};
 
 const langDialog = new EventEmitter();
 

@@ -24,14 +24,15 @@
     ]
   },
   "rules": {
-    "indent": ["error", 2, {
+    "indent": ["warn", 2, {
       "SwitchCase": 1
     }],
-    "no-trailing-spaces": ["error", {
+    "no-trailing-spaces": ["warn", {
       "skipBlankLines": true,
       "ignoreComments": true
     }],
-    "quotes": ["error", "double", {"avoidEscape": true }],
+    "quotes": ["warn", "double", {"avoidEscape": true }],
+    "semi": "warn",
     "camelcase": "error",
     "valid-typeof": "error",
     "guard-for-in": "error",

@@ -21,8 +21,8 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     button.appendChild(thumbnail);
 
     // A container for icon and label
-    const labelContainer = document.createElement("div")
-    labelContainer.className = "capturer-label-container"
+    const labelContainer = document.createElement("div");
+    labelContainer.className = "capturer-label-container";
 
     // Icon
     if (source.appIcon) {
@@ -78,4 +78,4 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
   }).catch(reason => ipc.send("closeCapturerView", reason));
-})
+});

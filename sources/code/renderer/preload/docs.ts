@@ -1,4 +1,4 @@
-import { marked } from "marked"
+import { marked } from "marked";
 import { sanitize } from "dompurify";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
@@ -6,7 +6,7 @@ import { pathToFileURL, fileURLToPath } from "url";
 import { trustedProtocolRegExp } from "../../common/global";
 import * as _hljsmodule from "highlight.js";
 
-const htmlFileUrl = document.URL
+const htmlFileUrl = document.URL;
 
 // Workaround for highlight's wrong export type (there shouldn't be default as "root").
 const { highlight } = (_hljsmodule as unknown as _hljsmodule.HLJSApi);
@@ -15,18 +15,18 @@ const { highlight } = (_hljsmodule as unknown as _hljsmodule.HLJSApi);
 
 marked.setOptions({
   highlight: (code, lang) => {
-    if (lang==="") return
+    if (lang==="") return;
     const language = (() => {
       if (lang==="jsonc") return "json"; // highlight does not support JSONC as JSON alias
       return lang;
-    })()
+    })();
     return highlight(code, {language: language}).value;
   }
-})
+});
 
 const menu = document.createElement("img");
-menu.src = "../../icons/symbols/menu.svg"
-menu.id = "menu-hamburger"
+menu.src = "../../icons/symbols/menu.svg";
+menu.id = "menu-hamburger";
 
 const menuHeader = document.createElement("p");
 
@@ -52,22 +52,22 @@ function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdA
 function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLElement, mdPrevious: string):void {
   for(const link of container.getElementsByTagName("a")){
     link.onclick = () => {
-      window.history.replaceState("", "", pathToFileURL(mdPrevious))
+      window.history.replaceState("", "", pathToFileURL(mdPrevious));
       // Handle links with the whitelisted protocols
       if(new URL(link.href).protocol.match(trustedProtocolRegExp)) {
-        open(link.href)
+        open(link.href);
         // Handle in-document links
       } else if (link.href.startsWith(document.URL.replace(/#.*/, "")+"#")) {
         const id = getId(link.href);
         if (id) {
-          const element = document.getElementById(id)
+          const element = document.getElementById(id);
           if(element) element.scrollIntoView({behavior: "smooth"});
         }
         // Handle markdown links and 'LICENSE' files.
       } else if(link.href.match(/^file:\/\/.+(\.md|LICENSE)(#[a-z0-9-]+)?$/)) {
         const mdFile = fileURLToPath(link.href);
         const id = getId(link.href);
-        const oldHeader = menuHeader.innerHTML
+        const oldHeader = menuHeader.innerHTML;
         menuHeader.innerText = basename(mdFile);
         document.body.removeChild(article);
         if(existsSync(mdFile)){
@@ -98,25 +98,25 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
           if (element) element.scrollIntoView();
         }
       }
-      window.history.pushState("", "", htmlFileUrl)
+      window.history.pushState("", "", htmlFileUrl);
       return false;
-    }
+    };
   }
 }
 
 function fixImages(container:HTMLElement) {
   // Fix logo URL in Readme files.
   const logo = container.querySelector<HTMLImageElement>('a[href="https://github.com/SpacingBat3/WebCord"] > picture > img');
-  const logoPicture = logo?.parentNode ?? null
-  const logoAnchor = logoPicture?.parentElement ?? null
+  const logoPicture = logo?.parentNode ?? null;
+  const logoAnchor = logoPicture?.parentElement ?? null;
   if(logo===null||logoPicture===null||logoAnchor===null) return;
-  (logoPicture as HTMLPictureElement).remove()
+  (logoPicture as HTMLPictureElement).remove();
   if(logo.src.match("/sources/assets/web"))
     logo.src=logo.src.replace("/sources/assets/web","");
   else
     logo.src=logo.src.replace("/sources/assets","");
-  const newLogo = logo.cloneNode()
-  logoAnchor.appendChild(newLogo)
+  const newLogo = logo.cloneNode();
+  logoAnchor.appendChild(newLogo);
     
   // Remove badges (they require an internet connection).
   for(const image of container.getElementsByTagName("img"))
@@ -153,7 +153,7 @@ document.addEventListener("readystatechange", () => {
             setBody(mdBody, mdHeader, readmeFile, mdArticle);
             mdBody.getElementsByTagName("sub")[0]?.parentElement?.remove();
           } else {
-            scrollOptions = {behavior:"smooth"}
+            scrollOptions = {behavior:"smooth"};
           }
           let docsId = "documentation";
           if(navigator.language === "pl")
@@ -167,7 +167,7 @@ document.addEventListener("readystatechange", () => {
       .finally(() => {
         void import("electron/renderer")
           .then(electron => electron.ipcRenderer)
-          .then(ipc => ipc.send("documentation-show"))
+          .then(ipc => ipc.send("documentation-show"));
       })
       .catch(error => {
         if(error instanceof Error)
@@ -176,5 +176,5 @@ document.addEventListener("readystatechange", () => {
           throw new Error(error);
         else
           console.error(error);
-      })
+      });
 });

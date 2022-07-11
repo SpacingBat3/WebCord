@@ -34,11 +34,11 @@ function generateConfig (config:AppConfig) {
   // Append more third-party sites labels.
   websitesThirdParty.map(stringGroup => {
     if(finalConfig?.advanced?.cspThirdParty?.labels && !finalConfig.advanced.cspThirdParty.labels[stringGroup[0]])
-      finalConfig.advanced.cspThirdParty.labels[stringGroup[0]] = stringGroup[1]
+      finalConfig.advanced.cspThirdParty.labels[stringGroup[0]] = stringGroup[1];
   });
   // Append name from CSP.
   if(finalConfig?.advanced?.cspThirdParty?.name)
-    finalConfig.advanced.cspThirdParty.name = appConfig.advanced.csp.name + " – " + appConfig.advanced.cspThirdParty.name
+    finalConfig.advanced.cspThirdParty.name = appConfig.advanced.csp.name + " – " + appConfig.advanced.cspThirdParty.name;
   return finalConfig as generatedConfig;
 }
 
@@ -50,28 +50,28 @@ export type htmlConfig = [
 
 export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electron.BrowserWindow|void {
   const config = generateConfig(new AppConfig());
-  console.log(config.advanced.currentInstance.type)
+  console.log(config.advanced.currentInstance.type);
   const htmlConfig:htmlConfig = [
     ["general", config.general],
     ["privacy", config.privacy],
     ["advanced", config.advanced]
-  ]
+  ];
   if(!parent.isVisible()) parent.show();
   const settingsWindow = initWindow("settings", parent, {
     minWidth: appInfo.minWinWidth,
     minHeight: appInfo.minWinHeight,
-  })
+  });
   if(settingsWindow === undefined) return;
   ipcMain.handle("settings-generate-html", () => {
     if(!settingsWindow.isDestroyed()) settingsWindow.show();
     return htmlConfig;
-  })
+  });
   settingsWindow.once("closed", () => {
-    ipcMain.removeHandler("settings-generate-html")
-  })
+    ipcMain.removeHandler("settings-generate-html");
+  });
   return settingsWindow;
 }
 
 ipcMain.on("settings-config-modified", (_event, config:AppConfig["defaultConfig"])=> {
   new AppConfig().set(config);
-})
+});

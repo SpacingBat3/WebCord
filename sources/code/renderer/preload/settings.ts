@@ -13,7 +13,7 @@ import { sanitize } from "dompurify";
 
 type keys = <T>(o:T) => (keyof T)[];
 
-type generatedConfigGeneric = Record<string,ConfigElement&Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>
+type generatedConfigGeneric = Record<string,ConfigElement&Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>;
 
 const buildType = getBuildInfo().type;
 
@@ -25,13 +25,13 @@ function fetchFromWebsite(this: HTMLInputElement) {
 
   const dotArray = this.name.split(".");
 
-  const value = (this.type === "checkbox" ? this.checked : parseInt(this.value))
+  const value = (this.type === "checkbox" ? this.checked : parseInt(this.value));
 
   let config:Record<string, unknown> = {};
 
   config = {[dotArray[dotArray.length-1]??0]: value};
   for(let n = dotArray.length-2; n >= 0; n--)
-    config = {[dotArray[n]??0]: config}
+    config = {[dotArray[n]??0]: config};
   console.dir({settings: config});
   ipcRenderer.send("settings-config-modified", {settings: config});
 }
@@ -46,7 +46,7 @@ function generateSettings(optionsGroups: htmlConfig) {
     document.body.appendChild(h1);
     (Object.keys)(group).map(settingKey => {
       if(settingKey !== "name" && settingKey !== buildType) {
-        const setting = (group as unknown as generatedConfigGeneric)[settingKey]
+        const setting = (group as unknown as generatedConfigGeneric)[settingKey];
         if(setting) {
           const h2 = document.createElement("h2");
           const pDesc = document.createElement("p");
@@ -58,7 +58,7 @@ function generateSettings(optionsGroups: htmlConfig) {
           formContainer.classList.add("settingsContainer");
 
           if("radio" in setting) {
-            const types = setting.type.split("|")
+            const types = setting.type.split("|");
             types.map(value => {
               formContainer.appendChild(createForm({
                 type: "radio",
@@ -66,8 +66,8 @@ function generateSettings(optionsGroups: htmlConfig) {
                 isChecked: value === types[setting.radio],
                 label: value,
                 value: types.indexOf(value).toString()
-              }))
-            })
+              }));
+            });
           } else if(!("dropdown" in setting || "input" in setting || "keybind" in setting)) {
             (Object.keys as keys)(setting).map(key => {
               if(key !== "name" && key !== "description" && key !== "labels" && setting[key] !== undefined) {
@@ -78,7 +78,7 @@ function generateSettings(optionsGroups: htmlConfig) {
                   label: setting.labels[key] ?? "N/A"
                 }));
               }
-            })
+            });
           } else {
             throw new Error("Still unimplemented / unsupported configuration type!");
           }
@@ -87,8 +87,8 @@ function generateSettings(optionsGroups: htmlConfig) {
           document.body.appendChild(formContainer);
         }
       }
-    })
-  })
+    });
+  });
 }
 
 interface CommonForm {
@@ -123,10 +123,10 @@ function createForm(form:CheckBoxForm|RadioForm){
       inputTag.value = form.value;
       break;
   }
-  inputLabel.setAttribute("for", inputTag.id)
+  inputLabel.setAttribute("for", inputTag.id);
   if(form.description) {
-    inputTag.title = form.description
-    inputLabel.title = form.description
+    inputTag.title = form.description;
+    inputLabel.title = form.description;
   }
   inputTag.addEventListener("change", fetchFromWebsite);
   inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""));
@@ -182,8 +182,8 @@ function generateSettingsOld(optionsGroups: HTMLSettingsGroup[]) {
         inputTag.checked = checklist.isChecked;
 
         if(checklist.description) {
-          inputTag.title = checklist.description
-          inputLabel.title = checklist.description
+          inputTag.title = checklist.description;
+          inputLabel.title = checklist.description;
         }
         inputTag.addEventListener("change", fetchFromWebsite);
 
