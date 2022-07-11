@@ -14,7 +14,7 @@ import * as __webJSON from "../../../translations/en/web.json";
 const defaultTranslations = {
   client: __clientJSON,
   web: __webJSON
-}
+};
 
 const langDialog = new EventEmitter();
 

@@ -44,7 +44,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     case -1:
     // Application is newer than remote version.
       if(getBuildInfo().type === "devel")
-        updateMsg = strings.dialog.ver.devel
+        updateMsg = strings.dialog.ver.devel;
       else
         updateMsg = strings.dialog.ver.downgrade +
                     " (v" + app.getVersion() + " → v" + githubApi["tag_name"].replace(/^v(.+)$/,"$1") + ")";
@@ -61,7 +61,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     body: updateMsg
   };
   const nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate()+7)
+  nextWeek.setDate(nextWeek.getDate()+7);
   const ignored = (
     config.notification.version === githubApi["tag_name"] &&
         new Date(config.notification.till) < nextWeek
@@ -81,7 +81,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
               till: (JSON.parse(JSON.stringify(nextWeek)) as string)
             }
           }
-        })
+        });
     });
     notification.show();
   }

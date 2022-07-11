@@ -9,20 +9,20 @@ import { wLog, sanitizeConfig } from "../../common/global";
 import { sanitize } from "dompurify";
 
 function isChecklistForms(arg: HTMLRadioForms|HTMLChecklistForms|HTMLRadioCustom):arg is HTMLChecklistForms {
-  return (arg as unknown as HTMLChecklistForms).id !== undefined
+  return (arg as unknown as HTMLChecklistForms).id !== undefined;
 }
 
 function fetchFromWebsite(this: HTMLInputElement) {
 
   const dotArray = this.name.split(".");
 
-  const value = (this.type === "checkbox" ? this.checked : parseInt(this.value))
+  const value = (this.type === "checkbox" ? this.checked : parseInt(this.value));
 
   let config:Record<string, unknown> = {};
 
   config = {[dotArray[dotArray.length-1]??0]: value};
   for(let n = dotArray.length-2; n >= 0; n--)
-    config = {[dotArray[n]??0]: config}
+    config = {[dotArray[n]??0]: config};
   console.log(config);
   ipcRenderer.send("settings-config-modified", config);
 }
@@ -73,8 +73,8 @@ function generateSettings(optionsGroups: HTMLSettingsGroup[]) {
         inputTag.checked = checklist.isChecked;
 
         if(checklist.description) {
-          inputTag.title = checklist.description
-          inputLabel.title = checklist.description
+          inputTag.title = checklist.description;
+          inputLabel.title = checklist.description;
         }
         inputTag.addEventListener("change", fetchFromWebsite);
 

@@ -33,6 +33,7 @@
     }],
     "quotes": ["error", "double", {"avoidEscape": true }],
     "camelcase": "error",
+    "semi": "error",
     "valid-typeof": "error",
     "guard-for-in": "error",
     "no-await-in-loop": "error",

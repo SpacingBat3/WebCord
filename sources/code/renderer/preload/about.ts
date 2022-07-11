@@ -17,7 +17,7 @@ async function getUserAvatar(person: Person, size = 96) {
   const sources = [], promises = [], controler = new AbortController();
   sources.push("https://github.com/"+encodeURIComponent(person.name)+".png?size="+size.toString());
   if(person.email)
-    sources.push("https://gravatar.com/avatar/"+createHash("md5").update(person.email).digest("hex")+"?d=404&s="+size.toString())
+    sources.push("https://gravatar.com/avatar/"+createHash("md5").update(person.email).digest("hex")+"?d=404&s="+size.toString());
   for(const source of sources) {
     promises.push(fetch(source, { signal: controler.signal }).then(async (data) => {
       if(data.ok && data.headers.get("Content-Type")?.startsWith("image")) {
@@ -27,7 +27,7 @@ async function getUserAvatar(person: Person, size = 96) {
         image.addEventListener("load", () => URL.revokeObjectURL(blobUrl));
         return image;
       } else if(data.ok)
-        throw new Error("[Avatar] Not an image!")
+        throw new Error("[Avatar] Not an image!");
       else
         throw new Error("[Avatar] HTTP "+data.status.toString()+data.statusText);
     }));
@@ -49,7 +49,7 @@ function addContributor(person: Person, role?: string) {
   if(typeof person.url === "string")
     link.href = person.url;
   else if (typeof person.email === "string")
-    link.href = "mailto:"+person.email
+    link.href = "mailto:"+person.email;
   if(link.href !== "") {
     link.innerText = person.name;
     link.rel="noreferrer";
@@ -63,7 +63,7 @@ function addContributor(person: Person, role?: string) {
 
   if(role) {
     const roleElement = document.createElement("p");
-    roleElement.classList.add("description")
+    roleElement.classList.add("description");
     roleElement.innerText = role;
     description.appendChild(roleElement);
   }
@@ -73,7 +73,7 @@ function addContributor(person: Person, role?: string) {
 
 const locks = {
   dialog: false
-}
+};
 
 interface aboutWindowDetails {
     appName: string;
@@ -132,7 +132,7 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
   const details = await detailsPromise;
   nameElement.innerText = details.appName + " ("+details.buildInfo.type+")";
   versionElement.innerText = "v" + details.appVersion + (details.buildInfo.commit !== undefined ? "-"+details.buildInfo.commit.substring(0, 7) : "");
-  (document.getElementById("logo") as HTMLImageElement).src = getAppIcon([256,192,128,96])
+  (document.getElementById("logo") as HTMLImageElement).src = getAppIcon([256,192,128,96]);
     
   if(repoElement.tagName === "A")
     (repoElement as HTMLAnchorElement).href = details.appRepo??"";
@@ -140,7 +140,7 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
   for (const id of Object.keys(l10n.about)) {
     const element = document.getElementById(id);
     if(element)
-      element.innerText = l10n.about[id as keyof typeof l10n.about]
+      element.innerText = l10n.about[id as keyof typeof l10n.about];
   }
   const [features, versions, checksum] = [
     document.getElementById("features"),
@@ -149,7 +149,7 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
   ];
   if(versions)
     versions.innerText = process.versions.electron+" / "+
-            process.versions.chrome+" / "+process.versions.node
+            process.versions.chrome+" / "+process.versions.node;
   if(features) {
     for(const [key, value] of Object.entries(details.buildInfo.features ?? {}))
       if(value)
@@ -162,13 +162,13 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
       features.style.fontStyle = "italic";
     }
   }
-  if(checksum) checksum.innerText = (await getAppHash("sha256", "base64")) ?? "N/A"
+  if(checksum) checksum.innerText = (await getAppHash("sha256", "base64")) ?? "N/A";
 }
 
 function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promise<aboutWindowDetails>) {
   const packageJson = new PackageJSON(["dependencies", "devDependencies"]);
   for (const id of Object.keys(l10n.licenses).filter((value)=>value.match(/^(?:licensedUnder|packageAuthors)$/) === null)) {
-    const element = document.getElementById(id)
+    const element = document.getElementById(id);
     if(element)
       void details
         .then(details => details.appName)
@@ -181,7 +181,7 @@ function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promis
     const {data} = new PackageJSON(
       ["author", "license", "version", "description"],
       resolve(getAppPath(), "node_modules/"+packName+"/package.json")
-    )
+    );
     const npmLink = document.createElement("a");
     const title = document.createElement("h3");
     const copy = document.createElement("p");
@@ -194,7 +194,7 @@ function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promis
             new Person(data.author ?? '"'+l10n.licenses.packageAuthors
               .replace("%s", packName)+'"').name + " " +
                 l10n.licenses.licensedUnder.replace("%s","<code>"+data.license+"</code>")
-    , sanitizeConfig)
+    , sanitizeConfig);
     npmLink.appendChild(title);
     document.getElementById("licenses")?.appendChild(npmLink);
     document.getElementById("licenses")?.appendChild(copy);
@@ -212,7 +212,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // Header sections names
   for(const div of document.querySelectorAll<HTMLDivElement>("nav > div")) {
     const content = div.querySelector<HTMLDivElement>("div.content");
-    if(content) content.innerText = l10n.nav[div.id.replace("-nav","") as keyof typeof l10n.nav]
+    if(content) content.innerText = l10n.nav[div.id.replace("-nav","") as keyof typeof l10n.nav];
   }
   // Get app details and inject them into the page
   const details = ipc.invoke("about.getDetails") as Promise<aboutWindowDetails>;
@@ -228,7 +228,7 @@ window.addEventListener("DOMContentLoaded", () => {
         
   // Generate "credits"
   if(packageJson.data.author)
-    addContributor(new Person(packageJson.data.author), l10n.credits.people.author)
+    addContributor(new Person(packageJson.data.author), l10n.credits.people.author);
   for (const person of packageJson.data.contributors??[]) {
     const safePerson = new Person(person);
     let translation:string = l10n.credits.people.contributors.default;
@@ -247,7 +247,7 @@ window.addEventListener("DOMContentLoaded", () => {
         animation.currentTime = 0;
       }, {once: true});
     }
-  })
+  });
   document.body.style.display = "initial";
   // Initialize close button
   document.getElementById("closebutton")?.addEventListener("click", () => {

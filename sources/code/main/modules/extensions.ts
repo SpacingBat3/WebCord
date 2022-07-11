@@ -11,9 +11,9 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
 
   const url = new URL(file);
   if(url.protocol === "file:")
-    return { read: readFile(url.pathname, {signal}) }
+    return { read: readFile(url.pathname, {signal}) };
   else
-    return { download: fetch(url.href, (signal ? {signal} : {})) }
+    return { download: fetch(url.href, (signal ? {signal} : {})) };
 }
 
 /**
@@ -67,7 +67,7 @@ export async function loadStyles(webContents:Electron.WebContents) {
     import("fs"),
     import("path")
   ]);
-  const stylesDir = resolve(app.getPath("userData"),"Themes")
+  const stylesDir = resolve(app.getPath("userData"),"Themes");
   if(!existsSync(stylesDir)) mkdirSync(stylesDir, {recursive:true});
   const callback = () => new Promise<Promise<string>[]>((callback, reject) => {
     // Read CSS module directories.
@@ -82,13 +82,13 @@ export async function loadStyles(webContents:Electron.WebContents) {
               const fsWatch = watch(index);
               fsWatch.once("change", () => {
                 webContents.reload();
-              })
+              });
               webContents.once("did-finish-load", () => fsWatch.close());
             }
           }
         }
         Promise.all(promises).then(dataArray => {
-          const themeIDs:Promise<string>[] = []
+          const themeIDs:Promise<string>[] = [];
           for(const data of dataArray)
             themeIDs.push(
               parseImports(data.toString())
@@ -105,7 +105,7 @@ export async function loadStyles(webContents:Electron.WebContents) {
   if(process.platform === "win32" || process.platform === "darwin")
     watch(stylesDir, {recursive:true}).once("change", () => {
       webContents.reload();
-    })
+    });
   callback().catch(commonCatches.print);
 }
 
@@ -131,7 +131,7 @@ export async function loadChromiumExtensions(session:Electron.Session) {
     import("fs"),
     import("path")
   ]);
-  const extDir = resolve(app.getPath("userData"),"Extensions", "Chrome")
+  const extDir = resolve(app.getPath("userData"),"Extensions", "Chrome");
   if(!existsSync(extDir)) {
     mkdirSync(extDir, {recursive:true});
     return;
@@ -139,6 +139,6 @@ export async function loadChromiumExtensions(session:Electron.Session) {
   readdir(extDir, {withFileTypes: true}).then(paths => {
     for (const path of paths) if (path.isDirectory() && session.isPersistent())
       session.loadExtension(resolve(extDir, path.name))
-        .catch(commonCatches.print)
-  }).catch(commonCatches.print)
+        .catch(commonCatches.print);
+  }).catch(commonCatches.print);
 }

@@ -6,11 +6,11 @@ import { initWindow } from "../modules/parent";
 // "About" Panel:
 
 export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.BrowserWindow|undefined {
-  const screenBounds = screen.getPrimaryDisplay().size
+  const screenBounds = screen.getPrimaryDisplay().size;
   const [width, height] = [
     (screenBounds.width < 600 ? screenBounds.width : 600),
     (screenBounds.height < 480 ? screenBounds.height : 480)
-  ]
+  ];
   const aboutPanel = initWindow("about", parent, {
     width,
     height,

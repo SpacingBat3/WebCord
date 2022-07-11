@@ -8,14 +8,14 @@ import { initWindow } from "../modules/parent";
 const appConfig = new AppConfig();
 
 function instances2forms() {
-  const instanceForms:HTMLRadioForms[] = []
+  const instanceForms:HTMLRadioForms[] = [];
   for(const instance of knownInstancesList)
     instanceForms.push({
       label: instance[0],
       value: knownInstancesList.indexOf(instance),
       isChecked: appConfig.get().currentInstance === knownInstancesList.indexOf(instance)
-    })
-  return instanceForms
+    });
+  return instanceForms;
 }
 
 function conf2html (config:AppConfig) {
@@ -35,20 +35,20 @@ function conf2html (config:AppConfig) {
     ["soundcloud", "SoundCloud"],
     ["reddit", "Reddit"]
   ];
-  const cspChecklist: HTMLChecklistForms[] = []
+  const cspChecklist: HTMLChecklistForms[] = [];
   for (const stringGroup of websitesThirdParty.sort()) {
     cspChecklist.push({
       label: stringGroup[1],
       id: "csp.thirdparty."+stringGroup[0],
       isChecked: (appConfig.get().csp.thirdparty as Record<string, boolean>)[stringGroup[0]]??false
-    })
+    });
   }
   const csp: HTMLChecklistOption = {
     name: lang.advanced.group.csp.name+" – "+lang.advanced.group.csp.extends.thirdparty.name,
     description: lang.advanced.group.csp.extends.thirdparty.description,
     type: "checkbox",
     forms: cspChecklist
-  }
+  };
   // Basic / general
   const general:HTMLSettingsGroup = {
     title: lang.basic.name,
@@ -80,7 +80,7 @@ function conf2html (config:AppConfig) {
         ]
       }
     ]
-  }
+  };
   // Privacy
   const privacy:HTMLSettingsGroup = {
     title: lang.privacy.name,
@@ -140,7 +140,7 @@ function conf2html (config:AppConfig) {
         ]
       }
     ]
-  }
+  };
   // Advanced
   const advanced:HTMLSettingsGroup = {
     title: lang.advanced.name,
@@ -199,7 +199,7 @@ function conf2html (config:AppConfig) {
         ],
       }
     ]
-  }
+  };
   return [general, privacy, advanced];
 }
 
@@ -209,15 +209,15 @@ export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electr
   const settingsWindow = initWindow("settings", parent, {
     minWidth: appInfo.minWinWidth,
     minHeight: appInfo.minWinHeight,
-  })
+  });
   if(settingsWindow === undefined) return;
   ipcMain.on("settings-generate-html", (event) => {
     if(!settingsWindow.isDestroyed()) settingsWindow.show();
-    event.reply("settings-generate-html", configWithStrings)
-  })
+    event.reply("settings-generate-html", configWithStrings);
+  });
   return settingsWindow;
 }
 
 ipcMain.on("settings-config-modified", (_event, config:AppConfig["defaultConfig"])=> {
   appConfig.set(config);
-})
+});

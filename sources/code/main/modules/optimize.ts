@@ -16,16 +16,16 @@ interface partialGPU {
 
 function hasGPUDevices(object: unknown):object is partialGPU {
   if(typeof object !== "object" || object === null)
-    return false
+    return false;
   if(!("gpuDevice" in object) || !Array.isArray((object as partialGPU).gpuDevice))
-    return false
+    return false;
   for(const device of (object as partialGPU).gpuDevice) {
     if(!("active" in device) || typeof device.active !== "boolean")
-      return false
+      return false;
     if(!("driverVendor" in device) || typeof device.driverVendor !== "string")
-      return false
+      return false;
   }
-  return true
+  return true;
 }
 
 /**
@@ -46,9 +46,9 @@ export async function getRecommendedGPUFlags() {
   let desktopGl:"desktop"|"egl";
 
   if(isUnix && process.env["XDG_SESSION_TYPE"] === "wayland")
-    desktopGl = "egl"
+    desktopGl = "egl";
   else
-    desktopGl = "desktop"
+    desktopGl = "desktop";
 
   const flags:([string]|[string,string])[] = [];
   const gpuInfoResult = await app.getGPUInfo("basic");
@@ -101,7 +101,7 @@ export function getRedommendedOSFlags() {
     } else if(process.env["XDG_SESSION_TYPE"] === "wayland") {
       flags.push(
         ["enable-features","WebRTCPipeWireCapturer"]
-      )
+      );
     }
   }
   return flags;

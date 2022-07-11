@@ -1,7 +1,7 @@
 import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
 import { app, BrowserWindow, net, ipcMain, desktopCapturer, BrowserView } from "electron/main";
-import { nativeImage } from "electron/common";
+import { NativeImage, nativeImage } from "electron/common";
 import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
@@ -50,7 +50,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       void win.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/404.html"));
     else if (errorCode === -30) {
       // Ignore CSP errors.
-      console.warn(kolor.bold("[WARN]")+' A page "'+validatedURL+'" was blocked by CSP.')
+      console.warn(kolor.bold("[WARN]")+' A page "'+validatedURL+'" was blocked by CSP.');
       return;
     }
     console.error(kolor.bold("[ERROR]")+" "+errorDescription+" ("+(errorCode*-1).toString()+")");
@@ -62,9 +62,9 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     }, 1000);
   });
   win.webContents.once("did-finish-load", () => {
-    console.debug("[PAGE] Starting to load the Discord page...")
+    console.debug("[PAGE] Starting to load the Discord page...");
     if (!startHidden) win.show();
-    setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().get().currentInstance][1].href)}, 1500);
+    setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().get().currentInstance][1].href);}, 1500);
   });
   if (mainWindowState.initState.isMaximized) win.maximize();
 
@@ -76,7 +76,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       console.debug("[CSP] Overwritting Discord CSP.");
       headersOverwrite = {
         "Content-Security-Policy": [getWebCordCSP().toString()]
-      }
+      };
     }
     callback({
       responseHeaders: {
@@ -154,7 +154,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         }
       }
       return null;
-    }
+    };
     win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
       const requestUrl = (webContents !== null && webContents.getURL() !== "" ? webContents.getURL() : requestingOrigin);
       const returnValue = permissionHandler(requestUrl,permission,details);
@@ -242,7 +242,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   win.on("page-title-updated", (event, title) => {
     event.preventDefault();
     if (title.includes("Discord Test Client"))
-      win.setTitle(app.getName() + " (Fosscord)")
+      win.setTitle(app.getName() + " (Fosscord)");
     else if (title.includes("Discord") && !/[0-9]+/.test(win.webContents.getURL()))
       win.setTitle(title.replace("Discord",app.getName()));
     else
@@ -266,7 +266,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
   // Inject desktop capturer
   ipcMain.on("api-exposed", (_event, api:string) => {
-    console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.")
+    console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
     const functionString = `
             navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [async() => navigator.mediaDevices.getUserMedia(await window['${api.replaceAll("'","\\'")}']())]);
         `;
@@ -278,19 +278,19 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     const config = new AppConfig();
     // Menu bar
     if ("hideMenuBar" in object) {
-      console.debug("[Settings] Updating menu bar state...")
+      console.debug("[Settings] Updating menu bar state...");
       win.setAutoHideMenuBar(config.get().hideMenuBar);
       win.setMenuBarVisibility(!config.get().hideMenuBar);
     }
     // Custom Discord instance switch
     if("currentInstance" in object) {
-      void win.loadURL(knownInstancesList[config.get().currentInstance][1].href)
+      void win.loadURL(knownInstancesList[config.get().currentInstance][1].href);
     }
   });
 
   // Load extensions for builds of type "devel".
   if(getBuildInfo().type === "devel")
-    void loadChromiumExtensions(win.webContents.session)
+    void loadChromiumExtensions(win.webContents.session);
     
   // WebSocket server
   import("../modules/socket")
@@ -306,10 +306,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       return new Promise((resolvePromise) => {
         // Handle lock and check for a presence of another BrowserView.
         if(lock || win.getBrowserViews().length !== 0)
-          return new Error("Main process is busy by another request.")
+          return new Error("Main process is busy by another request.");
         // Fail when client has denied the permission to the capturer.
         if(!configData.get().permissions["display-capture"])
-          return new Error("Permission denied.")
+          return new Error("Permission denied.");
         lock = !app.commandLine.getSwitchValue("enable-features")
           .includes("WebRTCPipeWireCapturer") ||
                     process.env["XDG_SESSION_TYPE"] !== "wayland" ||
@@ -341,13 +341,13 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             win.removeListener("resize", autoResize);
             resolvePromise(data);
             lock = false;
-          })
+          });
           win.setBrowserView(view);
           void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
           view.webContents.once("did-finish-load", () => {
             autoResize();
             win.on("resize", autoResize);
-          })
+          });
         } else {
           sources.then(sources => resolvePromise({
             audio: false,

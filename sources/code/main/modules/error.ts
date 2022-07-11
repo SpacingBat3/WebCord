@@ -14,7 +14,7 @@ export const commonCatches = {
     else if(typeof reason === "string")
       throw new Error(reason);
   }
-}
+};
 
 async function handleWithGUI(wasReady:boolean, name:string, message:string, stack:string, stackColor:string, error:Error&NodeJS.ErrnoException) {
   if(!app.isReady()) await app.whenReady();

@@ -47,7 +47,7 @@ export interface PackageJsonProperties {
 /**
  * Name says it well. A `RegExp` that *magically* splits string to Person values.
  */
-const personMagic = /^((?:.*?(?=\s*(?:<[^ ]*>|\([^ ]*\)))|.*?))(?: <([^ ]*)>)? *(?:\((.*)\))?$/
+const personMagic = /^((?:.*?(?=\s*(?:<[^ ]*>|\([^ ]*\)))|.*?))(?: <([^ ]*)>)? *(?:\((.*)\))?$/;
 
 export class Person {
   /** Person name (can be either a nickname or full name). */
@@ -59,7 +59,7 @@ export class Person {
   public toString():string {
     return (this.name !== "[Anonymous]" ? this.name : "")+
       (this.email ? " <" + this.email + ">" : "")+
-      (this.url   ? " (" + this.url   + ")" : "")
+      (this.url   ? " (" + this.url   + ")" : "");
   }
   constructor(value:PersonLike) {
     if((value as PersonObject) instanceof Object) {
@@ -67,10 +67,10 @@ export class Person {
       this.email = (value as PersonObject).email;
       this.url   = (value as PersonObject).url;
     } else {
-      const match = (value as string).match(personMagic)
-      this.name  = (match?.[1] ?? "[Anonymous]").trimEnd()
-      this.email = match?.[2] ??   undefined
-      this.url   = match?.[3] ??   undefined
+      const match = (value as string).match(personMagic);
+      this.name  = (match?.[1] ?? "[Anonymous]").trimEnd();
+      this.email = match?.[2] ??   undefined;
+      this.url   = match?.[3] ??   undefined;
     }
   }
 }
@@ -85,7 +85,7 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
   readonly data;
   private isEmail(email: string|undefined|null): boolean {
     return /^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*@[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*\.[a-z]+$/
-      .test(email??"")
+      .test(email??"");
   }
   private isPersonObject(variable: unknown): variable is PersonObject {
     // Variable is an Object, which has 'name' key and optionally 'email' and 'url' keys.
@@ -94,11 +94,11 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
         return false;
     
       if ((variable as PersonAny).email !== undefined && typeof (variable as PersonAny).email !== "string")
-        return false
+        return false;
     
       // Validate Emails if present
       else if(typeof (variable as PersonAny).email === "string" && !this.isEmail((variable as PersonAny).email))
-        return false
+        return false;
     
       if ((variable as PersonAny).url !== undefined && typeof (variable as PersonAny).url !== "string")
         return false;
@@ -117,23 +117,23 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
     
     // Check #2: When Person is string, it shall be in `name <email> [url]` format.
     if (typeof variable === "string"){
-      const match = variable.match(personMagic)
+      const match = variable.match(personMagic);
       return (
         (match !== null && match[1] !== undefined)
       ) && (
         match[2] !== undefined ? this.isEmail(match[2]) : true
-      )
+      );
     }
-    return false
+    return false;
   }
   /** A function used to return the details about the `package.json` wrong configuration. */
   private checkPackageJsonComplete(object: unknown): string {
     // Check 1: `package.json` is a JSON object.
     if(!(object instanceof Object))
-      return "'object' is actually not an object (but '"+typeof object+"')!"
+      return "'object' is actually not an object (but '"+typeof object+"')!";
     else for(const key in object)
       if(typeof key !== "string")
-        return "'object' keys are not of the type 'string'."
+        return "'object' keys are not of the type 'string'.";
 
     // Check 2: 'contributors' is array of 'Person'
     if ((object as PackageJsonProperties).contributors instanceof Object)
@@ -170,48 +170,48 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
       if (parse((object as PackageJsonProperties).version) === null)
         return "Version "+(object as PackageJsonProperties).version+" can't be parsed to 'semver'.";
     } else {
-      return "Version property is not assignable to type 'string'!"
+      return "Version property is not assignable to type 'string'!";
     }
 
     // Check 9: `devDependencies` or `dependencies` are either `undefinied` or `Record<string,string>`:
     for(const key of ["dependencies", "devDependencies"]) {
-      const testValue = (object as Record<string,unknown|undefined>)[key]
+      const testValue = (object as Record<string,unknown|undefined>)[key];
       if (!/undefined|object/.test(typeof testValue))
-        return "Property '"+key+"' is of invalid type!"
+        return "Property '"+key+"' is of invalid type!";
       else if(testValue instanceof Object) {
         for(const key in testValue)
           if(typeof key !== "string") {
             const key2string:unknown = (key as Record<string,unknown>)?.toString();
             let keyString:string;
             if(typeof key2string === "string")
-              keyString = key2string
+              keyString = key2string;
             else
-              keyString = "[unknown]"
-            return "Package name '"+keyString+"' is not a valid 'string'."
+              keyString = "[unknown]";
+            return "Package name '"+keyString+"' is not a valid 'string'.";
           } else if (typeof (testValue as Record<string, unknown>)[key] !== "string")
-            return "Version of the package '"+key+"' is not of type 'string'."
+            return "Version of the package '"+key+"' is not of type 'string'.";
       }
     }
 
     // Check 10: `license` is a valid string:
     if(!/^UNLICEN[SC]ED|SEE LICEN[CS]E IN .+$/.test((object as PackageJsonProperties).license))
       try {
-        spdxParse((object as PackageJsonProperties).license)
+        spdxParse((object as PackageJsonProperties).license);
       } catch {
-        return "License field is in wrong format."
+        return "License field is in wrong format.";
       }
 
 
     // Check 11: `homepage` is either `undefinied` or `string`
     if((object as PackageJsonProperties).homepage !== undefined && typeof (object as PackageJsonProperties).homepage !== "string")
-      return "Homepage property is neither 'string' nor 'undefinied'."
+      return "Homepage property is neither 'string' nor 'undefinied'.";
     // All checks passed!
     return "";
   }
   private findProjectPackageJson() {
     let cwd = __dirname;
     while(!existsSync(resolve(cwd, "package.json")) && cwd !== "/") {
-      cwd = resolve(cwd, "../")
+      cwd = resolve(cwd, "../");
     }
     return resolve(cwd, "package.json");
   }
@@ -222,16 +222,16 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
    * for the `[Person].email` or the `name` top-level property.
    */
   public isPackageJsonComplete(object: unknown): object is PackageJsonProperties {
-    return (this.checkPackageJsonComplete(object) === "")
+    return (this.checkPackageJsonComplete(object) === "");
   }
   constructor(keys: T, packageJsonFile?: string) {
     const file = packageJsonFile ?? this.findProjectPackageJson();
     const packageJSON: unknown = JSON.parse(readFileSync(file).toString());
     if (!this.isPackageJsonComplete(packageJSON))
       throw new TypeError("While parsing `package.json`: "+this.checkPackageJsonComplete(packageJSON));
-    const newObj: Partial<Pick<PackageJsonProperties, T[number]>> = {}
+    const newObj: Partial<Pick<PackageJsonProperties, T[number]>> = {};
     for (const key of Array.from(new Set(keys)))
-      (newObj as Record<string,unknown>)[key] = packageJSON[key]
+      (newObj as Record<string,unknown>)[key] = packageJSON[key];
     this.data = newObj as Pick<PackageJsonProperties, T[number]>;
   }
 }

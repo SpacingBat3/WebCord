@@ -33,32 +33,32 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
     .then(([cmd,colors]) => {
       if (cmd.hasSwitch("verbose")||cmd.hasSwitch("v"))
         if(typeof message === "string")
-          console.log(colors.gray(message), ...optionalParams)
+          console.log(colors.gray(message), ...optionalParams);
         else
-          console.log(message, ...optionalParams)
-    }).catch(commonCatches.print)
-}
+          console.log(message, ...optionalParams);
+    }).catch(commonCatches.print);
+};
 
 // Colorize output on errors/warnings
 {
-  const stdErr = console.error
-  const stdWarn = console.warn
+  const stdErr = console.error;
+  const stdWarn = console.warn;
   console.error = function (message?:unknown, ...optionalParams:unknown[]) {
     import("@spacingbat3/kolor").then(colors => colors.default).then(colors => {
       if(typeof message === "string")
-        stdErr(colors.red(message), ...optionalParams)
+        stdErr(colors.red(message), ...optionalParams);
       else
-        stdErr(message, ...optionalParams)
-    }).catch(commonCatches.print)
-  }
+        stdErr(message, ...optionalParams);
+    }).catch(commonCatches.print);
+  };
   console.warn = function (message?, ...optionalParams:unknown[]) {
     import("@spacingbat3/kolor").then(colors => colors.default).then(colors => {
       if(typeof message === "string")
-        stdWarn(colors.yellow(message), ...optionalParams)
+        stdWarn(colors.yellow(message), ...optionalParams);
       else
-        stdWarn(message, ...optionalParams)
-    }).catch(commonCatches.print)
-  }
+        stdWarn(message, ...optionalParams);
+    }).catch(commonCatches.print);
+  };
 }
 import { app, BrowserWindow, dialog, session } from "electron/main";
 import { shell } from "electron/common";
@@ -80,7 +80,7 @@ app.userAgentFallback = getUserAgent(process.versions.chrome);
 
 // Set AppUserModelID on Windows
 {
-  const {AppUserModelId} = getBuildInfo()
+  const {AppUserModelId} = getBuildInfo();
   if(process.platform === "win32" && AppUserModelId)
     app.setAppUserModelId(AppUserModelId);
 }
@@ -95,8 +95,8 @@ let overwriteMain: (() => void | unknown) | undefined;
   const renderLine = (parameter:string, description:string, length?:number) => {
     // eslint-disable-next-line no-control-regex
     const spaceBetween = (length ?? 30) - parameter.replace(/\x1B\[[^m]+m/g, "").length;
-    return "  "+kolor.green(parameter)+" ".repeat(spaceBetween)+kolor.gray(description)+"\n"
-  }
+    return "  "+kolor.green(parameter)+" ".repeat(spaceBetween)+kolor.gray(description)+"\n";
+  };
   const cmd = app.commandLine;
 
   // Mitigations to *unsafe* command-line switches
@@ -108,7 +108,7 @@ let overwriteMain: (() => void | unknown) | undefined;
       "inspect-publish-uid"
     ]) if(cmd.hasSwitch(cmdSwitch))
     {
-      console.info("Unsafe switch detected: '--"+cmdSwitch+"'! It will be removed from Chromium's cmdline…")
+      console.info("Unsafe switch detected: '--"+cmdSwitch+"'! It will be removed from Chromium's cmdline…");
       cmd.removeSwitch(cmdSwitch);
     }
   if (cmd.hasSwitch("help") || cmd.hasSwitch("h")) {
@@ -162,7 +162,7 @@ let overwriteMain: (() => void | unknown) | undefined;
     };
   }
   if (cmd.hasSwitch("gpu-info")) {
-    const param = cmd.getSwitchValue("gpu-info")
+    const param = cmd.getSwitchValue("gpu-info");
     switch(param) {
       case "basic":
       case "complete":
@@ -175,7 +175,7 @@ let overwriteMain: (() => void | unknown) | undefined;
           .catch(commonCatches.throw);
         break;
       default:
-        throw new Error("Flag 'gpu-info' should contain parameter of type '\"basic\"|\"complete\"'.")
+        throw new Error("Flag 'gpu-info' should contain parameter of type '\"basic\"|\"complete\"'.");
     }
   }
 }
@@ -183,20 +183,20 @@ let overwriteMain: (() => void | unknown) | undefined;
   const applyFlags = (name:string, value?:string) => {
     if(name === "enable-features" && value !== undefined
         && app.commandLine.getSwitchValue(name) !== "")
-      value = app.commandLine.getSwitchValue(name)+","+value
+      value = app.commandLine.getSwitchValue(name)+","+value;
     app.commandLine.appendSwitch(name, value);
-    console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value ? "="+value : ""))
-  }
+    console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value ? "="+value : ""));
+  };
   // Apply recommended GPU flags if user had opt in for them.
   if(new AppConfig().get().useRecommendedFlags.gpu)
     getRecommendedGPUFlags().then(flags => {
       for(const flag of flags) if(!app.isReady()) {
         applyFlags(flag[0], flag[1]);
       } else
-        console.warn("Flag '--"+flag[0]+(flag[1] ? "="+flag[1] : "")+"' won't be assigned to Chromium's cmdline, since app is already 'ready'!")
+        console.warn("Flag '--"+flag[0]+(flag[1] ? "="+flag[1] : "")+"' won't be assigned to Chromium's cmdline, since app is already 'ready'!");
     }).catch(error => {
       console.error(error);
-    })
+    });
 
   for(const flag of getRedommendedOSFlags())
     applyFlags(flag[0], flag[1]);
@@ -256,7 +256,7 @@ app.on("web-contents-created", (_event, webContents) => {
 
   // Securely open some urls in external software.
   webContents.setWindowOpenHandler((details) => {
-    const config = new AppConfig().get()
+    const config = new AppConfig().get();
     if (!app.isReady()) return { action: "deny" };
     const openUrl = new URL(details.url);
     const sameOrigin = new URL(webContents.getURL()).origin === openUrl.origin;
@@ -305,7 +305,7 @@ app.on("web-contents-created", (_event, webContents) => {
             ...(window ? {BrowserWindow: window} : {}),
             fullscreenable: false // not functional with 'children'
           }
-        }
+        };
       else
         shell.openExternal(details.url).catch(commonCatches.print);
     }

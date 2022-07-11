@@ -7,11 +7,11 @@
 import type { buildInfo } from "../common/global";
 import packageJson, { Person } from "../common/modules/package";
 import { readFileSync, writeFileSync } from "fs";
-import { resolve } from "path"
+import { resolve } from "path";
 import type { ForgeConfigFile } from "./forge.d";
 import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
-const projectPath = resolve(__dirname, "../../..")
+const projectPath = resolve(__dirname, "../../..");
 const AppUserModelId = process.env["WEBCORD_WIN32_APPID"];
 const FlatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
   "io.github.spacingbat3.webcord";
@@ -34,16 +34,16 @@ function getCommit():string | void {
 const env = {
   asar: process.env["WEBCORD_ASAR"]?.toLowerCase() !== "false",
   build: process.env["WEBCORD_BUILD"]?.toLowerCase()
-}
+};
 
 function getElectronPath(platform:string) {
   switch (platform) {
     case "darwin":
-      return "Electron.app/Contents/MacOS/Electron"
+      return "Electron.app/Contents/MacOS/Electron";
     case "win32":
-      return "electron.exe"
+      return "electron.exe";
     default:
-      return "electron"
+      return "electron";
   }
 }
 
@@ -161,8 +161,8 @@ const config: ForgeConfigFile = {
         features: {
           updateNotifications: process.env["WEBCORD_UPDATE_NOTIFICATIONS"] !== "false"
         }
-      }
-      writeFileSync(resolve(path, "buildInfo.json"), JSON.stringify(buildConfig, null, 2))
+      };
+      writeFileSync(resolve(path, "buildInfo.json"), JSON.stringify(buildConfig, null, 2));
       return Promise.resolve();
     },
     // Hardened Electron binary via Electron Fuses feature.
@@ -210,6 +210,6 @@ if(process.env["WEBCORD_FLATPAK"]?.toLowerCase() === "true")
         icon: iconFile + ".png"
       }
     }
-  })
+  });
 
 module.exports = config;

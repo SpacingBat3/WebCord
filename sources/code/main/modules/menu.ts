@@ -11,7 +11,7 @@ import {
 
 import { AppConfig } from "./config";
 
-const appConfig = new AppConfig()
+const appConfig = new AppConfig();
 
 import { EventEmitter } from "events";
 import { createGithubIssue } from "./bug";
@@ -25,13 +25,13 @@ const sideBar = new EventEmitter();
 const devel = getBuildInfo().type === "devel";
 
 sideBar.on("hide", (contents: Electron.WebContents) => {
-  console.debug("[EVENT] Hiding menu bar...")
+  console.debug("[EVENT] Hiding menu bar...");
   contents.insertCSS("div[class|=sidebar]{ width: 0px !important; }").then(cssKey => {
     sideBar.once("show", () => {
-      console.debug("[EVENT] Showing menu bar...")
-      contents.removeInsertedCSS(cssKey).catch(commonCatches.throw)
+      console.debug("[EVENT] Showing menu bar...");
+      contents.removeInsertedCSS(cssKey).catch(commonCatches.throw);
     });
-  }).catch(commonCatches.print)
+  }).catch(commonCatches.print);
 });
 
 // Contex Menu with spell checker
