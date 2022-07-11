@@ -9,7 +9,7 @@
             }
         },
         "tray": {
-            "name": "Tray",
+            "name": "Zasobnik systemowy",
             "description": "Zmienia widoczność ikony w zasobniku systemowym.",
             "labels": {
                 "disable": "Wyłącz ukrywanie okna do zasobnika systemowego."
@@ -19,20 +19,20 @@
     "privacy": {
         "name": "Prywatność",
         "blockApi": {
-            "name": "Blokowanie API Discord'a",
+            "name": "Blokowanie API Discorda",
             "description": "Blokowanie wybranych żądań API i skryptów Discorda w celu polepszenia prywatności.",
             "labels": {
-                "science": "Blokuj żądania telemetrii (<code>/science</code> and <code>/tracing</code>).",
+                "science": "Blokuj żądania telemetrii (<code>/science</code> i <code>/tracing</code>).",
                 "typingIndicator": "Blokuj wskaźnik pisania (<code>/typing</code>).",
                 "fingerprinting": "Blokuj skrypt <code>api.js</code> zbierający <i>odcisk palca</i> klienta."
             }
         },
         "permissions": {
             "name": "Uprawnienia",
-            "description": "Zezwala bądź odmawia przy zapytaniach bądź żądaniach uprawnień przez stronę Discorda. Proszę wziąść pod uwagę, że uprawnienia spoza poniższej listy są domyślnie blokowane przez WebCord'a",
+            "description": "Zezwala bądź odmawia przy zapytaniach bądź żądaniach uprawnień przez stronę Discorda. Proszę wziąć pod uwagę, że uprawnienia spoza poniższej listy są domyślnie blokowane przez WebCorda",
             "labels": {
                 "video": "Kamera",
-                "audio": "Microfon",
+                "audio": "Mikrofon",
                 "fullscreen": "Pełny ekran",
                 "notifications": "Powiadomienia",
                 "display-capture": "Nagrywanie ekranu"
@@ -43,46 +43,46 @@
         "name": "Zaawansowane",
         "csp": {
             "name": "Polityka Bezpieczeństwa Treści",
-            "description": "Switches whenever application should ignore Discord's Content Security Policy headers and let client set its own CSP for privacy and security concerns.",
+            "description": "Przełącza kiedy Webcord powinnien ignorować <i>Politykę Bezpieczeństwa Treści</i> Discorda i pozwolić klientowi na ustawienie własnej polityki ze względu na lepszą prywatność i bezpieczeństwo.",
             "labels": {
-                "enabled": "Use in-app Content Security Policy"
+                "enabled": "Korzystaj z wbudowanej <i>Polityki Bezpieczeństwa Treści</i>."
             }
         },
         "cspThirdParty": {
             "name": "Witryny firm trzecich",
-            "description": "Sets a list of the third-party websites allowed to connect or display content.",
+            "description": "Ustala listę firm trzecich, które mogą łączyć się z klientem i wyświetlać treść.",
             "labels": {
-                "gif": "GIF Providers"
+                "gif": "Dostawcy GIF-ów"
             }
         },
         "currentInstance": {
             "name": "Instancja Discorda",
-            "description": "Selects the instance WebCord should connect to. <b>Experimental</b> as the Fosscord implementation is not fully finished yet."
+            "description": "Wybiera instancję Discorda, z którą WebCord powinien się łączyć. <b>Eksperymentalne</b>, ponieważ implementacja Fosscorda nie jest w pełni ukończona."
         },
         "devel": {
             "name": "Tryb deweloperski",
-            "description": "Enables the access to tools and unfinished options that are potentially considered as broken or dangerous. <b>Disclaimer</b>: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
+            "description": "Zezwala na dostęp do narzędzi i funkcji, które są potencjalnie niebezpiecznie lub nie działają. <b>Uwaga</b>: opiekunowie aplikacji nie są odpowiedzialni za jakiekolwiek błędy lub problemy po tym, jak ta funkcja została włączona – prosimy ich nie zgłaszać!",
             "labels": {
-                "enabled": "Enable developer mode"
+                "enabled": "Włącz tryb deweloperski"
             }
         },
         "redirection": {
             "name": "Przekierowania międzydomenowe",
-            "description": "Controls the actions on cross-origin redirections. <b>This affects application security</b>.",
+            "description": "Kontroluje podjętą czynność przy przekierowaniach międzydomenowych. <b>To ma wpływ na bezpieczeństwo aplikacji</b>.",
             "labels": {
-                "warn": "Always warn user about cross-origin redirections to external applications."
+                "warn": "Zawsze ostrzegaj użytkownika przed przekierowaniami międzydomenowymi do zewnętrznych aplikacji."
             }
         },
         "optimize": {
             "name": "Optymalizacje klienta",
-            "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by itself.",
+            "description": "Próbuje wykryć oprogramowanie i sprzęt użytkownika, aby zastosować niestandardowe flagi do silnika Chromium, które <b>mogą</b> polepszyć wydajność lub funkcjonalność Elektrona. <b>Eksperymentalne</b>, ponieważ istnieje powód, dla którego domyślnie Chromium nie stosuje tych flag.",
             "labels": {
-                "gpu": "Optimize the client for the currently active graphics card."
+                "gpu": "Optymalizuj klient względem obecnie aktywnej karty graficznej."
             }
         },
         "webApi": {
             "name": "Dostęp do API w JavaScript",
-            "description": "Controls which API should be permitted in unpriviledged (DOM) scripts.",
+            "description": "Kontroluje, jakie API powinny być dostępne dla nieuprzywilejowanych skryptów (DOM).",
             "labels": {
                 "webGl": "Włącz WebGL"
             }
