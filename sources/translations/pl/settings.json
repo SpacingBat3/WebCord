@@ -1,90 +1,90 @@
 {
     "general": {
-        "name": "General",
+        "name": "Ogólne",
         "menuBar": {
-            "name": "Menu bar",
-            "description": "Changes visibility settings of native menu bar.",
+            "name": "Pasek menu",
+            "description": "Zmienia widoczność natywnego paska menu.",
             "labels": {
-                "hide": "Hide menu bar automatically (<kbd>ALT</kbd> key switches the visibility)."
+                "hide": "Ukrywaj pasek menu automatycznie (<kbd>ALT</kbd> tymczasowo zmienia widoczność)."
             }
         },
         "tray": {
             "name": "Tray",
-            "description": "Changes the visibility of the icon in the system tray.",
+            "description": "Zmienia widoczność ikony w zasobniku systemowym.",
             "labels": {
-                "disable": "Disable hiding window to the system tray functionality."
+                "disable": "Wyłącz ukrywanie okna do zasobnika systemowego."
             }
         }
     },
     "privacy": {
-        "name": "Privacy",
+        "name": "Prywatność",
         "blockApi": {
-            "name": "Discord API blocking",
-            "description": "Blocks Discord API requests for hardening the privacy.",
+            "name": "Blokowanie API Discord'a",
+            "description": "Blokowanie wybranych żądań API i skryptów Discorda w celu polepszenia prywatności.",
             "labels": {
-                "science": "Block known telemetry endpoints (<code>/science</code> and <code>/tracing</code>).",
-                "typingIndicator": "Block typing indicator (<code>/typing</code>).",
-                "fingerprinting": "Block fingerprinting <code>api.js</code> script."
+                "science": "Blokuj żądania telemetrii (<code>/science</code> and <code>/tracing</code>).",
+                "typingIndicator": "Blokuj wskaźnik pisania (<code>/typing</code>).",
+                "fingerprinting": "Blokuj skrypt <code>api.js</code> zbierający <i>odcisk palca</i> klienta."
             }
         },
         "permissions": {
-            "name": "Permissions",
-            "description": "Allows or denies the permission checks and request from the Discord website. Please note that other permissions not listed here are blocked automatically by WebCord.",
+            "name": "Uprawnienia",
+            "description": "Zezwala bądź odmawia przy zapytaniach bądź żądaniach uprawnień przez stronę Discorda. Proszę wziąść pod uwagę, że uprawnienia spoza poniższej listy są domyślnie blokowane przez WebCord'a",
             "labels": {
-                "video": "Camera",
-                "audio": "Microphone",
-                "fullscreen": "Fullscreen",
-                "notifications": "Notifications",
-                "display-capture": "Desktop capture"
+                "video": "Kamera",
+                "audio": "Microfon",
+                "fullscreen": "Pełny ekran",
+                "notifications": "Powiadomienia",
+                "display-capture": "Nagrywanie ekranu"
             }
         }
     },
     "advanced": {
-        "name": "Advanced",
+        "name": "Zaawansowane",
         "csp": {
-            "name": "Content Security Policy",
+            "name": "Polityka Bezpieczeństwa Treści",
             "description": "Switches whenever application should ignore Discord's Content Security Policy headers and let client set its own CSP for privacy and security concerns.",
             "labels": {
                 "enabled": "Use in-app Content Security Policy"
             }
         },
         "cspThirdParty": {
-            "name": "Third party websites",
+            "name": "Witryny firm trzecich",
             "description": "Sets a list of the third-party websites allowed to connect or display content.",
             "labels": {
                 "gif": "GIF Providers"
             }
         },
         "currentInstance": {
-            "name": "Discord instance",
+            "name": "Instancja Discorda",
             "description": "Selects the instance WebCord should connect to. <b>Experimental</b> as the Fosscord implementation is not fully finished yet."
         },
         "devel": {
-            "name": "Developer mode",
+            "name": "Tryb deweloperski",
             "description": "Enables the access to tools and unfinished options that are potentially considered as broken or dangerous. <b>Disclaimer</b>: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
             "labels": {
                 "enabled": "Enable developer mode"
             }
         },
         "redirection": {
-            "name": "Cross-origin redirection behavior",
+            "name": "Przekierowania międzydomenowe",
             "description": "Controls the actions on cross-origin redirections. <b>This affects application security</b>.",
             "labels": {
                 "warn": "Always warn user about cross-origin redirections to external applications."
             }
         },
         "optimize": {
-            "name": "Client optimizations",
+            "name": "Optymalizacje klienta",
             "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by itself.",
             "labels": {
                 "gpu": "Optimize the client for the currently active graphics card."
             }
         },
         "webApi": {
-            "name": "Access to JavaScript APIs",
+            "name": "Dostęp do API w JavaScript",
             "description": "Controls which API should be permitted in unpriviledged (DOM) scripts.",
             "labels": {
-                "webGl": "Enable WebGL"
+                "webGl": "Włącz WebGL"
             }
         }
     }
