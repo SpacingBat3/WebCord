@@ -1,0 +1,91 @@
+{
+    "general": {
+        "name": "General",
+        "menuBar": {
+            "name": "Menu bar",
+            "description": "Changes visibility settings of native menu bar.",
+            "labels": {
+                "hide": "Hide menu bar automatically (<kbd>ALT</kbd> key switches the visibility)."
+            }
+        },
+        "tray": {
+            "name": "Tray",
+            "description": "Changes the visibility of the icon in the system tray.",
+            "labels": {
+                "disable": "Disable hiding window to the system tray functionality."
+            }
+        }
+    },
+    "privacy": {
+        "name": "Privacy",
+        "blockApi": {
+            "name": "Discord API blocking",
+            "description": "Blocks Discord API requests for hardening the privacy.",
+            "labels": {
+                "science": "Block known telemetry endpoints (<code>/science</code> and <code>/tracing</code>).",
+                "typingIndicator": "Block typing indicator (<code>/typing</code>).",
+                "fingerprinting": "Block fingerprinting <code>api.js</code> script."
+            }
+        },
+        "permissions": {
+            "name": "Permissions",
+            "description": "Allows or denies the permission checks and request from the Discord website. Please note that other permissions not listed here are blocked automatically by WebCord.",
+            "labels": {
+                "video": "Camera",
+                "audio": "Microphone",
+                "fullscreen": "Fullscreen",
+                "notifications": "Notifications",
+                "display-capture": "Desktop capture"
+            }
+        }
+    },
+    "advanced": {
+        "name": "Advanced",
+        "csp": {
+            "name": "Content Security Policy",
+            "description": "Switches whenever application should ignore Discord's Content Security Policy headers and let client set its own CSP for privacy and security concerns.",
+            "labels": {
+                "enabled": "Use in-app Content Security Policy"
+            }
+        },
+        "cspThirdParty": {
+            "name": "Third party websites",
+            "description": "Sets a list of the third-party websites allowed to connect or display content.",
+            "labels": {
+                "gif": "GIF Providers"
+            }
+        },
+        "currentInstance": {
+            "name": "Discord instance",
+            "description": "Selects the instance WebCord should connect to. <b>Experimental</b> as the Fosscord implementation is not fully finished yet."
+        },
+        "devel": {
+            "name": "Developer mode",
+            "description": "Enables the access to tools and unfinished options that are potentially considered as broken or dangerous. <b>Disclaimer</b>: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
+            "labels": {
+                "enabled": "Enable developer mode"
+            }
+        },
+        "redirection": {
+            "name": "Cross-origin redirection behavior",
+            "description": "Controls the actions on cross-origin redirections. <b>This affects application security</b>.",
+            "labels": {
+                "warn": "Always warn user about cross-origin redirections to external applications."
+            }
+        },
+        "optimize": {
+            "name": "Client optimizations",
+            "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by default.",
+            "labels": {
+                "gpu": "Optimize the client for the currently active graphics card."
+            }
+        },
+        "webApi": {
+            "name": "Access to JavaScript APIs",
+            "description": "Controls which API should be permitted in unpriviledged (DOM) scripts.",
+            "labels": {
+                "webGl": "Enable WebGL"
+            }
+        }
+    }
+}

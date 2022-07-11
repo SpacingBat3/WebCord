@@ -39,7 +39,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         standard: "Arial" // `sans-serif` as default font.
       },
       enableWebSQL: false,
-      webgl: configData.get().webgl,
+      webgl: configData.get().settings.advanced.webApi.webGl,
       safeDialogs: true,
       autoplayPolicy: "no-user-gesture-required"
     }
@@ -57,14 +57,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     const retry = setInterval(() => {
       if (retry && net.isOnline()) {
         clearInterval(retry);
-        void win.loadURL(knownInstancesList[new AppConfig().get().currentInstance][1].href);
+        void win.loadURL(knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].href);
       }
     }, 1000);
   });
   win.webContents.once("did-finish-load", () => {
     console.debug("[PAGE] Starting to load the Discord page...");
     if (!startHidden) win.show();
-    setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().get().currentInstance][1].href);}, 1500);
+    setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].href);}, 1500);
   });
   if (mainWindowState.initState.isMaximized) win.maximize();
 
@@ -72,7 +72,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     let headersOverwrite:{"Content-Security-Policy":string[]}|undefined = undefined;
-    if (configData.get().csp.enabled) {
+    if (configData.get().settings.advanced.csp.enabled) {
       console.debug("[CSP] Overwritting Discord CSP.");
       headersOverwrite = {
         "Content-Security-Policy": [getWebCordCSP().toString()]
@@ -97,7 +97,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     },
     (details, callback) => {
 
-      const configData = (new AppConfig()).get().blockApi;
+      const configData = (new AppConfig()).get().settings.privacy.blockApi;
             
       const cancel = configData.science ||
                 configData.typingIndicator ||
@@ -122,7 +122,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   {
     /** List of domains, urls or protocols accepted by permission handlers. */
     const trustedURLs = [
-      knownInstancesList[new AppConfig().get().currentInstance][1].origin,
+      knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].origin,
       "devtools://"
     ];
     const permissionHandler = function (webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null {
@@ -136,10 +136,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             if("mediaTypes" in details) {
               if(details.mediaTypes === undefined) break;
               for(const type of details.mediaTypes)
-                callbackValue = callbackValue && configData.get().permissions[type];
+                callbackValue = callbackValue && configData.get().settings.privacy.permissions[type];
             } else if("mediaType" in details) {
               if(details.mediaType === undefined || details.mediaType === "unknown") break;
-              callbackValue = callbackValue && configData.get().permissions[details.mediaType];
+              callbackValue = callbackValue && configData.get().settings.privacy.permissions[details.mediaType];
             } else {
               callbackValue = false;
             }
@@ -148,7 +148,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
           case "display-capture":
           case "notifications":
           case "fullscreen":
-            return configData.get().permissions[permission];
+            return configData.get().settings.privacy.permissions[permission];
           default:
             return false;
         }
@@ -174,8 +174,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     });
   }
   void win.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/load.html"));
-  win.setAutoHideMenuBar(configData.get().hideMenuBar);
-  win.setMenuBarVisibility(!configData.get().hideMenuBar);
+  win.setAutoHideMenuBar(configData.get().settings.general.menuBar.hide);
+  win.setMenuBarVisibility(!configData.get().settings.general.menuBar.hide);
   // Add English to the spellchecker
   {
     let valid = true;
@@ -193,7 +193,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
 
   // Load all menus:
   getMenu.context(win);
-  const tray = !configData.get().disableTray ? getMenu.tray(win) : null;
+  const tray = !configData.get().settings.general.tray.disable ? getMenu.tray(win) : null;
   getMenu.bar(packageJson.data.repository.url, win);
 
   // "Red dot" icon feature
@@ -216,7 +216,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     }
 
     // Compare hashes.
-    if (!configData.get().disableTray) {
+    if (!configData.get().settings.general.tray.disable) {
       if(faviconHash === discordFavicons.default) {
         icon = nativeImage.createFromPath(appInfo.trayIcon);
         win.flashFrame(false);
@@ -236,6 +236,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       }
       setFavicon = faviconHash;
     }
+    setFavicon = faviconHash;
   });
 
   // Window Title
@@ -274,17 +275,17 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   });
 
   // Apply settings that doesn't need app restart on change
-  ipcMain.on("settings-config-modified", (_event, object:Record<string,unknown>) => {
+  ipcMain.on("settings-config-modified", (_event, object:Partial<AppConfig["defaultConfig"]>) => {
     const config = new AppConfig();
     // Menu bar
-    if ("hideMenuBar" in object) {
+    if (object?.settings?.general?.menuBar?.hide !== undefined) {
       console.debug("[Settings] Updating menu bar state...");
-      win.setAutoHideMenuBar(config.get().hideMenuBar);
-      win.setMenuBarVisibility(!config.get().hideMenuBar);
+      win.setAutoHideMenuBar(config.get().settings.general.menuBar.hide);
+      win.setMenuBarVisibility(!config.get().settings.general.menuBar.hide);
     }
     // Custom Discord instance switch
-    if("currentInstance" in object) {
-      void win.loadURL(knownInstancesList[config.get().currentInstance][1].href);
+    if(object?.settings?.advanced?.currentInstance?.radio !== undefined) {
+      void win.loadURL(knownInstancesList[config.get().settings.advanced.currentInstance.radio][1].href);
     }
   });
 
@@ -308,7 +309,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         if(lock || win.getBrowserViews().length !== 0)
           return new Error("Main process is busy by another request.");
         // Fail when client has denied the permission to the capturer.
-        if(!configData.get().permissions["display-capture"])
+        if(!configData.get().settings.privacy.permissions["display-capture"])
           return new Error("Permission denied.");
         lock = !app.commandLine.getSwitchValue("enable-features")
           .includes("WebRTCPipeWireCapturer") ||

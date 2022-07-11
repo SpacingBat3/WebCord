@@ -6,55 +6,104 @@ import * as fs from "fs";
 import { app, BrowserWindow, screen } from "electron/main";
 import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
-import { objectsAreSameType, isJsonSyntaxCorrect } from "../../common/global";
+import { objectsAreSameType, isJsonSyntaxCorrect, knownInstancesList } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
 
+type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind"
+
+type lastKeyof<T> = T extends object ? T[keyof T] extends object ? lastKeyof<T[keyof T]> : keyof T : never
+
+type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reservedKeys>
+
+export type ConfigElement = Partial<Record<checkListKeys,boolean>> | {
+  radio: number,
+  type: string,
+} | {
+  dropdown: number
+  type: string,
+} | {
+  input: string|number
+} | {
+  keybind: string
+}
+
+const test = {} as unknown as ConfigElement;
+
+if("radio" in test)
+  test.radio;
+
+export interface AppConfigBase {
+  settings: Record<string, Record<string, ConfigElement>>,
+  update: Record<string, unknown>
+}
+
 const defaultAppConfig = {
-  hideMenuBar: false,
-  disableTray: false,
-  devel: false,
-  redirectionWarning: true,
-  csp: {
-    enabled: true,
-    thirdparty: {
-      spotify: true,
-      gif: true,
-      hcaptcha: true,
-      youtube: true,
-      twitter: true,
-      twitch: true,
-      streamable: true,
-      vimeo: true,
-      soundcloud: true,
-      paypal: true,
-      audius: true,
-      algolia: true,
-      reddit: true
+  settings: {
+    general: {
+      menuBar: {
+        hide: false
+      },
+      tray: {
+        disable: false
+      }
+    },
+    privacy: {
+      blockApi: {
+        science: true,
+        typingIndicator: false,
+        fingerprinting: true
+      },
+      permissions: {
+        "video": false,
+        "audio": false,
+        "fullscreen": true,
+        "notifications": false,
+        "display-capture": true
+      },
+    },
+    advanced: {
+      csp: {
+        enabled: true
+      },
+      cspThirdParty: {
+        spotify: true,
+        gif: true,
+        hcaptcha: true,
+        youtube: true,
+        twitter: true,
+        twitch: true,
+        streamable: true,
+        vimeo: true,
+        soundcloud: true,
+        paypal: true,
+        audius: true,
+        algolia: true,
+        reddit: true
+      },
+      currentInstance: {
+        radio: 0 as 0|1,
+        type: knownInstancesList.map(value => value[0]).join("|")
+      },
+      devel: {
+        enabled: false
+      },
+      redirection: {
+        warn: true
+      },
+      optimize: {
+        gpu: false
+      },
+      webApi: {
+        webGl: true
+      }
     }
   },
-  blockApi: {
-    typingIndicator: false,
-    science: true,
-    fingerprinting: true
-  },
-  permissions: {
-    "video": false,
-    "audio": false,
-    "fullscreen": true,
-    "notifications": false,
-    "display-capture": true
-  },
-  currentInstance: 0 as 0|1,
   update: {
     notification: {
       version: "",
       till: "",
     },
-  },
-  useRecommendedFlags: {
-    gpu: false
-  },
-  webgl: true
+  }
 };
 
 class Config<T> {
@@ -102,7 +151,7 @@ class Config<T> {
  *
  * @todo Use JSONC format instead, so every option will have its description in the comments.
  */
-export class AppConfig extends Config<typeof defaultAppConfig> {
+export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigBase ? typeof defaultAppConfig : never> {
   protected override defaultConfig = defaultAppConfig;
   protected override path: fs.PathLike = resolve(app.getPath("userData"), "config.json");
   /**

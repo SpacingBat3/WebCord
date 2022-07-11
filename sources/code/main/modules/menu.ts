@@ -76,7 +76,7 @@ export function context(parent: Electron.BrowserWindow): void {
       });
       cmenu.push({ type: "separator" });
     }
-    if (devel || appConfig.get().devel) {
+    if (devel || appConfig.get().settings.advanced.devel.enabled) {
       cmenu.push({
         label: strings.context.inspectElement,
         click: () => parent.webContents.inspectElement(params.x, params.y)
@@ -221,7 +221,7 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
           label: strings.menubar.view.devTools,
           id: "devTools",
           role: "toggleDevTools",
-          enabled: devel || appConfig.get().devel
+          enabled: devel || appConfig.get().settings.advanced.devel.enabled
         },
         { type: "separator" },
         // Zoom settings (reset, zoom in, zoom out)
