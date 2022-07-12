@@ -24,7 +24,6 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
     title: app.getName() + " – " + (new l10n()).client.windows[name],
     show: false,
     parent: parent,
-    modal: true,
     backgroundColor: appInfo.backgroundColor,
     icon: appInfo.icon,
     webPreferences: {
