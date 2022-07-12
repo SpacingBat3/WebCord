@@ -80,10 +80,16 @@ export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
  */
 export const trustedProtocolRegExp = /^(https:|mailto:|tel:|sms:)$/;
 
-/** Known Discord instances, including the official ones. */
+/** 
+ * Two-dimensional array of known Discord instances, including the official
+ * ones.
+ */
 export const knownInstancesList = [
-  ["Discord", new URL("https://discord.com/app")],
-  ["Fosscord", new URL("https://dev.fosscord.com/app")]
+  /* NAME                              URL                       ACTIVE */
+  ["Discord",         new URL("https://discord.com/app"),        true   ],
+  ["Discord Canary",  new URL("https://canary.discord.com/app"), true   ],
+  ["Fosscord",        new URL("https://dev.fosscord.com/app"),   false  ],
+  ["Freecord",        new URL("https://app.freecord.ir/app"),    true   ],
 ] as const;
 
 export interface buildInfo {

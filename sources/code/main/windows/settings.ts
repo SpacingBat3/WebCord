@@ -50,7 +50,6 @@ export type htmlConfig = [
 
 export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electron.BrowserWindow|void {
   const config = generateConfig(new AppConfig());
-  console.log(config.advanced.currentInstance.type);
   const htmlConfig:htmlConfig = [
     ["general", config.general],
     ["privacy", config.privacy],

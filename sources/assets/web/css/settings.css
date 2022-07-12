@@ -40,8 +40,16 @@ label {
     font-size: 1em;
 }
 
+label.disabled {
+    color: var(--color-font-settings);
+}
+
 input, label {
     cursor: pointer;
+}
+
+input:disabled, label.disabled {
+    cursor: default;
 }
 
 input[type="checkbox"], input[type="radio"] {
@@ -64,12 +72,21 @@ input[type="radio"] {
 
 }
 
+input[type="checkbox"] {
+    border-color: var(--color-input-bg);
+}
+
+input[type="radio"]:disabled {
+    outline-color: var(--color-font-settings);
+}
+
 input[type="checkbox"]:checked {
     background-color: var(--color-accent);
     background-image: url(../../icons/symbols/checkmark.svg);
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
+    border-color: var(--color-accent);
 }
 
 input[type="radio"]:checked {

@@ -5,7 +5,7 @@ import { ipcRenderer } from "electron/renderer";
 import type { htmlConfig } from "../../main/windows/settings";
 import type { ConfigElement } from "../../main/modules/config";
 import { getBuildInfo } from "../../common/modules/client";
-import { wLog, sanitizeConfig } from "../../common/global";
+import { wLog, sanitizeConfig, knownInstancesList } from "../../common/global";
 import { sanitize } from "dompurify";
 
 type keys = <T>(o:T) => (keyof T)[];
@@ -27,6 +27,15 @@ function fetchFromWebsite(this: HTMLInputElement) {
     config = {[dotArray[n]??0]: config};
   console.dir({settings: config});
   ipcRenderer.send("settings-config-modified", {settings: config});
+}
+
+function generateRadioLabels(key:string) {
+  switch(key) {
+    case "currentInstance":
+      return knownInstancesList.map(value => [value[0],value[2]] as const);
+    default:
+      throw new Error("Currently unsupported!");
+  }
 }
 
 function generateSettings(optionsGroups: htmlConfig) {
@@ -51,14 +60,15 @@ function generateSettings(optionsGroups: htmlConfig) {
           formContainer.classList.add("settingsContainer");
 
           if("radio" in setting) {
-            const types = setting.type.split("|");
+            const types = generateRadioLabels(settingKey);
             types.map(value => {
               formContainer.appendChild(createForm({
                 type: "radio",
                 id: groupId+"."+settingKey+".radio",
                 isChecked: value === types[setting.radio],
-                label: value,
-                value: types.indexOf(value).toString()
+                label: value[0],
+                value: types.indexOf(value).toString(),
+                enabled: value[1],
               }));
             });
           } else if(!("dropdown" in setting || "input" in setting || "keybind" in setting)) {
@@ -89,6 +99,7 @@ interface CommonForm {
   label:string;
   isChecked: boolean;
   description?: string;
+  enabled?: boolean;
 }
 
 interface CheckBoxForm extends CommonForm {
@@ -120,6 +131,10 @@ function createForm(form:CheckBoxForm|RadioForm){
   if(form.description) {
     inputTag.title = form.description;
     inputLabel.title = form.description;
+  }
+  if(!(form.enabled??true)) {
+    inputTag.disabled = true;
+    inputLabel.classList.add("disabled");
   }
   inputTag.addEventListener("change", fetchFromWebsite);
   inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""));

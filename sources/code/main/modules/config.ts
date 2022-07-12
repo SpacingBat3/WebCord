@@ -6,7 +6,7 @@ import * as fs from "fs";
 import { app, BrowserWindow, screen } from "electron/main";
 import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
-import { objectsAreSameType, isJsonSyntaxCorrect, knownInstancesList } from "../../common/global";
+import { objectsAreSameType, isJsonSyntaxCorrect } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
 
 type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind"
@@ -16,11 +16,9 @@ type lastKeyof<T> = T extends object ? T[keyof T] extends object ? lastKeyof<T[k
 type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reservedKeys>
 
 export type ConfigElement = Partial<Record<checkListKeys,boolean>> | {
-  radio: number,
-  type: string,
+  radio: number
 } | {
   dropdown: number
-  type: string,
 } | {
   input: string|number
 } | {
@@ -81,8 +79,7 @@ const defaultAppConfig = {
         reddit: true
       },
       currentInstance: {
-        radio: 0 as 0|1,
-        type: knownInstancesList.map(value => value[0]).join("|")
+        radio: 0 as 0|1
       },
       devel: {
         enabled: false
