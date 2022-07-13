@@ -126,34 +126,30 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       "devtools://"
     ];
     const permissionHandler = function (webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null {
-      for (const secureURL of trustedURLs) {
-        if (new URL(webContentsUrl).origin !== new URL(secureURL).origin) {
+      {
+        const webContents = new URL(webContentsUrl);
+        if(webContents.origin !== trustedURLs[0] && webContents.protocol !== trustedURLs[1])
           return false;
-        }
-        switch (permission) {
-          case "media":{
-            let callbackValue = true;
-            if("mediaTypes" in details) {
-              if(details.mediaTypes === undefined) break;
-              for(const type of details.mediaTypes)
-                callbackValue = callbackValue && configData.get().settings.privacy.permissions[type];
-            } else if("mediaType" in details) {
-              if(details.mediaType === undefined || details.mediaType === "unknown") break;
-              callbackValue = callbackValue && configData.get().settings.privacy.permissions[details.mediaType];
-            } else {
-              callbackValue = false;
-            }
-            return callbackValue;
-          }
-          case "display-capture":
-          case "notifications":
-          case "fullscreen":
-            return configData.get().settings.privacy.permissions[permission];
-          default:
-            return false;
-        }
       }
-      return null;
+      switch (permission) {
+        case "media":{
+          let callbackValue = true;
+          if("mediaTypes" in details && details.mediaTypes !== undefined)
+            details.mediaTypes.map(type => callbackValue = callbackValue &&
+              configData.get().settings.privacy.permissions[type]
+            );
+          else if("mediaType" in details && details.mediaType !== undefined && details.mediaType !== "unknown")
+            callbackValue = callbackValue && configData.get().settings.privacy.permissions[details.mediaType];
+          else
+            callbackValue = false;
+          return callbackValue;
+        }
+        case "notifications":
+        case "fullscreen":
+          return configData.get().settings.privacy.permissions[permission];
+        default:
+          return null;
+      }
     };
     win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
       const requestUrl = (webContents !== null && webContents.getURL() !== "" ? webContents.getURL() : requestingOrigin);
@@ -265,12 +261,20 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     }
   });
 
-  // Inject desktop capturer
+  // Inject desktop capturer and block getUserMedia.
   ipcMain.on("api-exposed", (_event, api:string) => {
     console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
     const functionString = `
-            navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [async() => navigator.mediaDevices.getUserMedia(await window['${api.replaceAll("'","\\'")}']())]);
-        `;
+      const media = navigator.mediaDevices.getUserMedia;
+      navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [async(constrains) => {
+        if(constrains?.audio?.mandatory || constrains?.video?.mandatory)
+          throw new Error("Permission denied.");
+        return media(constrains);
+      }]);
+      navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [
+        async() => media(await window['${api.replaceAll("'","\\'")}']())
+      ]);
+    `;
     win.webContents.executeJavaScript(functionString + ";0").catch(commonCatches.throw);
   });
 
@@ -313,8 +317,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
           return new Error("Permission denied.");
         lock = !app.commandLine.getSwitchValue("enable-features")
           .includes("WebRTCPipeWireCapturer") ||
-                    process.env["XDG_SESSION_TYPE"] !== "wayland" ||
-                    process.platform === "win32";
+          process.env["XDG_SESSION_TYPE"] !== "wayland" ||
+          process.platform === "win32";
         const sources = desktopCapturer.getSources({
           types: lock ? ["screen", "window"] : ["screen"],
           fetchWindowIcons: lock

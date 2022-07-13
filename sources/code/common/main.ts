@@ -29,7 +29,7 @@ crash();
 // Optional debug logging implementation by overwritting the global `console` method.
 console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
   Promise.all([import("electron"),import("@spacingbat3/kolor")])
-    .then(([Electron,colors]) => [Electron.app.commandLine, colors.default] as [Electron.CommandLine, typeof colors.default])
+    .then(([Electron,colors]) => [Electron.app.commandLine, colors.default] as const)
     .then(([cmd,colors]) => {
       if (cmd.hasSwitch("verbose")||cmd.hasSwitch("v"))
         if(typeof message === "string")
