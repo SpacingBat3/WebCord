@@ -264,17 +264,19 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   // Inject desktop capturer and block getUserMedia.
   ipcMain.on("api-exposed", (_event, api:string) => {
     console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
-    const functionString = `
+    const functionString = `{
       const media = navigator.mediaDevices.getUserMedia;
-      navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [async(constrains) => {
+      navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [(constrains) => {
         if(constrains?.audio?.mandatory || constrains?.video?.mandatory)
           throw new Error("Permission denied.");
         return media(constrains);
       }]);
       navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [
-        async() => media(await window['${api.replaceAll("'","\\'")}']())
+        () => window['${api.replaceAll("'","\\'")}']().then(value => media(value))
       ]);
-    `;
+      Object.defineProperty(navigator.mediaDevices.getUserMedia, "name", {value: "getUserMedia"});
+      Object.defineProperty(navigator.mediaDevices.getDisplayMedia, "name", {value: "getDisplayMedia"});
+    }`;
     win.webContents.executeJavaScript(functionString + ";0").catch(commonCatches.throw);
   });
 
