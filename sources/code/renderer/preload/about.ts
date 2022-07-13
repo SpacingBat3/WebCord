@@ -102,7 +102,7 @@ function showAppLicense() {
         const dialog = document.createElement("div");
         const content = document.createElement("div");
         dialog.classList.add("dialog");
-        content.innerText = license.replace(/(?<!\n)\n(?!\n)/g," ");
+        content.innerText = license.replace(/(?<!\r?\n)\r?\n(?!\r?\n)/g," ");
         dialog.appendChild(content);
         document.getElementById("licenses")?.appendChild(dialog);
         const animations = [...dialog.getAnimations(), ...content.getAnimations()];

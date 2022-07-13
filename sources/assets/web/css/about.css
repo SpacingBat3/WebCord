@@ -82,6 +82,16 @@ main > article {
     box-sizing: border-box;
 }
 
+#nav-line {
+    width: 100%;
+    height: 2px;
+    background-color: rgb(var(--color-accent-light));
+    position:static;
+    bottom: 2px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 header {
     text-align: center;
 }

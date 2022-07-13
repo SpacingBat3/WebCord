@@ -12,15 +12,13 @@
         <nav>
             <div id="about-nav" class="selected">
                 <div class="content"></div>
-                <div class="line"></div>
+                <div id="nav-line"></div>
             </div>
             <div id="credits-nav">
                 <div class="content"></div>
-                <div class="line"></div>
             </div>
             <div id="licenses-nav">
                 <div class="content"></div>
-                <div class="line"></div>
             </div>
         </nav>
         <img id="closebutton" src="../../icons/symbols/close.svg">
@@ -88,6 +86,16 @@
                 root: document.getElementsByTagName('main')[0],
                 threshold: 1
             }).observe(document.getElementById(element.id.replace("-nav","")));
+        }{
+            const main = document.getElementsByTagName("main")[0];
+            const scroller = document.getElementById("nav-line");
+            const licenses = document.getElementById("licenses");
+            function calcScroll() {
+                return main.scrollLeft/licenses.offsetLeft;
+            }
+            main.addEventListener("scroll", () => requestAnimationFrame (() => {
+                scroller.style.transform = "translateX("+(scroller.clientWidth*calcScroll()*2)+"px)"
+            }));
         }
     </script>
 </body>
