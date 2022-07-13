@@ -29,7 +29,7 @@
         },
         "permissions": {
             "name": "Uprawnienia",
-            "description": "Zezwala bądź odmawia przy zapytaniach bądź żądaniach uprawnień przez stronę Discorda. Proszę wziąć pod uwagę, że uprawnienia spoza poniższej listy są domyślnie blokowane przez WebCorda",
+            "description": "Zezwala bądź odmawia przy zapytaniach bądź żądaniach uprawnień przez stronę Discorda. Proszę wziąć pod uwagę, że uprawnienia spoza poniższej listy są domyślnie blokowane przez WebCorda.",
             "labels": {
                 "video": "Kamera",
                 "audio": "Mikrofon",
