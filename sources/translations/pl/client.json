@@ -82,6 +82,17 @@
         "externalApp": {
             "title": "Otwieranie linku w programie zewnętrznym",
             "message": "Strona usiłuje przekierować link o innym źródle pochodzenia do aplikacji zewnętrznej. Kontynuować mimo tego?"
+        },
+        "screenShare": {
+            "close": "Zamknij",
+            "sound": {
+                "unavailable": "Udostępnianie dźwięku nie jest dostępne na tej platformie.",
+                "system": "Udostępnij z dźwiękiem urządzenia."
+            },
+            "source": {
+                "entire": "Ekran komputera",
+                "screen": "Ekran"
+            }
         }
     },
     "help": {

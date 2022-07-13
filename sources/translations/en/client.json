@@ -82,6 +82,17 @@
         "externalApp": {
             "title": "Opening link in external app",
             "message": "A website tries to redirect the link with the different origin to the external application. Continue anyway?"
+        },
+        "screenShare": {
+            "close": "Close",
+            "sound": {
+                "unavailable": "Sharing audio is unavailable on this platform.",
+                "system": "Share with device audio."
+            },
+            "source": {
+                "entire": "Computer's screen",
+                "screen": "Screen"
+            }
         }
     },
     "help": {

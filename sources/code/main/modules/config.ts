@@ -100,6 +100,9 @@ const defaultAppConfig = {
       version: "",
       till: "",
     },
+  },
+  screenShareStore: {
+    audio: false
   }
 };
 
@@ -267,3 +270,11 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
     };
   }
 }
+
+void import("electron/main")
+  .then(Electron => Electron.ipcMain)
+  .then(ipc => ipc.on("settings-config-modified",
+    (_event, config:AppConfig["defaultConfig"])=> {
+      new AppConfig().set(config);
+    })
+  );

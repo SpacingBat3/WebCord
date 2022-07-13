@@ -70,7 +70,3 @@ export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electr
   });
   return settingsWindow;
 }
-
-ipcMain.on("settings-config-modified", (_event, config:AppConfig["defaultConfig"])=> {
-  new AppConfig().set(config);
-});

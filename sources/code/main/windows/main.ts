@@ -336,10 +336,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
             x:0,
             y:0,
           }));
+          ipcMain.handleOnce("capturer-get-settings", () => {
+            return new AppConfig().get().screenShareStore;
+          });
           ipcMain.once("closeCapturerView", (_event,data:unknown) => {
             win.removeBrowserView(view);
             view.webContents.delete();
             win.removeListener("resize", autoResize);
+            ipcMain.removeHandler("capturer-get-settings");
             resolvePromise(data);
             lock = false;
           });
