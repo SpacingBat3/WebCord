@@ -95,9 +95,28 @@ let overwriteMain: (() => void | unknown) | undefined;
   const renderLine = (parameter:string, description:string, length?:number) => {
     // eslint-disable-next-line no-control-regex
     const spaceBetween = (length ?? 30) - parameter.replace(/\x1B\[[^m]+m/g, "").length;
-    return "  "+kolor.green(parameter)+" ".repeat(spaceBetween)+kolor.gray(description)+"\n";
+    return "  "+kolor.green(parameter)+" ".repeat(spaceBetween)+kolor.gray(description);
   };
-  const cmd = app.commandLine;
+  const isNotUnix = process.platform === "win32";
+  const swBreak = isNotUnix ? "" : "-";
+  const hasSwitch = (sw:string) => {
+    const swSymbol = isNotUnix ? "/" :
+      sw.length === 1 ? "-" : "--";
+    const swCase = isNotUnix;
+    return process.argv.find(
+      arg => (swCase ? arg.toLowerCase() : arg)
+        .split("=")[0] === swSymbol+(swCase ? sw.toLowerCase() : sw)
+    ) !== undefined;
+  };
+  const getSwitchValue = (sw:string) => {
+    const swSymbol = isNotUnix ? "/" :
+      sw.length === 1 ? "-" : "--";
+    const swCase = isNotUnix;
+    return process.argv.find(
+      arg => (swCase ? arg.toLowerCase() : arg)
+        .split("=")[0] === swSymbol+(swCase ? sw.toLowerCase() : sw)
+    )?.split("=")[1] ?? null;
+  };
 
   // Mitigations to *unsafe* command-line switches
   if (getBuildInfo().type !== "devel")
@@ -106,39 +125,44 @@ let overwriteMain: (() => void | unknown) | undefined;
       "inspect-port",
       "inspect",
       "inspect-publish-uid"
-    ]) if(cmd.hasSwitch(cmdSwitch))
+    ]) if(app.commandLine.hasSwitch(cmdSwitch))
     {
       console.info("Unsafe switch detected: '--"+cmdSwitch+"'! It will be removed from Chromium's cmdline…");
-      cmd.removeSwitch(cmdSwitch);
+      app.commandLine.removeSwitch(cmdSwitch);
     }
-  if (cmd.hasSwitch("help") || cmd.hasSwitch("h")) {
-    console.log(
+  if (hasSwitch("h")||hasSwitch("-?")||hasSwitch("help")) {
+    const swSymbol = process.platform === "win32" ? {short: "/", long: "/"} :
+      {short: "-", long: "--"};
+    console.log([
       "\n " + kolor.bold(kolor.blue(app.getName())) +
-      " – Privacy focused Discord client made with " + kolor.bold(kolor.white(kolor.blueBg("TypeScript"))) + " and " + kolor.bold(kolor.blackBg(kolor.cyan("Electron"))) + ".\n\n" +
-      " " + kolor.underscore("Usage:") + " " + kolor.red(process.argv0) + kolor.green(" [option]\n\n") +
-      " " + kolor.underscore("Options:") + "\n" +
-      renderLine("--version  -V","Show current application version.")+
-      renderLine("--start-minimized  -m","Hide application at first run.") +
-      renderLine("--export-l10n"+ "=" + kolor.yellow("{dir}"), "Export currently loaded translation files from") +
-      " ".repeat(32)+kolor.gray("the application to the ") + kolor.yellow("{dir}") + kolor.gray(" directory.\n")+
-      renderLine("--verbose  -v", "Show debug messages."),
+        " – Privacy focused Discord client made with " +
+        kolor.bold(kolor.brightWhite(kolor.blueBg("TypeScript"))) + " and " + 
+        kolor.bold(kolor.blackBg(kolor.brightCyan("Electron"))) + ".\n",
+      " " + kolor.underscore("Usage:") + " " + kolor.red(process.argv0) + kolor.green(" [option]\n"),
+      " " + kolor.underscore("Options:"),
+      renderLine(swSymbol.long+"version  "+swSymbol.short+"V","Show current application version."),
+      renderLine(swSymbol.long+"start"+swBreak+"minimized  "+swSymbol.short+"m","Hide application at first run."),
+      renderLine(swSymbol.long+"export"+swBreak+"l10n"+ "=" + kolor.yellow("{dir}"), "Export currently loaded translation files from"),
+      " ".repeat(32)+kolor.gray("the application to the ") + kolor.yellow("{dir}") + kolor.gray(" directory."),
+      renderLine(swSymbol.long+"verbose  "+swSymbol.short+"v", "Show debug messages."),
       renderLine(
-        "--gpu-info"+ "=" + kolor.yellow("basic") + kolor.blue("|") + kolor.yellow("complete"),
+        swSymbol.long+"gpu"+swBreak+"info"+ "=" + kolor.yellow("basic") + kolor.blue("|") + kolor.yellow("complete"),
         "Shows GPU information as JS object."
       )
-    );
+    ].join("\n")+"\n");
     app.exit();
   }
-  if (cmd.hasSwitch("version") || cmd.hasSwitch("V")) {
+  if (hasSwitch("version") || hasSwitch("V")) {
     console.log(app.getName() + " v" + app.getVersion());
     app.exit();
   }
-  if (cmd.hasSwitch("start-minimized") || cmd.hasSwitch("m"))
+  if (hasSwitch("start"+swBreak+"minimized") || hasSwitch("m"))
     startHidden = true;
-  if (cmd.hasSwitch("export-l10n")) {
+  if (hasSwitch("export"+swBreak+"l10n")) {
     overwriteMain = () => {
       const locale = new l10n;
-      const directory = cmd.getSwitchValue("export-l10n");
+      const directory = getSwitchValue("export"+swBreak+"l10n");
+      if(directory === null) return;
       const filePromise: Promise<void>[] = [];
       for (const file of Object.keys(locale))
         filePromise.push(
@@ -161,8 +185,8 @@ let overwriteMain: (() => void | unknown) | undefined;
       });
     };
   }
-  if (cmd.hasSwitch("gpu-info")) {
-    const param = cmd.getSwitchValue("gpu-info");
+  if (hasSwitch("gpu"+swBreak+"info")) {
+    const param = getSwitchValue("gpu"+swBreak+"info");
     switch(param) {
       case "basic":
       case "complete":
