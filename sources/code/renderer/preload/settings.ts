@@ -72,7 +72,7 @@ function generateSettings(optionsGroups: htmlConfig) {
               }));
             });
           } else if(!("dropdown" in setting || "input" in setting || "keybind" in setting)) {
-            (Object.keys as keys)(setting).map(key => {
+            (Object.keys as keys)(setting).sort().map(key => {
               if(key !== "name" && key !== "description" && key !== "labels" && setting[key] !== undefined) {
                 formContainer.appendChild(createForm({
                   type:"checkbox",
