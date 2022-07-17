@@ -227,7 +227,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       if(tray) {
         // Resize icon on MacOS when its height is longer than 22 pixels.
         if(process.platform === "darwin" && icon.getSize().height > 22)
-          icon.resize({height:22});
+          icon = icon.resize({height:22});
         tray.setImage(icon);
       }
       setFavicon = faviconHash;
