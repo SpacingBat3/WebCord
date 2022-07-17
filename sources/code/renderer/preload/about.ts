@@ -1,11 +1,12 @@
 import { ipcRenderer as ipc } from "electron/renderer";
-import { buildInfo, getAppIcon, sanitizeConfig } from "../../common/global";
+import { buildInfo, sanitizeConfig } from "../../common/global";
 import { getAppPath, getAppHash } from "../../common/modules/electron";
 import { resolve } from "path";
 import L10N from "../../common/modules/l10n";
 import packageJson, { PackageJSON, Person } from "../../common/modules/package";
 import { createHash } from "crypto";
 import { sanitize } from "dompurify";
+import { appInfo } from "../../common/modules/client";
 
 /**
  * Fetches user avatar by making the requests to both GitHub and Gravatar
@@ -132,7 +133,7 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
   const details = await detailsPromise;
   nameElement.innerText = details.appName + " ("+details.buildInfo.type+")";
   versionElement.innerText = "v" + details.appVersion + (details.buildInfo.commit !== undefined ? "-"+details.buildInfo.commit.substring(0, 7) : "");
-  (document.getElementById("logo") as HTMLImageElement).src = getAppIcon([256,192,128,96]);
+  (document.getElementById("logo") as HTMLImageElement).src = appInfo.icon;
     
   if(repoElement.tagName === "A")
     (repoElement as HTMLAnchorElement).href = details.appRepo??"";

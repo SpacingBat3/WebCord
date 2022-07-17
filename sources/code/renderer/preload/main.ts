@@ -1,7 +1,8 @@
 import { contextBridge, ipcRenderer } from "electron/renderer";
 import { clipboard } from "electron/common";
 import { generateSafeKey, navigate } from "../modules/api";
-import { getAppIcon, wLog } from "../../common/global";
+import { wLog } from "../../common/global";
+import { appInfo } from "../../common/modules/client";
 import desktopCapturerPicker from "../modules/capturer";
 import l10n from "../../common/modules/l10n";
 
@@ -47,7 +48,7 @@ if (window.location.protocol === "file:") {
   window.addEventListener("load", () => {
     const element = document.getElementById("logo");
     if(element && element.tagName === "IMG")
-      (element as HTMLImageElement).src = getAppIcon([512,256,192]);
+      (element as HTMLImageElement).src = appInfo.icon;
   });
   contextBridge.exposeInMainWorld(
     "webcord",

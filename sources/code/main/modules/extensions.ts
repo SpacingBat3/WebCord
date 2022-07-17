@@ -110,7 +110,7 @@ export async function loadStyles(webContents:Electron.WebContents) {
 }
 
 /**
- * Loads unpacked Chromium extensions from `{userData}/Extensions/Chromium.
+ * Loads **unpacked** Chromium extensions from `{userData}/Extensions/Chromium`.
  * 
  * Due to limitations of Electron, there's no full support to whole API of
  * Chromium extensions and there's likely no support at all to `v3` manifest

@@ -2,10 +2,6 @@
  * Global.ts – non-Electron depending globally-used module declarations
  */
 
-import { existsSync } from "fs";
-import { getAppPath } from "./modules/electron";
-import { resolve } from "path";
-
 /**
  * Outputs a fancy log message in the (DevTools) console.
  * 
@@ -136,16 +132,6 @@ export function isBuildInfo(object: unknown): object is buildInfo {
   if (process.platform === "win32" && !(typeof (object as buildInfo)?.AppUserModelId === "string"))
     return false;
   return true;
-}
-
-export function getAppIcon(sizes:number[]) {
-  const defaultPath = resolve(getAppPath(), "sources/assets/icons/app.png");
-  if(existsSync(defaultPath))
-    return defaultPath;
-  for (const size of sizes)
-    if(existsSync("/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png"))
-      return "/usr/share/icons/hicolor/"+size.toString()+"x"+size.toString()+"/apps/webcord.png";
-  return "";
 }
 
 export type SessionLatest = Electron.Session & {
