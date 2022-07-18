@@ -1,4 +1,5 @@
 # Command line (runtime) flags
+
 WebCord is capable of parsing some Chromium flags and following
 application-specific flags:
 
@@ -8,12 +9,15 @@ application-specific flags:
 - **`--version` or `-V`** – display application version and exit even before
   *app is ready*.
 
-- **`--help` or `-h`** – display help information about the application.
+- **`--help`, `-?` or `-h`** – display help information about the application.
 
 - **`--export-l10n={dir}`** – export currently loaded translations as a set of
   JSON files to the **`{dir}`** directory.
 
 - **`--verbose` or `-v`** – show debug messages.
+
+- **`--gpu-info=basic|complete`** – displays a raw GPU information from Chromium
+  in form of a JavaScript object.
 
 # Build flags:
 
@@ -35,6 +39,17 @@ following build environment variables to set build specific flags:
   maintainers so they can disable the notifications for their users and let the
   package manager to handle the update notifications.
 
+- `WEBCORD_WIN32_APPID=[string]` *(Windows only)* – replaces the `ApplicationUserModelID`, used
+  as an unique application identifier. Default is `SpacingBat3.WebCord`. You
+  should replace it if you want to differ your build from the official ones,
+  e.g. if you release your own WebCord package for Windows with your own
+  patches and want to allow for coexisting it with the official WebCord
+  executables.
+
+- `WEBCORD_FLATPAK_ID=[string]` *(Linux only)* – Used in Flatpak manifest file
+  as an unique app identifier. For community builds it should be set to
+  something else. Defaults to `io.github.spacingbat3.webcord`
+
 ## 2. Other tools
 
 If you're packaging the application on your own, you can create directly a
@@ -50,6 +65,10 @@ The `buildInfo.json` file should be placed in the application's root directory
 
 - `"commit": [hash]` – this property will save the information about the build
   commit; it is ignored for the `release` build type.
+
+- `AppUserModelId: [string]` *(Windows only)* – definies an
+  `ApplicationUserModelId` of the WebCord build, this should always be present
+  in Windows distributables.
 
 - `"features": [Object]` – this is the object controlling some features;
   currently it can contain these optional properties:

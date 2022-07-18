@@ -184,7 +184,7 @@ const config: ForgeConfigFile = {
  * to cause a confusion just because someone has not added a flathub repository
  * for their user-wide Flathub environment.
  * 
- * It will stay as it is untill either official maker will resolve this or my
+ * It will stay as it is until either official maker will resolve this or my
  * own maker implementation will be mature enough to be released.
  */
 if(process.env["WEBCORD_FLATPAK"]?.toLowerCase() === "true")

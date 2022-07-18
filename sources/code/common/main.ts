@@ -130,7 +130,7 @@ let overwriteMain: (() => void | unknown) | undefined;
       console.info("Unsafe switch detected: '--"+cmdSwitch+"'! It will be removed from Chromium's cmdline…");
       app.commandLine.removeSwitch(cmdSwitch);
     }
-  if (hasSwitch("h")||hasSwitch("-?")||hasSwitch("help")) {
+  if (hasSwitch("h")||hasSwitch("?")||hasSwitch("help")) {
     const swSymbol = isNotUnix ? {short: "/", long: "/"} : {short: "-", long: "--"};
     const argv0 = process.argv0.endsWith("electron") && process.argv.length > 2 ?
       (process.argv[0]??"") + ' "'+(process.argv[1]??"")+'"' : process.argv0;
@@ -142,6 +142,7 @@ let overwriteMain: (() => void | unknown) | undefined;
       " " + kolor.underscore("Usage:"),
       " " + kolor.red(argv0) + kolor.green(" [options]\n"),
       " " + kolor.underscore("Options:"),
+      renderLine(swSymbol.long+"help  "+swSymbol.short+"h  "+swSymbol.short+"?","Show this help message."),
       renderLine(swSymbol.long+"version  "+swSymbol.short+"V","Show current application version."),
       renderLine(swSymbol.long+"start"+swBreak+"minimized  "+swSymbol.short+"m","Hide application at first run."),
       renderLine(swSymbol.long+"export"+swBreak+"l10n"+ "=" + kolor.yellow("{dir}"), "Export currently loaded translation files from"),
