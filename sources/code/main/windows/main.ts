@@ -268,11 +268,16 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       const media = navigator.mediaDevices.getUserMedia;
       navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [(constrains) => {
         if(constrains?.audio?.mandatory || constrains?.video?.mandatory)
-          throw new Error("Permission denied.");
+          return new Promise((resolve,reject) => setImmediate(() => reject(new DOMException("Invalid state.", "NotAllowedError"))));
         return media(constrains);
       }]);
       navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [
-        () => window['${api.replaceAll("'","\\'")}']().then(value => media(value))
+        () => window['${api.replaceAll("'","\\'")}']().then(value => media(value)).catch(error => {
+          if(typeof error === "string")
+            throw new DOMException(error, "NotAllowedError")
+          else
+            throw error
+        })
       ]);
       Object.defineProperty(navigator.mediaDevices.getUserMedia, "name", {value: "getUserMedia"});
       Object.defineProperty(navigator.mediaDevices.getDisplayMedia, "name", {value: "getDisplayMedia"});
@@ -316,7 +321,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
           return new Error("Main process is busy by another request.");
         // Fail when client has denied the permission to the capturer.
         if(!configData.get().settings.privacy.permissions["display-capture"])
-          return new Error("Permission denied.");
+          return new DOMException("Permission denied", "NotAllowedError");
         lock = !app.commandLine.getSwitchValue("enable-features")
           .includes("WebRTCPipeWireCapturer") ||
           process.env["XDG_SESSION_TYPE"] !== "wayland" ||

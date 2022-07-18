@@ -106,7 +106,7 @@ window.addEventListener("DOMContentLoaded", () => {
           })
         );
         document.getElementById("capturer-close")
-          ?.addEventListener("click", () => ipc.send("closeCapturerView", "Operation canceled by user"));
+          ?.addEventListener("click", () => ipc.send("closeCapturerView", "Permission denied"));
       } catch(reason) {
         ipc.send("closeCapturerView", reason);
       }
