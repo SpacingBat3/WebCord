@@ -1,4 +1,4 @@
-import { AppConfig } from "./config";
+import { AppConfig, cspTP } from "./config";
 
 const cspKeys = [
   "default-src",
@@ -75,7 +75,7 @@ export default class CSP {
   }
 }
 
-const csp = {
+const csp: {base:CSP}&cspTP<CSP> = {
   base: new CSP({
     "default-src": "'self'",
     "script-src": "'self' 'unsafe-eval' 'unsafe-inline' "+
@@ -106,6 +106,9 @@ const csp = {
     "media-src": "https://i.imgur.com https://*.gfycat.com "+
       "https://media.tenor.co https://media.tenor.com "+
       "https://c.tenor.com https://*.giphy.com",
+  }),
+  googleStorageApi: new CSP({
+    "connect-src": "https://discord-attachments-uploads-prd.storage.googleapis.com/"
   }),
   hcaptcha: new CSP({
     "script-src": "https://*.hcaptcha.com https://hcaptcha.com",

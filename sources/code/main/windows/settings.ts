@@ -4,6 +4,7 @@ import { appInfo } from "../../common/modules/client";
 import l10n from "../../common/modules/l10n";
 import { initWindow } from "../modules/parent";
 import { deepmerge } from "deepmerge-ts";
+import type { cspTP } from "../modules/config";
 
 type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"] & {
   advanced: {
@@ -16,25 +17,26 @@ type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"]
 function generateConfig (config:AppConfig) {
   const appConfig = deepmerge(config.get().settings, (new l10n()).settings);
   const finalConfig: Partial<generatedConfig> = appConfig as object;
-  const websitesThirdParty = [
-    ["algolia", "Algolia"],
-    ["spotify", "Spotify"],
-    ["hcaptcha", "hCaptcha"],
-    ["paypal", "PayPal"],
-    ["gif", appConfig.advanced.cspThirdParty.labels.gif],
-    ["youtube", "YouTube"],
-    ["twitter", "Twitter"],
-    ["twitch", "Twitch"],
-    ["streamable", "Streamable"],
-    ["vimeo", "Vimeo"],
-    ["audius", "Audius"],
-    ["soundcloud", "SoundCloud"],
-    ["reddit", "Reddit"]
-  ] as const;
+  const websitesThirdParty: cspTP<string> = {
+    algolia: "Algolia",
+    spotify: "Spotify",
+    hcaptcha: "hCaptcha",
+    paypal: "PayPal",
+    audius: "Audius",
+    gif: appConfig.advanced.cspThirdParty.labels.gif,
+    reddit: "Reddit",
+    soundcloud: "SoundCloud",
+    streamable: "Streamable",
+    twitch: "Twitch",
+    twitter: "Twitter",
+    vimeo: "Vimeo",
+    youtube: "YouTube",
+    googleStorageApi: "Google Storage API"
+  };
   // Append more third-party sites labels.
-  websitesThirdParty.map(stringGroup => {
-    if(finalConfig?.advanced?.cspThirdParty?.labels && !finalConfig.advanced.cspThirdParty.labels[stringGroup[0]])
-      finalConfig.advanced.cspThirdParty.labels[stringGroup[0]] = stringGroup[1];
+  Object.entries(websitesThirdParty).map(stringGroup => {
+    if(finalConfig?.advanced?.cspThirdParty?.labels && !finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>])
+      finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] = stringGroup[1];
   });
   // Append name from CSP.
   if(finalConfig?.advanced?.cspThirdParty?.name)

@@ -35,6 +35,10 @@ export interface AppConfigBase {
   update: Record<string, unknown>
 }
 
+export type cspTP<T> = {
+  [P in keyof typeof defaultAppConfig["settings"]["advanced"]["cspThirdParty"]]: T
+ }
+
 const defaultAppConfig = {
   settings: {
     general: {
@@ -76,7 +80,8 @@ const defaultAppConfig = {
         paypal: true,
         audius: true,
         algolia: true,
-        reddit: true
+        reddit: true,
+        googleStorageApi: true
       },
       currentInstance: {
         radio: 0 as 0|1
