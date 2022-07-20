@@ -1,1 +1,28 @@
-{}
+{
+    "general": {
+        "menuBar": {
+            "name": "Menüleiste",
+            "description": "Ändert die Sichtbarkeit der Menüleiste.",
+            "labels": {
+                "hide": "Verstecke Menüleiste automatisch (<kbd>ALT</kbd> zeigt diese erneut an)."
+            }
+        },
+        "tray": {
+            "name": "Systemablage",
+            "description": "Ändert die Sichtbarkeit des WebCord Symbols in der Systemablage.",
+            "labels": {
+                "disable": "Deaktiviert das Schließen in die Systemablage."
+            }
+        }
+    },
+    "privacy": {
+        "name": "Privatsphäre",
+        "blockApi": {
+            "name": "Discord API Blockierung",
+            "description": "Blockiert ausgewählte Discord API Anfragen für verbesserte Privatsphäre.",
+            "labels": {
+                "science": "Blockiert bekannte Telemetrie (<code>/science</code> und <code>/tracing</code>)."
+            }
+        }
+    }
+}
