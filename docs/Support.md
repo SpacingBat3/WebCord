@@ -30,26 +30,41 @@ Unfortunately, there's no official Electron release built under `musl` `libc`,
 although it might be possible to compile it, at least for some Electron
 releases. See [`electron/electron #9662`][issue9662] for further details.
 
+Some Linux distibutions seem to provide Electron packages and in that case, it
+should be possible to run WebCord on them without any issues. Moreover you could
+even try to extract or repackage the Electron from these distributions to any
+other `musl` `libc` based Linux distribution if you want to. Currently,
+[Void Linux `x86-64` seem to provide a release for it][void-electron].
+
 ### FreeBSD
 
 Currently Electron isn't officially supported on FreeBSD (see
-[`electron/electron #3797`][issue3797]).
+[`electron/electron #3797`][issue3797]). However, a community provides the
+[prebuilt Electron binaries for `x64` FreeBSD operating system][freebsd], which
+should be functional with WebCord. And because FreeBSD uses similar libraries as
+Linux, WebCord's code does not include any `process.platform === "linux"` checks
+and rather than this prefers to exclude the presence of some platforms that are
+supported by the Electron and don't support Linux APIs (i.e. Windows and macOS).
+This way, a compatibility with FreeBSD as well as with other BSD-based
+distributions or even with other *nix operating systems that are not part of BSD
+operating system family.
 
-Electron was previously available in `freshports`, but now there're no Electron
-14+ releases here, so it doesn't seem to be maintained here anymore. There's also
-[a GitHub repository][freebsd-repo] that seems to provide recent Electron
-binaries for FreeBSD, although I'm unsure whenever they're working fine with
-WebCord or not – you can use them at your own responsibility.
+WebCord has been confirmed to work in the past with FreeBSD by me (author of
+this project). It shouldn't break but if it does, I may or may not work on any
+fix for it. But as long as provided Electron builds runs correctly, WebCord on
+FreeBSD should share most of its bugs with Linux.
 
-If you want to run WebCord under FreeBSD's Electron binary, you can install it
-(or extract it somewhere), clone WebCord's source code, install dependencies and
-compile it with `tsc` as described in [Build.md](Build.md) and run `electron`
-with WebCord's source code directory as the parameter:
+After you install a specific Electron package (e.g. `electron19`), you can
+extract `app.asar` from any distributable (most likely from Windows or Linux
+ones) and run it in terminal with installed system-wide Electron:
 ```sh
-electron "/path/to/WebCord/"
+electron$v $path
 ```
+*(Replace `$v` and `$path` with actual version number and path to the extracted*
+*`app.asar`.)*
 
 [repo]: https://github.com/SpacingBat3/WebCord "GitHub: SpacingBat3/WebCord"
 [issue3797]: https://github.com/electron/electron/issues/3797 "Add FreeBSD support to electron • Issue #3797 • electron/electron"
 [issue9662]: https://github.com/electron/electron/issues/9662 "musl libc support • Issue #9662 • electron/electron"
-[freebsd-repo]: https://github.com/tagattie/FreeBSD-Electron/releases "Releases • FreeBSD-Electron: Electron port for FreeBSD"
+[freebsd]: https://github.com/tagattie/FreeBSD-Electron/releases "Releases • FreeBSD-Electron: Electron port for FreeBSD"
+[void-electron]: https://voidlinux.org/packages/?arch=x86_64-musl&q=electron "Electron query search in Void Linux package list."
