@@ -1,6 +1,6 @@
 # How to contribute in the project?
 
-This file describes in general the ways of contribution within the 
+This file describes the ways of contributing to the project.
 
 ## How do I report a bug or request a new feature?
 
@@ -34,7 +34,7 @@ also encouraging to read the following parts of the documentation:
 
 ## How to translate WebCord?
 
-Currently WebCord has moved its translation to its [Weblate instance][weblate].
+Currently, WebCord has moved its translation to its [Weblate instance][weblate].
 It includes the current state of the translation project, instructions and
 limitations. You are free to translate it *the old way* (by doing a PR), yet
 Weblate changes might be pulled earlier in order to avoid conflicts on Weblate
