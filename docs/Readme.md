@@ -66,7 +66,7 @@ WebCord the way you like!
 
 - 📱 **ARM-friendly and Linux mobile support**
 
-Altrough Electron is not designed to work on mobile devices, WebCord tries its
+Although Electron is not designed to work on mobile devices, WebCord tries its
 best to be responsive even on devices with the smaller screens and touch
 screens. It's still not ideal, but should work for basic Discord usage. However
 I plan to focus on it someday and to make it look and work closer to the
