@@ -6,7 +6,6 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:import/recommended",
@@ -57,6 +56,9 @@
     "no-restricted-imports": ["error", {
       "name": "electron",
       "message": "This module does not provide the information about the process type. Please use 'electron/common', 'electron/main' or 'electron/renderer' instead."
+    }],
+    "import/no-unused-modules": ["error", {
+      "unusedExports": true
     }]
   }
 }

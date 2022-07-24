@@ -13,10 +13,10 @@ interface PersonObject {
 	url?: string;
 }
 
-export type PersonAny = string & PersonObject
-export type PersonLike = string | PersonObject
+type PersonAny = string & PersonObject
+type PersonLike = string | PersonObject
 
-export interface PackageJsonProperties {
+interface PackageJsonProperties {
 	/** Node.js-friendly application name. */
 	name: string,
     /** Node package description. */

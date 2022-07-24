@@ -17,7 +17,7 @@ const cspKeysRegExp = new RegExp("(?<="+cspKeys.join("|")+")\\s+");
 
 type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 
-export default class CSP {
+class CSP {
   private values: {
         object: cspObject,
         string: string

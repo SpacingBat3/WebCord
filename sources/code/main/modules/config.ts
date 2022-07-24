@@ -30,7 +30,7 @@ const test = {} as unknown as ConfigElement;
 if("radio" in test)
   test.radio;
 
-export interface AppConfigBase {
+interface AppConfigBase {
   settings: Record<string, Record<string, ConfigElement>>,
   update: Record<string, unknown>
 }

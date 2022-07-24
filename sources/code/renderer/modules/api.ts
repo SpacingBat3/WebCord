@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unused-modules */
 /*
  * A place to move useful WebCord's function that could be exposed to
  * third-party addons in the future as part of planned "API".
