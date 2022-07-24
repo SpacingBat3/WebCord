@@ -71,12 +71,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   // CSP
 
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    let headersOverwrite:{"Content-Security-Policy":string[]}|undefined = undefined;
+    const headersOverwrite:{"Content-Security-Policy"?:[string]} = {};
     if (configData.get().settings.advanced.csp.enabled) {
       console.debug("[CSP] Overwritting Discord CSP.");
-      headersOverwrite = {
-        "Content-Security-Policy": [getWebCordCSP().toString()]
-      };
+      headersOverwrite["Content-Security-Policy"] = [getWebCordCSP().toString()];
     }
     callback({
       responseHeaders: {
@@ -298,6 +296,12 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     if(object?.settings?.advanced?.currentInstance?.radio !== undefined) {
       void win.loadURL(knownInstancesList[config.get().settings.advanced.currentInstance.radio][1].href);
     }
+    // CSP
+    if(
+      object?.settings?.advanced?.cspThirdParty !== undefined ||
+      object?.settings?.advanced?.csp !== undefined
+    )
+      win.reload();
   });
 
   // Load extensions for builds of type "devel".
