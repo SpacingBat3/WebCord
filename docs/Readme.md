@@ -51,10 +51,9 @@ has a complex process model which sandboxes (at least) the browser scripts from
 Node.js. And with the restrictive TypeScript and ESlint policy, most simple bugs
 in the code, including those affecting the app security, are eliminated even
 before they will go into the production. WebCord also tries to follow practises
-from the [Electron#Security] page, validating the pages using the local list
-rather than the one remotely fetched from the Discord. It has also a few
-securities known from the browsers, like an `alert`/`prompt` dialog spam
-prevention in case Discord would begin to behave maliciously.
+from the [Electron#Security]. It has also a few securities known from the
+browsers, like an `alert`/`prompt` dialog spam prevention in case Discord would
+begin to behave maliciously.
 
 - 🛠️ **Customizable**
 
@@ -183,7 +182,6 @@ you don't even need to be familiar with programming at all!
 [Sentry]: https://sentry.io "Application Monitoring and Error Tracking Software"
 [Discord-Electron]: https://github.com/GyozaGuy/Discord-Electron "An Electron Discord app designed for use on Linux systems."
 [npm-docs]: https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors "People Fields | NPM Documentation"
-[makepr]: https://makeapullrequest.com/ "Make a Pull Request"
 [electron]: https://www.electronjs.org/ "Build cross-platform desktop apps with JavaScript, HTML, and CSS."
 [electron-forge]: https://www.electronforge.io/ "A complete tool for creating, publishing, and installing modern Electron applications."
 [license]: ../LICENSE "WebCord license"
