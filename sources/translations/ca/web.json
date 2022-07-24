@@ -1,0 +1,37 @@
+{
+    "offline": {
+        "title": "No es pot connectar al servei de Discord.",
+        "description": "Assegureu-vos que esteu connectat a Internet."
+    },
+    "aboutWindow": {
+        "nav": {
+            "about": "Quant a",
+            "credits": "Crèdits",
+            "licenses": "Llicències"
+        },
+        "about": {
+            "appDescription": "Client web Discord i Fosscord amb funcions enfocades a la privadesa.",
+            "appRepo": "Repositori GitHub",
+            "featuresDefault": "Per defecte",
+            "checksumTitle": "Suma de control",
+            "featuresTitle": "Banderes de construcció"
+        },
+        "credits": {
+            "people": {
+                "author": "Autor, mantenidor i desenvolupador principal.",
+                "contributors": {
+                    "default": "Col·laborador de codi."
+                }
+            }
+        },
+        "licenses": {
+            "appLicenseTitle": "Llicència d'aplicació",
+            "appLicenseBody": "%s és un programari lliure: podeu utilitzar-lo, modificar-lo i redistribuir-lo sota els termes de la llicència MIT, que s'hauria de distribuir amb aquest programari.",
+            "showLicense": "Mostra la llicència",
+            "thirdPartyLicensesTitle": "Llicències de tercers",
+            "thirdPartyLicensesBody": "%s depèn del programari de tercers següent:",
+            "licensedUnder": "sota la llicència %s",
+            "packageAuthors": "%s autors"
+        }
+    }
+}

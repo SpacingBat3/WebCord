@@ -1,0 +1,107 @@
+{
+    "context": {
+        "paste": "Enganxa",
+        "copyURLText": "Copia el text de l'enllaç",
+        "inspectElement": "Inspeccionar",
+        "copy": "Còpia",
+        "cut": "Talla",
+        "dictionaryAdd": "Afegeix al diccionari local",
+        "copyURL": "Copia l'adreça de l'enllaç"
+    },
+    "menubar": {
+        "window": {
+            "mobileMode": "Amaga la barra lateral",
+            "groupName": "Finestra"
+        },
+        "view": {
+            "zoomOut": "Redueix",
+            "groupName": "Vista",
+            "resetZoom": "Mida actual",
+            "reload": "Recarregar",
+            "fullScreen": "Commuta la pantalla completa",
+            "forceReload": "Força la recàrrega",
+            "devTools": "Commuta les eines per a desenvolupadors",
+            "zoomIn": "Amplia"
+        },
+        "file": {
+            "quit": "Surt",
+            "relaunch": "Rellança",
+            "addon": {
+                "groupName": "Extensions",
+                "loadChrome": "Carrega l'extensió de Chrome",
+                "loadNode": "Carrega l'extensió del node"
+            },
+            "groupName": "Fitxer"
+        },
+        "edit": {
+            "groupName": "Edita",
+            "undo": "Desfer",
+            "redo": "Refer"
+        },
+        "enabled": "Habilitat"
+    },
+    "dialog": {
+        "common": {
+            "yes": "&Sí",
+            "no": "&No",
+            "source": "Font",
+            "warning": "Advertiment",
+            "error": "Error",
+            "continue": "&Continua"
+        },
+        "ver": {
+            "updateBadge": "[ACTUALITZACIÓ]",
+            "updateTitle": "Actualització disponible!",
+            "update": "Hi ha disponible una nova versió de l'aplicació!",
+            "recent": "L'aplicació està actualitzada!",
+            "devel": "Esteu utilitzant la versió que no és de producció.",
+            "downgrade": "La vostra construcció de producció és més nova que la estable!"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: S'ha denegat la sol·licitud de permís a %s."
+            },
+            "check": {
+                "denied": "%s: Comprovació de permisos a %s denegada."
+            }
+        },
+        "mod": {
+            "nodeExt": "Complement de WebCord Node.js",
+            "crx": "Extensió de Chrome/Chromium"
+        },
+        "externalApp": {
+            "title": "S'està obrint l'enllaç a l'aplicació externa",
+            "message": "Un lloc web intenta redirigir l'enllaç amb el diferent origen a l'aplicació externa. Continuar igualment?"
+        },
+        "screenShare": {
+            "close": "Tanca",
+            "sound": {
+                "unavailable": "La compartició d'àudio no està disponible en aquesta plataforma.",
+                "system": "Comparteix l'àudio amb el dispositiu."
+            },
+            "source": {
+                "entire": "Pantalla de l'ordinador",
+                "screen": "Pantalla"
+            }
+        }
+    },
+    "tray": {
+        "toggle": "Commuta",
+        "quit": "Sortir"
+    },
+    "help": {
+        "groupName": "Ajuda",
+        "repo": "Repositori",
+        "bugs": "Informar d'un error"
+    },
+    "log": {
+        "singleInstance": "S'està canviant a la finestra existent...",
+        "listenPort": "Escoltant al port %s."
+    },
+    "windows": {
+        "docs": "Documentació",
+        "invite": "Convidar",
+        "settings": "Configuració",
+        "about": "Sobre"
+    }
+}
