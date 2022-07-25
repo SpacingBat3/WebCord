@@ -14,6 +14,13 @@
             "labels": {
                 "disable": "Disable hiding window to the system tray functionality."
             }
+        },
+        "taskbar": {
+            "name": "Taskbar",
+            "description": "Controls the behavior of taskbar entry of WebCord.",
+            "labels": {
+                "flash": "Flash taskbar button on new messages."
+            }
         }
     },
     "privacy": {

@@ -47,6 +47,9 @@ const defaultAppConfig = {
       },
       tray: {
         disable: false
+      },
+      taskbar: {
+        flash: true
       }
     },
     privacy: {

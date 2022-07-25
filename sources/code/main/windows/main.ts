@@ -226,7 +226,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         icon = icon.resize({height:22});
       tray.setImage(icon);
     }
-    win.flashFrame(flash);
+    win.flashFrame(flash&&configData.get().settings.general.taskbar.flash);
     setFavicon = faviconHash;
   });
 
@@ -299,6 +299,9 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       object?.settings?.advanced?.csp !== undefined
     )
       win.reload();
+    // Remove window flashing when it is disabled
+    if(object?.settings?.general?.taskbar?.flash === false)
+      win.flashFrame(false);
   });
 
   // Load extensions for builds of type "devel".
