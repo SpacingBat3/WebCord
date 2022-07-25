@@ -15,9 +15,8 @@ export function getAppPath() {
   else {
     // Calculate the project's directory based on the `package.json` position.
     let path = __dirname;
-    while(!existsSync(resolve(path, "./package.json")) && /^\/|[A-Z]:\\$/.test(path)) {
+    while(!existsSync(resolve(path, "./package.json")) && /^\/|[A-Z]:\\$/.test(path))
       path = resolve(path, "../");
-    }
     return path;
   }
 }
