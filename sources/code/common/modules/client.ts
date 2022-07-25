@@ -1,7 +1,7 @@
 /*
  * Declarations used between multiple files (main scripts only)
  */
-
+import { nativeImage } from "electron/common";
 import { getAppPath, getName } from "./electron";
 import { resolve } from "path";
 import { buildInfo, isBuildInfo } from "../global";
@@ -32,10 +32,10 @@ export const appInfo = {
     /** Web service on which app repository is published. */
     provider: "github.com"
   },
-  icon: resolve(getAppPath(), "sources/assets/icons/app.png"),
-  trayIcon: resolve(getAppPath(), "sources/assets/icons/tray.png"),
-  trayUnread: resolve(getAppPath(), "sources/assets/icons/tray-unread.png"),
-  trayPing: resolve(getAppPath(), "sources/assets/icons/tray-ping.png"),
+  icon: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/app.png")),
+  trayIcon: nativeImage.createFromPath((getAppPath(), "sources/assets/icons/tray.png")),
+  trayUnread: nativeImage.createFromPath((getAppPath(), "sources/assets/icons/tray-unread.png")),
+  trayPing: nativeImage.createFromPath((getAppPath(), "sources/assets/icons/tray-ping.png")),
   minWinHeight: 412,
   minWinWidth: 312,
   backgroundColor: "#36393F",

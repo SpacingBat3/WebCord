@@ -133,7 +133,7 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
   const details = await detailsPromise;
   nameElement.innerText = details.appName + " ("+details.buildInfo.type+")";
   versionElement.innerText = "v" + details.appVersion + (details.buildInfo.commit !== undefined ? "-"+details.buildInfo.commit.substring(0, 7) : "");
-  (document.getElementById("logo") as HTMLImageElement).src = appInfo.icon;
+  (document.getElementById("logo") as HTMLImageElement).src = appInfo.icon.toDataURL();
     
   if(repoElement.tagName === "A")
     (repoElement as HTMLAnchorElement).href = details.appRepo??"";
