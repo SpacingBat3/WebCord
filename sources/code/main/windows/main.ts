@@ -202,7 +202,8 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     // Stop execution when icon is same as the one set.
     if (faviconHash === setFavicon) return;
     // Stop code execution on Fosscord instances.
-    if (new URL(win.webContents.getURL()).origin !== knownInstancesList[0][1].origin) {
+    const currentInstance = knownInstancesList.find((value) => value[1].origin === new URL(win.webContents.getURL()).origin);
+    if (currentInstance?.[2] !== true) {
       setFavicon = faviconHash;
       icon = appInfo.trayIcon;
       win.flashFrame(false);
