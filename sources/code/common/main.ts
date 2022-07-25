@@ -172,18 +172,27 @@ let overwriteMain: (() => void | unknown) | undefined;
           fs.writeFile(resolvePath(directory, file + ".json"),JSON.stringify(locale[file as keyof typeof locale], null, 2))
         );
       Promise.all(filePromise).then(() => {
-        console.log(
-          "\n🎉️ Successfully exported localization files to \n" +
-            "   '" + directory + "'!\n"
-        );
+        console.log([
+          "\n🎉️ "+kolor.green(kolor.bold("Successfully"))+" exported localization files to",
+          "   '" + kolor.blue(kolor.underscore(directory)) + "'!\n"
+        ].join("\n"));
         app.quit();
       }).catch((err:NodeJS.ErrnoException) => {
-        console.error(
-          "\n⛔️ " + kolor.red(kolor.bold(err.code ?? err.name)) + " " + (err.syscall ?? "") + ": " +
-                        (err.path ? kolor.blue(kolor.underscore(relative(process.cwd(),err.path))) + ": " : "") +
-                        err.message.replace((err.code ?? "") + ": ", "")
-                          .replace(", " + (err.syscall ?? "") + " '" + (err.path ?? "") + "'", "") + ".\n"
-        );
+        const path = err.path ? {
+          relative: relative(process.cwd(),err.path),
+          absolute: resolvePath(process.cwd(),err.path),
+        } : {};
+        const finalPath = path.absolute ?
+          path.absolute.length > path.relative.length ?
+            path.relative :
+            path.absolute :
+          null;
+        console.error([
+          "\n⛔️ " + kolor.red(kolor.bold(err.code ?? err.name)) + " " + (err.syscall ?? "") + ": ",
+          (finalPath ? kolor.blue(kolor.underscore(finalPath)) + ": " : ""),
+          err.message.replace((err.code ?? "") + ": ", "")
+            .replace(", " + (err.syscall ?? "") + " '" + (err.path ?? "") + "'", "") + ".\n"
+        ].join(""));
         app.exit((err.errno??0)*(-1));
       });
     };
