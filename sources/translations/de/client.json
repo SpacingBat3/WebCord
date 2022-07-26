@@ -82,6 +82,17 @@
             "check": {
                 "denied": "%s: Berechtigungsprüfung auf %s abgelehnt."
             }
+        },
+        "screenShare": {
+            "close": "Schließen",
+            "sound": {
+                "unavailable": "Das Teilen von Audio ist auf dieser Plattform nicht verfügbar.",
+                "system": "Mit Geräteaudio teilen."
+            },
+            "source": {
+                "entire": "Computerbildschirm",
+                "screen": "Bildschirm"
+            }
         }
     },
     "help": {
