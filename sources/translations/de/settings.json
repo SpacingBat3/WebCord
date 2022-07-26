@@ -14,6 +14,14 @@
             "labels": {
                 "disable": "Deaktiviert das Schließen in die Systemablage."
             }
+        },
+        "name": "Allgemein",
+        "taskbar": {
+            "name": "Taskleiste",
+            "description": "Steuert das Verhalten des Taskleisteneintrags von WebCord.",
+            "labels": {
+                "flash": "Erleuchte Taskleisten-Icon bei neuer Nachricht."
+            }
         }
     },
     "privacy": {
@@ -22,8 +30,13 @@
             "name": "Discord API Blockierung",
             "description": "Blockiert ausgewählte Discord API Anfragen für verbesserte Privatsphäre.",
             "labels": {
-                "science": "Blockiert bekannte Telemetrie (<code>/science</code> und <code>/tracing</code>)."
+                "science": "Blockiert bekannte Telemetrie (<code>/science</code> und <code>/tracing</code>).",
+                "typingIndicator": "Tippanzeige blockieren (<code>/typing</code>).",
+                "fingerprinting": "Fingerprinting Blockieren <code>api.js</code> script."
             }
+        },
+        "permissions": {
+            "name": "Berechtigungen"
         }
     }
 }
