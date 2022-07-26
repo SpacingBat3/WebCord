@@ -36,7 +36,61 @@
             }
         },
         "permissions": {
-            "name": "Berechtigungen"
+            "name": "Berechtigungen",
+            "description": "Erlaubt oder verweigert die Berechtigungsprüfungen und anfragen von der Discord-Website. Bitte beachte, dass andere hier nicht aufgeführte Berechtigungen automatisch von WebCord blockiert werden.",
+            "labels": {
+                "display-capture": "Desktop-Aufnahme",
+                "video": "Kamera",
+                "audio": "Mikrofon",
+                "fullscreen": "Vollbild",
+                "notifications": "Benachrichtigungen"
+            }
+        }
+    },
+    "advanced": {
+        "redirection": {
+            "description": "Steuert die Aktionen bei herkunftsübergreifenden Umleitungen. <b>Dies betrifft die Anwendungssicherheit</b>.",
+            "name": "Herkunftsübergreifendes Weiterleitungsverhalten",
+            "labels": {
+                "warn": "Immer vor herkunftsübergreifenden Umleitungen zu externen Anwendungen warnen."
+            }
+        },
+        "csp": {
+            "name": "Richtlinie zur Inhaltssicherheit",
+            "labels": {
+                "enabled": "In-App-Sicherheitsrichtlinie für Inhalte verwenden"
+            }
+        },
+        "name": "Fortgeschritten",
+        "cspThirdParty": {
+            "name": "Drittanbieter-websites",
+            "description": "Legt eine Liste der Websites von Drittanbietern fest, die eine Verbindung herstellen oder Inhalte anzeigen dürfen.",
+            "labels": {
+                "gif": "GIF-Anbieter"
+            }
+        },
+        "currentInstance": {
+            "description": "Wählt die Instanz aus, mit der sich WebCord verbinden soll. <b>Experimentell</b> da die Fosscord-Implementierung noch nicht vollständig abgeschlossen ist.",
+            "name": "Discord-Instanz"
+        },
+        "devel": {
+            "labels": {
+                "enabled": "Entwicklermodus einschalten"
+            },
+            "name": "Entwicklermodus",
+            "description": "Ermöglicht den Zugriff auf unfertige Optionen, die möglicherweise als fehlerhaft oder gefährlich eingestuft werden. <b>Haftungsausschluss</b>: Die Anwendungsentwickler sind nicht für Fehler oder Probleme verantwortlich, nachdem diese Option aktiviert wurde - bitte melden Sie diese nicht!"
+        },
+        "optimize": {
+            "name": "Client-Optimierungen",
+            "labels": {
+                "gpu": "Optimieren Sie den Client für die derzeit aktive Grafikkarte."
+            }
+        },
+        "webApi": {
+            "name": "Zugang zu JavaScript APIs",
+            "labels": {
+                "webGl": "WebGL aktivieren"
+            }
         }
     }
 }
