@@ -33,9 +33,9 @@ export const appInfo = {
     provider: "github.com"
   },
   icon: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/app.png")),
-  trayIcon: nativeImage.createFromPath((getAppPath(), "sources/assets/icons/tray.png")),
-  trayUnread: nativeImage.createFromPath((getAppPath(), "sources/assets/icons/tray-unread.png")),
-  trayPing: nativeImage.createFromPath((getAppPath(), "sources/assets/icons/tray-ping.png")),
+  trayIcon: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/tray.png")),
+  trayUnread: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/tray-unread.png")),
+  trayPing: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/tray-ping.png")),
   minWinHeight: 412,
   minWinWidth: 312,
   backgroundColor: "#36393F",
