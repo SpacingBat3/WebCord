@@ -14,6 +14,13 @@
             "labels": {
                 "disable": "Wyłącz ukrywanie okna do zasobnika systemowego."
             }
+        },
+        "taskbar": {
+            "name": "Pasek zadań",
+            "description": "Steruje zachowaniem przycisku WebCorda na pasku zadań.",
+            "labels": {
+                "flash": "Spraw, aby przycisk błyskał przy nowych wiadomościach."
+            }
         }
     },
     "privacy": {
