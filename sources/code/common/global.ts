@@ -93,37 +93,38 @@ export interface buildInfo {
 	commit?: string | undefined;
 	/** @platform win32 */
 	AppUserModelId?: string;
-	features?: {
-		updateNotifications?: boolean;
+	features: {
+		updateNotifications: boolean;
 	}
 }
 
-export function isBuildInfo(object: unknown): object is buildInfo {
+export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo> {
   // #1 Element is object.
   if (!(object instanceof Object))
     return false;
-  // #2 Object has 'type' property.
-  if (!Object.prototype.hasOwnProperty.call(object, "type")) return false;
-  // #3 'type' property contains 'release' and 'devel' strings.
-  switch ((object as buildInfo).type) {
-    case "release":
-    case "devel":
-      break;
-    default:
-      return false;
-  }
-  // #4 If object contains 'commit' property, it should be of type 'string'.
-  if (!(typeof (object as buildInfo).commit === "string"))
+  // #2 'type' property contains 'release' and 'devel' strings if defined.
+  if("type" in object)
+    switch ((object as buildInfo).type) {
+      case "release":
+      case "devel":
+        break;
+      case undefined:
+        break;
+      default:
+        return false;
+    }
+  // #3 If object contains 'commit' property, it should be of type 'string'.
+  if ("commit" in object && !(typeof (object as buildInfo).commit === "string"))
     return false;
 
   /** List of valid properties for the `.features` object. */
   const features = ["updateNotifications"];
-  // #5 If object contains the 'features' property, it should be an object.
-  if (Object.prototype.hasOwnProperty.call(object, "features"))
+  // #4 If object contains the 'features' property, it should be an object.
+  if ("features" in object)
     if (!((object as buildInfo).features instanceof Object))
       return false;
     else for(const property of features)
-    // #6 `features` properties are of type `boolean`.
+    // #5 `features` properties are of type `boolean`.
       if(Object.prototype.hasOwnProperty.call((object as {features:Record<string, unknown>}).features, property))
         if(typeof (object as {features:Record<string,unknown>}).features[property] !== "boolean")
           return false;
