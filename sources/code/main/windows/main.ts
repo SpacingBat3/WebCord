@@ -188,7 +188,10 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   // Load all menus:
   getMenu.context(win);
   const tray = !configData.get().settings.general.tray.disable ? getMenu.tray(win) : null;
-  getMenu.bar(packageJson.data.repository.url, win);
+  if(typeof packageJson.data.repository === "object")
+    getMenu.bar(packageJson.data.repository.url, win);
+  else
+    throw new TypeError("'repository' in package.json is not of type 'object'.");
 
   // "Red dot" icon feature
   let setFavicon: string | undefined;
