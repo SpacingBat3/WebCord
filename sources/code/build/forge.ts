@@ -71,6 +71,7 @@ const config: ForgeConfigFile = {
       // Directories:
       /sources\/app\/.build/,
       /out\//,
+      /schemas\//,
       // Files:
       /\.eslintrc\.json$/,
       /tsconfig\.json$/,
