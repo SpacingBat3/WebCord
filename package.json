@@ -6,8 +6,8 @@
   "description": "A Discord and Fosscord client made with the Electron API.",
   "main": "app/code/common/main.js",
   "scripts": {
-    "test": "tsc && eslint --ext .ts .",
-    "lint": "eslint --ext .ts .",
+    "test": "tsc && eslint --ext .json,.ts .",
+    "lint": "eslint --ext .json,.ts .",
     "build": "tsc",
     "start": "tsc && electron .",
     "package": "tsc && electron-forge package",
@@ -53,6 +53,7 @@
     "eslint": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-import": "latest",
+    "eslint-plugin-json-schema-validator": "^4.0.0",
     "typescript": "^4.5.2"
   },
   "dependencies": {
