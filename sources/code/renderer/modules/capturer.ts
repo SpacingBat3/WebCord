@@ -6,7 +6,7 @@ interface EMediaStreamConstraints extends MediaStreamConstraints {
 }
 
 interface EMediaTrackConstraints extends MediaTrackConstraints {
-    mandatory: {
+    mandatory?: {
         chromeMediaSource: string;
         chromeMediaSourceId?: string;
     };
@@ -18,14 +18,18 @@ function isMediaStreamConstrains(object:unknown): object is EMediaStreamConstrai
     if(!(child in object))
       return false;
     else {
-      const testValue = (object as EMediaStreamConstraints)[child as keyof EMediaStreamConstraints];
+      const testValue = (object as Partial<EMediaStreamConstraints>)[child as keyof EMediaStreamConstraints];
       switch (typeof testValue) {
         case "boolean":
           break;
         case "object":
-          if("mandatory" in testValue && "chromeMediaSource" in testValue.mandatory)
-            break;
-          return false;
+          if(typeof testValue?.mandatory === "object" &&
+              typeof testValue?.mandatory?.chromeMediaSource !== "string")
+            return false;
+          if(typeof testValue?.mandatory !== "object" ||
+              testValue?.mandatory !== undefined)
+            return false;
+          break;
         default:
           return false;
       }
