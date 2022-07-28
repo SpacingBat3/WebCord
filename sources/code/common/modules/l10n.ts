@@ -65,11 +65,12 @@ class l10n {
     if (!existsSync(internalStringsFile))
       internalStringsFile = externalStringsFile;
 
-    if (process.type === "browser" && process.platform === "win32" && !app.isReady()) console.warn(
-      "[WARN] Electron may fail loading localized strings,\n" +
-			"       because the app hasn't still emitted the 'ready' event!\n" +
-			"[WARN] In this case, English strings will be used as a fallback.\n"
-    );
+    if (process.type === "browser" && process.platform === "win32" && !app.isReady())
+      console.warn([
+        "[WARN] Electron may fail loading localized strings,",
+        "       because the app hasn't still emitted the 'ready' event!",
+        "[WARN] In this case, English strings will be used as a fallback."
+      ].join("\n"));
     if (existsSync(internalStringsFile)) {
       localStrings = JSON.parse(readFileSync(internalStringsFile).toString());
       finalStrings = deepmerge(defaultTranslations[type], localStrings);
