@@ -19,29 +19,29 @@ type PersonLike = string | PersonObject
 interface PackageJsonProperties {
 	/** Node.js-friendly application name. */
 	name: string,
-    /** Node package description. */
-    description: string,
+  /** Node package description. */
+  description: string,
 	/** Node package version, must be parsable by `semver`. */
 	version: string,
 	/** Node package author. */
 	author?: PersonLike,
-    /** Application license. */
-    license: string,
+  /** Application license. */
+  license: string,
 	/** Array of application code contributors. */
 	contributors?: Array<PersonLike>,
 	/** Application homepage (`Readme.md` file). */
 	homepage?: string,
 	/** Application repository. */
-	repository: string & {
+	repository: string | {
 		/** Repository type (e.g. `git`). */
 		type: string,
 		/** Repository URL (e.g `git+https://example.com`) */
 		url: string;
 	};
-    /** Application dependencies. */
-    dependencies?: Record<string, string>,
-    /** Application development dependencies. */
-    devDependencies?: Record<string, string>
+  /** Application dependencies. */
+  dependencies?: Record<string, string>,
+  /** Application development dependencies. */
+  devDependencies?: Record<string, string>
 }
 
 /**
@@ -82,10 +82,13 @@ export class Person {
  * this class is not able to return any value from the `package.json`.
  */
 export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
-  readonly data;
+  private readonly _regexp = {
+    license: /^UNLICEN[SC]ED|SEE LICEN[CS]E IN .+$/,
+    email: /^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*@[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*\.[a-z]+$/
+  };
+  public readonly data;
   private isEmail(email: string|undefined|null): boolean {
-    return /^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*@[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*\.[a-z]+$/
-      .test(email??"");
+    return this._regexp.email.test(email??"");
   }
   private isPersonObject(variable: unknown): variable is PersonObject {
     // Variable is an Object, which has 'name' key and optionally 'email' and 'url' keys.
@@ -194,11 +197,11 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
     }
 
     // Check 10: `license` is a valid string:
-    if(!/^UNLICEN[SC]ED|SEE LICEN[CS]E IN .+$/.test((object as PackageJsonProperties).license))
+    if(!this._regexp.license.test((object as PackageJsonProperties).license))
       try {
         spdxParse((object as PackageJsonProperties).license);
       } catch {
-        return "License field is in wrong format.";
+        return "'license' field is in invalid format.";
       }
 
 
