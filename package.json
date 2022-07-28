@@ -1,4 +1,5 @@
 {
+  "$schema": "./schemas/schemastore/package.json",
   "name": "webcord",
   "productName": "WebCord",
   "version": "3.5.2",

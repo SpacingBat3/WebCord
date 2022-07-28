@@ -1,4 +1,5 @@
 {
+    "$schema": "../../../schemas/localization/settings.json",
     "general": {
         "menuBar": {
             "name": "Menüleiste",

@@ -1,0 +1,17 @@
+The JSON schemas in this folder are modified version of schemas distributed at
+<https://www.schemastore.org> and should not be considered as a part of this
+software. They're distributed specifically for this software, to bring better
+suggestions to supported text editors for JSON files included as part of this
+software.
+
+I DO NOT CLAIM ANY KIND OF OWNERSHIP OF THIS FILES AND BY THAT MEANING THEY'RE
+DISTRIBUTED UNDER SAME CONDITIONS AS IT IS IN CASE OF SCHEMA STORE FILES. 
+
+This is the copyright notice took from NOTICE file from schemastore
+GitHub repository:
+
+JSON Schema Store
+Copyright 2015-Current Mads Kristensen and Contributors
+
+The Apache license is also distributed with these schema stores as it is in
+original GitHub project.

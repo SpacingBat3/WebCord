@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "JSON schema for configuration window (settings.json) localization files.",
+  "definitions": {
+    "subsection": {
+      "description": "A subsection defining a configuration for specific functionality of the application.",
+      "type": "object",
+      "required": ["name","description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A short name for this subsection. Rendered in uppercase letters. Should be short, but can be little longer section name. It shouldn't end with a full stop symbol since it shouldn't be a sentence."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of this subsection. Preferably, you should include the non-breaking spaces in order to describe how breaks should occur in this text. You can also use some HTML tags for text formatting, others will be sanitized for security reasons. It should end with a full stop symbol as it should be a sententce."
+        },
+        "labels": {
+          "type": "object",
+          "description": "A labels of input elements associated with this subsection",
+          "additionalProperties": {
+            "type": "string",
+            "description": "A label for input element with the same id or name as this entry key. You can use there HTML tags for text formatting, others will be sanitized for security reasons. It should end with a full stop symbol when it is a sentence."
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "section": {
+      "description": "One of top-level sections in rendered configuration window. Groups features by their type, e.g. features associated with the user privacy are inside the \"Privacy\" section.",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "A name of this section. While there are no limitations to this property value length, it is recommended to keep it as short and concise as possible. It should not end with a full stop symbol as this property value should not be a sentence."
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/subsection"
+      }
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "A path to settings.json JSON schema. DO NOT CHANGE THIS WHEN CREATING NEW LOCALIZATION FILES."
+    }
+  },
+  "additionalProperties": {
+    "$ref": "#/definitions/section"
+  }
+}
