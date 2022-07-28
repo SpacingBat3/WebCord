@@ -71,7 +71,7 @@
             "name": "Tryb deweloperski",
             "description": "Zezwala na dostęp do narzędzi i funkcji, które są potencjalnie niebezpiecznie lub nie działają. <b>Uwaga</b>: opiekunowie aplikacji nie są odpowiedzialni za jakiekolwiek błędy lub problemy po tym, jak ta funkcja została włączona – prosimy ich nie zgłaszać!",
             "labels": {
-                "enabled": "Włącz tryb deweloperski"
+                "enabled": "Włącz tryb deweloperski."
             }
         },
         "redirection": {
@@ -92,7 +92,7 @@
             "name": "Dostęp do API w JavaScript",
             "description": "Kontroluje, jakie API powinny być dostępne dla nieuprzywilejowanych skryptów (DOM).",
             "labels": {
-                "webGl": "Włącz WebGL"
+                "webGl": "Włącz wsparcie dla WebGL."
             }
         }
     }

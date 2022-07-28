@@ -53,7 +53,7 @@
             "name": "Content Security Policy",
             "description": "Switches whenever application should ignore Discord's Content Security Policy headers and let client set its own CSP for privacy and security concerns.",
             "labels": {
-                "enabled": "Use in-app Content Security Policy"
+                "enabled": "Use built-in Content Security Policy."
             }
         },
         "cspThirdParty": {
@@ -71,7 +71,7 @@
             "name": "Developer mode",
             "description": "Enables the access to tools and unfinished options that are potentially considered as broken or dangerous. <b>Disclaimer</b>: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
             "labels": {
-                "enabled": "Enable developer mode"
+                "enabled": "Enable developer mode."
             }
         },
         "redirection": {
@@ -92,7 +92,7 @@
             "name": "Access to JavaScript APIs",
             "description": "Controls which API should be permitted in unpriviledged (DOM) scripts.",
             "labels": {
-                "webGl": "Enable WebGL"
+                "webGl": "Enable WebGL support."
             }
         }
     }
