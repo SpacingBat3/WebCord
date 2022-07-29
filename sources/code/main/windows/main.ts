@@ -12,10 +12,13 @@ import { resolve } from "path";
 import kolor from "@spacingbat3/kolor";
 import { loadChromiumExtensions, loadStyles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
+import { EventEmitter } from "events";
 
 const configData = new AppConfig();
 
 export default function createMainWindow(startHidden: boolean, l10nStrings: l10n["client"]): BrowserWindow {
+  const internalWindowEvents = new EventEmitter();
+
   // Check the window state
 
   const mainWindowState = new WinStateKeeper("mainWindow");
@@ -261,9 +264,13 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   });
 
   // Inject desktop capturer and block getUserMedia.
-  ipcMain.on("api-exposed", (_event, api:string) => {
+  ipcMain.on("api-exposed", (_event, api:unknown) => {
+    if(typeof api !== "string") return;
+    const safeApi = api.replaceAll("'","\\'");
     console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
-    const functionString = `{
+    const functionString = `
+    // Validate if API is exposed by
+    if('${safeApi}' in window && typeof window['${safeApi}'] === "function" && !(delete window['${safeApi}'])) {
       const media = navigator.mediaDevices.getUserMedia;
       navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [(constrains) => {
         if(constrains?.audio?.mandatory || constrains?.video?.mandatory)
@@ -271,21 +278,25 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         return media(constrains);
       }]);
       navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [
-        () => window['${api.replaceAll("'","\\'")}']().then(value => media(value)).catch(error => {
+        () => window['${safeApi}'](${safeApi}).then(value => media(value)).catch(error => {
           if(typeof error === "string")
-            throw new DOMException(error, "NotAllowedError")
+            throw new DOMException(error, "NotAllowedError");
           else
-            throw error
+            throw error;
         })
       ]);
       Object.defineProperty(navigator.mediaDevices.getUserMedia, "name", {value: "getUserMedia"});
       Object.defineProperty(navigator.mediaDevices.getDisplayMedia, "name", {value: "getDisplayMedia"});
     }`;
-    win.webContents.executeJavaScript(functionString + ";0").catch(commonCatches.throw);
+    win.webContents.executeJavaScript(functionString + ";0")
+      .then(() => internalWindowEvents.emit("api", safeApi))
+      .catch(commonCatches.throw);
   });
 
   // Apply settings that doesn't need app restart on change
-  ipcMain.on("settings-config-modified", (_event, object:Partial<AppConfig["defaultConfig"]>) => {
+  ipcMain.on("settings-config-modified", (event, object:Partial<AppConfig["defaultConfig"]>) => {
+    if(new URL(event.senderFrame.url).protocol !== "file:")
+      return;
     const config = new AppConfig();
     // Menu bar
     if (object?.settings?.general?.menuBar?.hide !== undefined) {
@@ -317,12 +328,14 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     .then(socket => socket.default)
     .then(startServer => startServer(win))
     .catch(commonCatches.print);
-
-  // Handle desktopCapturer functionality through experimental BrowserViews
-  {
-    /** Determines whenever another request is in process. */
+  
+  // IPC events validated by secret "API" key and sender frame.
+  internalWindowEvents.on("api", (safeApi:string) => {
+    /** Determines whenever another request to desktopCapturer is in process. */
     let lock = false;
-    ipcMain.handle("desktopCapturerRequest", () => {
+    ipcMain.removeHandler("desktopCapturerRequest");
+    ipcMain.handle("desktopCapturerRequest", (event, api:unknown) => {
+      if(safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
       return new Promise((resolvePromise) => {
         // Handle lock and check for a presence of another BrowserView.
         if(lock || win.getBrowserViews().length !== 0)
@@ -386,10 +399,12 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
         return;
       });
     });
-  }
-  ipcMain.on("paste-workaround", () => {
-    console.debug("[Clipboard] Applying workaround to the image...");
-    win.webContents.paste();
+    ipcMain.removeAllListeners("paste-workaround");
+    ipcMain.on("paste-workaround", (event, api:unknown) => {
+      if(safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
+      console.debug("[Clipboard] Applying workaround to the image...");
+      win.webContents.paste();
+    });
   });
   return win;
 }

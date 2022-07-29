@@ -26,14 +26,19 @@ export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.
     appRepo: packageJson.data.homepage
   };
   if(aboutPanel === undefined) return;
-  ipc.once("about.close", () => {
-    if(!aboutPanel.isDestroyed()) aboutPanel.close();
+  ipc.once("about.close", (event) => {
+    if(!aboutPanel.isDestroyed() && event.senderFrame.url === aboutPanel.webContents.getURL())
+      aboutPanel.close();
   });
-  ipc.once("about.readyToShow", () => {
-    if(!aboutPanel.isDestroyed())
+  ipc.once("about.readyToShow", (event) => {
+    if(!aboutPanel.isDestroyed() && event.senderFrame.url === aboutPanel.webContents.getURL())
       aboutPanel.show();
   });
-  ipc.handle("about.getDetails", () => appDetails);
+  ipc.handle("about.getDetails", (event) => {
+    if(event.senderFrame.url === aboutPanel.webContents.getURL())
+      return appDetails;
+    return undefined;
+  });
   aboutPanel.once("close", () => {
     ipc.removeAllListeners("showAppLicense");
     ipc.removeAllListeners("about.readyToShow");

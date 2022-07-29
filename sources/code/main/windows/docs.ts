@@ -15,9 +15,11 @@ async function handleEvents(docsWindow: Electron.BrowserWindow) {
   if(existsSync(resolve(app.getAppPath(), "docs", app.getLocale(), "Readme.md")))
     readmeFile = "docs/"+app.getLocale()+"/Readme.md";
   ipcMain.removeHandler("documentation-load");
-  ipcMain.handle("documentation-load", () => {
-    ipcMain.once("documentation-show", () => {
-      if(!docsWindow.isDestroyed()) {
+  ipcMain.removeAllListeners("documentation-show");
+  ipcMain.handle("documentation-load", (event) => {
+    if(event.senderFrame.url !== docsWindow.webContents.getURL()) return;
+    ipcMain.once("documentation-show", (event) => {
+      if(!docsWindow.isDestroyed() && event.senderFrame.url === docsWindow.webContents.getURL()) {
         docsWindow.show();
       }
     });

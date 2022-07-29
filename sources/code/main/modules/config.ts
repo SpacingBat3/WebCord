@@ -282,7 +282,9 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
 void import("electron/main")
   .then(Electron => Electron.ipcMain)
   .then(ipc => ipc.on("settings-config-modified",
-    (_event, config:AppConfig["defaultConfig"])=> {
-      new AppConfig().set(config);
+    (event, config:AppConfig["defaultConfig"]) => {
+      // Only permit the local pages.
+      if(new URL(event.senderFrame.url).protocol === "file:")
+        new AppConfig().set(config);
     })
   );

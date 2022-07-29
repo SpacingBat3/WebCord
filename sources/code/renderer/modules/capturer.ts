@@ -37,9 +37,9 @@ function isMediaStreamConstrains(object:unknown): object is EMediaStreamConstrai
   return true;
 }
 
-export default function desktopCapturerPicker(): Promise<EMediaStreamConstraints> {
+export default function desktopCapturerPicker(api:string): Promise<EMediaStreamConstraints> {
   return new Promise((resolve,reject) => {
-    ipc.invoke("desktopCapturerRequest").then((result:unknown) => {
+    ipc.invoke("desktopCapturerRequest", api).then((result:unknown) => {
       if(isMediaStreamConstrains(result)) {
         resolve(result);
       } else {

@@ -63,7 +63,8 @@ export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electr
     minHeight: appInfo.minWinHeight,
   });
   if(settingsWindow === undefined) return;
-  ipcMain.handle("settings-generate-html", () => {
+  ipcMain.handle("settings-generate-html", (event) => {
+    if(new URL(event.senderFrame.url).protocol !== "file:") return;
     if(!settingsWindow.isDestroyed()) settingsWindow.show();
     return htmlConfig;
   });
