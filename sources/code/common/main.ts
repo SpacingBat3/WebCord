@@ -75,9 +75,6 @@ import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
 
-// Set global user agent
-app.userAgentFallback = getUserAgent(process.versions.chrome);
-
 // Set AppUserModelID on Windows
 {
   const {AppUserModelId} = getBuildInfo();
@@ -89,34 +86,47 @@ app.userAgentFallback = getUserAgent(process.versions.chrome);
 
 /** Whenever `--start-minimized` or `-m` switch is used when running client. */
 let startHidden = false;
-let overwriteMain: (() => void | unknown) | undefined;
+
+const userAgent: Partial<{
+  replace: Parameters<typeof getUserAgent>[2];
+  mobile: boolean;
+}> = {};
+
+let overwriteMain: (() => unknown) | undefined;
 
 {
-  const renderLine = (parameter:string, description:string, length?:number) => {
+  /** Whenever current platform is not unix (i.e. is Windows). */
+  const isNotUnix = process.platform === "win32";
+  
+  /** Constant variable with platform-specific switch properties. */
+  const sw = {
+    /** A symbol that indentifies the switch from the other arguments. */
+    symbol: (sw:string) => isNotUnix ? "/" : sw.length === 1 ? "-" : "--",
+    /** A character that separates words in switch. */
+    break: isNotUnix ? "" : "-"
+  };
+  
+  /** Renders a line from the list of the parameters and their descripiton. */
+  const renderLine = (parameters:string[], description:string, length?:number) => {
+    const parameter = parameters.map(p => sw.symbol(p)+p.replace("-",sw.break)).join("  ");
     // eslint-disable-next-line no-control-regex
     const spaceBetween = (length ?? 30) - parameter.replace(/\x1B\[[^m]+m/g, "").length;
     return "  "+kolor.green(parameter)+" ".repeat(spaceBetween)+kolor.gray(description);
   };
-  const isNotUnix = process.platform === "win32";
-  const swBreak = isNotUnix ? "" : "-";
-  const hasSwitch = (sw:string) => {
-    const swSymbol = isNotUnix ? "/" :
-      sw.length === 1 ? "-" : "--";
-    const swCase = isNotUnix;
-    return process.argv.find(
-      arg => (swCase ? arg.toLowerCase() : arg)
-        .split("=")[0] === swSymbol+(swCase ? sw.toLowerCase() : sw)
-    ) !== undefined;
-  };
-  const getSwitchValue = (sw:string) => {
-    const swSymbol = isNotUnix ? "/" :
-      sw.length === 1 ? "-" : "--";
-    const swCase = isNotUnix;
-    return process.argv.find(
-      arg => (swCase ? arg.toLowerCase() : arg)
-        .split("=")[0] === swSymbol+(swCase ? sw.toLowerCase() : sw)
-    )?.split("=")[1] ?? null;
-  };
+  
+  /** Searchs and checks whenever given switch argument exists. */
+  const hasSwitch = (flag:string) => process.argv.find(
+    arg => (isNotUnix ? arg.toLowerCase() : arg)
+      .split("=")[0] === sw.symbol(flag)+(isNotUnix ? flag.toLowerCase() : flag)
+      .replace("-",sw.break)
+  ) !== undefined;
+
+  /** Returns the value of given switch argument of `null` if it does not exists.*/
+  const getSwitchValue = (flag:string) => process.argv.find(
+    arg => (isNotUnix ? arg.toLowerCase() : arg)
+      .split("=")[0] === sw.symbol(flag)+(isNotUnix ? flag.toLowerCase() : flag)
+      .replace("-",sw.break)
+  )?.split("=")[1] ?? null;
 
   // Mitigations to *unsafe* command-line switches
   if (getBuildInfo().type !== "devel")
@@ -131,7 +141,6 @@ let overwriteMain: (() => void | unknown) | undefined;
       app.commandLine.removeSwitch(cmdSwitch);
     }
   if (hasSwitch("h")||hasSwitch("?")||hasSwitch("help")) {
-    const swSymbol = isNotUnix ? {short: "/", long: "/"} : {short: "-", long: "--"};
     const argv0 = process.argv0.endsWith("electron") && process.argv.length > 2 ?
       (process.argv[0]??"") + ' "'+(process.argv[1]??"")+'"' : process.argv0;
     console.log([
@@ -141,30 +150,45 @@ let overwriteMain: (() => void | unknown) | undefined;
         kolor.bold(kolor.blackBg(kolor.brightCyan("Electron"))) + ".\n",
       " " + kolor.underscore("Usage:"),
       " " + kolor.red(argv0) + kolor.green(" [options]\n"),
-      " " + kolor.underscore("Options:"),
-      renderLine(swSymbol.long+"help  "+swSymbol.short+"h  "+swSymbol.short+"?","Show this help message."),
-      renderLine(swSymbol.long+"version  "+swSymbol.short+"V","Show current application version."),
-      renderLine(swSymbol.long+"start"+swBreak+"minimized  "+swSymbol.short+"m","Hide application at first run."),
-      renderLine(swSymbol.long+"export"+swBreak+"l10n"+ "=" + kolor.yellow("{dir}"), "Export currently loaded translation files from"),
+      " " + kolor.underscore("Options:")
+    ].join("\n")+"\n"+[
+      renderLine(["help", "h", "?"],"Show this help message."),
+      renderLine(["version","V"],"Show current application version."),
+      renderLine(["start-minimized", "m"],"Hide application at first run."),
+      renderLine(["export-l10n=" + kolor.yellow("{dir}")], "Export currently loaded translation files from")+"\n"+
       " ".repeat(32)+kolor.gray("the application to the ") + kolor.yellow("{dir}") + kolor.gray(" directory."),
-      renderLine(swSymbol.long+"verbose  "+swSymbol.short+"v", "Show debug messages."),
+      renderLine(["verbose","v"], "Show debug messages."),
       renderLine(
-        swSymbol.long+"gpu"+swBreak+"info"+ "=" + kolor.yellow("basic") + kolor.blue("|") + kolor.yellow("complete"),
+        ["gpu-info=" + kolor.yellow("basic") + kolor.blue("|") + kolor.yellow("complete")],
         "Shows GPU information as JS object."
-      )
-    ].join("\n")+"\n");
+      ),
+      renderLine(["user-agent-mobile"], "Whenever use 'mobile' variant of user agent."),
+      renderLine(["user-agent-platform=" + kolor.yellow("string")], "Platform to replace in the user agent."),
+      renderLine(["user-agent-version="  + kolor.yellow("string")], "Version of platform in user agent."),
+      renderLine(["user-agent-device"], "Device identifier in the user agent (Android).")
+    ].sort().join("\n")+"\n");
     app.exit();
   }
   if (hasSwitch("version") || hasSwitch("V")) {
     console.log(app.getName() + " v" + app.getVersion());
     app.exit();
   }
-  if (hasSwitch("start"+swBreak+"minimized") || hasSwitch("m"))
+  if (hasSwitch("user-agent-mobile"))
+    userAgent.mobile = true;
+
+  if(hasSwitch("user-agent-platform") || hasSwitch("user-agent-version") || hasSwitch("user-agent-device"))
+    userAgent.replace = {
+      platform: getSwitchValue("user-agent-platform") ?? process.platform,
+      version: getSwitchValue("user-agent-version") ?? process.getSystemVersion(),
+      device: getSwitchValue("user-agent-device") ?? ""
+    };
+    
+  if (hasSwitch("start-minimized") || hasSwitch("m"))
     startHidden = true;
-  if (hasSwitch("export"+swBreak+"l10n")) {
+  if (hasSwitch("export-l10n")) {
     overwriteMain = () => {
       const locale = new l10n;
-      const directory = getSwitchValue("export"+swBreak+"l10n");
+      const directory = getSwitchValue("export-l10n");
       if(directory === null) return;
       const filePromise: Promise<void>[] = [];
       for (const file of Object.keys(locale))
@@ -197,8 +221,8 @@ let overwriteMain: (() => void | unknown) | undefined;
       });
     };
   }
-  if (hasSwitch("gpu"+swBreak+"info")) {
-    const param = getSwitchValue("gpu"+swBreak+"info");
+  if (hasSwitch("gpu-info")) {
+    const param = getSwitchValue("gpu-info");
     switch(param) {
       case "basic":
       case "complete":
@@ -237,7 +261,9 @@ let overwriteMain: (() => void | unknown) | undefined;
   for(const flag of getRedommendedOSFlags())
     applyFlags(flag[0], flag[1]);
 }
-// Some variable declarations
+
+// Set global user agent
+app.userAgentFallback = getUserAgent(process.versions.chrome, userAgent.mobile, userAgent.replace);
 
 const singleInstance = app.requestSingleInstanceLock();
 let mainWindow: BrowserWindow;
