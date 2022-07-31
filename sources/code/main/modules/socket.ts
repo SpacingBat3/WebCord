@@ -60,20 +60,20 @@ function isResponse<C,T>(data:unknown, cmd?: C&string|(C&string)[], argsType?: T
         return false;
     return true;
   }
-  if(typeof (data as Partial<Response<string,never>>).cmd !== "string")
+  if(typeof (data as Response<string,never>).cmd !== "string")
     return false;
   if(!(data instanceof Object))
     return false;
   if(typeof cmd === "string") {
-    if((data as Partial<Response<string,never>>).cmd !== cmd)
+    if((data as Response<string,never>).cmd !== cmd)
       return false;
   } else if(Array.isArray(cmd)) {
-    if(!cmd.includes((data as unknown as Response<string,never>).cmd as C&string))
+    if(!cmd.includes((data as Response<string,never>).cmd as C&string))
       return false;
   }
-  if(typeof(data as Partial<Response<string,never>>).args !== "object")
+  if(typeof(data as Response<string,never>).args !== "object")
     return false;
-  if(argsType && typeof (data as Partial<Response<"DEEP_LINK",typeof argsType>>).args?.params === "object")
+  if(argsType && typeof (data as Response<"DEEP_LINK",typeof argsType>).args.params === "object")
     switch(argsType) {
       case "CHANNEL":
         if(!checkRecord(
@@ -82,7 +82,7 @@ function isResponse<C,T>(data:unknown, cmd?: C&string|(C&string)[], argsType?: T
         ) && (data as Response<"DEEP_LINK","CHANNEL">).args.params.channelId !== undefined)
           return false;
     }
-  if(typeof (data as Partial<Response<string,never>>).nonce !== "string")
+  if(typeof (data as Response<string,never>).nonce !== "string")
     return false;
   return true;
 }
