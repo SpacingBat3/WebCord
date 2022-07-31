@@ -3,40 +3,40 @@
  */
 
 import { resolve } from "path";
-import { parse } from "semver";
+import { valid, validRange } from "semver";
 import { readFileSync, existsSync } from "fs";
 import spdxParse from "spdx-expression-parse";
 
 interface PersonObject {
-	name: string,
-	email?: string,
-	url?: string;
+  name: string,
+  email?: string,
+  url?: string;
 }
 
 type PersonLike = string | PersonObject;
 
 interface PackageJsonProperties {
-	/** Node.js-friendly application name. */
-	name: string,
+  /** Node.js-friendly application name. */
+  name: string,
   /** Node package description. */
   description: string,
-	/** Node package version, must be parsable by `semver`. */
-	version: string,
-	/** Node package author. */
-	author?: PersonLike,
+  /** Node package version, must be parsable by `semver`. */
+  version: string,
+  /** Node package author. */
+  author?: PersonLike,
   /** Application license. */
   license: string,
-	/** Array of application code contributors. */
-	contributors?: Array<PersonLike>,
-	/** Application homepage (`Readme.md` file). */
-	homepage?: string,
-	/** Application repository. */
-	repository: string | {
-		/** Repository type (e.g. `git`). */
-		type: string,
-		/** Repository URL (e.g `git+https://example.com`) */
-		url: string;
-	};
+  /** Array of application code contributors. */
+  contributors?: PersonLike[],
+  /** Application homepage (`Readme.md` file). */
+  homepage?: string,
+  /** Application repository. */
+  repository: string | {
+    /** Repository type (e.g. `git`). */
+    type: string,
+    /** Repository URL (e.g `git+https://example.com`) */
+    url: string;
+  };
   /** Application dependencies. */
   dependencies?: Record<string, string>,
   /** Application development dependencies. */
@@ -172,7 +172,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     
     // Check 8: `version` is a `semver`-parsable string
     if(typeof (object as PackageJsonProperties).version === "string") {
-      if (parse((object as PackageJsonProperties).version) === null)
+      if (valid((object as PackageJsonProperties).version) === null)
         return "Version "+(object as PackageJsonProperties).version+" can't be parsed to 'semver'.";
     } else {
       return "Version property is not assignable to type 'string'!";
@@ -189,6 +189,9 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
             return "Package name '"+JSON.stringify(key)+"' is not a valid 'string'.";
           else if (typeof value !== "string")
             return "Version of the package '"+key+"' is not of type 'string'.";
+          else if (validRange(value) === null && value !== "latest") {
+            return "Version '"+value+"' of the package '"+key+"' is not SemVer-parsable.";
+          }
       }
     }
 

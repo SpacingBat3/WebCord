@@ -89,13 +89,13 @@ export const knownInstancesList = [
 ] as const;
 
 export interface buildInfo {
-	type: "release" | "devel";
-	commit?: string | undefined;
-	/** @platform win32 */
-	AppUserModelId?: string;
-	features: {
-		updateNotifications: boolean;
-	}
+  type: "release" | "devel";
+  commit?: string | undefined;
+  /** @platform win32 */
+  AppUserModelId?: string;
+  features: {
+    updateNotifications: boolean;
+  }
 }
 
 export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo> {
@@ -130,20 +130,19 @@ export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo
           return false;
 
   // #6 On Windows, AppUserModelID should be of 'string' type
-  if (process.platform === "win32" && !(typeof (object as buildInfo)?.AppUserModelId === "string"))
+  if (process.platform === "win32" && !(typeof (object as buildInfo).AppUserModelId === "string"))
     return false;
   return true;
 }
 
 export type SessionLatest = Electron.Session & {
-	/**
+  /**
 	 * A method that is unsupported within your Electron version, but valid
 	 * for Electron releases supporting WebHID API, which are versions from
 	 * range `>=14.1.0 && <15.0.0 || >=15.1.0`.
 	 */
-	setDevicePermissionHandler: (handler: (()=>boolean)|null)=>void;
-}
-
+  setDevicePermissionHandler: (handler: (()=>boolean)|null)=>void;
+};
 
 /**
  * A sanitizer configuration that allows only for tags that modifies the code

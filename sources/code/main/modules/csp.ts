@@ -18,11 +18,11 @@ const cspKeysRegExp = new RegExp("(?<="+cspKeys.join("|")+")\\s+");
 type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 
 class CSP {
-  private values: {
-        object: cspObject,
-        string: string
-    };
-  private string2object(value: string) {
+  readonly #values: {
+    object: cspObject,
+    string: string
+  };
+  #string2object(value: string) {
     const raw = value.split(/;\s+/);
     const record: cspObject = {};
     for(const element of raw) {
@@ -33,16 +33,16 @@ class CSP {
     }
     return record;
   }
-  private object2string(object: cspObject) {
+  #object2string(object: cspObject) {
     return Object.entries(object)
       .map(entry => entry.join(" "))
       .join("; ");
   }
   public toObject() {
-    return this.values.object;
+    return this.#values.object;
   }
   public toString() {
-    return this.values.string;
+    return this.#values.string;
   }
   public static merge(...policies:CSP[]):CSP {
     let partial: cspObject = {};
@@ -52,25 +52,29 @@ class CSP {
         partial = policyObject;
       else {
         const keys = new Set([...Object.keys(partial), ...Object.keys(policyObject)]) as Set<keyof cspObject>;
-        for(const key of keys) if(key in policyObject)
-          if(key in partial)
-            partial[key] += " "+(policyObject[key] as string);
-          else
-            partial[key] = policyObject[key];
+        for(const key of keys){
+          const policy = policyObject[key];
+          if(policy)
+            if(key in partial)
+              partial[key] += " "+policy;
+            else
+              partial[key] = policy;
+        }
+          
       }
     }
     return new CSP(partial);
   }
   constructor(value: string|cspObject) {
     if(typeof value !== "string")
-      this.values = {
+      this.#values = {
         object: value,
-        string: this.object2string(value)
+        string: this.#object2string(value)
       };
     else
-      this.values = {
-        object: this.string2object(value) ?? {},
-        string: this.object2string(this.string2object(value) ?? {})
+      this.#values = {
+        object: this.#string2object(value) ?? {},
+        string: this.#object2string(this.#string2object(value) ?? {})
       };
   }
 }

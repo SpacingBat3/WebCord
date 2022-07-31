@@ -77,7 +77,7 @@ function generateSettings(optionsGroups: htmlConfig) {
                 formContainer.appendChild(createForm({
                   type:"checkbox",
                   id: groupId+"."+settingKey+"."+key,
-                  isChecked: setting[key] as boolean,
+                  isChecked: setting[key] === true,
                   label: setting.labels[key] ?? "N/A"
                 }));
               }

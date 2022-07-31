@@ -1,3 +1,9 @@
+import { createHash } from "crypto";
+import { EventEmitter } from "events";
+import { resolve } from "path";
+
+import kolor from "@spacingbat3/kolor";
+
 import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
 import { app, BrowserWindow, net, ipcMain, desktopCapturer, BrowserView } from "electron/main";
@@ -6,17 +12,15 @@ import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
-import type l10n from "../../common/modules/l10n";
-import { createHash } from "crypto";
-import { resolve } from "path";
-import kolor from "@spacingbat3/kolor";
+import l10n from "../../common/modules/l10n";
 import { loadChromiumExtensions, loadStyles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
-import { EventEmitter } from "events";
 
 const configData = new AppConfig();
 
-export default function createMainWindow(startHidden: boolean, l10nStrings: l10n["client"]): BrowserWindow {
+export default function createMainWindow(startHidden: boolean): BrowserWindow {
+  const l10nStrings = (new l10n()).client;
+
   const internalWindowEvents = new EventEmitter();
 
   // Check the window state
@@ -58,7 +62,7 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
     }
     console.error(kolor.bold("[ERROR]")+" "+errorDescription+" ("+(errorCode*-1).toString()+")");
     const retry = setInterval(() => {
-      if (retry && net.isOnline()) {
+      if (net.isOnline()) {
         clearInterval(retry);
         void win.loadURL(knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].href);
       }
@@ -135,12 +139,12 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
       switch (permission) {
         case "media":{
           let callbackValue = true;
-          if("mediaTypes" in details && details.mediaTypes !== undefined)
+          if("mediaTypes" in details)
             details.mediaTypes.map(type => callbackValue = callbackValue &&
               configData.get().settings.privacy.permissions[type]
             );
-          else if("mediaType" in details && details.mediaType !== undefined && details.mediaType !== "unknown")
-            callbackValue = callbackValue && configData.get().settings.privacy.permissions[details.mediaType];
+          else if("mediaType" in details && details.mediaType !== "unknown")
+            callbackValue = configData.get().settings.privacy.permissions[details.mediaType];
           else
             callbackValue = false;
           return callbackValue;
@@ -200,7 +204,6 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   let setFavicon: string | undefined;
   win.webContents.on("page-favicon-updated", (_event, favicons) => {
     let icon: NativeImage, flash = false;
-    if(!tray) return;
     // Convert from DataURL to RAW.
     const faviconRaw = nativeImage.createFromDataURL(favicons[0]??"").toBitmap();
     // Hash discord favicon.
@@ -294,28 +297,28 @@ export default function createMainWindow(startHidden: boolean, l10nStrings: l10n
   });
 
   // Apply settings that doesn't need app restart on change
-  ipcMain.on("settings-config-modified", (event, object:Partial<AppConfig["defaultConfig"]>) => {
+  ipcMain.on("settings-config-modified", (event, object:null|Partial<AppConfig["defaultConfig"]>) => {
     if(new URL(event.senderFrame.url).protocol !== "file:")
       return;
     const config = new AppConfig();
     // Menu bar
-    if (object?.settings?.general?.menuBar?.hide !== undefined) {
+    if (object?.settings?.general.menuBar.hide !== undefined) {
       console.debug("[Settings] Updating menu bar state...");
       win.setAutoHideMenuBar(config.get().settings.general.menuBar.hide);
       win.setMenuBarVisibility(!config.get().settings.general.menuBar.hide);
     }
     // Custom Discord instance switch
-    if(object?.settings?.advanced?.currentInstance?.radio !== undefined) {
+    if(object?.settings?.advanced.currentInstance.radio !== undefined) {
       void win.loadURL(knownInstancesList[config.get().settings.advanced.currentInstance.radio][1].href);
     }
     // CSP
     if(
-      object?.settings?.advanced?.cspThirdParty !== undefined ||
-      object?.settings?.advanced?.csp !== undefined
+      object?.settings?.advanced.cspThirdParty !== undefined ||
+      object?.settings?.advanced.csp !== undefined
     )
       win.reload();
     // Remove window flashing when it is disabled
-    if(object?.settings?.general?.taskbar?.flash === false)
+    if(object?.settings?.general.taskbar.flash === false)
       win.flashFrame(false);
   });
 

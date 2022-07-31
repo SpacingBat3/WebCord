@@ -12,7 +12,7 @@ type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"]
       labels: Record<keyof Omit<AppConfig["defaultConfig"]["settings"]["advanced"]["cspThirdParty"], "labels">, string>
     }
   }
-}
+};
 
 function generateConfig (config:AppConfig) {
   const appConfig = deepmerge(config.get().settings, (new l10n()).settings);
@@ -35,11 +35,11 @@ function generateConfig (config:AppConfig) {
   };
   // Append more third-party sites labels.
   Object.entries(websitesThirdParty).map(stringGroup => {
-    if(finalConfig?.advanced?.cspThirdParty?.labels && !finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>])
+    if(finalConfig.advanced?.cspThirdParty.labels && !finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>])
       finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] = stringGroup[1];
   });
   // Append name from CSP.
-  if(finalConfig?.advanced?.cspThirdParty?.name)
+  if(finalConfig.advanced?.cspThirdParty.name)
     finalConfig.advanced.cspThirdParty.name = appConfig.advanced.csp.name + " – " + appConfig.advanced.cspThirdParty.name;
   return finalConfig as generatedConfig;
 }
@@ -48,9 +48,9 @@ export type htmlConfig = [
   ["general", generatedConfig["general"]],
   ["privacy", generatedConfig["privacy"]],
   ["advanced", generatedConfig["advanced"]]
-]
+];
 
-export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electron.BrowserWindow|void {
+export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electron.BrowserWindow|undefined {
   const config = generateConfig(new AppConfig());
   const htmlConfig:htmlConfig = [
     ["general", config.general],

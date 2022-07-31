@@ -42,7 +42,7 @@ if (window.location.protocol === "file:") {
   {
     let lock = true;
     document.addEventListener("paste", (event) => {
-      const contentTypes = clipboard.availableFormats() as [string, string];
+      const contentTypes = clipboard.availableFormats() as []|[string, string];
       if(contentTypes.length === 2 && contentTypes[0].startsWith("image/") &&
           contentTypes[1] === "text/html" && lock) {
         console.debug("[WebCord] Applying clipboard workaround to the image…");

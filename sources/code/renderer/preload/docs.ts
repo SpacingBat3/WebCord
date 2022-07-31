@@ -34,9 +34,10 @@ const menuHeader = document.createElement("p");
  * Handles URL clicks – it will open websites in default browser and load
  * markdown files instead of trying it to open.
  */
-function getId(url:string): string | void {
+function getId(url:string) {
   if (url.split("#").length > 1)
     return url.split("#")[1];
+  return;
 }
 
 function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
@@ -120,7 +121,7 @@ function fixImages(container:HTMLElement) {
     
   // Remove badges (they require an internet connection).
   for(const image of container.getElementsByTagName("img"))
-    if(image.src.startsWith("https:") && image?.parentElement?.parentElement?.tagName === "P") {
+    if(image.src.startsWith("https:") && image.parentElement?.parentElement?.tagName === "P") {
       image.parentElement.parentElement.remove();
       break;
     }

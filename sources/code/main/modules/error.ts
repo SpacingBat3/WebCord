@@ -84,7 +84,7 @@ export default function uncaughtExceptionHandler(): void {
         if (line.match(RegExp("at.*\\(" + regexAppPath + ".*\\).*", "g"))) {
           let modifiedLine = line;
           const tsRule = line.match(/\(\/.*\.ts.*\)/);
-          if (tsRule && tsRule[0])
+          if (tsRule?.[0])
             modifiedLine = line.replace(tsRule[0].replace(new RegExp("\\((" + regexAppPath + "\\/).*\\)"), "$1"), "");
           stackProcessed.push(modifiedLine);
           stackColorProcessed.push(modifiedLine);

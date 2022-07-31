@@ -32,7 +32,7 @@ type Redeclare<I, M> = Omit<I, keyof M> & M;
 type MPConfig = unknown | {
   /** Maker or publisher specific set of options. */
   options?: unknown
-}
+};
 
 interface MPBase {
   /** A Node.js package name that provides the maker or publisher functionality. */

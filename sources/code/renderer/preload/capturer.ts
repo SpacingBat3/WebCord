@@ -34,7 +34,7 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     labelContainer.className = "capturer-label-container";
 
     // Icon
-    if (source.appIcon) {
+    if (source.appIcon as typeof source["appIcon"]|null) {
       const icon = document.createElement("img");
       icon.className = "capturer-label-icon";
       icon.src = source.appIcon.toDataURL();

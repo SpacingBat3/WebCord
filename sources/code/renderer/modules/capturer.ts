@@ -1,33 +1,33 @@
 import { ipcRenderer as ipc } from "electron/renderer";
 
 interface EMediaStreamConstraints extends MediaStreamConstraints {
-    audio?: boolean | EMediaTrackConstraints;
-    video?: boolean | EMediaTrackConstraints;
+  audio?: boolean | EMediaTrackConstraints;
+  video?: boolean | EMediaTrackConstraints;
 }
 
 interface EMediaTrackConstraints extends MediaTrackConstraints {
-    mandatory?: {
-        chromeMediaSource: string;
-        chromeMediaSourceId?: string;
-    };
+  mandatory?: {
+    chromeMediaSource: string;
+    chromeMediaSourceId?: string;
+  };
 }
 
 function isMediaStreamConstrains(object:unknown): object is EMediaStreamConstraints {
-  if(!(object instanceof Object)) return false;
-  for(const child of ["audio","video"])
+  if(!object || !(object instanceof Object)) return false;
+  for(const child of ["audio","video"] as const)
     if(!(child in object))
       return false;
     else {
-      const testValue = (object as Partial<EMediaStreamConstraints>)[child as keyof EMediaStreamConstraints];
+      const testValue = (object as EMediaStreamConstraints)[child];
       switch (typeof testValue) {
         case "boolean":
           break;
         case "object":
-          if(typeof testValue?.mandatory === "object" &&
-              typeof testValue?.mandatory?.chromeMediaSource !== "string")
+          if(typeof testValue.mandatory === "object" &&
+              typeof testValue.mandatory.chromeMediaSource !== "string")
             return false;
-          if(typeof testValue?.mandatory !== "object" ||
-              testValue?.mandatory !== undefined)
+          if(typeof testValue.mandatory !== "object" &&
+            testValue.mandatory as undefined|null !== undefined)
             return false;
           break;
         default:

@@ -1,4 +1,4 @@
-import type { Server, WebSocket } from "ws";
+import type { Server } from "ws";
 import kolor from "@spacingbat3/kolor";
 
 function wsLog(message:string, ...args:unknown[]) {
@@ -11,44 +11,44 @@ function range(start:number,end:number) {
 }
 
 interface Response<C extends string, T extends string|never> {
-    /** Response type/command. */
-    cmd: C,
-    /** Response arguments. */
-    args: ResponseArgs<C, T>,
-    /** Nonce indentifying the communication. */
-    nonce: string;
+  /** Response type/command. */
+  cmd: C,
+  /** Response arguments. */
+  args: ResponseArgs<C, T>,
+  /** Nonce indentifying the communication. */
+  nonce: string;
 }
 
 type ResponseArgs<C extends string, T extends string|never> =
 C extends "INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER" ? {
-    /** An invitation code. */
-    code: string;
+  /** An invitation code. */
+  code: string;
 } : C extends "AUTHORIZE" ? {
-    scopes: string[];
-    /** An application's client_id. */
-    client_id: string;
+  scopes: string[];
+  /** An application's client_id. */
+  client_id: string;
 } : C extends "DEEP_LINK" ? T extends string ? {
-    type: T;
-    params: ResponseParams<T>;
+  type: T;
+  params: ResponseParams<T>;
 } : {
-    type: string;
-    params: Record<string,unknown>;
+  type: string;
+  params: Record<string,unknown>;
 } : Record<string,unknown>;
 
 type ResponseParams<T extends string> = T extends "CHANNEL" ? {
-    guildId: string;
-    channelId?: string;
-    search: string;
-    fingerprint: string;
+  guildId: string;
+  channelId?: string;
+  search: string;
+  fingerprint: string;
 } : Record<string,unknown>;
 
 type typeofResult = "string" | "number" | "bigint" | "boolean" | "object" |
-    "function" | "undefined";
+"function" | "undefined";
 type typeofResolved<T extends typeofResult> =  T extends "string" ? string :
-    T extends "number" ? number : T extends "bigint" ? bigint :
+  T extends "number" ? number : T extends "bigint" ? bigint :
     T extends "boolean" ? boolean : T extends "object" ? object|null :
-    T extends "function" ? (...args:unknown[])=>unknown :
-    T extends "undefined" ? undefined : unknown;
+      T extends "function" ? (...args:unknown[])=>unknown :
+        T extends "undefined" ? undefined : unknown;
 /**
  * Generic response checker, assumes Discord will do requests of certain type
  * based on `cmd` and `argsType` values.
@@ -60,29 +60,29 @@ function isResponse<C,T>(data:unknown, cmd?: C&string|(C&string)[], argsType?: T
         return false;
     return true;
   }
-  if(typeof (data as Partial<Response<string,never>>)?.cmd !== "string")
+  if(typeof (data as Partial<Response<string,never>>).cmd !== "string")
     return false;
   if(!(data instanceof Object))
     return false;
   if(typeof cmd === "string") {
-    if((data as Partial<Response<string,never>>)?.cmd !== cmd)
+    if((data as Partial<Response<string,never>>).cmd !== cmd)
       return false;
   } else if(Array.isArray(cmd)) {
     if(!cmd.includes((data as unknown as Response<string,never>).cmd as C&string))
       return false;
   }
-  if(typeof(data as Partial<Response<string,never>>)?.args !== "object")
+  if(typeof(data as Partial<Response<string,never>>).args !== "object")
     return false;
-  if(argsType && typeof (data as Partial<Response<"DEEP_LINK",typeof argsType>>)?.args?.params === "object")
+  if(argsType && typeof (data as Partial<Response<"DEEP_LINK",typeof argsType>>).args?.params === "object")
     switch(argsType) {
       case "CHANNEL":
         if(!checkRecord(
-          (data as Response<"DEEP_LINK","CHANNEL">)?.args?.params,
+          (data as Response<"DEEP_LINK","CHANNEL">).args.params,
           ["guildId", "channelId", "search", "fingerprint"], "string"
-        ) && (data as Response<"DEEP_LINK","CHANNEL">)?.args?.params?.channelId !== undefined)
+        ) && (data as Response<"DEEP_LINK","CHANNEL">).args.params.channelId !== undefined)
           return false;
     }
-  if(typeof (data as Partial<Response<string,never>>)?.nonce !== "string")
+  if(typeof (data as Partial<Response<string,never>>).nonce !== "string")
     return false;
   return true;
 }
@@ -123,7 +123,7 @@ const messages = {
  */
 async function getServer(port:number) {
   const {WebSocketServer} = await import("ws");
-  return new Promise<Server<WebSocket>|null>(resolve => {
+  return new Promise<Server|null>(resolve => {
     const wss = new WebSocketServer({ host: "127.0.0.1", port });
     wss.once("listening", () => resolve(wss));
     wss.once("error", () => resolve(null));
@@ -152,7 +152,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
     import("../../common/modules/l10n").then(l10n => l10n.default)
   ]);
   const {listenPort} = new L10N().client.log;
-  let wss: Server<WebSocket> | null = null, wsPort = 6463;
+  let wss: Server | null = null, wsPort = 6463;
   for(const port of range(6463, 6472)) {
     // eslint-disable-next-line no-await-in-loop
     wss = await getServer(port);
@@ -176,7 +176,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
     wss.once("message", (data, isBinary) => {
       let parsedData:unknown = data;
       if(!isBinary)
-        parsedData = data.toString();
+        parsedData = (data as Buffer).toString();
       if(isJsonSyntaxCorrect(parsedData as string))
         parsedData = JSON.parse(parsedData as string);
       // Invite response handling
@@ -201,12 +201,8 @@ export default async function startServer(window:Electron.BrowserWindow) {
         const child = initWindow("invite", window, winProperties);
         if(child === undefined) return;
         const path = parsedData.cmd === "INVITE_BROWSER" ?
-          "/invite/" : parsedData.cmd === "GUILD_TEMPLATE_BROWSER" ?
-            "/template/" : null;
-        if(path !== null)
-          void child.loadURL(origin+path+parsedData.args.code);
-        else
-          throw new TypeError('WSS handled wrong request type: "'+parsedData.cmd+'".');
+          "/invite/" : "/template/";
+        void child.loadURL(origin+path+parsedData.args.code);
         child.webContents.once("did-finish-load", () => {
           child.show();
         });
@@ -242,7 +238,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
       }
       // Unknown text message error
       else if(!isBinary)
-        console.error("[WS] Could not handle the packed text data: '"+data.toString()+"'.");
+        console.error("[WS] Could not handle the packed text data: '"+(data as Buffer).toString()+"'.");
       // Unknown binary data transfer error
       else
         console.error("[WS] Unknown data transfer (not text).");

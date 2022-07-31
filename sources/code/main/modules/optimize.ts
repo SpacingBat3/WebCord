@@ -8,10 +8,10 @@ import { app } from "electron/main";
 const isUnix = process.platform !== "win32" && process.platform !== "darwin";
 
 interface partialGPU {
-    gpuDevice: {
-        active: boolean,
-        driverVendor: string
-    }[]
+  gpuDevice: {
+    active: boolean,
+    driverVendor: string
+  }[]
 }
 
 function hasGPUDevices(object: unknown):object is partialGPU {

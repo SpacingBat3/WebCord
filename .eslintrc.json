@@ -31,21 +31,22 @@
         "plugin:import/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/strict",
         "plugin:import/typescript"
       ],
       "rules": {
-        // ESLint cosmetic rules
-        "indent": ["warn", 2, {
-          "SwitchCase": 1
-        }],
+        /*** ESLint cosmetic rules ***/
         "no-trailing-spaces": ["warn", {
           "skipBlankLines": true,
           "ignoreComments": true
         }],
-        "quotes": ["warn", "double", {"avoidEscape": true }],
-        "semi": "warn",
-        "camelcase": "error",
-        // ESLint built-in rules
+        // Broken rules with TypeScript
+        "camelcase": "off",
+        "indent": "off",
+        "semi": "off",
+        "quotes": "off",
+
+        /*** ESLint built-in rules ***/
         "valid-typeof": "error",
         "guard-for-in": "error",
         "no-await-in-loop": "error",
@@ -57,7 +58,25 @@
           "name": "electron",
           "message": "This module does not provide the information about the process type. Please use 'electron/common', 'electron/main' or 'electron/renderer' instead."
         }],
-        // TypeScript Rules
+
+        /*** TypeScript ESLint cosmetic rules ***/
+        "@typescript-eslint/indent": ["warn", 2, {
+          "SwitchCase": 1
+        }],
+        "@typescript-eslint/semi": "warn",
+        "@typescript-eslint/quotes": ["warn", "double", {"avoidEscape": true }],
+        // TODO: Define naming conventions (to replace camelcase rule).
+        /*"@typescript-eslint/naming-convention": ["warn", {
+          "selector": "default",
+          "format": ["camelCase", "PascalCase"],
+          "leadingUnderscore": "allow"
+        },{
+          "selector": "property",
+          "format": ["camelCase", "PascalCase","UPPER_CASE","snake_case"],
+          "leadingUnderscore": "forbid"
+        }],*/
+
+        /*** TypeScript ESLint plugin rules ***/
         "@typescript-eslint/consistent-type-assertions": ["error", {
           "assertionStyle": "as",
           "objectLiteralTypeAssertions": "never"
@@ -71,7 +90,12 @@
         "@typescript-eslint/no-unsafe-call": "error",
         "@typescript-eslint/no-unsafe-member-access": "error",
         "@typescript-eslint/no-unsafe-return": "error",
-        // Import rules
+        // Same as in TSC.
+        "@typescript-eslint/no-unused-vars": "error",
+        // Interfaces compile faster.
+        "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+
+        /*** Import plugin rules ***/
         "import/no-unused-modules": ["error", {
           "unusedExports": true
         }]

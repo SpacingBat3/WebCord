@@ -77,11 +77,11 @@ const locks = {
 };
 
 interface aboutWindowDetails {
-    appName: string;
-    appVersion: string;
-    appRepo: string|undefined;
-    buildInfo: buildInfo;
-    responseId: number;
+  appName: string;
+  appVersion: string;
+  appRepo: string|undefined;
+  buildInfo: buildInfo;
+  responseId: number;
 }
 
 function event2promise<C extends EventTarget>(emitter:C, channel:Parameters<C["addEventListener"]>[0]) {
@@ -152,7 +152,7 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
     versions.innerText = process.versions.electron+" / "+
             process.versions.chrome+" / "+process.versions.node;
   if(features) {
-    for(const [key, value] of Object.entries(details.buildInfo.features ?? {}))
+    for(const [key, value] of Object.entries(details.buildInfo.features))
       if(value)
         if(features.innerText === "")
           features.innerText = key;

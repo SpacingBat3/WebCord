@@ -23,12 +23,13 @@ const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Netwo
 
 // Some custom functions
 
-function getCommit():string | void {
+function getCommit():string | null {
   const refsPath = readFileSync(resolve(projectPath, ".git/HEAD"))
     .toString()
     .split(": ")[1]
     ?.trim();
   if(refsPath) return readFileSync(resolve(projectPath, ".git", refsPath)).toString().trim();
+  return null;
 }
 
 const env = {

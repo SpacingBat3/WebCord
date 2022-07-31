@@ -9,11 +9,11 @@ import { appInfo } from "../../common/modules/client";
 import { objectsAreSameType, isJsonSyntaxCorrect } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
 
-type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind"
+type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind";
 
-type lastKeyof<T> = T extends object ? T[keyof T] extends object ? lastKeyof<T[keyof T]> : keyof T : never
+type lastKeyof<T> = T extends object ? T[keyof T] extends object ? lastKeyof<T[keyof T]> : keyof T : never;
 
-type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reservedKeys>
+type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reservedKeys>;
 
 export type ConfigElement = Partial<Record<checkListKeys,boolean>> | {
   radio: number
@@ -23,12 +23,7 @@ export type ConfigElement = Partial<Record<checkListKeys,boolean>> | {
   input: string|number
 } | {
   keybind: string
-}
-
-const test = {} as unknown as ConfigElement;
-
-if("radio" in test)
-  test.radio;
+};
 
 interface AppConfigBase {
   settings: Record<string, Record<string, ConfigElement>>,
@@ -37,7 +32,7 @@ interface AppConfigBase {
 
 export type cspTP<T> = {
   [P in keyof typeof defaultAppConfig["settings"]["advanced"]["cspThirdParty"]]: T
- }
+};
 
 const defaultAppConfig = {
   settings: {
@@ -183,13 +178,13 @@ export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigB
   }
 }
 
-type windowStatus = {
-    width: number;
-    height: number;
-    isMaximized: boolean;
+interface windowStatus {
+  width: number;
+  height: number;
+  isMaximized: boolean;
 }
 
-export class WinStateKeeper extends Config<Record<string, windowStatus>> {
+export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>> {
   protected override path: fs.PathLike = resolve(app.getPath("userData"),"windowState.json");
   private windowName: string;
   /**
@@ -201,15 +196,15 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
     let event = eventType;
     if(eventType === "resize" && window.isMaximized())
       event = "maximize";
-    else if (eventType === "resize" && this.get()?.[this.windowName]?.isMaximized)
+    else if (eventType === "resize" && this.get()[this.windowName]?.isMaximized)
       event = "unmaximize";
     switch(event) {
       case "maximize":
       case "unmaximize":
         this.set({
           [this.windowName]: {
-            width: this.get()?.[this.windowName]?.width ?? window.getNormalBounds().width,
-            height: this.get()?.[this.windowName]?.height ?? window.getNormalBounds().height,
+            width: this.get()[this.windowName]?.width ?? window.getNormalBounds().width,
+            height: this.get()[this.windowName]?.height ?? window.getNormalBounds().height,
             isMaximized: window.isMaximized()
           }
         });
@@ -272,9 +267,9 @@ export class WinStateKeeper extends Config<Record<string, windowStatus>> {
       this.write({...this.defaultConfig, ...this.get()});
     }
     this.initState = {
-      width: this.get()?.[this.windowName]?.width ?? defaults.width,
-      height: this.get()?.[this.windowName]?.height ?? defaults.height,
-      isMaximized: this.get()?.[this.windowName]?.isMaximized ?? false
+      width: this.get()[this.windowName]?.width ?? defaults.width,
+      height: this.get()[this.windowName]?.height ?? defaults.height,
+      isMaximized: this.get()[this.windowName]?.isMaximized ?? false
     };
   }
 }

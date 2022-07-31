@@ -15,7 +15,7 @@ const popups = [
  */
 export function initWindow(name:string&keyof l10n["client"]["windows"], parent: Electron.BrowserWindow, properties?: Electron.BrowserWindowConstructorOptions) {
   const isPopup = popups.includes(name);
-  if(!app.isReady) throw new Error("Tried to initialize a new parent window when app is not ready!");
+  if(!app.isReady()) throw new Error("Tried to initialize a new parent window when app is not ready!");
   const wSession = isPopup ? session.defaultSession : session.fromPartition("temp:"+name);
   for (const window of parent.getChildWindows())
     if(window.webContents.session === wSession) return;

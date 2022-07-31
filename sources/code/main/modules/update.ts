@@ -66,7 +66,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     config.notification.version === githubApi["tag_name"] &&
         new Date(config.notification.till) < nextWeek
   );
-  if (showGui && (getBuildInfo()?.features?.updateNotifications ?? true) && !ignored) {
+  if (showGui && (getBuildInfo().features.updateNotifications) && !ignored) {
     const notification = new Notification(updatePopup);
     notification.on("click", () => {
       if(githubApi["html_url"] !== undefined)

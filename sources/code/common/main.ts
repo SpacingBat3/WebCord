@@ -191,9 +191,9 @@ let overwriteMain: (() => unknown) | undefined;
       const directory = getSwitchValue("export-l10n");
       if(directory === null) return;
       const filePromise: Promise<void>[] = [];
-      for (const file of Object.keys(locale))
+      for (const file of Object.keys(locale) as (keyof typeof locale)[])
         filePromise.push(
-          fs.writeFile(resolvePath(directory, file + ".json"),JSON.stringify(locale[file as keyof typeof locale], null, 2))
+          fs.writeFile(resolvePath(directory, file + ".json"),JSON.stringify(locale[file], null, 2))
         );
       Promise.all(filePromise).then(() => {
         console.log([
@@ -265,9 +265,8 @@ let overwriteMain: (() => unknown) | undefined;
 // Set global user agent
 app.userAgentFallback = getUserAgent(process.versions.chrome, userAgent.mobile, userAgent.replace);
 
+/** Whenever this application is locked to single instantce. */
 const singleInstance = app.requestSingleInstanceLock();
-let mainWindow: BrowserWindow;
-let l10nStrings: l10n["client"], updateInterval: NodeJS.Timeout | undefined;
 
 function main(): void {
   if (overwriteMain) {
@@ -275,10 +274,15 @@ function main(): void {
     overwriteMain();
   } else {
     // Run app normally
-    l10nStrings = (new l10n()).client;
+    const updateInterval = setInterval(function () { checkVersion(updateInterval).catch(commonCatches.print); }, 1800000);
     checkVersion(updateInterval).catch(commonCatches.print);
-    updateInterval = setInterval(function () { checkVersion(updateInterval).catch(commonCatches.print); }, 1800000);
-    mainWindow = createMainWindow(startHidden, l10nStrings);
+    const mainWindow = createMainWindow(startHidden);
+    // Show window on second instance
+    app.on("second-instance", () => {
+      if (!mainWindow.isVisible()) mainWindow.show();
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    });
   }
 }
 
@@ -288,13 +292,6 @@ if (!singleInstance && !overwriteMain) {
     app.quit();
   });
 } else {
-  app.on("second-instance", () => {
-    if (mainWindow) {
-      if (!mainWindow.isVisible()) mainWindow.show();
-      if (mainWindow.isMinimized()) mainWindow.restore();
-      mainWindow.focus();
-    }
-  });
   app.on("ready", main);
 }
 
