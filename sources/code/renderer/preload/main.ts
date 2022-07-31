@@ -24,7 +24,7 @@ if (window.location.protocol === "file:") {
    * by the Context Bridge.
    */
   const contextBridgeApiKey = generateSafeKey();
-  contextBridge.exposeInMainWorld(contextBridgeApiKey,desktopCapturerPicker);
+  contextBridge.exposeInMainWorld(contextBridgeApiKey,() => desktopCapturerPicker(contextBridgeApiKey));
 
   /*
    * Expose API key back to the main process.
