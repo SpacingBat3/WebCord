@@ -154,3 +154,11 @@ export const sanitizeConfig = {
   /** Block every attribute */
   ALLOWED_ATTR: []
 };
+
+/**
+ * Like {@link Partial<T>}, except it also makes all subproperties in T
+ * optional.
+ */
+export type PartialRecursive<T> = {
+  [P in keyof T]?: PartialRecursive<T[P]>
+};

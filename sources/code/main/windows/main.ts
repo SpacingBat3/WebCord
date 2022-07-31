@@ -16,6 +16,8 @@ import l10n from "../../common/modules/l10n";
 import { loadChromiumExtensions, loadStyles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 
+import type { PartialRecursive } from "../../common/global";
+
 const configData = new AppConfig();
 
 interface MainWindowFlags {
@@ -304,29 +306,33 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   });
 
   // Apply settings that doesn't need app restart on change
-  ipcMain.on("settings-config-modified", (event, object:null|Partial<AppConfig["defaultConfig"]>) => {
+  ipcMain.on("settings-config-modified", (event, object:null|PartialRecursive<AppConfig["defaultConfig"]>) => {
     if(new URL(event.senderFrame.url).protocol !== "file:")
       return;
     const config = new AppConfig();
-    // Menu bar
-    if (object?.settings?.general.menuBar.hide !== undefined) {
-      console.debug("[Settings] Updating menu bar state...");
-      win.setAutoHideMenuBar(config.get().settings.general.menuBar.hide);
-      win.setMenuBarVisibility(!config.get().settings.general.menuBar.hide);
+    try {
+      // Menu bar
+      if (object?.settings?.general?.menuBar?.hide !== undefined) {
+        console.debug("[Settings] Updating menu bar state...");
+        win.setAutoHideMenuBar(config.get().settings.general.menuBar.hide);
+        win.setMenuBarVisibility(!config.get().settings.general.menuBar.hide);
+      }
+      // Custom Discord instance switch
+      if(object?.settings?.advanced?.currentInstance?.radio !== undefined) {
+        void win.loadURL(knownInstancesList[config.get().settings.advanced.currentInstance.radio][1].href);
+      }
+      // CSP
+      if(
+        object?.settings?.advanced?.cspThirdParty !== undefined ||
+        object?.settings?.advanced?.csp !== undefined
+      )
+        win.reload();
+      // Remove window flashing when it is disabled
+      if(object?.settings?.general?.taskbar?.flash === false)
+        win.flashFrame(false);
+    } catch(error) {
+      commonCatches.print(error);
     }
-    // Custom Discord instance switch
-    if(object?.settings?.advanced.currentInstance.radio !== undefined) {
-      void win.loadURL(knownInstancesList[config.get().settings.advanced.currentInstance.radio][1].href);
-    }
-    // CSP
-    if(
-      object?.settings?.advanced.cspThirdParty !== undefined ||
-      object?.settings?.advanced.csp !== undefined
-    )
-      win.reload();
-    // Remove window flashing when it is disabled
-    if(object?.settings?.general.taskbar.flash === false)
-      win.flashFrame(false);
   });
 
   // Load extensions for builds of type "devel".
