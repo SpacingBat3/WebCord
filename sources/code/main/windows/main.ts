@@ -40,14 +40,16 @@ export default function createMainWindow(startHidden: boolean): BrowserWindow {
     show: false,
     webPreferences: {
       preload: resolve(app.getAppPath(), "app/code/renderer/preload/main.js"),
-      nodeIntegration: false,
-      devTools: true, // Too usefull to be blocked.
+      nodeIntegration: false, // Never set to "true"!
+      contextIsolation: true, // Isolates website from preloads.
+      sandbox: false, // Removes Node.js from preloads (TODO).
+      devTools: true, // Allows the use of the devTools.
       defaultFontFamily: {
         standard: "Arial" // `sans-serif` as default font.
       },
       enableWebSQL: false,
       webgl: configData.get().settings.advanced.webApi.webGl,
-      safeDialogs: true,
+      safeDialogs: true, // prevents dialog spam by the website
       autoplayPolicy: "no-user-gesture-required"
     }
   });

@@ -28,6 +28,7 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
     icon: appInfo.icon,
     webPreferences: {
       session: wSession,
+      sandbox: false,
       defaultFontFamily: {
         standard: "Arial" // `sans-serif` as default font.
       },
