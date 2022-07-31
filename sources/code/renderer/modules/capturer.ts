@@ -38,6 +38,8 @@ function isMediaStreamConstrains(object:unknown): object is EMediaStreamConstrai
 }
 
 export default function desktopCapturerPicker(api:string): Promise<EMediaStreamConstraints> {
+  if(typeof api !== "string")
+    throw new TypeError("Parameter 'api' is of invalid type (received "+String(api)+").");
   return new Promise((resolve,reject) => {
     ipc.invoke("desktopCapturerRequest", api).then((result:unknown) => {
       if(isMediaStreamConstrains(result)) {

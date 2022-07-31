@@ -87,6 +87,13 @@ import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/o
 /** Whenever `--start-minimized` or `-m` switch is used when running client. */
 let startHidden = false;
 
+/**
+ * Force enables screen share audio support. Disabled by the default.
+ * 
+ * **Might bring undesirable consequences on unsupported platforms**.
+ */
+let screenShareAudio = false;
+
 const userAgent: Partial<{
   replace: Parameters<typeof getUserAgent>[2];
   mobile: boolean;
@@ -165,7 +172,8 @@ let overwriteMain: (() => unknown) | undefined;
       renderLine(["user-agent-mobile"], "Whenever use 'mobile' variant of user agent."),
       renderLine(["user-agent-platform=" + kolor.yellow("string")], "Platform to replace in the user agent."),
       renderLine(["user-agent-version="  + kolor.yellow("string")], "Version of platform in user agent."),
-      renderLine(["user-agent-device"], "Device identifier in the user agent (Android).")
+      renderLine(["user-agent-device"], "Device identifier in the user agent (Android)."),
+      renderLine(["force-audio-share-support"], "Force support for sharing audio in screen share.")
     ].sort().join("\n")+"\n");
     app.exit();
   }
@@ -238,6 +246,8 @@ let overwriteMain: (() => unknown) | undefined;
         throw new Error("Flag 'gpu-info' should contain parameter of type '\"basic\"|\"complete\"'.");
     }
   }
+  if(hasSwitch("force-audio-share-support"))
+    screenShareAudio = true;
 }
 {
   const applyFlags = (name:string, value?:string) => {
@@ -276,7 +286,7 @@ function main(): void {
     // Run app normally
     const updateInterval = setInterval(function () { checkVersion(updateInterval).catch(commonCatches.print); }, 1800000);
     checkVersion(updateInterval).catch(commonCatches.print);
-    const mainWindow = createMainWindow(startHidden);
+    const mainWindow = createMainWindow({startHidden, screenShareAudio});
     // Show window on second instance
     app.on("second-instance", () => {
       if (!mainWindow.isVisible()) mainWindow.show();

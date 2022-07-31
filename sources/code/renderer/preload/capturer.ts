@@ -52,64 +52,74 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     list.appendChild(item);
   }
 }
+
+type ExpectedIncomingResult = [
+  /** List of sources fetched from the Electron API. */
+  sources: Electron.DesktopCapturerSource[],
+  /** Whenever audio has been enforced by command-line flags. */
+  screenShareAudio: boolean
+];
+
 window.addEventListener("DOMContentLoaded", () => {
   let audioSupport = false;
   const audioButton = document.getElementById("capturer-sound") as HTMLInputElement|null;
-  {
-    const l10n = new L10N().client.dialog.screenShare;
-    const closeButton = document.getElementById("capturer-close") as HTMLButtonElement|null;
-    if(process.platform === "win32" && audioButton) {
-      audioSupport = true;
-      audioButton.disabled = false;
-      audioButton.title = l10n.sound.system;
-      void ipc.invoke("capturer-get-settings")
-        .then((settings:AppConfig["defaultConfig"]["screenShareStore"]) => {
-          audioButton.checked = settings.audio;
-        });
-      audioButton.addEventListener("click", () => ipc.send("settings-config-modified", {
-        screenShareStore: {
-          audio: audioButton.checked
-        }
-      }));
-    } else if(audioButton) {
-      audioButton.title = l10n.sound.unavailable;
-      audioButton.disabled = true;
-    }
-    if(closeButton) closeButton.title = l10n.close;
-  }
-  ipc.invoke("getDesktopCapturerSources").then((result:null|Electron.DesktopCapturerSource[]) => {
-    if(result === null) {
-      ipc.send("closeCapturerView", new Error("Unknown sources list."));
-    } else {
-      try {
-        renderCapturerContainer(result);
-        [...document.querySelectorAll(".capturer-button")].map(button =>
-          button.addEventListener("click", () => {
-            const id = button.getAttribute("data-id");
-            const source = result.find(source => source.id === id);
-            if (!source) {
-              throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
-            }
-            ipc.send("closeCapturerView", {
-              audio: audioSupport && audioButton?.checked ? {
-                mandatory: {
-                  chromeMediaSource: "desktop"
-                }
-              } : false,
-              video: {
-                mandatory: {
-                  chromeMediaSource: "desktop",
-                  chromeMediaSourceId: source.id
-                }
+  ipc.invoke("getDesktopCapturerSources")
+    .then((result:null|ExpectedIncomingResult) => {
+      if(result === null) {
+        ipc.send("closeCapturerView", new Error("Unknown sources list."));
+      } else {
+        {
+          const l10n = new L10N().client.dialog.screenShare;
+          const closeButton = document.getElementById("capturer-close") as HTMLButtonElement|null;
+          if((process.platform === "win32" || result[1]) && audioButton) {
+            audioSupport = true;
+            audioButton.disabled = false;
+            audioButton.title = l10n.sound.system;
+            void ipc.invoke("capturer-get-settings")
+              .then((settings:AppConfig["defaultConfig"]["screenShareStore"]) => {
+                audioButton.checked = settings.audio;
+              });
+            audioButton.addEventListener("click", () => ipc.send("settings-config-modified", {
+              screenShareStore: {
+                audio: audioButton.checked
               }
-            });
-          })
-        );
-        document.getElementById("capturer-close")
-          ?.addEventListener("click", () => ipc.send("closeCapturerView", "Permission denied"));
-      } catch(reason) {
-        ipc.send("closeCapturerView", reason);
+            }));
+          } else if(audioButton) {
+            audioButton.title = l10n.sound.unavailable;
+            audioButton.disabled = true;
+          }
+          if(closeButton) closeButton.title = l10n.close;
+        }
+        try {
+          renderCapturerContainer(result[0]);
+          [...document.querySelectorAll(".capturer-button")].map(button =>
+            button.addEventListener("click", () => {
+              const id = button.getAttribute("data-id");
+              const source = result[0].find(source => source.id === id);
+              if (!source) {
+                throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
+              }
+              ipc.send("closeCapturerView", {
+                audio: audioSupport && audioButton?.checked ? {
+                  mandatory: {
+                    chromeMediaSource: "desktop"
+                  }
+                } : false,
+                video: {
+                  mandatory: {
+                    chromeMediaSource: "desktop",
+                    chromeMediaSourceId: source.id
+                  }
+                }
+              });
+            })
+          );
+          document.getElementById("capturer-close")
+            ?.addEventListener("click", () => ipc.send("closeCapturerView", "Permission denied"));
+        } catch(reason) {
+          ipc.send("closeCapturerView", reason);
+        }
       }
-    }
-  }).catch(reason => ipc.send("closeCapturerView", reason));
+    })
+    .catch(reason => ipc.send("closeCapturerView", reason));
 });

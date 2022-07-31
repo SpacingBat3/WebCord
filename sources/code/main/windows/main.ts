@@ -18,7 +18,12 @@ import { commonCatches } from "../modules/error";
 
 const configData = new AppConfig();
 
-export default function createMainWindow(startHidden: boolean): BrowserWindow {
+interface MainWindowFlags {
+  startHidden: boolean;
+  screenShareAudio: boolean;
+}
+
+export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   const l10nStrings = (new l10n()).client;
 
   const internalWindowEvents = new EventEmitter();
@@ -72,7 +77,7 @@ export default function createMainWindow(startHidden: boolean): BrowserWindow {
   });
   win.webContents.once("did-finish-load", () => {
     console.debug("[PAGE] Starting to load the Discord page...");
-    if (!startHidden) win.show();
+    if (!flags.startHidden) win.show();
     setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].href);}, 1500);
   });
   if (mainWindowState.initState.isMaximized) win.maximize();
@@ -362,9 +367,9 @@ export default function createMainWindow(startHidden: boolean): BrowserWindow {
               preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js")
             }
           });
-          ipcMain.handleOnce("getDesktopCapturerSources", (event) => {
+          ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
             if(event.sender === view.webContents)
-              return sources;
+              return [await sources, flags.screenShareAudio];
             else
               return null;
           });
@@ -392,7 +397,7 @@ export default function createMainWindow(startHidden: boolean): BrowserWindow {
           });
         } else {
           sources.then(sources => resolvePromise({
-            audio: false,
+            audio: flags.screenShareAudio,
             video: {
               mandatory: {
                 chromeMediaSource: "desktop",
