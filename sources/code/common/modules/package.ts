@@ -13,8 +13,7 @@ interface PersonObject {
 	url?: string;
 }
 
-type PersonAny = string & PersonObject
-type PersonLike = string | PersonObject
+type PersonLike = string | PersonObject;
 
 interface PackageJsonProperties {
 	/** Node.js-friendly application name. */
@@ -44,10 +43,13 @@ interface PackageJsonProperties {
   devDependencies?: Record<string, string>
 }
 
-/**
- * Name says it well. A `RegExp` that *magically* splits string to Person values.
- */
-const personMagic = /^((?:.*?(?=\s*(?:<[^ ]*>|\([^ ]*\)))|.*?))(?: <([^ ]*)>)? *(?:\((.*)\))?$/;
+const moduleRegexp = {
+  /**
+   * Name says it well. A `RegExp` that *magically* splits string to Person values.
+   */
+  personMagic: /^((?:.*?(?=\s*(?:<[^ ]*>|\([^ ]*\)))|.*?))(?: <([^ ]*)>)? *(?:\((.*)\))?$/,
+  email: /^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*@[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*\.[a-z]+$/
+};
 
 export class Person {
   /** Person name (can be either a nickname or full name). */
@@ -61,13 +63,51 @@ export class Person {
       (this.email ? " <" + this.email + ">" : "")+
       (this.url   ? " (" + this.url   + ")" : "");
   }
+  public static isPersonObject(variable: unknown): variable is PersonObject {
+    // Variable is an Object, which has 'name' key and optionally 'email' and 'url' keys.
+    if (variable instanceof Object) {
+      if (typeof (variable as PersonObject).name !== "string")
+        return false;
+    
+      if ((variable as PersonObject).email !== undefined &&
+          typeof (variable as PersonObject).email !== "string")
+        return false;
+    
+      // Validate Emails if present
+      else if(typeof (variable as PersonObject).email === "string" &&
+          !moduleRegexp.email.test((variable as PersonObject).email ?? ""))
+        return false;
+    
+      if ((variable as PersonObject).url !== undefined &&
+          typeof (variable as PersonObject).url !== "string")
+        return false;
+    } else {
+      return false;
+    }
+    return true;
+  }
+  public static isPerson(variable: unknown): variable is PersonLike {
+    // Check #1: Variable might be PersonObject:
+    if(this.isPersonObject(variable)) return true;
+    
+    // Check #2: When Person is string, it shall be in `name <email> [url]` format.
+    if (typeof variable === "string"){
+      const match = variable.match(moduleRegexp.personMagic);
+      return (
+        match?.[1] !== undefined
+      ) && (
+        match[2] !== undefined ? moduleRegexp.email.test(match[2]) : true
+      );
+    }
+    return false;
+  }
   constructor(value:PersonLike) {
     if((value as PersonObject) instanceof Object) {
       this.name  = (value as PersonObject).name;
       this.email = (value as PersonObject).email;
       this.url   = (value as PersonObject).url;
     } else {
-      const match = (value as string).match(personMagic);
+      const match = (value as string).match(moduleRegexp.personMagic);
       this.name  = (match?.[1] ?? "[Anonymous]").trimEnd();
       this.email = match?.[2] ??   undefined;
       this.url   = match?.[3] ??   undefined;
@@ -81,54 +121,16 @@ export class Person {
  * To avoid leakage of some properties (like `scripts`) to the malicious code,
  * this class is not able to return any value from the `package.json`.
  */
-export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
+export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
   private readonly _regexp = {
-    license: /^UNLICEN[SC]ED|SEE LICEN[CS]E IN .+$/,
-    email: /^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*@[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*\.[a-z]+$/
+    license: /^UNLICEN[SC]ED|SEE LICEN[CS]E IN .+$/
   };
   public readonly data;
-  private isEmail(email: string|undefined|null): boolean {
-    return this._regexp.email.test(email??"");
-  }
-  private isPersonObject(variable: unknown): variable is PersonObject {
-    // Variable is an Object, which has 'name' key and optionally 'email' and 'url' keys.
-    if (variable instanceof Object) {
-      if (typeof (variable as PersonAny).name !== "string")
-        return false;
-    
-      if ((variable as PersonAny).email !== undefined && typeof (variable as PersonAny).email !== "string")
-        return false;
-    
-      // Validate Emails if present
-      else if(typeof (variable as PersonAny).email === "string" && !this.isEmail((variable as PersonAny).email))
-        return false;
-    
-      if ((variable as PersonAny).url !== undefined && typeof (variable as PersonAny).url !== "string")
-        return false;
-    } else {
-      return false;
-    }
-    return true;
-  }
   /**
    * A TypeGuard to check whenever a property is in `package.json` person
    * field format.
    */
-  private isPerson(variable: unknown): variable is PersonAny {
-    // Check #1: Variable might be PersonObject:
-    if(this.isPersonObject(variable)) return true;
-    
-    // Check #2: When Person is string, it shall be in `name <email> [url]` format.
-    if (typeof variable === "string"){
-      const match = variable.match(personMagic);
-      return (
-        (match !== null && match[1] !== undefined)
-      ) && (
-        match[2] !== undefined ? this.isEmail(match[2]) : true
-      );
-    }
-    return false;
-  }
+  
   /** A function used to return the details about the `package.json` wrong configuration. */
   private checkPackageJsonComplete(object: unknown): string {
     // Check 1: `package.json` is a JSON object.
@@ -140,17 +142,17 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
 
     // Check 2: 'contributors' is array of 'Person'
     if ((object as PackageJsonProperties).contributors instanceof Object)
-      for (const key of (object as Record<string, Array<unknown>>)["contributors"]??[])
-        if (!this.isPerson(key)) return "Contributors field is of invalid type.";
+      for (const key of (object as Record<string, unknown[]>)["contributors"]??[])
+        if (!Person.isPerson(key)) return "Contributors field is of invalid type.";
     
     // Check 3: 'author' is 'Person' when definied
     if((object as PackageJsonProperties).author !== undefined)
-      if (!this.isPerson((object as PackageJsonProperties).author))
+      if (!Person.isPerson((object as PackageJsonProperties).author))
         return "Author field is of invalid type.";
     
     // Check 4: 'name', 'description' and 'license' are strings.
     for (const stringKey of ["name", "description", "license"])
-      if (typeof ((object as { [key: string]: string; })[stringKey]) !== "string")
+      if (typeof ((object as Record<string,string>)[stringKey]) !== "string")
         return "'"+stringKey+"' is not assignable to type 'string'.";
         
     // Check 5: 'repository' is either string or object
@@ -158,9 +160,9 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
       return "Repository field is neither of type 'string' nor 'object'.";
     
     // Check 6: As object, 'repository' has 'type' and 'url' keys of type 'string'
-    for (const stringKey of ["type", "url"]) {
+    for (const stringKey of ["type", "url"] as const) {
       const repository = (object as PackageJsonProperties).repository;
-      if (typeof (repository) === "object" && typeof ((repository as { [key: string]: string; })[stringKey]) !== "string")
+      if (typeof (repository) === "object" && typeof ((repository)[stringKey]) !== "string")
         return "Repository object does not contain a '"+stringKey+"' property.";
     }
     
@@ -177,21 +179,15 @@ export class PackageJSON<T extends Array<keyof PackageJsonProperties>> {
     }
 
     // Check 9: `devDependencies` or `dependencies` are either `undefinied` or `Record<string,string>`:
-    for(const key of ["dependencies", "devDependencies"]) {
-      const testValue = (object as Record<string,unknown|undefined>)[key];
+    for(const key of ["dependencies", "devDependencies"] as const) {
+      const testValue = (object as PackageJsonProperties)[key];
       if (!/undefined|object/.test(typeof testValue))
         return "Property '"+key+"' is of invalid type!";
       else if(testValue instanceof Object) {
-        for(const key in testValue)
-          if(typeof key !== "string") {
-            const key2string:unknown = (key as Record<string,unknown>)?.toString();
-            let keyString:string;
-            if(typeof key2string === "string")
-              keyString = key2string;
-            else
-              keyString = "[unknown]";
-            return "Package name '"+keyString+"' is not a valid 'string'.";
-          } else if (typeof (testValue as Record<string, unknown>)[key] !== "string")
+        for(const [key,value] of Object.entries(testValue))
+          if(typeof key !== "string")
+            return "Package name '"+JSON.stringify(key)+"' is not a valid 'string'.";
+          else if (typeof value !== "string")
             return "Version of the package '"+key+"' is not of type 'string'.";
       }
     }
