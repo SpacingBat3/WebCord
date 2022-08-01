@@ -94,6 +94,13 @@
             "labels": {
                 "webGl": "Włącz wsparcie dla WebGL."
             }
+        },
+        "unix": {
+            "name": "Funkcje eksperymentalne dla systemu Unix/uniksopodobnego",
+            "description": "Włącza funkcje, które zostały oznaczone przez silnik Chromium/Blink jako eksperymentalne. <b>Korzystasz z nich na własną odpowiedzialność</b>.",
+            "labels": {
+                "autoscroll": "Włącz przewijanie za pomocą środkowego przycisku (tzw. <i>autoscroll</i>)."
+            }
         }
     }
 }

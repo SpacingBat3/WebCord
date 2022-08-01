@@ -94,6 +94,13 @@
             "labels": {
                 "webGl": "Enable WebGL support."
             }
+        },
+        "unix": {
+            "name": "Experimental features for Unix/Unix-like OS",
+            "description": "Enables features that were flagged by Chromium/Blink engine as experimental. <b>Use them at your own responsibility</b>.",
+            "labels": {
+                "autoscroll": "Enable middle-click scrolling (aka. <i>autoscroll</i>)."
+            }
         }
     }
 }

@@ -38,6 +38,21 @@ function generateRadioLabels(key:string) {
   }
 }
 
+function checkPlatformKey(key:string) {
+  switch(key as NodeJS.Platform|"unix") {
+    case "win32":
+    case "darwin":
+    case "linux":
+    case "freebsd":
+    case "openbsd":
+      return process.platform === key;
+    case "unix":
+      return process.platform !== "win32";
+    default:
+      return true;
+  }
+}
+
 function generateSettings(optionsGroups: htmlConfig) {
   // Clear old config (so this function can be executed multiple times).
   document.body.innerHTML = "";
@@ -47,7 +62,7 @@ function generateSettings(optionsGroups: htmlConfig) {
     h1.innerHTML = sanitize(group.name, sanitizeConfig);
     document.body.appendChild(h1);
     (Object.keys)(group).map(settingKey => {
-      if(settingKey !== "name" && settingKey !== buildType) {
+      if(settingKey !== "name" && settingKey !== buildType && checkPlatformKey(settingKey)) {
         const setting = (group as unknown as generatedConfigGeneric)[settingKey];
         if(setting) {
           const h2 = document.createElement("h2");

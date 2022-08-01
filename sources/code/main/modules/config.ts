@@ -95,6 +95,9 @@ const defaultAppConfig = {
       },
       webApi: {
         webGl: true
+      },
+      unix: {
+        autoscroll: false
       }
     }
   },

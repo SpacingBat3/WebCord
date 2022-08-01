@@ -251,9 +251,13 @@ let overwriteMain: (() => unknown) | undefined;
 }
 {
   const applyFlags = (name:string, value?:string) => {
-    if(name === "enable-features" && value !== undefined
+    if(value !== undefined
         && app.commandLine.getSwitchValue(name) !== "")
-      value = app.commandLine.getSwitchValue(name)+","+value;
+      switch(name) {
+        case "enable-features":
+        case "enable-blink-features":
+          value = app.commandLine.getSwitchValue(name)+","+value;
+      }
     app.commandLine.appendSwitch(name, value);
     console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value ? "="+value : ""));
   };
@@ -267,6 +271,11 @@ let overwriteMain: (() => unknown) | undefined;
     }).catch(error => {
       console.error(error);
     });
+  
+  // Enable MiddleClickAutoscroll for all windows.
+  if(process.platform !== "win32" &&
+      new AppConfig().get().settings.advanced.unix.autoscroll)
+    applyFlags("enable-blink-features","MiddleClickAutoscroll");
 
   for(const flag of getRedommendedOSFlags())
     applyFlags(flag[0], flag[1]);
