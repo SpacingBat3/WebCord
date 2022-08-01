@@ -403,7 +403,12 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           });
         } else {
           sources.then(sources => resolvePromise({
-            audio: flags.screenShareAudio,
+            audio: flags.screenShareAudio ? {
+              mandatory: {
+                chromeMediaSource: "desktop",
+                chromeMediaSourceId: sources[0]?.id
+              }
+            } : false,
             video: {
               mandatory: {
                 chromeMediaSource: "desktop",
