@@ -58,7 +58,8 @@ const defaultAppConfig = {
         "audio": false,
         "fullscreen": true,
         "notifications": false,
-        "display-capture": true
+        "display-capture": true,
+        "background-sync": false,
       },
     },
     advanced: {

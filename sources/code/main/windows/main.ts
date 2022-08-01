@@ -160,6 +160,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         }
         case "notifications":
         case "fullscreen":
+        case "background-sync":
           return configData.get().settings.privacy.permissions[permission];
         default:
           return null;

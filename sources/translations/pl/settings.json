@@ -43,7 +43,8 @@
                 "audio": "Mikrofon",
                 "fullscreen": "Pełny ekran",
                 "notifications": "Powiadomienia",
-                "display-capture": "Nagrywanie ekranu"
+                "display-capture": "Nagrywanie ekranu",
+                "background-sync": "Synchronizacja w tle"
             }
         }
     },

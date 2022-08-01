@@ -43,7 +43,8 @@
                 "audio": "Microphone",
                 "fullscreen": "Fullscreen",
                 "notifications": "Notifications",
-                "display-capture": "Desktop capture"
+                "display-capture": "Desktop capture",
+                "background-sync": "Background synchronisation"
             }
         }
     },
