@@ -18,13 +18,22 @@
       "parserOptions": {
         "project": "./tsconfig.json"
       },
-      "plugins": ["@typescript-eslint"],
+      "plugins": ["@typescript-eslint","import"],
       "settings": {
         "import/core-modules": [
           "electron/main",
           "electron/common",
           "electron/renderer"
-        ]
+        ],
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts", ".mts", ".cts"]
+        },
+        "import/resolver": {
+          "typescript": {
+            "alwaysTryTypes": true,
+            "project": "./tsconfig.json"
+          }
+        }
       },
       "extends": [
         "eslint:recommended",
