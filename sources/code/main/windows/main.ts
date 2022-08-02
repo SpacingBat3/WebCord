@@ -6,7 +6,15 @@ import kolor from "@spacingbat3/kolor";
 
 import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
-import { app, BrowserWindow, net, ipcMain, desktopCapturer, BrowserView } from "electron/main";
+import {
+  app,
+  BrowserWindow,
+  net,
+  ipcMain,
+  desktopCapturer,
+  BrowserView,
+  systemPreferences
+} from "electron/main";
 import { NativeImage, nativeImage } from "electron/common";
 import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
@@ -139,6 +147,20 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].origin,
       "devtools://"
     ];
+    const getMediaTypesPermission = (mediaTypes: unknown[] = []) => {
+      const supportsMediaAccessStatus = ["darwin","win32"].includes(process.platform);
+      return [...new Set(mediaTypes)]
+        .map(media => {
+          const mediaType = media === "video" ? "camera" : media === "audio" ? "microphone" : null;
+          return mediaType && (
+            supportsMediaAccessStatus ?
+              systemPreferences.getMediaAccessStatus(mediaType) === "granted" :
+              true
+          );
+        })
+        .reduce((previousValue,currentValue) => (previousValue??false) && (currentValue??false), null)??true;
+    };
+    /** Common handler for  */
     const permissionHandler = function (webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null {
       {
         const webContents = new URL(webContentsUrl);
@@ -148,12 +170,17 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       switch (permission) {
         case "media":{
           let callbackValue = true;
-          if("mediaTypes" in details)
-            details.mediaTypes.map(type => callbackValue = callbackValue &&
-              configData.get().settings.privacy.permissions[type]
-            );
+          if("mediaTypes" in details) {
+            callbackValue = getMediaTypesPermission(details.mediaTypes);
+            for(const type of [...new Set(details.mediaTypes)])
+              if(!callbackValue)
+                break;
+              else
+                callbackValue = configData.get().settings.privacy.permissions[type];
+          }
           else if("mediaType" in details && details.mediaType !== "unknown")
-            callbackValue = configData.get().settings.privacy.permissions[details.mediaType];
+            callbackValue = getMediaTypesPermission([details.mediaType]) &&
+              configData.get().settings.privacy.permissions[details.mediaType];
           else
             callbackValue = false;
           return callbackValue;
@@ -177,11 +204,42 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     });
     win.webContents.session.setPermissionRequestHandler((webContents, permission, callback, details) => {
       const returnValue = permissionHandler(webContents.getURL(), permission, details);
-      if(returnValue === null) {
-        console.warn("[" + l10nStrings.dialog.common.warning.toLocaleUpperCase() + "] " + l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
-        return callback(false);
+      switch(returnValue) {
+        // WebCord does not recognize the permission – it should be denied.
+        case null:
+          console.warn("[" + l10nStrings.dialog.common.warning.toLocaleUpperCase() + "] " + l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
+          callback(false);
+          break;
+        // Both WebCord and system allows for the permission.
+        case true:
+          callback(true);
+          break;
+        // Either WebCord or system denies the request.
+        default:
+          // macOS: try asking for media access whenever possible.
+          if(permission === "media" && process.platform === "darwin") {
+            const promises:Promise<boolean>[] = [];
+            (["camera","microphone"] as const).forEach(media => {
+              if(systemPreferences.getMediaAccessStatus(media) === "not-determined" &&
+                  details.mediaTypes?.includes(media === "camera" ? "video" : "audio"))
+                promises.push(systemPreferences.askForMediaAccess(media));
+            });
+            if(promises.length === 0)
+              Promise.all(promises)
+                // Re-check permissions and return their values.
+                .then(() => callback(getMediaTypesPermission(details.mediaTypes)))
+                // Deny on failure.
+                .catch(() => callback(false));
+            else
+              // Deny if no changes were done.
+              callback(false);
+            break;
+          }
+          else
+            // Deny on non-macOS platfomrs or non-media permissions.
+            callback(false);
+          break;
       }
-      return callback(returnValue);
     });
   }
   void win.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/load.html"));

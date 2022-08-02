@@ -82,7 +82,11 @@ const config: ForgeConfigFile = {
       // Hidden (for *nix OSes) files:
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
-    ]
+    ],
+    extendInfo: {
+      NSMicrophoneUsageDescription: "This lets this app to internally manage the microphone access.",
+      NSCameraUsageDescription: "This lets this app to internally manage the camera access."
+    }
   },
   makers: [
     {
