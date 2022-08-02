@@ -149,6 +149,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     ];
     const getMediaTypesPermission = (mediaTypes: unknown[] = []) => {
       const supportsMediaAccessStatus = ["darwin","win32"].includes(process.platform);
+      if(mediaTypes.length === 0)
+        return false;
       return [...new Set(mediaTypes)]
         .map(media => {
           const mediaType = media === "video" ? "camera" : media === "audio" ? "microphone" : null;
@@ -158,7 +160,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               true
           );
         })
-        .reduce((previousValue,currentValue) => (previousValue??false) && (currentValue??false), null)??true;
+        .reduce((previousValue,currentValue) => (previousValue??false) && (currentValue??false))??true;
     };
     /** Common handler for  */
     const permissionHandler = function (webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null {
