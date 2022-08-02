@@ -8,7 +8,7 @@ import type { buildInfo } from "../common/global";
 import packageJson, { Person } from "../common/modules/package";
 import { readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
-import type { ForgeConfigFile } from "./forge.d";
+import type { ForgeConfigFile, ForgeArch } from "./forge.d";
 import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
 const projectPath = resolve(__dirname, "../../..");
@@ -37,7 +37,7 @@ const env = {
   build: process.env["WEBCORD_BUILD"]?.toLowerCase()
 };
 
-function getElectronPath(platform:string) {
+function getElectronPath(platform:ForgeArch) {
   switch (platform) {
     case "darwin":
       return "Electron.app/Contents/MacOS/Electron";
@@ -159,7 +159,7 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: (_ForgeConfig, path:string, _electronVersion: string, platform: string) => {
+    packageAfterCopy: (_ForgeConfig, path:string, _electronVersion: string, platform: ForgeArch) => {
       const buildConfig: buildInfo = {
         ...(platform === "win32" && AppUserModelId ? { AppUserModelId } : {}),
         type: getBuildID(),
@@ -172,7 +172,7 @@ const config: ForgeConfigFile = {
       return Promise.resolve();
     },
     // Hardened Electron binary via Electron Fuses feature.
-    packageAfterExtract: (_ForgeConfig, path:string, _electronVersion: string, platform: string) =>
+    packageAfterExtract: (_ForgeConfig, path:string, _electronVersion: string, platform: ForgeArch) =>
       flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
         [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,

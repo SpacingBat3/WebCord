@@ -9,7 +9,9 @@
 
 // Forge types
 
-import type { ForgeConfig, ForgePlatform } from "@electron-forge/shared-types";
+import type { ForgeConfig } from "@electron-forge/shared-types";
+import type { OfficialPlatform } from "electron-packager";
+export type ForgeArch = Exclude<OfficialPlatform | NodeJS.Platform, "android">;
 
 // Maker config types
 
@@ -38,7 +40,7 @@ interface MPBase {
   /** A Node.js package name that provides the maker or publisher functionality. */
   name: string,
   /** Overrides the platform that this maker or publisher will be used on.  */
-  platforms?: ForgePlatform[] | null;
+  platforms?: ForgeArch[] | null;
   /** A maker or publisher specific configuration object, usually containing the `options` property. */
   config?: MPConfig;
 }
