@@ -57,7 +57,7 @@ const defaultAppConfig = {
         flash: true
       },
       custombar: {
-        use: true
+        use: false
       }
     },
     privacy: {
