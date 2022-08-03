@@ -53,7 +53,7 @@ if (window.location.protocol === "file:") {
     titlebar.appendChild(minimizebutton);
     titlebar.appendChild(maximizebutton);
     titlebar.appendChild(closebutton);
-    document.body.insertBefore(titlebar, document.body.firstChild);
+    document.body.prepend(titlebar);
     title.onclick = function () {
       ipc.send("opensettings", contextBridgeApiKey);
     };
