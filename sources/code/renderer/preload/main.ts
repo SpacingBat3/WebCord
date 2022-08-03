@@ -34,20 +34,20 @@ if (window.location.protocol === "file:") {
   /*
    * Custom title bar
    */
-  ipc.on("createCustomBar", (_event) => {
-    const titlebar = document.createElement('div');
-    titlebar.className = 'titlebar';
+  ipc.on("createCustomBar", () => {
+    const titlebar = document.createElement("div");
+    titlebar.className = "titlebar";
 
-    const title = document.createElement('div');
-    // title.innerText = location.host.split('.')[0]!;
-    title.innerText = 'webcord';
-    title.className = 'title';
-    const minimizebutton = document.createElement('div');
-    minimizebutton.className = 'minimizebutton btn';
-    const maximizebutton = document.createElement('div');
-    maximizebutton.className = 'maximizebutton btn';
-    const closebutton = document.createElement('div');
-    closebutton.className = 'closebutton btn';
+    const title = document.createElement("div");
+    // title.innerText = location.host.split(".")[0]!;
+    title.innerText = "webcord";
+    title.className = "title";
+    const minimizebutton = document.createElement("div");
+    minimizebutton.className = "minimizebutton btn";
+    const maximizebutton = document.createElement("div");
+    maximizebutton.className = "maximizebutton btn";
+    const closebutton = document.createElement("div");
+    closebutton.className = "closebutton btn";
     closebutton.onclick = window.close;
     titlebar.appendChild(title);
     titlebar.appendChild(minimizebutton);
@@ -56,13 +56,13 @@ if (window.location.protocol === "file:") {
     document.body.insertBefore(titlebar, document.body.firstChild);
     title.onclick = function () {
       ipc.send("opensettings", contextBridgeApiKey);
-    }
+    };
     minimizebutton.onclick = function () {
       ipc.send("window-minimize", contextBridgeApiKey);
-    }
+    };
     maximizebutton.onclick = function () {
       ipc.send("window-maximize", contextBridgeApiKey);
-    }
+    };
   });
 
   /*

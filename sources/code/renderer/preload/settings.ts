@@ -88,16 +88,12 @@ function generateSettings(optionsGroups: htmlConfig) {
           } else if(!("dropdown" in setting || "input" in setting || "keybind" in setting)) {
             (Object.keys as keys)(setting).sort().map(key => {
               if (key !== "name" && key !== "description" && key !== "labels" && setting[key] !== undefined && setting.labels) {
-                console.log(key);
-                
-                // if (setting.labels[key]){
-                  formContainer.appendChild(createForm({
-                    type:"checkbox",
-                    id: groupId+"."+settingKey+"."+key,
-                    isChecked: setting[key] === true,
-                    label: setting.labels[key] ?? "N/A"
-                  }));
-                // }
+                formContainer.appendChild(createForm({
+                  type: "checkbox",
+                  id: groupId + "." + settingKey + "." + key,
+                  isChecked: setting[key] === true,
+                  label: setting.labels[key] ?? "N/A"
+                }));
               }
             });
           } else {
