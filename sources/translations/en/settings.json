@@ -18,7 +18,7 @@
         },
                 "custombar": {
                     "name": "Custom window bar",
-                    "description": "Uses non-native window bar. To access settings press title of window.",
+                    "description": "Uses non-native window bar. To access settings press title of window. <b>Important:</b> it is injected to Discord site, meaning it can be accessed by any scripts on Discord. This might potentially let Discord to know it is modded or even do some privileged task (open settings, manage main window state) by emitting fake events on title bar buttons.",
                     "labels": {
                         "use": "Use custom window bar. (Requires restart)"
                     }
