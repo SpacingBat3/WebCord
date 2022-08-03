@@ -22,6 +22,62 @@ img[src*="423864076095979522"] ~ h2 > span > span {
     --rb: 35%
 }
 
+.titlebar {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    height: 20px;
+    -webkit-app-region: drag;
+    margin-left: 15px;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    color: #ddd;
+    font-weight: 600;
+}
+.titlebar .title{
+    margin-right: auto;
+}
+.titlebar * {
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+    background-size: 12px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.titlebar .btn {
+    height: 12px;
+    width: 12px;
+    padding: 8px;
+}
+.titlebar .title {
+    padding: 2px;
+}
+.titlebar .title:hover {
+    background-color: #fff;
+    color: #000;
+    border-radius: 20px;
+}
+.titlebar .btn:hover {
+    background-color: #32353b;
+}
+.titlebar .closebutton:hover {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8.47 8.47'%3E%3Cpath d='m7.67.794-6.88 6.88m0-6.88 6.88 6.88' stroke='%23fff' stroke-linecap='round' stroke-width='1.59'/%3E%3C/svg%3E");
+    background-color: #f53d3d;
+}
+.titlebar .closebutton {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8.47 8.47'%3E%3Cpath d='m7.67.794-6.88 6.88m0-6.88 6.88 6.88' stroke='%23999' stroke-linecap='round' stroke-width='1.59'/%3E%3C/svg%3E");
+}
+.titlebar .maximizebutton {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8.47 8.47'%3E%3Cpath style='fill:none;stroke-width:1.404;stroke-dasharray:none;stroke-linejoin:round' d='M 0.70215499,0.70215499 H 7.767847 V 7.7678511 H 0.70215499 Z' stroke='%23999' stroke-linecap='round' stroke-width='1.40431' /%3E%3C/svg%3E");
+}
+.titlebar .minimizebutton {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8.47 8.47'%3E%3Cpath style='fill:none;stroke:%23999;stroke-width:1.42929;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1' d='M 0.71464503,4.235 H 7.7550979' id='path1837' /%3E%3C/svg%3E");
+}
+.titlebar+#app-mount {
+    height: calc(100% - 20px);
+}
+
 @keyframes rainbow {
     0% {
         color: hsl(0, 100%, var(--rb));

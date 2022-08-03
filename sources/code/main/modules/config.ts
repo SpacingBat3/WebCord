@@ -55,6 +55,9 @@ const defaultAppConfig = {
       },
       taskbar: {
         flash: true
+      },
+      custombar: {
+        use: true
       }
     },
     privacy: {

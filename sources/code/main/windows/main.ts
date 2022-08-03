@@ -23,6 +23,7 @@ import { getWebCordCSP } from "../modules/csp";
 import l10n from "../../common/modules/l10n";
 import { loadChromiumExtensions, styles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
+import loadSettingsWindow from "../windows/settings";
 
 import type { PartialRecursive } from "../../common/global";
 
@@ -52,6 +53,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     width: mainWindowState.initState.width,
     backgroundColor: appInfo.backgroundColor,
     show: false,
+    frame: !configData.get().settings.general.custombar.use,
     webPreferences: {
       preload: resolve(app.getAppPath(), "app/code/renderer/preload/main.js"),
       nodeIntegration: false, // Never set to "true"!
@@ -347,6 +349,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // Inject desktop capturer and block getUserMedia.
   ipcMain.on("api-exposed", (_event, api:unknown) => {
     if(typeof api !== "string") return;
+    if (configData.get().settings.general.custombar.use){
+      win.webContents.send("createCustomBar");
+    }
     const safeApi = api.replaceAll("'","\\'");
     console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
     const functionString = `
@@ -500,6 +505,21 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       if(safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
       console.debug("[Clipboard] Applying workaround to the image...");
       win.webContents.paste();
+    });
+    ipcMain.on("window-minimize", (event, api: unknown) => {
+      if (safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
+      console.debug("[Window] Minimize window...");
+      win.minimize();
+    });
+    ipcMain.on("window-maximize", (event, api: unknown) => {
+      if (safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
+      console.debug("[Window] Maximize window...");
+      win.isMaximized() ? win.unmaximize() : win.maximize();
+    });
+    ipcMain.on("opensettings", (event, api: unknown) => {
+      if (safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
+      console.debug("[IPC] Opening settings...");
+      loadSettingsWindow(win);
     });
   });
   return win;

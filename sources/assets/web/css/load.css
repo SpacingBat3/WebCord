@@ -8,6 +8,7 @@ html, body {
     margin: 0;
     background-color: #36393F;
     height: 100%;
+    -webkit-app-region: drag;
 }
 body, div.aura {
     text-align: center;

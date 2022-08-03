@@ -63,7 +63,7 @@ function generateSettings(optionsGroups: htmlConfig) {
     (Object.keys)(group).map(settingKey => {
       if(settingKey !== "name" && settingKey !== buildType && checkPlatformKey(settingKey)) {
         const setting = (group as unknown as generatedConfigGeneric)[settingKey];
-        if(setting) {
+        if(setting && setting.labels) {
           const h2 = document.createElement("h2");
           const pDesc = document.createElement("p");
           const formContainer = document.createElement("form");
@@ -87,13 +87,17 @@ function generateSettings(optionsGroups: htmlConfig) {
             });
           } else if(!("dropdown" in setting || "input" in setting || "keybind" in setting)) {
             (Object.keys as keys)(setting).sort().map(key => {
-              if(key !== "name" && key !== "description" && key !== "labels" && setting[key] !== undefined) {
-                formContainer.appendChild(createForm({
-                  type:"checkbox",
-                  id: groupId+"."+settingKey+"."+key,
-                  isChecked: setting[key] === true,
-                  label: setting.labels[key] ?? "N/A"
-                }));
+              if (key !== "name" && key !== "description" && key !== "labels" && setting[key] !== undefined && setting.labels) {
+                console.log(key);
+                
+                // if (setting.labels[key]){
+                  formContainer.appendChild(createForm({
+                    type:"checkbox",
+                    id: groupId+"."+settingKey+"."+key,
+                    isChecked: setting[key] === true,
+                    label: setting.labels[key] ?? "N/A"
+                  }));
+                // }
               }
             });
           } else {

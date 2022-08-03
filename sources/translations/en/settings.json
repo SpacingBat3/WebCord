@@ -16,6 +16,13 @@
                 "disable": "Disable hiding window to the system tray functionality."
             }
         },
+                "custombar": {
+                    "name": "Custom window bar",
+                    "description": "Uses non-native window bar. To access settings press title of window.",
+                    "labels": {
+                        "use": "Use custom window bar. (Requires restart)"
+                    }
+                },
         "taskbar": {
             "name": "Taskbar",
             "description": "Controls the behavior of taskbar entry of WebCord.",
