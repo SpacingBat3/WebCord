@@ -2,7 +2,7 @@ import type { Server } from "ws";
 import kolor from "@spacingbat3/kolor";
 
 function wsLog(message:string, ...args:unknown[]) {
-  console.log(kolor.bold(kolor.brightMagenta("[WebSocket]"))+" "+message,...args);
+  console.log(kolor.bold(kolor.magentaBright("[WebSocket]"))+" "+message,...args);
 }
 
 /** Generates an inclusive range (as `Array`) from `start` to `end`. */
@@ -143,7 +143,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
   const [
     {isJsonSyntaxCorrect, knownInstancesList: knownIstancesList},
     {initWindow},
-    {underscore},
+    {underline},
     L10N
   ] = await Promise.all([
     import("../../common/global"),
@@ -157,7 +157,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
     // eslint-disable-next-line no-await-in-loop
     wss = await getServer(port);
     if(wss !== null) {
-      wsLog(listenPort,underscore(port.toString()));
+      wsLog(listenPort,underline(port.toString()));
       wsPort = port;
       break;
     }

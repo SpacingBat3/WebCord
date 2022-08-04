@@ -153,11 +153,11 @@ let overwriteMain: (() => unknown) | undefined;
     console.log([
       "\n " + kolor.bold(kolor.blue(app.getName())) +
         " – Privacy focused Discord client made with " +
-        kolor.bold(kolor.brightWhite(kolor.blueBg("TypeScript"))) + " and " +
-        kolor.bold(kolor.blackBg(kolor.brightCyan("Electron"))) + ".\n",
-      " " + kolor.underscore("Usage:"),
+        kolor.bold(kolor.whiteBright(kolor.bgBlue("TypeScript"))) + " and " +
+        kolor.bold(kolor.bgBlack(kolor.cyanBright("Electron"))) + ".\n",
+      " " + kolor.underline("Usage:"),
       " " + kolor.red(argv0) + kolor.green(" [options]\n"),
-      " " + kolor.underscore("Options:")
+      " " + kolor.underline("Options:")
     ].join("\n")+"\n"+[
       renderLine(["help", "h", "?"],"Show this help message."),
       renderLine(["version","V"],"Show current application version."),
@@ -206,7 +206,7 @@ let overwriteMain: (() => unknown) | undefined;
       Promise.all(filePromise).then(() => {
         console.log([
           "\n🎉️ "+kolor.green(kolor.bold("Successfully"))+" exported localization files to",
-          "   '" + kolor.blue(kolor.underscore(directory)) + "'!\n"
+          "   '" + kolor.blue(kolor.underline(directory)) + "'!\n"
         ].join("\n"));
         app.quit();
       }).catch((err:NodeJS.ErrnoException) => {
@@ -221,7 +221,7 @@ let overwriteMain: (() => unknown) | undefined;
           null;
         console.error([
           "\n⛔️ " + kolor.red(kolor.bold(err.code ?? err.name)) + " " + (err.syscall ?? "") + ": ",
-          (finalPath ? kolor.blue(kolor.underscore(finalPath)) + ": " : ""),
+          (finalPath ? kolor.blue(kolor.underline(finalPath)) + ": " : ""),
           err.message.replace((err.code ?? "") + ": ", "")
             .replace(", " + (err.syscall ?? "") + " '" + (err.path ?? "") + "'", "") + ".\n"
         ].join(""));

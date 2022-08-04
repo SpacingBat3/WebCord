@@ -60,7 +60,7 @@
     "@fontsource/fira-code": "^4.5.9",
     "@fontsource/roboto": "^4.5.1",
     "@fontsource/ubuntu": "^4.5.0",
-    "@spacingbat3/kolor": "^2.0.1",
+    "@spacingbat3/kolor": "^3.0.1",
     "deepmerge-ts": "^4.0.0",
     "dompurify": "^2.3.6",
     "electron-fetch": "^1.7.3",
