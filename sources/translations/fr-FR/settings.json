@@ -1,0 +1,106 @@
+{
+    "general": {
+        "name": "Général",
+        "menuBar": {
+            "name": "Barre de menu",
+            "description": "Modifie les paramètres de visibilité de la barre de menu native.",
+            "labels": {
+                "hide": "Masquer automatiquement la barre de menu (la touche <kbd>ALT</kbd> change la visibilité)."
+            }
+        },
+        "tray": {
+            "name": "Barre d'état",
+            "description": "Modifie la visibilité de l'icône dans la barre d'état système.",
+            "labels": {
+                "disable": "Désactiver la fonctionnalité de masquage de la fenêtre dans la barre d'état système."
+            }
+        },
+        "taskbar": {
+            "name": "Barre des tâches",
+            "description": "Contrôle le comportement de l'entrée de la barre des tâches de WebCord.",
+            "labels": {
+                "flash": "Faire clignoter l'icône dans la barre des tâches après avoir reçu un message."
+            }
+        }
+    },
+    "privacy": {
+        "name": "Confidentialité",
+        "blockApi": {
+            "name": "Blocage API Discord",
+            "labels": {
+                "science": "Bloquer les points de terminaison de télémétrie connus (<code>/science</code> et <code>/tracing</code>).",
+                "typingIndicator": "Bloquer l'indicateur de frappe (<code>/typing</code>).",
+                "fingerprinting": "Bloquer le script de fingerprinting <code>api.js</code>."
+            },
+            "description": "Bloquer les demandes API de Discord pour renforcer la confidentialité."
+        },
+        "permissions": {
+            "name": "Permissions",
+            "description": "Autorise ou refuse les contrôles et les demandes de permission du site Web Discord. Veuillez noter que les autres permissions non répertoriées ici sont bloquées automatiquement par WebCord.",
+            "labels": {
+                "video": "Caméra",
+                "audio": "Microphone",
+                "fullscreen": "Plein écran",
+                "notifications": "Notifications",
+                "background-sync": "Synchronisation en arrière-plan",
+                "display-capture": "Capture d'écran"
+            }
+        }
+    },
+    "advanced": {
+        "name": "Avancé",
+        "csp": {
+            "name": "Politique de sécurité du contenu",
+            "description": "Indique si l'application doit ignorer les en-têtes de la politique de sécurité du contenu de Discord et laisser le client définir sa propre CSP pour des raisons de confidentialité et de sécurité.",
+            "labels": {
+                "enabled": "Utiliser la politique de sécurité du contenu intégrée."
+            }
+        },
+        "cspThirdParty": {
+            "description": "Définit une liste des sites Web tiers autorisés à se connecter ou à afficher du contenu.",
+            "name": "Sites Web de tiers",
+            "labels": {
+                "gif": "Fournisseurs de GIF"
+            }
+        },
+        "currentInstance": {
+            "name": "Instance de Discord",
+            "description": "Sélectionne l'instance à laquelle WebCord doit se connecter. <b>Expérimental</b> car l'implémentation de Fosscord n'est pas encore totalement terminée."
+        },
+        "devel": {
+            "labels": {
+                "enabled": "Activer le mode développeur."
+            },
+            "name": "Mode développeur",
+            "description": "Permet l'accès aux outils et aux options inachevées qui sont potentiellement considérés comme cassés ou dangereux. <b>Avis de non-responsabilité</b> : Les mainteneurs de l'application ne sont pas responsables des bugs ou des problèmes survenant après l'activation de cette option - veuillez ne pas les signaler !"
+        },
+        "redirection": {
+            "name": "Comportement de redirection inter-origine",
+            "description": "Contrôle les actions sur les redirections inter-origine. <b>Cela affecte la sécurité des applications</b>.",
+            "labels": {
+                "warn": "Toujours avertir l'utilisateur des redirections vers des applications externes."
+            }
+        },
+        "optimize": {
+            "name": "Optimisations du client",
+            "labels": {
+                "gpu": "Optimiser le client pour la carte graphique actuellement active."
+            },
+            "description": "Essaie de détecter le logiciel et le matériel de l'utilisateur pour appliquer des drapeaux personnalisés au moteur Chromium qui <b>pourraient</b> améliorer les performances ou les fonctionnalités d'Electron. <b>Expérimental</b>, car il y a une raison pour laquelle Chromium n'applique pas ces drapeaux par défaut."
+        },
+        "webApi": {
+            "name": "Accès aux API JavaScript",
+            "description": "Contrôle les API qui doivent être autorisées dans les scripts non privilégiés (DOM).",
+            "labels": {
+                "webGl": "Activez la prise en charge de WebGL."
+            }
+        },
+        "unix": {
+            "name": "Fonctionnalités expérimentales pour Unix/Unix-like OS",
+            "description": "Active les fonctionnalités qui ont été signalées par le moteur Chromium/Blink comme étant expérimentales. <b>Utilisez-les sous votre propre responsabilité</b>.",
+            "labels": {
+                "autoscroll": "Activer le défilement par le clic du milieu (aka. <i>défilement automatique</i>)."
+            }
+        }
+    }
+}

@@ -1,0 +1,107 @@
+{
+    "context": {
+        "cut": "Couper",
+        "copy": "Copier",
+        "copyURL": "Copier l'adresse du lien",
+        "paste": "Coller",
+        "dictionaryAdd": "Ajouter au dictionnaire local",
+        "inspectElement": "Inspecter",
+        "copyURLText": "Copier le texte du lien"
+    },
+    "menubar": {
+        "enabled": "Activé",
+        "file": {
+            "groupName": "Fichier",
+            "quit": "Quitter",
+            "relaunch": "Relancer",
+            "addon": {
+                "groupName": "Extensions",
+                "loadNode": "Charger une extension node",
+                "loadChrome": "Charger une extension Chrome"
+            }
+        },
+        "edit": {
+            "groupName": "Édition",
+            "undo": "Annuler",
+            "redo": "Rétablir"
+        },
+        "view": {
+            "groupName": "Affichage",
+            "reload": "Recharger",
+            "forceReload": "Forcer le rechargement",
+            "devTools": "Basculer les outils du développeur",
+            "resetZoom": "Taille réelle",
+            "zoomIn": "Zoom avant",
+            "zoomOut": "Zoom arrière",
+            "fullScreen": "Basculer en mode plein écran"
+        },
+        "window": {
+            "groupName": "Fenêtre",
+            "mobileMode": "Masquer la barre latérale"
+        }
+    },
+    "tray": {
+        "quit": "Quitter",
+        "toggle": "Basculer"
+    },
+    "windows": {
+        "settings": "Paramètres",
+        "about": "À propos",
+        "docs": "Documentation",
+        "invite": "Inviter"
+    },
+    "dialog": {
+        "common": {
+            "error": "Erreur",
+            "warning": "Attention",
+            "source": "Source",
+            "no": "&Non",
+            "continue": "&Continuer",
+            "yes": "&Oui"
+        },
+        "ver": {
+            "updateBadge": "[MISE À JOUR]",
+            "updateTitle": "Mise à jour disponible !",
+            "update": "Une nouvelle version de l'application est disponible !",
+            "devel": "Vous utilisez la version hors production.",
+            "downgrade": "Votre version de production est plus récente que la version stable !",
+            "recent": "L'application est à jour !"
+        },
+        "permission": {
+            "check": {
+                "denied": "%s : vérification des autorisations pour %s refusée."
+            },
+            "request": {
+                "denied": "%s : demande de permission à %s refusée."
+            }
+        },
+        "mod": {
+            "nodeExt": "Module WebCord Node.js",
+            "crx": "Extension Chrome/Chromium"
+        },
+        "externalApp": {
+            "title": "Ouverture d'un lien dans une application externe",
+            "message": "Un site web tente de rediriger le lien avec une origine différente vers l'application externe. Continuer quand même ?"
+        },
+        "screenShare": {
+            "close": "Fermer",
+            "sound": {
+                "system": "Partager avec l'audio du périphérique.",
+                "unavailable": "Le partage audio n'est pas disponible sur cette plate-forme."
+            },
+            "source": {
+                "entire": "Écran de l'ordinateur",
+                "screen": "Écran"
+            }
+        }
+    },
+    "help": {
+        "groupName": "Aide",
+        "repo": "Dépôt",
+        "bugs": "Signaler un bug"
+    },
+    "log": {
+        "singleInstance": "Passage à la fenêtre existante...",
+        "listenPort": "Écoute du port %s."
+    }
+}
