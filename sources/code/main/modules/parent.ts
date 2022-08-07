@@ -27,6 +27,8 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
     backgroundColor: appInfo.backgroundColor,
     webPreferences: {
       session: wSession,
+      nodeIntegration: false,
+      contextIsolation: true,
       sandbox: false,
       defaultFontFamily: {
         standard: "Arial" // `sans-serif` as default font.
