@@ -1,7 +1,6 @@
 name: Publish release
 on:
   push:
-    tags: ['v*']
     tags-ignore: ['*beta*']
 
 env:
