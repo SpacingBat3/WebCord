@@ -57,7 +57,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
 
   const updatePopup:Electron.NotificationConstructorOptions = {
     title: app.getName() + ": " + strings.dialog.ver.updateTitle,
-    icon: appInfo.icon,
+    icon: appInfo.icons.app,
     body: updateMsg
   };
   const nextWeek = new Date();

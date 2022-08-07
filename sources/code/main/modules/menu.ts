@@ -95,11 +95,8 @@ export function context(parent: Electron.BrowserWindow): void {
 
 export function tray(parent: Electron.BrowserWindow): Electron.Tray {
   const strings = (new l10n()).client;
-  let {trayIcon} = appInfo;
-  // Resize icon on MacOS when its height is longer than 22 pixels.
-  if(process.platform === "darwin" && trayIcon.getSize().height > 22)
-    trayIcon = trayIcon.resize({height: 22});
-  const tray = new Tray(trayIcon);
+  const {icons} = appInfo;
+  const tray = new Tray(icons.tray.default);
   function toogleVisibility() {
     if(parent.isVisible() && parent.isFocused()) {
       parent.hide();

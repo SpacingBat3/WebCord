@@ -9,7 +9,37 @@ import { buildInfo, isPartialBuildInfo } from "../global";
 import packageJson, { Person } from "./package";
 import { readFileSync } from "fs";
 
-const defaultBuildInfo: buildInfo = {
+/** Generates `NativeIcon` which size is prefered for a given platform. */
+function generateIcon(set: "application"|"tray", variant?: "unread"|"ping")  {
+  switch(set) {
+    case "application": {
+      const preferExt = process.platform === "win32" ? "ico" : "png";
+      const path = resolve(getAppPath(), "sources/assets/icons/app."+preferExt);
+      return nativeImage.createFromPath(path);
+    }
+    case "tray": {
+      const type = variant === "ping"||variant === "unread" ? "-"+variant as `-${typeof variant}` : "";
+      const image = nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/tray"+type+".png"));
+      if(process.platform !== "win32" && process.platform !== "darwin")
+        return image;
+      const newImage = nativeImage.createEmpty();
+      let sizes:[scaleFactor: number,height: number][];
+      if(process.platform === "win32")
+        sizes = [[1,16],[1.5,24],[2,32]];
+      else
+        sizes = [[1,22],[1.5,33],[2,44]];
+      sizes.forEach(element => newImage.addRepresentation({
+        scaleFactor: element[0],
+        buffer: image.resize({height:element[1]}).toPNG(),
+      }));
+      return newImage;
+    }
+    default:
+      throw new TypeError("Invalid set: "+String(set));
+  }
+}
+
+export const defaultBuildInfo: buildInfo = {
   type: "devel",
   ...(process.platform === "win32" ? {AppUserModelId: "SpacingBat3.WebCord"} : {}),
   features: {
@@ -36,7 +66,7 @@ export function getBuildInfo(): buildInfo {
 }
 
 /** Basic application details. */
-export const appInfo = {
+export const appInfo = Object.freeze({
   /** Application repository details */
   repository: {
     /** Repository indentifier in format `author/name`. */
@@ -44,11 +74,15 @@ export const appInfo = {
     /** Web service on which app repository is published. */
     provider: "github.com"
   },
-  icon: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/app.png")),
-  trayIcon: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/tray.png")),
-  trayUnread: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/tray-unread.png")),
-  trayPing: nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/tray-ping.png")),
+  icons: {
+    app: generateIcon("application"),
+    tray: {
+      default: generateIcon("tray"),
+      unread: generateIcon("tray", "unread"),
+      warn: generateIcon("tray", "ping")
+    }
+  },
   minWinHeight: 412,
   minWinWidth: 312,
   backgroundColor: "#36393F"
-} as const;
+});

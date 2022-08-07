@@ -51,7 +51,6 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     height: mainWindowState.initState.height,
     width: mainWindowState.initState.width,
     backgroundColor: appInfo.backgroundColor,
-    icon: appInfo.icon,
     show: false,
     webPreferences: {
       preload: resolve(app.getAppPath(), "app/code/renderer/preload/main.js"),
@@ -66,7 +65,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       webgl: configData.get().settings.advanced.webApi.webGl,
       safeDialogs: true, // prevents dialog spam by the website
       autoplayPolicy: "no-user-gesture-required"
-    }
+    },
+    ...(process.platform !== "win32" ? {icon: appInfo.icons.app} : {}),
   });
   win.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedURL) => {
     if (errorCode <= -100 && errorCode >= -199)
@@ -284,19 +284,19 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     const currentInstance = knownInstancesList.find((value) => value[1].origin === new URL(win.webContents.getURL()).origin);
     if (currentInstance?.[2] !== true) {
       setFavicon = faviconHash;
-      icon = appInfo.trayIcon;
+      icon = appInfo.icons.tray.default;
       win.flashFrame(false);
       return;
     }
 
     // Compare hashes.
     if(faviconHash === discordFavicons.default) {
-      icon = appInfo.trayIcon;
+      icon = appInfo.icons.tray.default;
     } else if(faviconHash.startsWith("4")) {
-      icon = appInfo.trayUnread;
+      icon = appInfo.icons.tray.unread;
     } else {
       console.debug("[Mention] Hash: "+faviconHash);
-      icon = appInfo.trayPing;
+      icon = appInfo.icons.tray.warn;
       flash = true;
     }
     // Set tray icon and taskbar flash

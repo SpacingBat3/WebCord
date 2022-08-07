@@ -6,9 +6,10 @@
 
 import type { buildInfo } from "../common/global";
 import packageJson, { Person } from "../common/modules/package";
-import { readFileSync, writeFileSync } from "fs";
+import { existsSync } from "fs";
+import { readFile, writeFile, rm } from "fs/promises";
 import { resolve } from "path";
-import type { ForgeConfigFile, ForgeArch } from "./forge.d";
+import type { ForgeConfigFile, ForgePlatform } from "./forge.d";
 import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
 const projectPath = resolve(__dirname, "../../..");
@@ -23,12 +24,15 @@ const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Netwo
 
 // Some custom functions
 
-function getCommit():string | null {
-  const refsPath = readFileSync(resolve(projectPath, ".git/HEAD"))
+async function getCommit():Promise<string | null> {
+  const refsPath = (await readFile(resolve(projectPath, ".git/HEAD")))
     .toString()
     .split(": ")[1]
     ?.trim();
-  if(refsPath) return readFileSync(resolve(projectPath, ".git", refsPath)).toString().trim();
+  if(refsPath)
+    return (await readFile(resolve(projectPath, ".git", refsPath)))
+      .toString()
+      .trim();
   return null;
 }
 
@@ -37,7 +41,7 @@ const env = {
   build: process.env["WEBCORD_BUILD"]?.toLowerCase()
 };
 
-function getElectronPath(platform:ForgeArch) {
+function getElectronPath(platform:ForgePlatform) {
   switch (platform) {
     case "darwin":
       return "Electron.app/Contents/MacOS/Electron";
@@ -78,7 +82,7 @@ const config: ForgeConfigFile = {
       /tsconfig\.json$/,
       /sources\/app\/forge\/config\..*/,
       /sources\/code\/.*/,
-      /sources\/assets\/icons\/app\.ic(?:o|ns)$/,
+      /sources\/assets\/icons\/app\.icns$/,
       // Hidden (for *nix OSes) files:
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
@@ -159,20 +163,33 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: (_ForgeConfig, path:string, _electronVersion: string, platform: ForgeArch) => {
-      const buildConfig: buildInfo = {
-        ...(platform === "win32" && AppUserModelId ? { AppUserModelId } : {}),
-        type: getBuildID(),
-        commit: getBuildID() === "devel" ? getCommit()??undefined : undefined,
-        features: {
-          updateNotifications: process.env["WEBCORD_UPDATE_NOTIFICATIONS"] !== "false"
-        }
-      };
-      writeFileSync(resolve(path, "buildInfo.json"), JSON.stringify(buildConfig, null, 2));
-      return Promise.resolve();
+    packageAfterCopy: async (_ForgeConfig, path:string, _electronVersion: string, platform: ForgePlatform) => {
+      /** Generates `buildInfo.json` file and saves it somewhe. */
+      async function writeBuildInfo() {
+        const buildConfig: buildInfo = {
+          ...(platform === "win32" && AppUserModelId ? { AppUserModelId } : {}),
+          type: getBuildID(),
+          commit: getBuildID() === "devel" ? (await getCommit())??undefined : undefined,
+          features: {
+            updateNotifications: process.env["WEBCORD_UPDATE_NOTIFICATIONS"] !== "false"
+          }
+        };
+        await writeFile(resolve(path, "buildInfo.json"), JSON.stringify(buildConfig, null, 2));
+      }
+      /** Removes data that is useless for specific platforms */
+      async function removeUselessPlatformData() {
+        const ext = platform === "win32" ? ".ico" : ".png"
+        const icon = resolve(path, iconFile+ext);
+        if(existsSync(icon))
+          await rm(icon);
+      }
+      return Promise.all([
+        writeBuildInfo(),
+        removeUselessPlatformData()
+      ]);
     },
     // Hardened Electron binary via Electron Fuses feature.
-    packageAfterExtract: (_ForgeConfig, path:string, _electronVersion: string, platform: ForgeArch) =>
+    packageAfterExtract: (_ForgeConfig, path:string, _electronVersion: string, platform: ForgePlatform) =>
       flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
         [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,

@@ -25,7 +25,6 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
     show: false,
     parent: parent,
     backgroundColor: appInfo.backgroundColor,
-    icon: appInfo.icon,
     webPreferences: {
       session: wSession,
       sandbox: false,
@@ -36,6 +35,7 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
         preload: resolve(app.getAppPath(), "app/code/renderer/preload/"+name+".js")
       } : {}),
     },
+    ...(process.platform !== "win32" ? {icon: appInfo.icons.app} : {}),
     ...properties
   });
   if(win.webContents.session === parent.webContents.session && !isPopup)

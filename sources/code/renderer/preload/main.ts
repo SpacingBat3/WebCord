@@ -10,7 +10,7 @@ if (window.location.protocol === "file:") {
   window.addEventListener("load", () => {
     const element = document.getElementById("logo");
     if(element && element.tagName === "IMG")
-      (element as HTMLImageElement).src = appInfo.icon.toDataURL();
+      (element as HTMLImageElement).src = appInfo.icons.app.toDataURL();
   });
   contextBridge.exposeInMainWorld(
     "webcord",
