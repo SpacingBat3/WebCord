@@ -178,7 +178,7 @@ const config: ForgeConfigFile = {
       }
       /** Removes data that is useless for specific platforms */
       async function removeUselessPlatformData() {
-        const ext = platform === "win32" ? ".ico" : ".png"
+        const ext = platform === "win32" ? ".ico" : ".png";
         const icon = resolve(path, iconFile+ext);
         if(existsSync(icon))
           await rm(icon);
