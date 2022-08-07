@@ -3,10 +3,10 @@
  */
 
 import * as fs from "fs";
-import { app, BrowserWindow, screen } from "electron/main";
+import { app, BrowserWindow, screen, safeStorage } from "electron/main";
 import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
-import { objectsAreSameType, isJsonSyntaxCorrect } from "../../common/global";
+import { objectsAreSameType } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
 import { gte, major } from "semver";
 
@@ -34,6 +34,15 @@ interface AppConfigBase {
 export type cspTP<T> = {
   [P in keyof typeof defaultAppConfig["settings"]["advanced"]["cspThirdParty"]]: T
 };
+
+const canImmediatellyEncrypt = safeStorage.isEncryptionAvailable();
+
+function isReadyToEncrypt() {
+  if(process.platform === "darwin")
+    return true;
+  else
+    return app.isReady();
+}
 
 const defaultAppConfig = {
   settings: {
@@ -114,13 +123,30 @@ const defaultAppConfig = {
   }
 };
 
+const fileExt = Object.freeze({
+  json: ".json",
+  encrypted: ""
+});
+
 class Config<T> {
+  readonly #pathExtension: (typeof fileExt)["encrypted"|"json"];
+  readonly #path;
   /** Default configuration values. */
-  protected defaultConfig!: T;
-  protected path!: fs.PathLike;
+  private readonly defaultConfig;
   protected spaces = 4;
-  protected write(object: typeof this.defaultConfig) {
-    fs.writeFileSync(this.path, JSON.stringify(object, null, this.spaces));
+  private write(object: unknown) {
+    const decodedData = JSON.stringify(object, null, this.spaces);
+    let encodedData:string|Buffer = decodedData;
+    if(this.#pathExtension === fileExt.encrypted)
+      encodedData = safeStorage.encryptString(decodedData);
+    fs.writeFileSync(this.#path+this.#pathExtension,encodedData);
+  }
+  private read(): unknown {
+    const encodedData = fs.readFileSync(this.#path+this.#pathExtension);
+    let decodedData = encodedData.toString();
+    if(this.#pathExtension === fileExt.encrypted)
+      decodedData = safeStorage.decryptString(encodedData);
+    return JSON.parse(decodedData);
   }
   /** 
    * Merges the configuration object with the another `object`.
@@ -138,52 +164,68 @@ class Config<T> {
   }
   /** Returns the entire parsed configuration file in form of the JavaScript object. */
   public get(): typeof this.defaultConfig {
-    const parsedConfig:unknown = JSON.parse(fs.readFileSync(this.path).toString());
+    const parsedConfig:unknown = this.read();
     const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig);
     if(objectsAreSameType(mergedConfig, this.defaultConfig))
       return mergedConfig;
     else
       return this.defaultConfig;
   }
-  constructor(path?: fs.PathLike, spaces?: number) {
-    // Replace "path" if it is definied in the constructor.
-    if(path !== undefined)
-      this.path = path;
-    // Replace "spaces" if it is definied in the constructor
+  constructor(path:string, encrypted: boolean, defaultConfig: T, spaces?: number) {
+    if(encrypted && !isReadyToEncrypt())
+      throw new Error("Cannot use encrypted configuration file when app is not ready yet!");
+    // Set required properties of this config file.
+    this.#path = path;
+    this.#pathExtension = encrypted&&safeStorage.isEncryptionAvailable()? fileExt.encrypted : fileExt.json;
+    this.defaultConfig = defaultConfig;
+    // Replace "spaces" if it is definied in the constructor.
     if (spaces !== undefined && spaces > 0)
       this.spaces = spaces;
-  }
-}
-/**
- * An class which initializes and modifies of the main application configuration.
- *
- * @todo Use JSONC format instead, so every option will have its description in the comments.
- */
-export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigBase ? typeof defaultAppConfig : never> {
-  protected override defaultConfig = defaultAppConfig;
-  protected override path: fs.PathLike = resolve(app.getPath("userData"), "config.json");
-  /**
-   * Initializes the main application configuration and provides the way of controling it,
-   * using `get`, `set` and `getProperty` public methods.
-   * 
-   * @param path A path to application's configuration. Defaults to `App.getPath('userdata')+"/config.json"`
-   * @param spaces A number of spaces that will be used for indentation of the configuration file.
-   */
-  constructor(path?: fs.PathLike, spaces?: number) {
-    super(path,spaces);
-    if (!(fs.existsSync(this.path)&&isJsonSyntaxCorrect(fs.readFileSync(this.path).toString())))
+    // Restore or remove configuration.
+    switch(this.#pathExtension) {
+      case fileExt.encrypted:
+        if(!fs.existsSync(this.#path+fileExt.encrypted) && fs.existsSync(this.#path+fileExt.json))
+          this.write(fs.readFileSync(this.#path+fileExt.json));
+        if(fs.existsSync(this.#path+fileExt.json))
+          fs.rmSync(this.#path+fileExt.json);
+        break;
+      case fileExt.json:
+        if(fs.existsSync(this.#path+fileExt.encrypted))
+          fs.rmSync(this.#path+fileExt.encrypted);
+        break;
+    }
+    // Fix configuration file.
+    if (!(fs.existsSync(this.#path+this.#pathExtension)))
       this.write(this.defaultConfig);
     else {
-      this.write({...this.defaultConfig, ...this.get()});
+      try {
+        this.write({...this.defaultConfig, ...this.get()});
+      } catch {
+        this.write(this.defaultConfig);
+      }
     }
   }
 }
 
-interface windowStatus {
-  width: number;
-  height: number;
-  isMaximized: boolean;
+// === MAIN APP CONFIGURATION CLASS ===
+
+/**
+ * Class that initializes and modifies of the main application configuration.
+ */
+export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigBase ? typeof defaultAppConfig : never> {
+  /**
+   * Initializes the main application configuration and provides the way of controling it,
+   * using `get`, `set` and `getProperty` public methods.
+   * 
+   * @param path A path to application's configuration. Defaults to `App.getPath('userdata')+"/config.*"`
+   * @param spaces A number of spaces that will be used for indentation of the configuration file.
+   */
+  constructor(path = resolve(app.getPath("userData"), "config"), spaces?: number) {
+    super(path,canImmediatellyEncrypt,defaultAppConfig,spaces);
+  }
 }
+
+// === WINDOW STATE KEEPER CLASS ===
 
 /**
  * Whenever to apply a workaround for "maximize" and "unmaximize" events.
@@ -208,8 +250,13 @@ const workaroundLinuxMinMaxEvents = (() => {
   }
 })();
 
+interface windowStatus {
+  width: number;
+  height: number;
+  isMaximized: boolean;
+}
+
 export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>> {
-  protected override path: fs.PathLike = resolve(app.getPath("userData"),"windowState.json");
   private windowName: string;
   /**
    * An object containing width and height of the window watched by `WinStateKeeper`
@@ -271,29 +318,21 @@ export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>
    * @param path Path to application's configuration. Defaults to `app.getPath('userData')+/windowState.json`
    * @param spaces Number of spaces that will be used for indentation of the configuration file.
    */
-  constructor(windowName: string, path?: fs.PathLike, spaces?: number) {
-    super(path,spaces);
-    // Initialize class
+  constructor(windowName: string, path = resolve(app.getPath("userData"),"windowState"), spaces?: number) {
     const defaults = {
       width: appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3),
       height: appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3),
     };
-    this.windowName = windowName;
-    this.defaultConfig = {
-      [this.windowName]: {
+    const defaultConfig = {
+      [windowName]: {
         width: defaults.width,
         height: defaults.height,
         isMaximized: false
       }
     };
-    if (!fs.existsSync(this.path))
-      this.write(this.defaultConfig);
-    else {
-      // If config is not a valid JSON file, remove it.
-      if(!isJsonSyntaxCorrect(fs.readFileSync(this.path).toString()))
-        fs.rmSync(this.path);
-      this.write({...this.defaultConfig, ...this.get()});
-    }
+    // Initialize class
+    super(path,true,defaultConfig,spaces);
+    this.windowName = windowName;
     this.initState = {
       width: this.get()[this.windowName]?.width ?? defaults.width,
       height: this.get()[this.windowName]?.height ?? defaults.height,
