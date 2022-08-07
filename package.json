@@ -49,7 +49,7 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/experimental-utils": "latest",
     "@typescript-eslint/parser": "latest",
-    "electron": "^19.0.1",
+    "electron": "^20.0.0",
     "eslint": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-import": "latest",
