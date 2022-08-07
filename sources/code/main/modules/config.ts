@@ -8,6 +8,7 @@ import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
 import { objectsAreSameType, isJsonSyntaxCorrect } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
+import { gte, major } from "semver";
 
 type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind";
 
@@ -170,13 +171,9 @@ export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigB
    */
   constructor(path?: fs.PathLike, spaces?: number) {
     super(path,spaces);
-    // If config file does not exists, create it.
-    if (!fs.existsSync(this.path))
+    if (!(fs.existsSync(this.path)&&isJsonSyntaxCorrect(fs.readFileSync(this.path).toString())))
       this.write(this.defaultConfig);
     else {
-      // If config is not a valid JSON file, remove it.
-      if(!isJsonSyntaxCorrect(fs.readFileSync(this.path).toString()))
-        fs.rmSync(this.path);
       this.write({...this.defaultConfig, ...this.get()});
     }
   }
@@ -188,6 +185,29 @@ interface windowStatus {
   isMaximized: boolean;
 }
 
+/**
+ * Whenever to apply a workaround for "maximize" and "unmaximize" events.
+ * 
+ * This allows WebCord to work on very old and deprecated Electron releases.
+ */
+const workaroundLinuxMinMaxEvents = (() => {
+  if(process.platform !== "linux")
+    return false;
+  const {electron} = process.versions;
+  if(major(electron) <= 12 || major(electron) > 17)
+    return false;
+  switch(major(electron)) {
+    case 14:
+      return gte(electron, "14.2.5");
+    case 15:
+      return gte(electron, "15.3.6");
+    case 16:
+      return gte(electron, "16.0.8");
+    default:
+      return false;
+  }
+})();
+
 export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>> {
   protected override path: fs.PathLike = resolve(app.getPath("userData"),"windowState.json");
   private windowName: string;
@@ -196,12 +216,13 @@ export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>
    */
   public initState: Readonly<windowStatus>;
   private setState(window: BrowserWindow, eventType?: string) {
-    // Workaround: fix `*maximize` events being detected as `resize`:
     let event = eventType;
-    if(eventType === "resize" && window.isMaximized())
-      event = "maximize";
-    else if (eventType === "resize" && this.get()[this.windowName]?.isMaximized)
-      event = "unmaximize";
+    // Workaround: fix `*maximize` events being detected as `resize`:
+    if(workaroundLinuxMinMaxEvents)
+      if(eventType === "resize" && window.isMaximized())
+        event = "maximize";
+      else if (eventType === "resize" && this.get()[this.windowName]?.isMaximized)
+        event = "unmaximize";
     switch(event) {
       case "maximize":
       case "unmaximize":
@@ -224,7 +245,8 @@ export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>
     }
     console.debug("[WIN] State changed to: "+JSON.stringify(this.get()[this.windowName]));
     console.debug("[WIN] Electron event: "+(eventType??"not definied"));
-    if(event !== eventType) console.debug("[WIN] Actual event calculated by WebCord: "+(event??"unknown"));
+    if(workaroundLinuxMinMaxEvents && event !== eventType)
+      console.debug("[WIN] Actual event calculated by WebCord: "+(event??"unknown"));
   }
 
   /**
@@ -236,8 +258,10 @@ export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>
   public watchState(window: BrowserWindow):void {
     // Timeout is needed to give some time for resize to end on Linux:
     window.on("resize", () => setTimeout(()=>this.setState(window, "resize"),100));
-    window.on("unmaximize", () => this.setState(window, "unmaximize"));
-    window.on("maximize", () => this.setState(window, "maximize"));
+    if(!workaroundLinuxMinMaxEvents){
+      window.on("unmaximize", () => this.setState(window, "unmaximize"));
+      window.on("maximize", () => this.setState(window, "maximize"));
+    }
   }
 
   /**
