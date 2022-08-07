@@ -198,7 +198,14 @@ export default async function startServer(window:Electron.BrowserWindow) {
         }));
         const winProperties = parsedData.cmd === "GUILD_TEMPLATE_BROWSER" ?
           {width: 960} : {};
-        const child = initWindow("invite", window, winProperties);
+        const child = initWindow("invite", window, {...winProperties,...{
+          webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            sandbox: true,
+            disableDialogs: true
+          }
+        }});
         if(child === undefined) return;
         const path = parsedData.cmd === "INVITE_BROWSER" ?
           "/invite/" : "/template/";

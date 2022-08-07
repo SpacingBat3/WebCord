@@ -2,6 +2,7 @@ import { app, BrowserWindow, session } from "electron/main";
 import l10n from "../../common/modules/l10n";
 import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { resolve } from "path";
+import { deepmerge } from "deepmerge-ts";
 
 /** A list of popup windows (i.e. non-local ones). */
 const popups = [
@@ -20,7 +21,7 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
   for (const window of parent.getChildWindows())
     if(window.webContents.session === wSession) return;
   if(!parent.isVisible()) parent.show();
-  const win = new BrowserWindow({
+  const win = new BrowserWindow(deepmerge<[Electron.BrowserWindowConstructorOptions,Electron.BrowserWindowConstructorOptions]>({
     title: app.getName() + " – " + (new l10n()).client.windows[name],
     show: false,
     parent: parent,
@@ -30,6 +31,9 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: false,
+      enableWebSQL: false,
+      webgl: false,
+      autoplayPolicy: "user-gesture-required",
       defaultFontFamily: {
         standard: "Arial" // `sans-serif` as default font.
       },
@@ -38,8 +42,7 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
       } : {}),
     },
     ...(process.platform !== "win32" ? {icon: appInfo.icons.app} : {}),
-    ...properties
-  });
+  }, properties??{}));
   if(win.webContents.session === parent.webContents.session && !isPopup)
     throw new Error("Child took session from parent!");
   win.setAutoHideMenuBar(true);
