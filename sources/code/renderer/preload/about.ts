@@ -6,7 +6,7 @@ import L10N from "../../common/modules/l10n";
 import packageJson, { PackageJSON, Person } from "../../common/modules/package";
 import { createHash } from "crypto";
 import { sanitize } from "dompurify";
-import { appInfo } from "../../common/modules/client";
+import { appInfo, defaultBuildInfo } from "../../common/modules/client";
 
 /**
  * Fetches user avatar by making the requests to both GitHub and Gravatar
@@ -152,8 +152,8 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
     versions.innerText = process.versions.electron+" / "+
             process.versions.chrome+" / "+process.versions.node;
   if(features) {
-    for(const [key, value] of Object.entries(details.buildInfo.features))
-      if(value)
+    for(const [key, value] of Object.entries(details.buildInfo.features) as [keyof buildInfo["features"], boolean][])
+      if(value !== defaultBuildInfo.features[key])
         if(features.innerText === "")
           features.innerText = key;
         else
