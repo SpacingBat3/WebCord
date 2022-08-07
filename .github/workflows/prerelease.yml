@@ -1,88 +1,36 @@
-name: Publish prerelease
+name: Publish pre-release
 on:
   push:
-    tags:
-      - '*beta*'
-      
+    tags: ['*beta*']
+
+env:
+  WEBCORD_BUILD: DEVEL
+
+permissions:
+  contents: write
+
 jobs:
-  linux:
-    runs-on: ubuntu-latest
-    env:
-      WEBCORD_BUILD: DEVEL
-      DEBUG: '*'
+  publish:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        arch: [x64, arm64]
+        includes:
+          - os: ubuntu-latest
+            arch: armv7l
+          - os: windows-latest
+            arch: ia32
+    name: Publish distributables for "${{ matrix.os }}-${{ matrix.arch }}"
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@master
-      with:
-        node-version: 16
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@master
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm install
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Publish artifacts (x64)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish
-
-    - name: Publish artifacts (arm64)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish -- -a arm64
-
-    - name: Publish artifacts (armv7l)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish -- -a armv7l
-
-  windows:
-    runs-on: windows-latest
-    env:
-      WEBCORD_BUILD: DEVEL
-      DEBUG: '*'
-    steps:
-    - uses: actions/checkout@v2       
-    - uses: actions/setup-node@master
-      with:
-        node-version: 16
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Publish artifacts (x64)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish
-
-    - name: Publish artifacts (arm64)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish -- -a arm64
-
-    - name: Publish artifacts (ia32)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish -- -a ia32
-
-  macos:
-    runs-on: macos-latest
-    env:
-      WEBCORD_BUILD: DEVEL
-      DEBUG: '*'
-    steps:
-    - uses: actions/checkout@v2       
-    - uses: actions/setup-node@master
-      with:
-        node-version: 16
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Publish artifacts (x64)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish
-
-    - name: Publish artifacts (arm64)
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish -- -a arm64
+      - name: Publish artifacts (${{ matrix.arch}})
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run publish -- -a ${{ matrix.arch }}

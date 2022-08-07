@@ -8,71 +8,32 @@ on:
     paths-ignore:
       - 'docs/**'
       - '.github/ISSUE_TEMPLATE/**'
+
+env:
+  WEBCORD_BUILD: DEVEL
+
+permissions: {}
+
 jobs:
-  linux:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        arch: [x64, arm64]
+        includes:
+          - os: ubuntu-latest
+            arch: armv7l
+          - os: windows-latest
+            arch: ia32
+    name: Test build for "${{ matrix.os }}-${{ matrix.arch }}"
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2       
-    - uses: actions/setup-node@master
-      with:
-        node-version: 16
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@master
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm install
 
-    - name: Install dependencies
-      run: npm install
-      
-    - name: Run tests (build and lint)
-      run: npm test
-
-    - name: Test build (x64)
-      run: npm run package
-
-    - name: Test build (arm64)
-      run: npm run package -- -a arm64
-
-    - name: Test build (armv7l)
-      run: npm run package -- -a armv7l
-
-  windows:
-    continue-on-error: true
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@master
-      with:
-        node-version: 16
-
-    - name: Install dependencies
-      run: npm install
-      
-    - name: Run tests (build and lint)
-      run: npm test
-
-    - name: Test build (x64)
-      run: npm run package
-
-    - name: Test build (arm64)
-      run: npm run package -- -a arm64
-
-    - name: Test build (ia32)
-      run: npm run package -- -a ia32
-
-  macos:
-    continue-on-error: true
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2       
-    - uses: actions/setup-node@master
-      with:
-        node-version: 16
-
-    - name: Install dependencies
-      run: npm install
-      
-    - name: Run tests (build and lint)
-      run: npm test
-
-    - name: Test build (x64)
-      run: npm run package
-
-    - name: Test build (arm64)
-      run: npm run package -- -a arm64
+      - name: Generate artifacts (${{ matrix.arch }})
+        run: npm run make -- -a ${{ matrix.arch }}
