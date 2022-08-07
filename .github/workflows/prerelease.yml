@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         arch: [x64, arm64]
-        includes:
+        include:
           - os: ubuntu-latest
             arch: armv7l
           - os: windows-latest
