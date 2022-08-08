@@ -150,7 +150,11 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     const getMediaTypesPermission = (mediaTypes: unknown[] = []) => {
       const supportsMediaAccessStatus = ["darwin","win32"].includes(process.platform);
       if(mediaTypes.length === 0)
-        return false;
+        return (
+          supportsMediaAccessStatus ?
+            systemPreferences.getMediaAccessStatus("screen") === "granted" :
+            true
+        ) && new AppConfig().get().settings.privacy.permissions["display-capture"];
       return [...new Set(mediaTypes)]
         .map(media => {
           const mediaType = media === "video" ? "camera" : media === "audio" ? "microphone" : null;
@@ -431,7 +435,13 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         if(lock) {
           const view = new BrowserView({
             webPreferences: {
-              preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js")
+              preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js"),
+              nodeIntegration: false,
+              contextIsolation: true,
+              sandbox: false,
+              enableWebSQL: false,
+              webgl: false,
+              autoplayPolicy: "user-gesture-required"
             }
           });
           ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
