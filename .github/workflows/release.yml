@@ -20,7 +20,7 @@ jobs:
             arch: armv7l
           - os: windows-latest
             arch: ia32
-    name: Publish distributables for "${{ matrix.os }}-${{ matrix.arch }}"
+    name: ${{ matrix.os }}-${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
