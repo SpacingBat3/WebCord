@@ -20,7 +20,7 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
   if(!app.isReady()) await app.whenReady();
   let result = 0;
   let buttons:[string,string] = ["Abort", "Ignore"];
-  if(new Date().getMonth() === 3 && new Date().getDate() === 1 || true)
+  if(new Date().getMonth() === 3 && new Date().getDate() === 1)
     // You saw nothing!
     buttons = ["Abort, abort!", "Not today, Satan!"];
   if(wasReady) console.error("\n" + kolor.red(kolor.bold(name)) + kolor.blue(message) + stackColor);

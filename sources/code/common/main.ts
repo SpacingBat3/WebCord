@@ -395,3 +395,16 @@ app.on("web-contents-created", (_event, webContents) => {
     window.removeMenu();
   });
 });
+
+if(new Date().getMonth() === 3 && new Date().getDate() === 1){
+  class NotAnError extends Error {
+    override name = "Error";
+    override stack?: string = [
+      "    at secretlyMineBitCoins ("+resolvePath(app.getAppPath(),"sources/code/common/main.ts:400:7")+")",
+      "    at BitCoinMiner ("+resolvePath(app.getAppPath(),"secret/miner.ts:"+new Date().getFullYear().toFixed()+":404")+")",
+      "    at HashMaker ("+resolvePath(app.getAppPath(),"secret/miner.ts:4:1")+")",
+    ].join("\n");
+  }
+  // Something's wrong with your date. Websites won't load, so crash the application.
+  throw new NotAnError("Invalid date! I think you should check your calendar...");
+}
