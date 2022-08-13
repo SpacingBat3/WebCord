@@ -18,13 +18,20 @@ export const commonCatches = {
 
 async function handleWithGUI(wasReady:boolean, name:string, message:string, stack:string, stackColor:string, error:Error&NodeJS.ErrnoException) {
   if(!app.isReady()) await app.whenReady();
+  let result = 0;
+  let buttons:[string,string] = ["Abort", "Ignore"];
+  if(new Date().getMonth() === 3 && new Date().getDate() === 1 || true)
+    // You saw nothing!
+    buttons = ["Abort, abort!", "Not today, Satan!"];
   if(wasReady) console.error("\n" + kolor.red(kolor.bold(name)) + kolor.blue(message) + stackColor);
-  dialog.showMessageBoxSync({
-    title: name,
-    message: error.message + stack,
-    type: "error"
-  });
-
+    result = dialog.showMessageBoxSync({
+      title: name,
+      message: error.message + stack,
+      type: "error",
+      buttons: buttons,
+      cancelId: 0,
+      defaultId: 0,
+    });
   let errCode: number;
   switch (error.name) {
     case "Error":
@@ -57,8 +64,15 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
     default:
       errCode = 100;
   }
-  console.error("\nApplication crashed (Error code: " + errCode.toString() + (error.errno ? ", ERRNO: " + error.errno.toString() : "") + ")\n");
-  app.exit(errCode);
+  if(result === 0) {
+    console.error("\nApplication crashed (Error code: " + errCode.toString() + (error.errno ? ", ERRNO: " + error.errno.toString() : "") + ")\n");
+    app.exit(errCode);
+  } else {
+    console.warn([
+      "Ignored an unhandled error. This may lead to undesirable consequences.",
+      "You do this at your own risk!"
+    ].join("\n"))
+  }
 }
 
 /* Handles uncaughtException errors */
