@@ -168,10 +168,14 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     };
     /** Common handler for  */
     const permissionHandler = function (webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null {
-      {
+      // Verify URL adress of the permissions.
+      try {
         const webContents = new URL(webContentsUrl);
         if(webContents.origin !== trustedURLs[0] && webContents.protocol !== trustedURLs[1])
           return false;
+      } catch {
+        // Deny invalid URLs (and show warning).
+        return null;
       }
       switch (permission) {
         case "media":{
