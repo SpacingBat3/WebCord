@@ -21,7 +21,7 @@ import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
 import l10n from "../../common/modules/l10n";
-import { loadChromiumExtensions, loadStyles } from "../modules/extensions";
+import { loadChromiumExtensions, styles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 
 import type { PartialRecursive } from "../../common/global";
@@ -333,7 +333,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   win.webContents.on("did-finish-load", () => {
     if(new URL(win.webContents.getURL()).protocol === "https:") {
-      loadStyles(win.webContents)
+      styles.load(win.webContents)
         .catch(commonCatches.print);
       import("fs")
         .then(fs => fs.promises.readFile)

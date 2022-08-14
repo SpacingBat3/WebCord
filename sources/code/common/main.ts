@@ -62,7 +62,7 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
 }
 import { app, BrowserWindow, dialog, session } from "electron/main";
 import { shell } from "electron/common";
-import { promises as fs } from "fs";
+import { existsSync, promises as fs } from "fs";
 import { trustedProtocolRegExp, SessionLatest, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
 import l10n from "./modules/l10n";
@@ -74,6 +74,7 @@ import { major } from "semver";
 import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
+import { styles } from "../main/modules/extensions";
 
 // Set AppUserModelID on Windows
 {
@@ -170,10 +171,13 @@ let overwriteMain: (() => unknown) | undefined;
         "Shows GPU information as JS object."
       ),
       renderLine(["user-agent-mobile"], "Whenever use 'mobile' variant of user agent."),
-      renderLine(["user-agent-platform=" + kolor.yellow("string")], "Platform to replace in the user agent."),
-      renderLine(["user-agent-version="  + kolor.yellow("string")], "Version of platform in user agent."),
+      renderLine(["user-agent-platform=" + kolor.yellow("{any}")], "Platform to replace in the user agent."),
+      renderLine(["user-agent-version="  + kolor.yellow("{any}")], "Version of platform in user agent."),
       renderLine(["user-agent-device"], "Device identifier in the user agent (Android)."),
-      renderLine(["force-audio-share-support"], "Force support for sharing audio in screen share.")
+      renderLine(["force-audio-share-support"], "Force support for sharing audio in screen share."),
+      renderLine(["add-css-theme=" + kolor.yellow("{path}")], "Adds theme to WebCord from "+kolor.yellow("{path}")+".")/*,
+      renderLine(["remove-css-theme=" + kolor.yellow("{name}")], "Removes WebCord theme by "+kolor.yellow("{name}")),
+      renderLine(["list-css-themes"], "Lists currently added WebCord themes")*/
     ].sort().join("\n")+"\n");
     app.exit();
   }
@@ -243,11 +247,23 @@ let overwriteMain: (() => unknown) | undefined;
           .catch(commonCatches.throw);
         break;
       default:
-        throw new Error("Flag 'gpu-info' should contain parameter of type '\"basic\"|\"complete\"'.");
+        throw new Error("Flag 'gpu-info' should include a value of type '\"basic\"|\"complete\"'.");
     }
   }
   if(hasSwitch("force-audio-share-support"))
     screenShareAudio = true;
+  if(hasSwitch("add-css-theme")) {
+    const path = getSwitchValue("add-css-theme");
+    if(path === null || !existsSync(path))
+      throw new Error("Flag 'add-css-theme' should include a value of type '{path}'.");
+    if(!path.endsWith(".theme.css"))
+      throw new Error("Value of flag 'add-css-theme' should point to '*.theme.css' file.");
+    overwriteMain = () => {
+      styles.add(path)
+        .then(() => process.exit(0))
+        .catch(() => process.exit(1));
+    };
+  }
 }
 {
   const applyFlags = (name:string, value?:string) => {

@@ -17,7 +17,7 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
 }
 
 /**
- * A function that recursively patses `@import` CSS statements, so they can be
+ * A function that recursively parses `@import` CSS statements, so they can be
  * understand for Electron on CSS instertion.
  * 
  * **Experimental** – it is unknown if that would work properly for all themes.
@@ -47,6 +47,37 @@ async function parseImports(cssString: string):Promise<string> {
   return cssString;
 }
 
+async function addStyle(path:string) {
+  const [
+    { app, safeStorage, dialog },
+    { readFile, writeFile },
+    { resolve, basename }
+  ] = await Promise.all([
+    import("electron/main"),
+    import("fs/promises"),
+    import("path")
+  ]);
+  function optionalCrypt(buffer:Buffer) {
+    if(safeStorage.isEncryptionAvailable())
+      return safeStorage.encryptString(buffer.toString());
+    return buffer.toString();
+  }
+  const data = readFile(path).then(path => optionalCrypt(path));
+  const out = resolve(app.getPath("userData"),"Themes", basename(path, ".theme.css"));
+  if(resolve(path) === out) return;
+  const {response} = await dialog.showMessageBox({
+    title: "WebCord plugin attestation",
+    message: "WebCord received a request to import theme from path '"+path+"'. Proceed?",
+    type: "question",
+    buttons: ["&No","&Yes"],
+    defaultId: 0,
+    cancelId: 0,
+    normalizeAccessKeys: true,
+  });
+  if(response === 1)
+    await writeFile(out, await data);
+}
+
 /**
  * Loads CSS styles from `${userdata}/Themes` directory and observes their changes.
  * 
@@ -55,9 +86,9 @@ async function parseImports(cssString: string):Promise<string> {
  * only the existing files are watched for changes and manual restart is
  * required for 
  */
-export async function loadStyles(webContents:Electron.WebContents) {
+async function loadStyles(webContents:Electron.WebContents) {
   const [
-    { app },
+    { app, safeStorage },
     { readFile, readdir },
     { watch, existsSync, mkdirSync, statSync },
     { resolve }
@@ -76,22 +107,22 @@ export async function loadStyles(webContents:Electron.WebContents) {
         const promises:Promise<Buffer>[] = [];
         for(const path of paths) {
           const index = resolve(stylesDir,path);
-          if (/^.+\.theme\.css$/.test(path) && statSync(index).isFile()) {
+          if (!path.endsWith(".theme.css") && statSync(index).isFile())
             promises.push(readFile(index));
-            if(process.platform !== "win32" && process.platform !== "darwin") {
-              const fsWatch = watch(index);
-              fsWatch.once("change", () => {
-                webContents.reload();
-              });
-              webContents.once("did-finish-load", () => fsWatch.close());
-            }
-          }
         }
         Promise.all(promises).then(dataArray => {
           const themeIDs:Promise<string>[] = [];
+          const decrypt = async (string:Buffer) => {
+            if(!safeStorage.isEncryptionAvailable() && !app.isReady())
+              await app.whenReady();
+            if(!safeStorage.isEncryptionAvailable())
+              return string.toString();
+            return safeStorage.decryptString(string);
+          };
           for(const data of dataArray)
             themeIDs.push(
-              parseImports(data.toString())
+              decrypt(data)
+                .then(data => parseImports(data))
                 /* Makes all CSS variables and color / background properties
                  * `!important` (this should fix most styles).
                  */
@@ -102,10 +133,9 @@ export async function loadStyles(webContents:Electron.WebContents) {
         }).catch(reason => reject(reason));
       }).catch(reason => reject(reason));
   });
-  if(process.platform === "win32" || process.platform === "darwin")
-    watch(stylesDir, {recursive:true}).once("change", () => {
-      webContents.reload();
-    });
+  watch(stylesDir).once("change", () => {
+    webContents.reload();
+  });
   callback().catch(commonCatches.print);
 }
 
@@ -142,3 +172,8 @@ export async function loadChromiumExtensions(session:Electron.Session) {
         .catch(commonCatches.print);
   }).catch(commonCatches.print);
 }
+
+export const styles = Object.freeze({
+  load: loadStyles,
+  add: addStyle
+});
