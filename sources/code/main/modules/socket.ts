@@ -5,11 +5,6 @@ function wsLog(message:string, ...args:unknown[]) {
   console.log(kolor.bold(kolor.magentaBright("[WebSocket]"))+" "+message,...args);
 }
 
-/** Generates an inclusive range (as `Array`) from `start` to `end`. */
-function range(start:number,end:number) {
-  return Array.from({length:end-start+1}, (_v,k) => start+k);
-}
-
 interface Response<C extends string, T extends string|never> {
   /** Response type/command. */
   cmd: C,
@@ -116,18 +111,24 @@ const messages = {
   }
 };
 /** 
- * Tries to reserve the server at given port.
+ * Tries to reserve the server using given (inclusive) port range.
+ * @param start A minimum port that should be assigned to the server.
+ * @param end A maximum port that should be assigned to the server.
  * 
  * @returns `Promise`, which always resolves (either to `Server<WebSocket>` on
  *          success or `null` on failure).
  */
-async function getServer(port:number) {
+async function getServer(start:number,end:number) {
   const {WebSocketServer} = await import("ws");
-  return new Promise<Server|null>(resolve => {
-    const wss = new WebSocketServer({ host: "127.0.0.1", port });
-    wss.once("listening", () => resolve(wss));
-    wss.once("error", () => resolve(null));
-  });
+  function tryServer(port: number) {
+    return new Promise<readonly [Server, number] | null>(resolve => {
+      if(port > end) resolve(null);
+      const wss = new WebSocketServer({ host: "127.0.0.1", port: port++ });
+      wss.once("listening", () => {resolve(Object.freeze([wss,port-1] as const)); wss.removeAllListeners("error");});
+      wss.once("error", () => {resolve(tryServer(port)); wss.close(); });
+    });
+  }
+  return tryServer(start);
 }
 
 /**
@@ -143,7 +144,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
   const [
     {isJsonSyntaxCorrect, knownInstancesList: knownIstancesList},
     {initWindow},
-    {underline},
+    {underline, blue},
     L10N
   ] = await Promise.all([
     import("../../common/global"),
@@ -151,27 +152,26 @@ export default async function startServer(window:Electron.BrowserWindow) {
     import("@spacingbat3/kolor").then(kolor => kolor.default),
     import("../../common/modules/l10n").then(l10n => l10n.default)
   ]);
-  const {listenPort} = new L10N().client.log;
-  let wss: Server | null = null, wsPort = 6463;
-  for(const port of range(6463, 6472)) {
-    // eslint-disable-next-line no-await-in-loop
-    wss = await getServer(port);
-    if(wss !== null) {
-      wsLog(listenPort,underline(port.toString()));
-      wsPort = port;
-      break;
-    }
-  }
-  if(wss === null) return;
+  //const {listenPort} = new L10N().client.log;
+  const [wsServer,wsPort] = await getServer(6463, 6472)??[null,6463] as const;
+  if(wsServer === null) return;
+  wsLog(new L10N().client.log.listenPort,blue(underline(wsPort.toString())));
   let lock = false;
-  wss.on("connection", (wss, request) => {
+  wsServer.on("connection", (wss, request) => {
     const origin = request.headers.origin??"https://discord.com";
-    let known = false;
-    for(const instance of knownIstancesList) {
-      if(instance[1].origin === origin)
-        known = true;
+    const trust = {
+      isKnown: knownIstancesList.filter(instance => instance[1].origin === origin).length === 0,
+      isDiscordService: /^https:\/\/[a-z]+\.discord\.com$/.test(origin),
+      isLocal: "http://127.0.0.1"
+    };
+    if(!trust.isKnown && !trust.isDiscordService && !trust.isLocal) {
+      console.debug("[WSS] Blocked request from origin '"+origin+"'. (not trusted)");
+      return wss.close(1008,"Client is not trusted.");
     }
-    if(!known) return;
+    if(!(trust.isDiscordService || trust.isLocal)) {
+      console.debug("[WSS] Blocked request from origin '"+origin+"'. (not supported)");
+      return wss.close(1008,"Client is not supported.");
+    }
     wss.send(JSON.stringify(messages.handShake));
     wss.once("message", (data, isBinary) => {
       let parsedData:unknown = data;
@@ -182,8 +182,8 @@ export default async function startServer(window:Electron.BrowserWindow) {
       // Invite response handling
       if(isResponse(parsedData, ["INVITE_BROWSER", "GUILD_TEMPLATE_BROWSER"] as ("INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER")[])) {
         if(lock) {
-          console.debug('Blocked request "'+parsedData.cmd+'" (WSS locked).');
-          return;
+          console.debug('[WSS] Blocked request "'+parsedData.cmd+'" (WSS locked).');
+          return wss.close(1013,"Server is busy, try again later.");
         }
         lock = true;
         // Replies to the browser, so it finds the communication successful.
@@ -234,21 +234,30 @@ export default async function startServer(window:Electron.BrowserWindow) {
         }));
       }
       // RPC response handling
-      else if(isResponse(parsedData, "AUTHORIZATION"))
+      else if(isResponse(parsedData, "AUTHORIZE")) {
         wsLog("Received RPC authorization request, but "+kolor.bold("RPC is not implemented yet")+".");
+        wss.close(1007, "Request of type: 'AUTHORIZE' is currently not supported.");
+      }
       // Unknown response error
       else if(isResponse(parsedData)) {
         const type = typeof parsedData.args["type"] === "string" ?
           parsedData.cmd+":"+parsedData.args["type"] : parsedData.cmd;
-        console.error("[WS] Request of type: '"+type+"' is currently not supported.");
+        const msg = "Request of type: '"+type+"' is currently not supported.";
+        console.error("[WS] "+msg);
         console.debug("[WS] Request %s", JSON.stringify(parsedData,undefined,4));
+        wss.close(1007, msg);
       }
       // Unknown text message error
-      else if(!isBinary)
-        console.error("[WS] Could not handle the packed text data: '"+(data as Buffer).toString()+"'.");
+      else if(!isBinary) {
+        const msg = "Could not handle the packed text data: '"+(data as Buffer).toString()+"'.";
+        console.error("[WS] "+msg);
+        wss.close(1007, msg);
+      }
       // Unknown binary data transfer error
-      else
+      else {
         console.error("[WS] Unknown data transfer (not text).");
+        wss.close(1003, "Unknown data transfer");
+      }
     });
   });
 }
