@@ -300,7 +300,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     // Compare hashes.
     if(faviconHash === discordFavicons.default) {
       icon = appInfo.icons.tray.default;
-    } else if(faviconHash.startsWith("4")) {
+    } else if(faviconHash === discordFavicons.unread) {
       icon = appInfo.icons.tray.unread;
     } else {
       console.debug("[Mention] Hash: "+faviconHash);
