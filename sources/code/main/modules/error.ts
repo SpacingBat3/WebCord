@@ -24,14 +24,14 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
     // You saw nothing!
     buttons = ["Abort, abort!", "Not today, Satan!"];
   if(wasReady) console.error("\n" + kolor.red(kolor.bold(name)) + kolor.blue(message) + stackColor);
-    result = dialog.showMessageBoxSync({
-      title: name,
-      message: error.message + stack,
-      type: "error",
-      buttons: buttons,
-      cancelId: 0,
-      defaultId: 0,
-    });
+  result = dialog.showMessageBoxSync({
+    title: name,
+    message: error.message + stack,
+    type: "error",
+    buttons: buttons,
+    cancelId: 0,
+    defaultId: 0,
+  });
   let errCode: number;
   switch (error.name) {
     case "Error":
@@ -71,7 +71,7 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
     console.warn([
       "Ignored an unhandled error. This may lead to undesirable consequences.",
       "You do this at your own risk!"
-    ].join("\n"))
+    ].join("\n"));
   }
 }
 
