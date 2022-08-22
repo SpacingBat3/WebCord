@@ -87,7 +87,7 @@ const messages = {
      * official Discord client (which makes browser to actually start a
      * communication with the WebCord).
      */
-  handShake: {
+  handShake: Object.freeze({
     /** Message command. */
     cmd:"DISPATCH",
     /** Message data. */
@@ -95,20 +95,18 @@ const messages = {
       /** Message scheme version. */
       v: 1,
       /** Client properties. */
-      config:{
-        /* eslint-disable camelcase */
+      config: {
         /** Discord CDN host (hard-coded for `discord.com` instance). */
         cdn_host: "cdn.discordapp.com",
         /** API endpoint (hard-coded for `discord.com` instance). */
         api_endpoint: "//discord.com/api",
         /** Client type. Can be (probably) `production` or `canary`. */
         environment: "production"
-        /* eslint-enable camelcase */
       }
     },
     evt: "READY",
     nonce: null
-  }
+  })
 };
 /** 
  * Tries to reserve the server using given (inclusive) port range.
@@ -168,7 +166,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not trusted)");
       return wss.close(1008,"Client is not trusted.");
     }
-    if(!(trust.isDiscordService || trust.isLocal)) {
+    if(trust.isDiscordService || trust.isLocal) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not supported)");
       return wss.close(1008,"Client is not supported.");
     }
