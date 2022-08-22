@@ -1,0 +1,36 @@
+{
+    "tray": {
+        "toggle": "Alternar",
+        "quit": "Quitar"
+    },
+    "context": {
+        "copy": "Copiar",
+        "paste": "Pegar",
+        "cut": "Cortar",
+        "dictionaryAdd": "Agregar a el diccionario local",
+        "copyURL": "Copiar la dirección del enlace",
+        "copyURLText": "Copiar el texto del enlace",
+        "inspectElement": "Inspeccionar"
+    },
+    "menubar": {
+        "enabled": "Habilitado",
+        "file": {
+            "groupName": "Archivo",
+            "quit": "Quitar",
+            "relaunch": "Relanzar",
+            "addon": {
+                "loadNode": "Cargar extensión de nodos",
+                "groupName": "Extensiones",
+                "loadChrome": "Cargar extensión Chrome"
+            }
+        },
+        "edit": {
+            "groupName": "Editar",
+            "undo": "Deshacer",
+            "redo": "Rehacer"
+        },
+        "view": {
+            "groupName": "Ver"
+        }
+    }
+}
