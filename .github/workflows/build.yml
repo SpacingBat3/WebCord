@@ -18,15 +18,19 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        arch: [x64, arm64]
         include:
-          - os: ubuntu-latest
-            arch: armv7l
-          - os: windows-latest
-            arch: ia32
-    name: ${{ matrix.os }}-${{ matrix.arch }}
-    runs-on: ${{ matrix.os }}
+          - name: Linux
+            runner: ubuntu
+            arch: x64,arm64,armv7l
+          - name: Windows
+            runner: windows
+            arch: x64,arm64,ia32
+          - name: macOS
+            runner: macos
+            arch: x64,arm64
+
+    name: ${{ matrix.name }} (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@master
