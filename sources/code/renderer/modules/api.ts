@@ -4,7 +4,11 @@
  * third-party addons in the future as part of planned "API".
  */
 
-import { randomInt } from "crypto";
+function randomInt(min = 0, max = 256) {
+  const random = crypto.getRandomValues(new Uint8Array([0]))[0];
+  if(random === undefined) throw new Error("Couldn't generate pseudo-random number!");
+  return random%(max-min)+min;
+}
 
 /**
  * Generates a random key of `window` that can safely be used as global variable
