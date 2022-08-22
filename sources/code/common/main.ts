@@ -63,7 +63,7 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
 import { app, BrowserWindow, dialog, session } from "electron/main";
 import { shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
-import { trustedProtocolRegExp, SessionLatest, knownInstancesList } from "./global";
+import { protocols, SessionLatest, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
 import l10n from "./modules/l10n";
 import createMainWindow from "../main/windows/main";
@@ -354,18 +354,26 @@ app.on("web-contents-created", (_event, webContents) => {
     if (!app.isReady()) return { action: "deny" };
     const openUrl = new URL(details.url);
     const sameOrigin = new URL(webContents.getURL()).origin === openUrl.origin;
-    let allowedProtocol = false;
+    const protocolMeta = { trust: false, allow: false };
 
     // Check if protocol of `openUrl` is secure.
-    if (openUrl.protocol.match(trustedProtocolRegExp))
-      allowedProtocol = true;
+    if (protocols.secure.includes(openUrl.protocol))
+      protocolMeta.trust = true;
+
+    // Allow handling some unencrypted protocols under certain circumstances
+    if(protocols.allowed.includes(openUrl.protocol))
+      protocolMeta.allow = true;
 
     /* 
      * If origins of `openUrl` and current webContents URL are different,
      * ask the end user to confirm if the URL is safe enough for him.
      * (unless an application user disabled that functionality)
      */
-    if (allowedProtocol && !sameOrigin && config.advanced.redirection.warn || !isMainWindow) {
+    if (
+      (protocolMeta.trust || protocolMeta.allow) &&
+      !sameOrigin &&
+      (config.advanced.redirection.warn || protocolMeta.allow || !isMainWindow)
+    ) {
       const window = BrowserWindow.fromWebContents(webContents);
       const strings = (new l10n).client.dialog;
       const options: Electron.MessageBoxSyncOptions = {
@@ -388,7 +396,7 @@ app.on("web-contents-created", (_event, webContents) => {
 
       if (result === 0) return { action: "deny" };
     }
-    if (allowedProtocol) {
+    if (protocolMeta.trust || protocolMeta.allow) {
       const url = new URL(details.url);
       const window = BrowserWindow.fromWebContents(webContents);
       if(url.host === knownInstancesList[config.advanced.currentInstance.radio][1].host && url.pathname === "/popout")

@@ -3,7 +3,7 @@ import { sanitize } from "dompurify";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import { pathToFileURL, fileURLToPath } from "url";
-import { trustedProtocolRegExp } from "../../common/global";
+import { protocols } from "../../common/global";
 import * as _hljsmodule from "highlight.js";
 
 const htmlFileUrl = document.URL;
@@ -55,7 +55,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
     link.onclick = () => {
       window.history.replaceState("", "", pathToFileURL(mdPrevious));
       // Handle links with the whitelisted protocols
-      if(new URL(link.href).protocol.match(trustedProtocolRegExp)) {
+      if(protocols.secure.includes(new URL(link.href).protocol)) {
         open(link.href);
         // Handle in-document links
       } else if (link.href.startsWith(document.URL.replace(/#.*/, "")+"#")) {

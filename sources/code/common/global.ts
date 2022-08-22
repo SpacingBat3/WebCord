@@ -75,7 +75,10 @@ export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
  * See:
  * https://www.electronjs.org/docs/tutorial/security#14-do-not-use-openexternal-with-untrusted-content
  */
-export const trustedProtocolRegExp = /^(https:|mailto:|tel:|sms:)$/;
+export const protocols = Object.freeze({
+  secure: Object.freeze(["https:","mailto:","tel:","sms:"]),
+  allowed: Object.freeze(["http:"])
+});
 
 /** 
  * Two-dimensional array of known Discord instances, including the official
