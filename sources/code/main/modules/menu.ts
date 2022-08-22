@@ -126,9 +126,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
     },
     {
       label: strings.tray.quit,
-      click: function () {
-        app.quit();
-      }
+      click: () => app.quit()
     }
   ]);
   tray.setContextMenu(contextMenu);
