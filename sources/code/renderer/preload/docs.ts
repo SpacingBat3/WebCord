@@ -41,7 +41,7 @@ function getId(url:string) {
 }
 
 function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
-  mdBody.innerHTML = sanitize(marked.parse(readFileSync(mdFile).toString()));
+  mdBody.innerHTML = sanitize(marked.parse(readFileSync(mdFile).toString()), {});
 }
 
 function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdArticle: HTMLElement) {

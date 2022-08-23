@@ -69,9 +69,9 @@ function generateSettings(optionsGroups: htmlConfig) {
           const pDesc = document.createElement("p");
           const formContainer = document.createElement("form");
 
-          h2.innerHTML = sanitize(setting.name);
+          h2.innerHTML = sanitize(setting.name, {});
           pDesc.classList.add("description");
-          pDesc.innerHTML = sanitize(setting.description);
+          pDesc.innerHTML = sanitize(setting.description, {});
           formContainer.classList.add("settingsContainer");
 
           if("radio" in setting) {
@@ -152,7 +152,7 @@ function createForm(form:CheckBoxForm|RadioForm){
     inputLabel.classList.add("disabled");
   }
   inputTag.addEventListener("change", fetchFromWebsite);
-  inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""));
+  inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""), {});
   inputForm.appendChild(inputTag);
   inputForm.appendChild(inputLabel);
   return inputForm;
