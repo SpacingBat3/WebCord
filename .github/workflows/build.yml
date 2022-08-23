@@ -1,8 +1,6 @@
 name: Run tests
 on:
   push:
-    tags-ignore:
-      - '*'
     paths-ignore:
       - 'docs/**'
       - '.github/ISSUE_TEMPLATE/**'
