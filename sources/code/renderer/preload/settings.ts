@@ -152,7 +152,7 @@ function createForm(form:CheckBoxForm|RadioForm){
     inputLabel.classList.add("disabled");
   }
   inputTag.addEventListener("change", fetchFromWebsite);
-  inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""), {});
+  inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""), sanitizeConfig);
   inputForm.appendChild(inputTag);
   inputForm.appendChild(inputLabel);
   return inputForm;
