@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run tests
+        run: npm test
+
       - name: Generate artifacts (${{ matrix.arch }})
         run: npm run make -- -a ${{ matrix.arch }}
 
