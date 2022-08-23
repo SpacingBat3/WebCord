@@ -1,11 +1,10 @@
 import { ipcRenderer as ipc } from "electron/renderer";
-import { buildInfo, sanitizeConfig } from "../../common/global";
+import { buildInfo, sanitize, sanitizeConfig } from "../../common/global";
 import { getAppPath, getAppHash } from "../../common/modules/electron";
 import { resolve } from "path";
 import L10N from "../../common/modules/l10n";
 import packageJson, { PackageJSON, Person } from "../../common/modules/package";
 import { createHash } from "crypto";
-import { sanitize } from "dompurify";
 import { appInfo, defaultBuildInfo } from "../../common/modules/client";
 
 /**

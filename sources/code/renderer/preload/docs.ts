@@ -1,9 +1,8 @@
 import { marked } from "marked";
-import { sanitize } from "dompurify";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import { pathToFileURL, fileURLToPath } from "url";
-import { protocols } from "../../common/global";
+import { protocols, sanitize } from "../../common/global";
 import * as _hljsmodule from "highlight.js";
 
 const htmlFileUrl = document.URL;

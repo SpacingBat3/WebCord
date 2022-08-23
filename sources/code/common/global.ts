@@ -2,6 +2,16 @@
  * Global.ts – non-Electron depending globally-used module declarations
  */
 
+import { sanitize as dompurify } from "dompurify";
+
+/** Type safe wrapper around DOMPurify. */
+export function sanitize(html: string, cfg: unknown): string {
+  const sanitizedValue:unknown = dompurify(html,cfg);
+  if(typeof sanitizedValue !== "string")
+    throw new TypeError("Sanitizer returned a non-string value!");
+  return sanitizedValue;
+}
+
 /**
  * Outputs a fancy log message in the (DevTools) console.
  * 
