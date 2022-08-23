@@ -41,3 +41,8 @@ jobs:
 
       - name: Generate artifacts (${{ matrix.arch }})
         run: npm run make -- -a ${{ matrix.arch }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.name }}
+          path: out/*/make/**/*
