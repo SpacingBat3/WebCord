@@ -3,8 +3,6 @@ out/
 app/
 # Ignore Node package managers artifacts
 node_modules/
-package-lock.json
-yarn.lock
 # Ignore hidden dirs, except `.github`
 # (these are likely used by text editors)
 .*/
