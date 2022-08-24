@@ -382,6 +382,17 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         .then(buffer => buffer.toString())
         .then(data => win.webContents.insertCSS(data))
         .catch(commonCatches.print);
+
+      if(useCustomBar){
+        styles.load(win.webContents)
+          .catch(commonCatches.print);
+        import("fs")
+          .then(fs => fs.promises.readFile)
+          .then(read => read(resolve(app.getAppPath(), "sources/assets/web/css/discord-custombar.css")))
+          .then(buffer => buffer.toString())
+          .then(data => win.webContents.insertCSS(data))
+          .catch(commonCatches.print);
+      }
     }
   });
 

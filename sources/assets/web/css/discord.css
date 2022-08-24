@@ -22,13 +22,6 @@ img[src*="423864076095979522"] ~ h2 > span > span {
     --rb: 35%
 }
 
-body {
-    padding-top: 20px !important;
-}
-#app-mount {
-    height: calc(100% - 20px);
-}
-
 @keyframes rainbow {
     0% {
         color: hsl(0, 100%, var(--rb));
