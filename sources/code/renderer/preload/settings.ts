@@ -63,7 +63,7 @@ function generateSettings(optionsGroups: htmlConfig) {
     (Object.keys)(group).map(settingKey => {
       if(settingKey !== "name" && settingKey !== buildType && checkPlatformKey(settingKey)) {
         const setting = (group as unknown as generatedConfigGeneric)[settingKey];
-        if(setting && setting.labels) {
+        if(setting) {
           const h2 = document.createElement("h2");
           const pDesc = document.createElement("p");
           const formContainer = document.createElement("form");

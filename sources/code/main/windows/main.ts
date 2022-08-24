@@ -45,6 +45,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   // Browser window
 
+  const useCustomBar = configData.get().settings.general.custombar.use;
+
   const win = new BrowserWindow({
     title: app.getName(),
     minWidth: appInfo.minWinWidth,
@@ -53,7 +55,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     width: mainWindowState.initState.width,
     backgroundColor: appInfo.backgroundColor,
     show: false,
-    frame: !configData.get().settings.general.custombar.use,
+    frame: !useCustomBar,
     webPreferences: {
       preload: resolve(app.getAppPath(), "app/code/renderer/preload/main.js"),
       nodeIntegration: false, // Never set to "true"!
@@ -70,6 +72,43 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     },
     ...(process.platform !== "win32" ? {icon: appInfo.icons.app} : {}),
   });
+  
+  // Custom Bar
+  if (useCustomBar){
+    const custombarView = new BrowserView({
+      webPreferences: {
+        nodeIntegration: false,
+        preload: resolve(app.getAppPath(), "app/code/renderer/preload/custombar.js")
+      }
+    });
+    win.setBrowserView(custombarView);
+    custombarView.setAutoResize({ width: true })
+    custombarView.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/custombar.html"));
+    custombarView.setBounds({ width: win.getBounds().width, height: 20, x: 0, y: 0 });
+    custombarView.webContents.on('ipc-message', (_event, channel) => {
+      switch (channel) {
+        case 'window-minimize':
+          console.debug("[Custom Bar] Minimize window...");
+          win.minimize();
+          break;
+        case 'window-maximize':
+          console.debug("[Custom Bar] Maximize window...");
+          win.isMaximized() ? win.unmaximize() : win.maximize();
+          break;
+        case 'window-close':
+          console.debug("[Custom Bar] Maximize window...");
+          win.close();
+          break;
+        case 'opensettings':
+          console.debug("[Custom Bar] Opening settings...");
+          loadSettingsWindow(win);
+          break;
+        default:
+          break;
+      }
+    });    
+  }
+
   win.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedURL) => {
     if (errorCode <= -100 && errorCode >= -199)
     // Show offline page on connection errors.
@@ -349,9 +388,6 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // Inject desktop capturer and block getUserMedia.
   ipcMain.on("api-exposed", (_event, api:unknown) => {
     if(typeof api !== "string") return;
-    if (configData.get().settings.general.custombar.use){
-      win.webContents.send("createCustomBar");
-    }
     const safeApi = api.replaceAll("'","\\'");
     console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
     const functionString = `
@@ -505,21 +541,6 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       if(safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
       console.debug("[Clipboard] Applying workaround to the image...");
       win.webContents.paste();
-    });
-    ipcMain.on("window-minimize", (event, api: unknown) => {
-      if (safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
-      console.debug("[Window] Minimize window...");
-      win.minimize();
-    });
-    ipcMain.on("window-maximize", (event, api: unknown) => {
-      if (safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
-      console.debug("[Window] Maximize window...");
-      win.isMaximized() ? win.unmaximize() : win.maximize();
-    });
-    ipcMain.on("opensettings", (event, api: unknown) => {
-      if (safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
-      console.debug("[IPC] Opening settings...");
-      loadSettingsWindow(win);
     });
   });
   return win;

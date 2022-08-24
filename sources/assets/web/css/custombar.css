@@ -1,0 +1,74 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #202225;
+    overflow: hidden;
+}
+.titlebar {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    height: 20px;
+    -webkit-app-region: drag;
+    margin-left: 15px;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    color: #ddd;
+    font-weight: 600;
+}
+
+.titlebar .title {
+    margin-right: auto;
+}
+
+.titlebar * {
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+    background-size: 12px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.titlebar .btn {
+    height: 12px;
+    width: 12px;
+    padding: 8px;
+}
+
+.titlebar .title {
+    padding-left: 2px;
+    padding-right: 2px;
+    font-family: system-ui;
+}
+
+.titlebar .title:hover {
+    background-color: #fff;
+    color: #000;
+    border-radius: 20px;
+}
+
+.titlebar .btn:hover {
+    background-color: #32353b;
+}
+
+.titlebar .closebutton:hover {
+    background-image: url("../../icons/symbols/custombar/close-hover.svg");
+    background-color: #f53d3d;
+}
+
+.titlebar .closebutton {
+    background-image: url("../../icons/symbols/custombar/close.svg");
+}
+
+.titlebar .maximizebutton {
+    background-image: url("../../icons/symbols/custombar/maximize.svg");
+}
+
+.titlebar .minimizebutton {
+    background-image: url("../../icons/symbols/custombar/minimize.svg");
+}
+
+.titlebar+#app-mount {
+    height: calc(100% - 20px);
+}
