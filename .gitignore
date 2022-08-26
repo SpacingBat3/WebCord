@@ -3,9 +3,14 @@ out/
 app/
 # Ignore Node package managers artifacts
 node_modules/
-package-lock.json
-yarn.lock
-# Ignore hidden dirs, except `.github`
+# Ignore foreign lockfiles
+*lock*
+!package-lock.json
+# Ignore hidden dirs with some exceptions
 # (these are likely used by text editors)
 .*/
+# GitHub – workflows, templates, configs etc.
 !.github/
+# Husky – Git hooks implementation 
+!.husky/
+.husky/_/
