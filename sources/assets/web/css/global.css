@@ -1,4 +1,4 @@
-@import url("fonts.css");
+@import "./fonts.css";
 
 :root {
     --color-accent: #4185D3;
@@ -14,6 +14,7 @@
     --color-link: #00A3E3;
     --color-input-bg: #484C52;
     --scrollbar-width: 8px;
+    --scrollbar-thumb: #202225;
 }
 
 html {
@@ -40,7 +41,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #202225;
+    background-color: var(--scrollbar-thumb);
     border-radius: 25px;
 }
 
