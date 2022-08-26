@@ -10,7 +10,7 @@ import { sanitize } from "dompurify";
 
 type keys = <T>(o:T) => (keyof T)[];
 
-type generatedConfigGeneric = Record<string,ConfigElement&Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>;
+type generatedConfigGeneric = Record<string,ConfigElement&Partial<Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>>;
 
 const buildType = getBuildInfo().type;
 
@@ -65,10 +65,13 @@ function generateSettings(optionsGroups: htmlConfig) {
       if(settingKey !== "name" && settingKey !== buildType && checkPlatformKey(settingKey)) {
         const setting = (group as unknown as generatedConfigGeneric)[settingKey];
         if(setting) {
+          // Skip unlocalized configurations.
+          if(!(setting.name && setting.description && setting.labels))
+            return;
+          const {labels} = setting;
           const h2 = document.createElement("h2");
           const pDesc = document.createElement("p");
           const formContainer = document.createElement("form");
-
           h2.innerHTML = sanitize(setting.name);
           pDesc.classList.add("description");
           pDesc.innerHTML = sanitize(setting.description);
@@ -93,7 +96,7 @@ function generateSettings(optionsGroups: htmlConfig) {
                   type:"checkbox",
                   id: groupId+"."+settingKey+"."+key,
                   isChecked: setting[key] === true,
-                  label: setting.labels[key] ?? "N/A"
+                  label: labels[key] ?? "N/A"
                 }));
               }
             });
