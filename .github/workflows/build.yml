@@ -15,8 +15,9 @@ env:
 permissions: {}
 
 jobs:
-  matrix:
+  test:
     strategy:
+      fail-fast: false
       matrix:
         build: [latest, exact]
         include:
