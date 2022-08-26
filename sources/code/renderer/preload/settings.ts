@@ -5,7 +5,8 @@ import { ipcRenderer } from "electron/renderer";
 import type { htmlConfig } from "../../main/windows/settings";
 import type { ConfigElement } from "../../main/modules/config";
 import { getBuildInfo } from "../../common/modules/client";
-import { wLog, sanitize, sanitizeConfig, knownInstancesList } from "../../common/global";
+import { wLog, sanitizeConfig, knownInstancesList } from "../../common/global";
+import { sanitize } from "dompurify";
 
 type keys = <T>(o:T) => (keyof T)[];
 
@@ -68,9 +69,9 @@ function generateSettings(optionsGroups: htmlConfig) {
           const pDesc = document.createElement("p");
           const formContainer = document.createElement("form");
 
-          h2.innerHTML = sanitize(setting.name, {});
+          h2.innerHTML = sanitize(setting.name);
           pDesc.classList.add("description");
-          pDesc.innerHTML = sanitize(setting.description, {} as unknown);
+          pDesc.innerHTML = sanitize(setting.description);
           formContainer.classList.add("settingsContainer");
 
           if("radio" in setting) {

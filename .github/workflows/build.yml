@@ -17,7 +17,9 @@ permissions: {}
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
+        build: [latest, exact]
         include:
           - name: Linux
             runner: ubuntu
@@ -29,23 +31,36 @@ jobs:
             runner: macos
             arch: x64,arm64
 
-    name: ${{ matrix.name }} (${{ matrix.arch }})
+    name: '${{ matrix.name }} (${{ matrix.build }})'
     runs-on: ${{ matrix.runner }}-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@master
         with:
           node-version: 16
+
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Update dependencies
+        if: ${{ matrix.build == 'latest' }}
+        run: npm update
 
       - name: Run tests
         run: npm test
 
-      - name: Generate artifacts (${{ matrix.arch }})
+      - name: Generate distributables (${{ matrix.arch }})
         run: npm run make -- -a ${{ matrix.arch }}
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload distributables as artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.name }}
+          name: ${{ matrix.name }}_${{ matrix.build }}
           path: out/devel/make/*
+
+      - name: Upload lockfile as artifact
+        if: ${{ matrix.build == 'latest' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.name }}_${{ matrix.build }}-lockfile
+          path: package-lock.json

@@ -1,8 +1,9 @@
 import { marked } from "marked";
+import { sanitize } from "dompurify";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import { pathToFileURL, fileURLToPath } from "url";
-import { protocols, sanitize } from "../../common/global";
+import { protocols } from "../../common/global";
 import * as _hljsmodule from "highlight.js";
 
 const htmlFileUrl = document.URL;
@@ -40,7 +41,7 @@ function getId(url:string) {
 }
 
 function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
-  mdBody.innerHTML = sanitize(marked.parse(readFileSync(mdFile).toString()), {});
+  mdBody.innerHTML = sanitize(marked.parse(readFileSync(mdFile).toString()));
 }
 
 function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdArticle: HTMLElement) {
