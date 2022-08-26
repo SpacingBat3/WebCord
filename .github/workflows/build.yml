@@ -19,16 +19,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        runner: [ubuntu,windows,macos]
         build: [latest, exact]
         include:
-          - name: Linux
-            runner: ubuntu
+          - runner: ubuntu
+            name: Linux
             arch: x64,arm64,armv7l
-          - name: Windows
-            runner: windows
+          - runner: windows
+            name: Windows
             arch: x64,arm64,ia32
-          - name: macOS
-            runner: macos
+          - runner: macos
+            name: macOS
             arch: x64,arm64
 
     name: '${{ matrix.name }} (${{ matrix.build }})'
