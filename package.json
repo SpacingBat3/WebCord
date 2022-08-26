@@ -6,6 +6,7 @@
   "description": "A Discord and Fosscord client made with the Electron API.",
   "main": "app/code/common/main.js",
   "scripts": {
+    "prepare": "husky install",
     "test": "tsc && eslint --ext .json,.ts .",
     "lint": "eslint --ext .json,.ts .",
     "build": "tsc",
