@@ -6,8 +6,7 @@ distributable format, run linter and so on. This section will describe the
 commands you may need to know to proceed with its development or packaging it
 yourself from its source code.
 
-
-<table>
+<table class="alert-info">
 <tr>
     <td> ℹ️ </td>
     <td>
@@ -18,7 +17,7 @@ yourself from its source code.
     </td>
 </tr>
 </table>
-<table>
+<table class="alert-warn">
 <tr>
     <td> ⚠️ </td>
     <td>

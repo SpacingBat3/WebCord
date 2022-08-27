@@ -87,3 +87,24 @@ article {
     background-color: #fff3;
     transition: background-color 0.5s ease-in-out;
 }
+
+/*
+ * Many Markdown documents (or even GitHub AsciiDoc parser itself) uses tables
+ * as alert popups. 
+ */
+table > tbody > tr:only-child {
+    display: block;
+    border: solid 1px var(--color-bg-border);
+    background-color: var(--color-bg-secondary);
+    border-radius: 20px;
+}
+
+table.alert-info > tbody > tr:only-child {
+    background-color: rgba(var(--color-alert-info), 20%);
+    border-color: rgb(var(--color-alert-info));
+}
+
+table.alert-warn > tbody > tr:only-child {
+    background-color: rgba(var(--color-alert-warn), 20%);
+    border-color: rgb(var(--color-alert-warn));
+}

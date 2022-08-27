@@ -18,8 +18,8 @@
 @import url('../../../../node_modules/twemoji-colr-font/twemoji.css');
 
 :root {
-    --font-primary: 'Roboto',Arial,sans-serif, Twemoji;
-    --font-display: 'Ubuntu',Arial,sans-serif, Twemoji;
-    --font-code: 'Fira Code',Courier,monospace, Twemoji;
+    --font-primary: 'Roboto',Twemoji, Arial, sans-serif;
+    --font-display: 'Ubuntu',Twemoji, Arial, sans-serif;
+    --font-code: 'Fira Code',Twemoji, Courier, monospace;
     --font-headline: var(--font-display);
 }
