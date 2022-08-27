@@ -14,9 +14,9 @@ following list of the features:
 | Custom CSP | Allow users to modify CSP to block unnecessary websites. | ✅️ Done |
 | Flash window on mentions | Flash window button to visually indicate mentions or DMs even with tray disabled. | ✅️ Done |
 | Custom dictionary languages | Customize the language set used for the auto-completion feature | ❌️ **TODO** |
-| Translations | WebCord's localization support for multiple languages. | 2️⃣️ ***Beta*** |
+| Translations | WebCord's localization support for multiple languages. | ✅️ Done |
 | Hiding the Discord's side bar | Switching the visibility state of side bar containing channel list. This makes WebCord working on the devices with the smaller screens, like e.g. PinePhone smartphones. | ✅️ Done |
-| Node.js based WebCord extensions support | WebCord-specific add-on implementation that allows for using Node dependencies. | ⚠️ **Will do** |
+| Node.js based WebCord extensions support | WebCord-specific add-on implementation that allows for using Node dependencies. | ❌️ **TODO** |
 | Chromium-based extensions support | Chromium browser add-on support. | 1️⃣ ***Alpha*** (experimental implementation) |
 | Add-on permissions management | Limits the permissions of the extensions for the security reasons. | ❌️ **TODO** |
 | Global shortcut for push-to-talk | Makes the shortcut for PTT globally available. | ❌️ **TODO** |
@@ -24,8 +24,7 @@ following list of the features:
 | Block `/typing` API endpoint | Optionally block typing indicator. | ✅️ Done |
 | End-to-end message encryption. | Allow to encrypt the message in the box before it is send. | ❌️ **TODO** |
 | HTML-based settings menu | Web-based settings menu instead of GTK (menu bar) ones. | 2️⃣ ***Beta*** (it's actively improved) |
-| `--version` / `-v` command-line flag | Prints application version to the console instead of running it. | ✅️ Done |
-| `--start-minized` / `-m` command-line flag | Starts application minimized in the tray. | ✅️ Done |
+| Command-line flags parsing | Provides a support for handling a command-line parameters, including common flags like `--help`. | ✅️ Done |
 | WebCord update notifications | Notifies the user whenever new WebCord version is out | ✅️ Done |
 | Bug report generation | Automatically generates bug report based on the OS configuration | ✅️ Done |
 | `buildInfo.json` | Implement generating and parsing a JSON configuration file that contains the release information and build flags. | ✅️ Done | 
@@ -35,8 +34,10 @@ following list of the features:
 | Custom Discord instances | Allows to use different Discord instances, e.g. Fosscord. | 1️⃣ ***Alpha*** |
 | Hide download buttons/popups | Hide elements referring to official Discord client download link | ✅️ Done |
 | HTML-based *about* panel | Non-native window showing the information about the application, like licenses, versions or credits. | 2️⃣ ***Beta*** (it's actively improved) |
-| Custom Discord and WebCord styles | Allow styling Discord and WebCord with own themes. | 1️⃣ ***Alpha*** (Discord can be styled) |
+| Custom Discord and WebCord styles | Allow styling Discord and WebCord with own themes. | 1️⃣ ***Alpha*** (Only Discord can be styled) |
 | Answer to invite URLs | Replies to guild invite links (like official Discord client). | ✅️ Done |
+| Navigate using external web browser | Handle navigation requests via WebSocket | ✅️ Done |
+| Application data encryption | Encrypt application files to prevent tinkering with it by the third-party software. | 2️⃣️ ***Beta*** (improvements are planned) |
 
 <sub> **NOTE:** Please report bugs for the features listed above. If your issue
 describes a feature that is not on the list, you may consider opening a
@@ -47,12 +48,12 @@ Request. </sub>
 
 ### State legend:
  
- - ❌️ **TODO** – this feature **may** or **may not** be implemented in the future.
-   It's in *concept* state – there's nothing implemented about it and it might not
-   be implemented soon, even if it is ever planned to be done.
+ - ❌️ **TODO** – this feature **may** or **may not** be implemented in the
+   future. It's in *concept* state – there's nothing implemented about it and it
+   might not be implemented soon, even if it is ever planned to be done.
 
--  ⚠️ **Will do** – there's nothing implemented in code about this feature, but it
-   is planned as a next feature to be worked on.
+-  ⚠️ **Will do** – there's nothing implemented in code about this feature, but
+   it is planned as a next feature to be worked on.
 
  - 1️⃣ ***Alpha*** – the work on implementing this feature has already begun, but
    it's still far from being finished.
@@ -83,8 +84,8 @@ broken, so don't expect you will be able to use them as you intent to.
 
 Since version `3.0.0`, WebCord is capable of styling Discord pages – unlike
 browser extensions like Stylus it does that without injecting any HTML elements
-to the page, to be more difficult to detect the modifications. On the other hand,
-the injected stylesheets can be easily overwritten by Discord CSS for some
+to the page, to be more difficult to detect the modifications. On the other
+hand, the injected stylesheets can be easily overwritten by Discord CSS for some
 properties, which could be prevented with the `!important` rule. Moreover, using
 `@import` keyword for referencing an another CSS stylesheet wouldn't work at all
 as well and needed to be resolved before injection. That is why the
@@ -102,16 +103,24 @@ properly.
 Currently WebCord loads CSS themes from `{userData}/Themes/` directory when
 they ends with `.theme.css` extension, like most BetterDiscord themes does.
 
-#### 2. Chromium Extensions
+However, in the future releases WebCord will encrypt themes with `safeStorage`
+in approach to prevent tinkering with it by third-party software after it is
+added to WebCord in order to improve the security especially in the future
+releases where it is planned that WebCord allow themes to modify its CSP in some
+way. This breaks with loading themes through `.theme.css` files and adds
+`--add-css-theme` flag as an alternative.
 
-From version `3.0.0`, WebCord can load unpacked Chromium extensions using
-Electron's [Chrome Extension Support][chrome-ext]. Since Electron
-implementation of Chromium extensions is far from the one in Chromium (which is
-due to the fact Electron removes a lot of browser-specific code in Chromium's
-code), a lot of extensions may not be fully functional or not work at all.
+#### 2. Chrome Extensions
+
+From version `3.0.0`, WebCord can load unpacked Chrome extensions using
+Electron's [Chrome Extension Support][chrome-ext]. Since Electron implementation
+of Chrome extensions is far from the one in Chromium (which is due to the fact
+Electron removes a lot of browser-specific code in Chromium's code), a lot of
+extensions may not be fully functional or not work at all.
 
 This is why a WebCord-specific implementation of the extensions is considered to
-be done in the future.
+be done in the future in which case Chromium extensions might be deprecated
+and / or removed.
 
 You can load Chromium extensions by extracting them from `.crx` archive to
 `{userData}/Extensions/Chromium/{extension name}/` folder.
