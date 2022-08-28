@@ -15,7 +15,7 @@
     --color-font-header: #fff;
     --color-link: #00A3E3;
     --color-input-bg: #484C52;
-    --scrollbar-width: 8px;
+    --scrollbar-width: 6px;
     --scrollbar-thumb: #202225;
     --color-alert-info: 65, 133, 211;
     --color-alert-warn: 248, 197, 29;
@@ -40,13 +40,24 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar {
     width: var(--scrollbar-width);
     height: var(--scrollbar-width);
-    background-color: var(--color-bg-secondary);
+    background-color: transparent;
     border-radius: 25px;
 }
 
 ::-webkit-scrollbar-thumb {
+    display: none;
     background-color: var(--scrollbar-thumb);
     border-radius: 25px;
+    box-sizing: border-box;
+    border: solid transparent 2px;
+}
+
+:hover > ::-webkit-scrollbar-thumb {
+    display: unset;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: var(--color-bg-border);
 }
 
 a {
