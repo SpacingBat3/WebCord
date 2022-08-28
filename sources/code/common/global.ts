@@ -24,8 +24,8 @@ export function isJsonSyntaxCorrect(string: string) {
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
 export const discordFavicons = {
   /** Default favicon (without *blue dot* indicator). */
-  default: "25522cef7e234ab001bbbc85c7a3f477b996e20b",
-  unread: "e6cba81a4e4189bb44df2c7ae63c79d8e80a3660"
+  default: "a971976200e0abf8d8a9fad46b7309363ef3cd01",
+  unread: "3133ab8ef98ea83f1573f6c3902c027015c005bf"
 };
 
 /**
