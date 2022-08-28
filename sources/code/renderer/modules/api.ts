@@ -4,10 +4,19 @@
  * third-party addons in the future as part of planned "API".
  */
 
-function randomInt(min = 0, max = 256) {
-  const random = crypto.getRandomValues(new Uint8Array([0]))[0];
-  if(random === undefined) throw new Error("Couldn't generate pseudo-random number!");
-  return random%(max-min)+min;
+function randomInt(min = 0, max = 255) {
+  if(min < 0 || max > 255)
+    throw new RangeError("Parameters 'min' and 'max' out of range of type 'u8'.");
+  let random: number|undefined;
+  let maxTries = 30;
+  while (maxTries > 0) {
+    random = crypto.getRandomValues(new Uint8Array([0]))[0];
+    if(random !== undefined && random >= min && random <= max) break;
+    maxTries--;
+  }
+  if(random === undefined)
+    throw new Error("Couldn't generate a valid pseudo-random number!");
+  return random;
 }
 
 /**
@@ -21,7 +30,7 @@ export function generateSafeKey () {
   while(key === "" || key in window) {
     key = "";
     for(let i=0; i<=randomInt(4,32); i++)
-      key += charset.charAt(randomInt(charset.length-1));
+      key += charset.charAt(randomInt(0,charset.length-1));
   }
   return key;
 }
