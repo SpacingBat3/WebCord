@@ -117,9 +117,14 @@ h3 {
 h1 ~ h2 {
     margin-top: -.5em;
 }
-#licenses a ~ p {
+#licenses > a ~ p {
     margin-top: 0em;
 }
+
+#licenses > a {
+    width: fit-content;
+}
+
 #about {
     padding: 8px 48px;
 }
