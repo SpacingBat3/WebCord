@@ -15,7 +15,6 @@ import {
   BrowserView,
   systemPreferences
 } from "electron/main";
-import { NativeImage, nativeImage } from "electron/common";
 import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
@@ -327,15 +326,15 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // "Red dot" icon feature
   let setFavicon: string | undefined;
   win.webContents.on("page-favicon-updated", (_event, favicons) => {
-    let icon: NativeImage, flash = false;
-    // Convert from DataURL to RAW.
-    const faviconRaw = nativeImage.createFromDataURL(favicons[0]??"").toBitmap();
+    if(favicons[0] === undefined) return;
+    let icon: Electron.NativeImage, flash = false;
     // Hash discord favicon.
-    const faviconHash = createHash("sha1").update(faviconRaw).digest("hex");
+    const faviconHash = createHash("sha1").update(favicons[0]).digest("hex");
     // Stop execution when icon is same as the one set.
     if (faviconHash === setFavicon) return;
     // Stop code execution on Fosscord instances.
-    const currentInstance = knownInstancesList.find((value) => value[1].origin === new URL(win.webContents.getURL()).origin);
+    const currentInstance = knownInstancesList
+      .find((value) => value[1].origin === new URL(win.webContents.getURL()).origin);
     if (currentInstance?.[2] !== true) {
       setFavicon = faviconHash;
       icon = appInfo.icons.tray.default;
