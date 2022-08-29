@@ -82,31 +82,36 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       }
     });
     win.setBrowserView(custombarView);
-    custombarView.setAutoResize({ width: true })
-    custombarView.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/custombar.html"));
+    custombarView.setAutoResize({ width: true });
+    custombarView.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/custombar.html")).then(() => {
+      console.debug("[Custom Bar] Loaded!");
+    }).catch((e) => {
+      console.debug("[Custom Bar] Error loading!");
+      console.debug(e);
+    });
     custombarView.setBounds({ width: win.getBounds().width, height: 20, x: 0, y: 0 });
-    custombarView.webContents.on('ipc-message', (_event, channel) => {
+    custombarView.webContents.on("ipc-message", (_event, channel) => {
       switch (channel) {
-        case 'window-minimize':
+        case "window-minimize":
           console.debug("[Custom Bar] Minimize window...");
           win.minimize();
           break;
-        case 'window-maximize':
+        case "window-maximize":
           console.debug("[Custom Bar] Maximize window...");
           win.isMaximized() ? win.unmaximize() : win.maximize();
           break;
-        case 'window-close':
+        case "window-close":
           console.debug("[Custom Bar] Maximize window...");
           win.close();
           break;
-        case 'opensettings':
+        case "opensettings":
           console.debug("[Custom Bar] Opening settings...");
           loadSettingsWindow(win);
           break;
         default:
           break;
       }
-    });    
+    });
   }
 
   win.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedURL) => {

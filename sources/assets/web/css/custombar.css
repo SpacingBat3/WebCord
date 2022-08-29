@@ -1,7 +1,7 @@
-body {
+html, body {
     margin: 0;
     padding: 0;
-    background: #202225;
+    background: var(--scrollbar-thumb);
     overflow: hidden;
 }
 .titlebar {
@@ -14,7 +14,7 @@ body {
     margin-left: 15px;
     font-size: 0.8em;
     text-transform: uppercase;
-    color: #ddd;
+    color: var(--color-font-normal);
     font-weight: 600;
 }
 
@@ -31,44 +31,28 @@ body {
 }
 
 .titlebar .btn {
-    height: 12px;
+    display: flex;
     width: 12px;
     padding: 8px;
+    color: var(--color-font-settings);
 }
 
 .titlebar .title {
     padding-left: 2px;
     padding-right: 2px;
+    border-radius: 20px;
     font-family: system-ui;
 }
 
 .titlebar .title:hover {
-    background-color: #fff;
-    color: #000;
-    border-radius: 20px;
+    background-color: var(--color-bg-primary);
 }
 
 .titlebar .btn:hover {
-    background-color: #32353b;
+    background-color: var(--color-bg-primary);
 }
 
 .titlebar .closebutton:hover {
-    background-image: url("../../icons/symbols/custombar/close-hover.svg");
-    background-color: #f53d3d;
-}
-
-.titlebar .closebutton {
-    background-image: url("../../icons/symbols/custombar/close.svg");
-}
-
-.titlebar .maximizebutton {
-    background-image: url("../../icons/symbols/custombar/maximize.svg");
-}
-
-.titlebar .minimizebutton {
-    background-image: url("../../icons/symbols/custombar/minimize.svg");
-}
-
-.titlebar+#app-mount {
-    height: calc(100% - 20px);
+    background-color: var(--color-red);
+    color: var(--color-font-header);
 }

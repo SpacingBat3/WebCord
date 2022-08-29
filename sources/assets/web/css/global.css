@@ -19,6 +19,7 @@
     --scrollbar-thumb: #202225;
     --color-alert-info: 65, 133, 211;
     --color-alert-warn: 248, 197, 29;
+    --color-red: #f53d3d;
 }
 
 html {
