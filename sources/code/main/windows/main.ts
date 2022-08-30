@@ -270,6 +270,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // Keep window state
   mainWindowState.watchState(win);
 
+  // Close children on hide.
+  win.on("hide", () => win.getChildWindows().forEach(child => child.close()));
+
   // Load all menus:
   getMenu.context(win);
   const tray = !configData.get().settings.general.tray.disable ? getMenu.tray(win) : null;
