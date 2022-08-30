@@ -22,11 +22,14 @@ export function isJsonSyntaxCorrect(string: string) {
 }
 
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
-export const discordFavicons = {
+export const discordFavicons = Object.freeze({
   /** Default favicon (without *blue dot* indicator). */
-  default: "6f637da8422057ec825c3249f2b37714de34a65b",
-  unread: "f88f58f3f6689b21c3a3426c4c76855f9ad2044c"
-};
+  default: "a2205eb4eb1cbf4ef7555e579bee3ba260574f3b", // seems always valid
+  unread: [
+    "ee9eef1403e76cb770d1c4a32265e8354e6af1a0", // works on FIFO pipe errors
+    "541317111758ff00613b2ff56f284a2474bd3d81"  // seems to be valid otherwise
+  ]
+});
 
 /**
  * A generic TypeGuard, used to deeply check if `object` can be merged with another

@@ -24,6 +24,7 @@ import { loadChromiumExtensions, styles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 
 import type { PartialRecursive } from "../../common/global";
+import { nativeImage } from "electron/common";
 
 const configData = new AppConfig();
 
@@ -282,8 +283,14 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   win.webContents.on("page-favicon-updated", (_event, favicons) => {
     if(favicons[0] === undefined) return;
     let icon: Electron.NativeImage, flash = false;
+    /** `NativeImage` */
+    const faviconNative = nativeImage.createFromDataURL(favicons[0]);
+    /** JPEG of this image re-converted from bitmap. */
+    const faviconBuffer = nativeImage.createFromBitmap(faviconNative.toBitmap(), {
+      ...(faviconNative.getSize())
+    }).toJPEG(90);
     // Hash discord favicon.
-    const faviconHash = createHash("sha1").update(favicons[0]).digest("hex");
+    const faviconHash = createHash("sha1").update(faviconBuffer).digest("hex");
     // Stop execution when icon is same as the one set.
     if (faviconHash === setFavicon) return;
     // Stop code execution on Fosscord instances.
@@ -299,7 +306,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     // Compare hashes.
     if(faviconHash === discordFavicons.default) {
       icon = appInfo.icons.tray.default;
-    } else if(faviconHash === discordFavicons.unread) {
+    } else if(discordFavicons.unread.includes(faviconHash)) {
       icon = appInfo.icons.tray.unread;
     } else {
       console.debug("[Mention] Hash: "+faviconHash);
