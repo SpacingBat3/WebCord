@@ -39,25 +39,25 @@ function generateIcon(set: "application"|"tray", variant?: "unread"|"ping")  {
   }
 }
 
-export const defaultBuildInfo: buildInfo = {
+export const defaultBuildInfo: Readonly<buildInfo> = Object.freeze({
   type: "devel",
   ...(process.platform === "win32" ? {AppUserModelId: "SpacingBat3.WebCord"} : {}),
   features: {
     updateNotifications: false
   }
-};
+});
 
 /**
  * Resolves the `buildInfo` using the file (for compatibility reasons and sake
  * of simplicity for the packagers, it assumes it is a partial file – any values
  * can be ommited, but the config itself still needs to be of valid types) and
  * default values. */
-export function getBuildInfo(): buildInfo {
+export function getBuildInfo(): Readonly<buildInfo> {
   try {
     const data = readFileSync(resolve(getAppPath(), "buildInfo.json"));
     const buildInfo:unknown = JSON.parse(data.toString());
     if (isPartialBuildInfo(buildInfo))
-      return deepmerge(defaultBuildInfo, buildInfo) as buildInfo;
+      return Object.freeze(deepmerge(defaultBuildInfo, buildInfo) as buildInfo);
     else
       return defaultBuildInfo;
   } catch {
