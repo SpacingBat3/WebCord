@@ -18,7 +18,7 @@
         },
                 "custombar": {
                     "name": "Custom window bar",
-                    "description": "Uses non-native window bar. To access settings press title of window. <b>Important:</b> it injects custom CSS. This might potentially let Discord to know it is modded.",
+                    "description": "Uses non-native window bar. To access settings press title of window.",
                     "labels": {
                         "use": "Use custom window bar. (Requires restart)"
                     }
