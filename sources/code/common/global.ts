@@ -87,13 +87,13 @@ export const protocols = Object.freeze({
  * Two-dimensional array of known Discord instances, including the official
  * ones.
  */
-export const knownInstancesList = [
+export const knownInstancesList = Object.freeze([
   /* NAME                              URL                       ACTIVE */
   ["Discord",         new URL("https://discord.com/app"),        true   ],
   ["Discord Canary",  new URL("https://canary.discord.com/app"), true   ],
   ["Fosscord",        new URL("https://dev.fosscord.com/app"),   false  ],
   ["Freecord",        new URL("https://app.freecord.ir/app"),    true   ],
-] as const;
+] as const);
 
 export interface buildInfo {
   type: "release" | "devel";
