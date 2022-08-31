@@ -16,7 +16,9 @@ type lastKeyof<T> = T extends object ? T[keyof T] extends object ? lastKeyof<T[k
 
 type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reservedKeys>;
 
-export type ConfigElement = Partial<Record<checkListKeys,boolean>> | {
+export type checkListRecord = Partial<Record<checkListKeys,boolean>>;
+
+export type ConfigElement = checkListRecord | {
   radio: number
 } | {
   dropdown: number

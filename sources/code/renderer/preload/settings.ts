@@ -3,14 +3,18 @@
  */
 import { ipcRenderer } from "electron/renderer";
 import type { htmlConfig } from "../../main/windows/settings";
-import type { ConfigElement } from "../../main/modules/config";
+import type { ConfigElement, checkListRecord } from "../../main/modules/config";
 import { getBuildInfo } from "../../common/modules/client";
 import { wLog, sanitizeConfig, knownInstancesList } from "../../common/global";
 import { sanitize } from "dompurify";
 
 type keys = <T>(o:T) => (keyof T)[];
 
-type generatedConfigGeneric = Record<string,ConfigElement&Partial<Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>>;
+//type generatedConfigGenericOld = Record<string,ConfigElement&Partial<Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>>;
+
+type generatedConfigGeneric = {"name":string} & Record<string, Partial<Record<"name"|"description",string>> & (
+  Exclude<ConfigElement, checkListRecord> | (checkListRecord&{"labels": Record<string,string|undefined>})
+)>;
 
 const buildType = getBuildInfo().type;
 
@@ -66,9 +70,14 @@ function generateSettings(optionsGroups: htmlConfig) {
         const setting = (group as unknown as generatedConfigGeneric)[settingKey];
         if(setting) {
           // Skip unlocalized configurations.
-          if(!(setting.name && setting.description && setting.labels))
+          if(setting.name === undefined || setting.description === undefined) {
+            try {
+              console.warn("Invalid configuration option: "+JSON.stringify(setting));
+            } catch {
+              console.warn("'setting' is not a valid object!");
+            }
             return;
-          const {labels} = setting;
+          }
           const h2 = document.createElement("h2");
           const pDesc = document.createElement("p");
           const formContainer = document.createElement("form");
@@ -96,7 +105,7 @@ function generateSettings(optionsGroups: htmlConfig) {
                   type:"checkbox",
                   id: groupId+"."+settingKey+"."+key,
                   isChecked: setting[key] === true,
-                  label: labels[key] ?? "N/A"
+                  label: setting.labels[key] ?? "N/A"
                 }));
               }
             });
