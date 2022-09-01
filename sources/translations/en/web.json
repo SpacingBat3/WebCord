@@ -20,7 +20,8 @@
             "people": {
                 "author": "Author, maintainer and main developer.",
                 "contributors": {
-                    "default": "Code contributor."
+                    "default": "Code contributor.",
+                    "GooseSima": "Contributor of non-native title bar feature."
                 }
             }
         },

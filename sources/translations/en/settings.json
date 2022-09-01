@@ -16,13 +16,13 @@
                 "disable": "Disable hiding window to the system tray functionality."
             }
         },
-                "custombar": {
-                    "name": "Custom window bar",
-                    "description": "Uses non-native window bar. To access settings press title of window.",
-                    "labels": {
-                        "use": "Use custom window bar. (Requires restart)"
-                    }
-                },
+        "custombar": {
+            "name": "Non-native window bar",
+            "description": "Removes native window borders and adds to it a HTML-based title bar, like it is done in official Discord client. To access WebCord's settings, press on the title on the title bar. <b>Currently non-native title bar lacks of menu bar.</b>",
+            "labels": {
+                "use": "Display non-native window bar (requires application restart)."
+            }
+        },
         "taskbar": {
             "name": "Taskbar",
             "description": "Controls the behavior of taskbar entry of WebCord.",

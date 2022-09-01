@@ -20,7 +20,8 @@
             "people": {
                 "author": "Autor, opiekun i główny deweloper aplikacji.",
                 "contributors": {
-                    "default": "Współtwórca kodu."
+                    "default": "Współtwórca kodu.",
+                    "GooseSima": "Współtwórca funkcji nie-natywnego title bar feature."
                 }
             }
         },

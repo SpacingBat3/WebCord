@@ -16,6 +16,13 @@
                 "disable": "Wyłącz ukrywanie okna do zasobnika systemowego."
             }
         },
+        "custombar": {
+            "name": "Nienatywny pasek tytułu",
+            "description": "Usuwa natywne ramki okna i dodaje do niego pasek tytułu oparty na HTML, tak jak jest to zrobione w oficjalnym kliencie Discorda. Aby uzyskać dostęp do ustawień, należy nacisnąć na tytuł okna na pasku. <b>Obecnie nienatywny pasek tytułu nie posiada zaimplementowanego paska menu.</b>",
+            "labels": {
+                "use": "Wyświetlaj nienatywny pasek menu (wymaga ponownego uruchomienia aplikacji)."
+            }
+        },
         "taskbar": {
             "name": "Pasek zadań",
             "description": "Steruje zachowaniem przycisku WebCorda na pasku zadań.",
