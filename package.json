@@ -21,6 +21,13 @@
     "email": "git@spacingbat3.anonaddy.com",
     "url": "https://github.com/SpacingBat3"
   },
+  "contributors": [
+    {
+      "name": "GooseSima",
+      "email": "simaduck@gmail.com",
+      "url": "https://goosesima.github.io/"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
