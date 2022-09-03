@@ -332,6 +332,21 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     event.preventDefault();
     if (title.includes("Discord Test Client"))
       win.setTitle(app.getName() + " (Fosscord)");
+    else if (title.includes("|")) {
+      // Wrap new title style!
+      const sections = title.split("|");
+      const [dirty,client,section,group] = [
+        sections[0]?.includes("•")
+          ? true
+          : sections[0]?.includes("(")
+            ? sections[0]?.match(/\(([0-9]+)\)/)?.[1] ?? "m"
+            : false,
+        app.getName(),
+        sections[1]?.trim() ?? "",
+        sections[2]?.trim() ?? null
+      ];
+      win.setTitle((typeof dirty === "string" ? "["+dirty+"] " : dirty ? "*" : "") + client + " - " + section + (group ? " ("+group+")" : ""));
+    }
     else if (title.includes("Discord") && !/[0-9]+/.test(win.webContents.getURL()))
       win.setTitle(title.replace("Discord",app.getName()));
     else
