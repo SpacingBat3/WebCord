@@ -1,4 +1,4 @@
-name: Run tests
+name: Build distributables
 on:
   push:
     branches-ignore:
@@ -21,10 +21,29 @@ permissions: {}
 jobs:
   test:
     strategy:
+      matrix:
+        deps: ['latest', 'locked']
+    name: "Test build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with ${{ matrix.deps }} dependencies
+        if: ${{ matrix.deps == 'latest' }}
+        run: npm test
+  make:
+    strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu,windows,macos]
-        build: [latest, exact]
+        runner: [ubuntu, windows, macos]
+        build: [latest, locked]
         include:
           - runner: ubuntu
             name: Linux
@@ -38,11 +57,13 @@ jobs:
 
     name: '${{ matrix.name }} (${{ matrix.build }})'
     runs-on: ${{ matrix.runner }}-latest
+    needs: ['test']
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -51,11 +72,12 @@ jobs:
         if: ${{ matrix.build == 'latest' }}
         run: npm update
 
-      - name: Run tests
-        run: npm test
-
       - name: Generate distributables (${{ matrix.arch }})
-        run: npm run make -- -a ${{ matrix.arch }}
+        uses: nick-fields/retry@v2
+        with:
+          retry_on: error
+          max_attempts: 3
+          command: npm run make -- -a ${{ matrix.arch }}
 
       - name: Upload distributables as artifact
         uses: actions/upload-artifact@v3
@@ -67,5 +89,5 @@ jobs:
         if: ${{ matrix.build == 'latest' }}
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.name }}_${{ matrix.build }}-lockfile
+          name: ${{ matrix.name }}-lockfile_updated
           path: package-lock.json
