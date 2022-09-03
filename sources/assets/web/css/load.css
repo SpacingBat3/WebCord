@@ -9,6 +9,7 @@ html, body {
     background-color: #36393F;
     height: 100%;
 }
+
 body, div.aura {
     text-align: center;
     display: flex;
@@ -42,6 +43,7 @@ h1 {
     overflow: hidden;
     text-overflow: clip;
 }
+
 @keyframes aura {
     0% {width: 0%}
     10% {width: 0%;background-color: var(--color-accent)}

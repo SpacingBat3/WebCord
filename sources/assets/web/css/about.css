@@ -13,9 +13,11 @@
 p, li, div, code {
     font-size: var(--font-size-factor);
 }
+
 h3, p, li {
     margin-bottom: var(--font-size-factor);
 }
+
 ul {
     margin-top: 0;
 }
@@ -86,7 +88,7 @@ main > article {
     width: 100%;
     height: 2px;
     background-color: rgb(var(--color-accent-light));
-    position:static;
+    position: static;
     bottom: 2px;
     margin-left: auto;
     margin-right: auto;
@@ -105,18 +107,22 @@ h1 {
     margin-top: 0.5em;
     font-size: calc(var(--font-size-factor) * 1.5);
 }
+
 h2 {
     font-size: calc(var(--font-size-factor) * 1.2);
     margin-bottom: 12px;
 }
+
 h3 {
     font-size: calc(var(--font-size-factor) * 1.1);
     margin-top: 1em;
     margin-bottom: 0.5em;
 }
+
 h1 ~ h2 {
     margin-top: -.5em;
 }
+
 #licenses > a ~ p {
     margin-top: 0em;
 }
@@ -128,16 +134,20 @@ h1 ~ h2 {
 #about {
     padding: 8px 48px;
 }
+
 #licenses h3 {
     color: var(--color-link);
     vertical-align: bottom;
 }
+
 #licenses h3 > small {
     font-size: calc(var(--font-size-factor) * 0.8);
 }
+
 hr {
     width: calc(100% - 4px);
 }
+
 nav {
     display: flex;
 }
@@ -301,6 +311,7 @@ div.contributor {
     padding: 4px 32px;
     box-sizing: content-box;
     border-radius: 16px;
+    margin-top: 4px;
 }
 
 div.contributor > img {
