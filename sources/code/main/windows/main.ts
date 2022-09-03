@@ -111,7 +111,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   win.webContents.session.webRequest.onBeforeRequest(
     {
       urls: [
-        "https://*/cdn-cgi/bm/cv/*/api.js",
+        "https://*/cdn-cgi/**",
         "https://*/api/*/science",
         "https://*/api/*/channels/*/typing",
         "https://*/api/*/track"
@@ -135,6 +135,12 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         callback({ cancel: configData.typingIndicator });
       else if (url.pathname.endsWith("/api.js"))
         callback({ cancel: configData.fingerprinting });
+      else if (url.pathname.includes("/cdn-cgi/")) {
+        // Looks like many scripts done for tracking might be published there.
+        // At least `invisible.js` script looks kinda suspicious and Discord
+        // works OK without it. Not sure how to categorise it through...
+        callback({ cancel: configData.fingerprinting||configData.science });
+      }
       else
         callback({ cancel: false });
 
