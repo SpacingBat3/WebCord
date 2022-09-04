@@ -58,7 +58,7 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/experimental-utils": "latest",
     "@typescript-eslint/parser": "latest",
-    "electron": "^20.0.0",
+    "electron": ">=13.0.0 <21.0.0",
     "eslint": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-import": "latest",
@@ -85,6 +85,10 @@
   },
   "config": {
     "forge": "./app/code/build/forge.js"
+  },
+  "engines": {
+    "node": "^16.0.0 || ^18.0.0",
+    "npm": "^8.0.0"
   },
   "private": true
 }

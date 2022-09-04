@@ -28,14 +28,20 @@ jobs:
     runs-on: ${{ matrix.runner }}-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Publish distributables (${{ matrix.arch}})
+        uses: nick-fields/retry@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run publish -- -a ${{ matrix.arch }}
+        with:
+          retry_on: error
+          max_attempts: 3
+          timeout_minutes: 10
+          command: npm run publish -- -a ${{ matrix.arch }}
