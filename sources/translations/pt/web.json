@@ -1,0 +1,11 @@
+{
+    "offline": {
+        "title": "Não foi possível conectar ao serviço do Discord.",
+        "description": "Verifique que você está conectado a internet."
+    },
+    "aboutWindow": {
+        "nav": {
+            "about": "Sobre"
+        }
+    }
+}
