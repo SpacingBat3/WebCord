@@ -7,7 +7,24 @@ body:
     id: notice
     attributes:
       value: |
-        **Note**: The project is still on process to switch to YAML forms.
+        <table>
+          <tr>
+            <td> ℹ️ </td>
+            <td> The project is still on process to switch to YAML forms. </td> 
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td> ⚠️ </td>
+            <td>
+              This bug request applies only to WebCord builds distributed
+              officially. These are distributables available on the GitHub
+              releases and <code>webcord-git</code> PKGBUILD. <b>Please
+              do not open issues for unsupported distributable formats!</b>
+              See a documentation for a further reference.
+            </td> 
+          </tr>
+        </table>
   - type: checkboxes
     id: aknowledgments
     attributes:
