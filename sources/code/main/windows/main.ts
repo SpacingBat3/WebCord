@@ -22,6 +22,7 @@ import { getWebCordCSP } from "../modules/csp";
 import l10n from "../../common/modules/l10n";
 import { loadChromiumExtensions, styles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
+import bindKeybindSocket from "../modules/keybind-socket";
 
 import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
@@ -532,5 +533,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       win.webContents.paste();
     });
   });
+
+  // Bind socket server for keybinds.
+  bindKeybindSocket(win);
   return win;
 }

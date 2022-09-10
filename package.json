@@ -67,6 +67,7 @@
     "dompurify": "^2.3.6",
     "electron-fetch": "^1.7.3",
     "highlight.js": "^11.4.0",
+    "keycode": "2.2.1",
     "marked": "^4.0.12",
     "semver": "^7.3.5",
     "source-map-support": "^0.5.21",

@@ -37,6 +37,18 @@ if (window.location.protocol === "file:") {
   window.addEventListener("load", () => window.localStorage.setItem("hideNag", "true"));
 
   /*
+   * Pull user-defined keybinds from localStorage.
+   */
+  ipc.on("pull-keybinds", (event) => {
+    if (typeof window.localStorage["keybinds"] === "string") {
+      event.sender.send(
+        "keybinds-value",
+        JSON.parse(window.localStorage["keybinds"]),
+      );
+    }
+  });
+
+  /*
   * Workaround for clipboard content.
   */
   {
