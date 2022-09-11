@@ -1,0 +1,18 @@
+{
+    "privacy": {
+        "permissions": {
+            "name": "Permissões",
+            "labels": {
+                "audio": "Microfone",
+                "notifications": "Notificações"
+            }
+        },
+        "name": "Privacidade"
+    },
+    "general": {
+        "name": "Geral",
+        "menuBar": {
+            "name": "Barra de menu"
+        }
+    }
+}
