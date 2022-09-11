@@ -15,6 +15,11 @@ interface KeybindState {
 }
 
 export default function bindKeybindSocket(window: Electron.BrowserWindow) {
+  if (!process.argv.includes("--ozone-platform=wayland")) {
+    console.error("[Keybinds] Not running under Wayland. Will not bind socket.");
+    return;
+  }
+
   const runtimeDirectory = process.env["XDG_RUNTIME_DIR"] ?? `/run/user/${os.userInfo().uid}`;
   const socketPath = `${runtimeDirectory}/webcord-keybinds.sock`;
   const socket = net.createServer((connection) => {
