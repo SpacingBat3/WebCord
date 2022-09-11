@@ -15,6 +15,11 @@ interface KeybindState {
 }
 
 export default function bindKeybindSocket(window: Electron.BrowserWindow) {
+  if (process.platform === "win32" || process.platform === "darwin") {
+    console.error("[Keybinds] Not running under non-macOS UNIX. Will not bind socket.");
+    return;
+  }
+
   if (!process.argv.includes("--ozone-platform=wayland")) {
     console.error("[Keybinds] Not running under Wayland. Will not bind socket.");
     return;
