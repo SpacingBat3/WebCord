@@ -2,7 +2,7 @@
   "$schema": "./schemas/schemastore/package.json",
   "name": "webcord",
   "productName": "WebCord",
-  "version": "3.8.1",
+  "version": "3.8.2",
   "description": "A Discord and Fosscord client made with the Electron API.",
   "main": "app/code/common/main.js",
   "scripts": {
@@ -56,7 +56,6 @@
     "@types/spdx-expression-parse": "^3.0.1",
     "@types/ws": "^8.5.1",
     "@typescript-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/experimental-utils": "latest",
     "@typescript-eslint/parser": "latest",
     "electron": ">=13.0.0 <21.0.0",
     "eslint": "latest",

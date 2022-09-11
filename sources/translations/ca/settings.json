@@ -1,1 +1,53 @@
-{}
+{
+    "general": {
+        "menuBar": {
+            "labels": {
+                "hide": "Amaga la barra de menús automàticament (la tecla <kbd>ALT</kbd> canvia la visibilitat)."
+            },
+            "name": "Barra de menús",
+            "description": "Canvia la configuració de visibilitat de la barra de menús nativa."
+        },
+        "tray": {
+            "name": "Safata",
+            "description": "Canvia la visibilitat de la icona a la safata del sistema.",
+            "labels": {
+                "disable": "Desactiva l'ocultació de la finestra a la funcionalitat de la safata del sistema."
+            }
+        },
+        "taskbar": {
+            "description": "Controla el comportament de l'entrada a la barra de tasques de WebCord.",
+            "name": "Barra de tasques"
+        },
+        "name": "General"
+    },
+    "privacy": {
+        "name": "Privacitat",
+        "blockApi": {
+            "name": "Bloqueig de l'API de Discord",
+            "labels": {
+                "typingIndicator": "Bloqueja l'indicació d'escriptura  (<code>/typing</code>).",
+                "science": "Bloqueja els punts finals de telemetria coneguts (<code>/science</code> i <code>/tracing</code>).",
+                "fingerprinting": "Bloqueja l'script d'empremtes digitals <code>api.js</code>."
+            },
+            "description": "Bloqueja les sol·licituds de l'API de Discord per endurir la privadesa."
+        },
+        "permissions": {
+            "name": "Permisos",
+            "labels": {
+                "video": "Càmera",
+                "fullscreen": "Pantalla completa",
+                "display-capture": "Captura d'escriptori",
+                "background-sync": "Sincronització de fons",
+                "notifications": "Notificacions",
+                "audio": "Micròfon"
+            },
+            "description": "Permet o denega les comprovacions de permisos i la sol·licitud des del lloc web de Discord. Tingueu en compte que WebCord bloqueja automàticament altres permisos que no s'inclouen aquí."
+        }
+    },
+    "advanced": {
+        "name": "Avançat",
+        "csp": {
+            "name": "Política de seguretat de contingut"
+        }
+    }
+}

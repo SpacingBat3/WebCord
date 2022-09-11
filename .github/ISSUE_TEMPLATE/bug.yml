@@ -7,7 +7,26 @@ body:
     id: notice
     attributes:
       value: |
-        **Note**: The project is still on process to switch to YAML forms.
+        <table>
+          <tr>
+            <td> ℹ️ </td>
+            <td> This project is still on process to switch to YAML forms. </td> 
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td> ⚠️ </td>
+            <td>
+              This bug report applies only to WebCord builds distributed
+              officially. These are distributables available on the GitHub
+              releases and <code>webcord-git</code> PKGBUILD. <b>Please
+              do not open issues for unsupported distributable formats!</b>
+              Please reffer <a href=https://github.com/SpacingBat3/WebCord/blob/master/docs/FAQ.md#1-which-file-i-should-download>to the documentation</a>
+              for a list of currently recommended distributables for each
+              platform.
+            </td> 
+          </tr>
+        </table>
   - type: checkboxes
     id: aknowledgments
     attributes:
