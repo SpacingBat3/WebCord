@@ -81,10 +81,8 @@ async function addStyle(path:string) {
 /**
  * Loads CSS styles from `${userdata}/Themes` directory and observes their changes.
  * 
- * On Windows and MacOS, entire directory is watched recursively for changes, so
- * new themes will apply immediatelly after they're updated. On other platforms,
- * only the existing files are watched for changes and manual restart is
- * required for 
+ * Loaded themes are encrypted with {@link safeStorage.encryptString} whenever
+ * Electron decides that encryption is available.
  */
 async function loadStyles(webContents:Electron.WebContents) {
   const [
@@ -107,7 +105,7 @@ async function loadStyles(webContents:Electron.WebContents) {
         const promises:Promise<Buffer>[] = [];
         for(const path of paths) {
           const index = resolve(stylesDir,path);
-          if (!path.endsWith(".theme.css") && statSync(index).isFile())
+          if (!path.includes(".") && statSync(index).isFile())
             promises.push(readFile(index));
         }
         Promise.all(promises).then(dataArray => {
@@ -117,6 +115,8 @@ async function loadStyles(webContents:Electron.WebContents) {
               await app.whenReady();
             if(!safeStorage.isEncryptionAvailable())
               return string.toString();
+            if(!string.toString("utf-8").includes("�"))
+              throw new Error("One of loaded styles was not encrypted and could not be loaded.");
             return safeStorage.decryptString(string);
           };
           for(const data of dataArray)
