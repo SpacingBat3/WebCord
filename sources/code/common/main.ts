@@ -295,6 +295,21 @@ let overwriteMain: (() => unknown) | undefined;
 
   for(const flag of getRedommendedOSFlags())
     applyFlags(flag[0], flag[1]);
+
+  // Workaround #236: WebCord calls appear as players in playerctl
+  if(process.platform !== "win32" && process.platform !== "darwin") {
+    const enabledFeatures = app.commandLine.getSwitchValue("enable-features");
+    ["MediaSessionService","HardwareMediaKeyHandling"].forEach((feature) => {
+      if(!enabledFeatures.includes(feature)) {
+        const disabledFeatures = app.commandLine.getSwitchValue("disable-features");
+        if(disabledFeatures === "") {
+          app.commandLine.appendSwitch("disable-features",enabledFeatures);
+        } else {
+          app.commandLine.appendSwitch("disable-features",disabledFeatures+","+feature);
+        }
+      }
+    });
+  }
 }
 
 // Set global user agent
