@@ -2,6 +2,7 @@ import net from "net";
 import fs from "fs";
 import keycode from "keycode";
 import { app, ipcMain } from "electron/main";
+import os from "os";
 
 interface KeybindState {
   _state?: Record<string, {
@@ -14,12 +15,8 @@ interface KeybindState {
 }
 
 export default function bindKeybindSocket(window: Electron.BrowserWindow) {
-  if (!process.env["XDG_RUNTIME_DIR"]) {
-    console.error("[Keybinds] $XDG_RUNTIME_DIR is not defined. Will not bind socket.");
-    return;
-  }
-
-  const socketPath = `${process.env["XDG_RUNTIME_DIR"]}/webcord-keybinds.sock`;
+  const runtimeDirectory = process.env["XDG_RUNTIME_DIR"] ?? `/run/user/${os.userInfo().uid}`;
+  const socketPath = `${runtimeDirectory}/webcord-keybinds.sock`;
   const socket = net.createServer((connection) => {
     console.log("[Keybinds] Received socket connection.");
 
