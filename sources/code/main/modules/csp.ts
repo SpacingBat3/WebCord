@@ -19,8 +19,8 @@ type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 
 class CSP {
   readonly #values: {
-    object: cspObject,
-    string: string
+    object: cspObject;
+    string: string;
   };
   #string2object(value: string) {
     const raw = value.split(/;\s+/);
@@ -54,7 +54,7 @@ class CSP {
         const keys = new Set([...Object.keys(partial), ...Object.keys(policyObject)]) as Set<keyof cspObject>;
         for(const key of keys){
           const policy = policyObject[key];
-          if(policy)
+          if(policy !== undefined)
             if(key in partial)
               partial[key] += " "+policy;
             else
@@ -182,7 +182,7 @@ const csp: {base:CSP}&cspTP<CSP> = {
   })
 };
 
-let cache: {configValues: string, result:CSP} | undefined;
+let cache: {configValues: string; result:CSP} | undefined;
 export function getWebCordCSP(additionalPolicies: CSP[]|[] = []) {
   const config = new AppConfig().get().settings.advanced.cspThirdParty;
     type parties = keyof typeof config;

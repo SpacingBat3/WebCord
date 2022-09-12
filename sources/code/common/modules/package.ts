@@ -8,8 +8,8 @@ import { readFileSync, existsSync } from "fs";
 import spdxParse from "spdx-expression-parse";
 
 interface PersonObject {
-  name: string,
-  email?: string,
+  name: string;
+  email?: string;
   url?: string;
 }
 
@@ -17,30 +17,30 @@ type PersonLike = string | PersonObject;
 
 interface PackageJsonProperties {
   /** Node.js-friendly application name. */
-  name: string,
+  name: string;
   /** Node package description. */
-  description: string,
+  description: string;
   /** Node package version, must be parsable by `semver`. */
-  version: string,
+  version: string;
   /** Node package author. */
-  author?: PersonLike,
+  author?: PersonLike;
   /** Application license. */
-  license: string,
+  license: string;
   /** Array of application code contributors. */
-  contributors?: PersonLike[],
+  contributors?: PersonLike[];
   /** Application homepage (`Readme.md` file). */
-  homepage?: string,
+  homepage?: string;
   /** Application repository. */
   repository: string | {
     /** Repository type (e.g. `git`). */
-    type: string,
+    type: string;
     /** Repository URL (e.g `git+https://example.com`) */
     url: string;
   };
   /** Application dependencies. */
-  dependencies?: Record<string, string>,
+  dependencies?: Record<string, string>;
   /** Application development dependencies. */
-  devDependencies?: Record<string, string>
+  devDependencies?: Record<string, string>;
 }
 
 const moduleRegexp = {
@@ -60,8 +60,8 @@ export class Person {
   public readonly url?:string|undefined;
   public toString():string {
     return (this.name !== "[Anonymous]" ? this.name : "")+
-      (this.email ? " <" + this.email + ">" : "")+
-      (this.url   ? " (" + this.url   + ")" : "");
+      (this.email !== undefined ? " <" + this.email + ">" : "")+
+      (this.url !== undefined   ? " (" + this.url   + ")" : "");
   }
   public static isPersonObject(variable: unknown): variable is PersonObject {
     // Variable is an Object, which has 'name' key and optionally 'email' and 'url' keys.

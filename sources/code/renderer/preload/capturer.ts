@@ -100,7 +100,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
               }
               ipc.send("closeCapturerView", {
-                audio: audioSupport && audioButton?.checked ? {
+                audio: audioSupport && (audioButton?.checked ?? false) ? {
                   mandatory: {
                     chromeMediaSource: "desktop"
                   }

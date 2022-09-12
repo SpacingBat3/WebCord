@@ -35,7 +35,8 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
   let errCode: number;
   switch (error.name) {
     case "Error":
-      if (error.errno||error.code||error.syscall||error.path)
+      if (error.errno !== undefined || error.code !== undefined ||
+          error.syscall !== undefined || error.path !== undefined)
         errCode = 99;
       else
         errCode = 101;
@@ -65,7 +66,7 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
       errCode = 100;
   }
   if(result === 0) {
-    console.error("\nApplication crashed (Error code: " + errCode.toString() + (error.errno ? ", ERRNO: " + error.errno.toString() : "") + ")\n");
+    console.error("\nApplication crashed (Error code: " + errCode.toString() + (error.errno !== undefined ? ", ERRNO: " + error.errno.toString() : "") + ")\n");
     app.exit(errCode);
   } else {
     console.warn([
@@ -98,7 +99,7 @@ export default function uncaughtExceptionHandler(): void {
         if (line.match(RegExp("at.*\\(" + regexAppPath + ".*\\).*", "g"))) {
           let modifiedLine = line;
           const tsRule = line.match(/\(\/.*\.ts.*\)/);
-          if (tsRule?.[0])
+          if (tsRule?.[0] !== undefined)
             modifiedLine = line.replace(tsRule[0].replace(new RegExp("\\((" + regexAppPath + "\\/).*\\)"), "$1"), "");
           stackProcessed.push(modifiedLine);
           stackColorProcessed.push(modifiedLine);

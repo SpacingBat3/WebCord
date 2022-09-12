@@ -28,7 +28,7 @@ async function parseImports(cssString: string):Promise<string> {
   const promises:Promise<string>[] = [];
   for (const singleImport of cssString.match(anyImport)??[]) {
     const matches = singleImport.match(/^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m);
-    if(!matches?.[0] || !matches[1]) break;
+    if(matches?.[0] === undefined || matches[1] === undefined) break;
     const file = matches[1];
     promises.push(fetchOrRead(file)
       .then(data => {

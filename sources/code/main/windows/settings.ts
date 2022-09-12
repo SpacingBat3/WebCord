@@ -5,18 +5,19 @@ import l10n from "../../common/modules/l10n";
 import { initWindow } from "../modules/parent";
 import { deepmerge } from "deepmerge-ts";
 import type { cspTP } from "../modules/config";
+import type { PartialRecursive } from "../../common/global";
 
 type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"] & {
   advanced: {
     cspThirdParty: {
-      labels: Record<keyof Omit<AppConfig["defaultConfig"]["settings"]["advanced"]["cspThirdParty"], "labels">, string>
-    }
-  }
+      labels: Record<keyof Omit<AppConfig["defaultConfig"]["settings"]["advanced"]["cspThirdParty"], "labels">, string>;
+    };
+  };
 };
 
 function generateConfig (config:AppConfig) {
   const appConfig = deepmerge(config.get().settings, (new l10n()).settings);
-  const finalConfig: Partial<generatedConfig> = appConfig as object;
+  const finalConfig: PartialRecursive<generatedConfig> = appConfig as object;
   const websitesThirdParty: cspTP<string> = {
     algolia: "Algolia",
     spotify: "Spotify",
@@ -35,11 +36,11 @@ function generateConfig (config:AppConfig) {
   };
   // Append more third-party sites labels.
   Object.entries(websitesThirdParty).map(stringGroup => {
-    if(finalConfig.advanced?.cspThirdParty.labels && !finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>])
+    if(finalConfig.advanced?.cspThirdParty?.labels && finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] === undefined)
       finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] = stringGroup[1];
   });
   // Append name from CSP.
-  if(finalConfig.advanced?.cspThirdParty.name)
+  if(finalConfig.advanced?.cspThirdParty?.name !== undefined)
     finalConfig.advanced.cspThirdParty.name = appConfig.advanced.csp.name + " – " + appConfig.advanced.cspThirdParty.name;
   return finalConfig as generatedConfig;
 }

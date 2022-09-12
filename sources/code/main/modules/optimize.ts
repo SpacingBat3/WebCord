@@ -9,9 +9,9 @@ const isUnix = process.platform !== "win32" && process.platform !== "darwin";
 
 interface partialGPU {
   gpuDevice: {
-    active: boolean,
-    driverVendor: string
-  }[]
+    active: boolean;
+    driverVendor: string;
+  }[];
 }
 
 function hasGPUDevices(object: unknown):object is partialGPU {

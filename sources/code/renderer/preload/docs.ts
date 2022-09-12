@@ -60,7 +60,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
         // Handle in-document links
       } else if (link.href.startsWith(document.URL.replace(/#.*/, "")+"#")) {
         const id = getId(link.href);
-        if (id) {
+        if (id !== undefined) {
           const element = document.getElementById(id);
           if(element) element.scrollIntoView({behavior: "smooth"});
         }
@@ -94,7 +94,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
         handleUrls(container, article, header, mdPrevious);
         fixImages(container);
         document.body.appendChild(article);
-        if (id) {
+        if (id !== undefined) {
           const element = document.getElementById(id);
           if (element) element.scrollIntoView();
         }

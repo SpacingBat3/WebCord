@@ -155,7 +155,7 @@ function createForm(form:CheckBoxForm|RadioForm){
       break;
   }
   inputLabel.setAttribute("for", inputTag.id);
-  if(form.description) {
+  if(form.description !== undefined) {
     inputTag.title = form.description;
     inputLabel.title = form.description;
   }

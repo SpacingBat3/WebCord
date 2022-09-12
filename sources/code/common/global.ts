@@ -102,7 +102,7 @@ export interface buildInfo {
   AppUserModelId?: string;
   features: {
     updateNotifications: boolean;
-  }
+  };
 }
 
 export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo> {

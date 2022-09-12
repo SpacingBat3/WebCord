@@ -38,7 +38,7 @@ export async function createGithubIssue(reason?: string): Promise<void> {
   githubIssueUrlParams
     .forEach((value,key) => githubIssueUrl.searchParams.append(key,value));
   
-  if(reason)
+  if(reason !== undefined)
     githubIssueUrl.searchParams.append("description", reason);
 
   /* Verify origin and open URL in default browser. */

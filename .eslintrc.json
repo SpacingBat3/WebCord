@@ -69,6 +69,7 @@
         }],
 
         /*** TypeScript ESLint cosmetic rules ***/
+        "@typescript-eslint/member-delimiter-style": "warn",
         "@typescript-eslint/indent": ["warn", 2, {
           "SwitchCase": 1
         }],
@@ -86,6 +87,14 @@
         }],*/
 
         /*** TypeScript ESLint plugin rules ***/
+        "@typescript-eslint/switch-exhaustiveness-check": "warn",
+        "@typescript-eslint/strict-boolean-expressions": ["error", {
+          "allowString": false,
+          "allowNumber": false
+        }],
+        "@typescript-eslint/no-confusing-void-expression": ["warn", {
+          "ignoreArrowShorthand": true
+        }],
         "@typescript-eslint/consistent-type-assertions": ["error", {
           "assertionStyle": "as",
           "objectLiteralTypeAssertions": "never"
