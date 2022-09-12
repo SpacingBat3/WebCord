@@ -28,7 +28,7 @@ export function showMessageBox(options: Electron.MessageBoxOptions): void {
       .then(api => api.dialog.showMessageBox(options))
       .catch(catchAndThrowErrors);
   } else {
-    const title = options.title ? options.title + "\n" : "";
+    const title = options.title !== undefined ? options.title + "\n" : "";
     alert(title + options.message);
   }
 }

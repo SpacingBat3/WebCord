@@ -19,18 +19,18 @@ type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reserv
 export type checkListRecord = Partial<Record<checkListKeys,boolean>>;
 
 export type ConfigElement = checkListRecord | {
-  radio: number
+  radio: number;
 } | {
-  dropdown: number
+  dropdown: number;
 } | {
-  input: string|number
+  input: string|number;
 } | {
-  keybind: string
+  keybind: string;
 };
 
 interface AppConfigBase {
-  settings: Record<string, Record<string, ConfigElement>>,
-  update: Record<string, unknown>
+  settings: Record<string, Record<string, ConfigElement>>;
+  update: Record<string, unknown>;
 }
 
 export type cspTP<T> = {
@@ -270,7 +270,7 @@ export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>
     if(workaroundLinuxMinMaxEvents)
       if(eventType === "resize" && window.isMaximized())
         event = "maximize";
-      else if (eventType === "resize" && this.get()[this.windowName]?.isMaximized)
+      else if (eventType === "resize" && (this.get()[this.windowName]?.isMaximized??false))
         event = "unmaximize";
     switch(event) {
       case "maximize":

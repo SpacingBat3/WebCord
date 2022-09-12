@@ -17,11 +17,11 @@ import { appInfo, defaultBuildInfo } from "../../common/modules/client";
 async function getUserAvatar(person: Person, size = 96) {
   const sources = [], promises = [], controler = new AbortController();
   sources.push("https://github.com/"+encodeURIComponent(person.name)+".png?size="+size.toString());
-  if(person.email)
+  if(person.email !== undefined)
     sources.push("https://gravatar.com/avatar/"+createHash("md5").update(person.email).digest("hex")+"?d=404&s="+size.toString());
   for(const source of sources) {
     promises.push(fetch(source, { signal: controler.signal }).then(async (data) => {
-      if(data.ok && data.headers.get("Content-Type")?.startsWith("image")) {
+      if(data.ok && (data.headers.get("Content-Type")?.startsWith("image") ?? false)) {
         const blobUrl =  URL.createObjectURL(await data.blob());
         const image = document.createElement("img");
         image.src = blobUrl;
@@ -62,7 +62,7 @@ function addContributor(person: Person, role?: string) {
   }
   description.appendChild(nameElement);
 
-  if(role) {
+  if(role !== undefined) {
     const roleElement = document.createElement("p");
     roleElement.classList.add("description");
     roleElement.innerText = role;
@@ -228,7 +228,7 @@ window.addEventListener("DOMContentLoaded", () => {
   generateLicenseContent(l10n, details);
         
   // Generate "credits"
-  if(packageJson.data.author)
+  if(packageJson.data.author !== undefined)
     addContributor(new Person(packageJson.data.author), l10n.credits.people.author);
   for (const person of packageJson.data.contributors??[]) {
     const safePerson = new Person(person);

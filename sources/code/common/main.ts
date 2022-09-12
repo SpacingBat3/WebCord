@@ -79,7 +79,7 @@ import { styles } from "../main/modules/extensions";
 // Set AppUserModelID on Windows
 {
   const {AppUserModelId} = getBuildInfo();
-  if(process.platform === "win32" && AppUserModelId)
+  if(process.platform === "win32" && AppUserModelId !== undefined)
     app.setAppUserModelId(AppUserModelId);
 }
 
@@ -214,18 +214,18 @@ let overwriteMain: (() => unknown) | undefined;
         ].join("\n"));
         app.quit();
       }).catch((err:NodeJS.ErrnoException) => {
-        const path = err.path ? {
+        const path = err.path !== undefined ? {
           relative: relative(process.cwd(),err.path),
           absolute: resolvePath(process.cwd(),err.path),
         } : {};
-        const finalPath = path.absolute ?
+        const finalPath = path.absolute !== undefined  ?
           path.absolute.length > path.relative.length ?
             path.relative :
             path.absolute :
           null;
         console.error([
           "\n⛔️ " + kolor.red(kolor.bold(err.code ?? err.name)) + " " + (err.syscall ?? "") + ": ",
-          (finalPath ? kolor.blue(kolor.underline(finalPath)) + ": " : ""),
+          (finalPath !== null ? kolor.blue(kolor.underline(finalPath)) + ": " : ""),
           err.message.replace((err.code ?? "") + ": ", "")
             .replace(", " + (err.syscall ?? "") + " '" + (err.path ?? "") + "'", "") + ".\n"
         ].join(""));
@@ -275,7 +275,7 @@ let overwriteMain: (() => unknown) | undefined;
           value = app.commandLine.getSwitchValue(name)+","+value;
       }
     app.commandLine.appendSwitch(name, value);
-    console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value ? "="+value : ""));
+    console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value !== undefined ? "="+value : ""));
   };
   // Apply recommended GPU flags if user had opt in for them.
   if(new AppConfig().get().settings.advanced.optimize.gpu)
@@ -283,7 +283,7 @@ let overwriteMain: (() => unknown) | undefined;
       for(const flag of flags) if(!app.isReady()) {
         applyFlags(flag[0], flag[1]);
       } else
-        console.warn("Flag '--"+flag[0]+(flag[1] ? "="+flag[1] : "")+"' won't be assigned to Chromium's cmdline, since app is already 'ready'!");
+        console.warn("Flag '--"+flag[0]+(flag[1] !== undefined ? "="+flag[1] : "")+"' won't be assigned to Chromium's cmdline, since app is already 'ready'!");
     }).catch(error => {
       console.error(error);
     });

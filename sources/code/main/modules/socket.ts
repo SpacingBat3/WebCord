@@ -7,9 +7,9 @@ function wsLog(message:string, ...args:unknown[]) {
 
 interface Response<C extends string, T extends string|never> {
   /** Response type/command. */
-  cmd: C,
+  cmd: C;
   /** Response arguments. */
-  args: ResponseArgs<C, T>,
+  args: ResponseArgs<C, T>;
   /** Nonce indentifying the communication. */
   nonce: string;
 }
@@ -68,7 +68,7 @@ function isResponse<C,T>(data:unknown, cmd?: C&string|(C&string)[], argsType?: T
   }
   if(typeof(data as Response<string,never>).args !== "object")
     return false;
-  if(argsType && typeof (data as Response<"DEEP_LINK",typeof argsType>).args.params === "object")
+  if(argsType !== undefined && typeof (data as Response<"DEEP_LINK",typeof argsType>).args.params === "object")
     switch(argsType) {
       case "CHANNEL":
         if(!checkRecord(
@@ -122,8 +122,14 @@ async function getServer(start:number,end:number) {
     return new Promise<readonly [Server, number] | null>(resolve => {
       if(port > end) resolve(null);
       const wss = new WebSocketServer({ host: "127.0.0.1", port: port++ });
-      wss.once("listening", () => {resolve(Object.freeze([wss,port-1] as const)); wss.removeAllListeners("error");});
-      wss.once("error", () => {resolve(tryServer(port)); wss.close(); });
+      wss.once("listening", () => {
+        resolve(Object.freeze([wss,port-1] as const));
+        wss.removeAllListeners("error");
+      });
+      wss.once("error", () => {
+        resolve(tryServer(port));
+        wss.close();
+      });
     });
   }
   return tryServer(start);
@@ -150,7 +156,6 @@ export default async function startServer(window:Electron.BrowserWindow) {
     import("@spacingbat3/kolor").then(kolor => kolor.default),
     import("../../common/modules/l10n").then(l10n => l10n.default)
   ]);
-  //const {listenPort} = new L10N().client.log;
   const [wsServer,wsPort] = await getServer(6463, 6472)??[null,6463] as const;
   if(wsServer === null) return;
   wsLog(new L10N().client.log.listenPort,blue(underline(wsPort.toString())));
@@ -162,14 +167,19 @@ export default async function startServer(window:Electron.BrowserWindow) {
       isDiscordService: /^https:\/\/[a-z]+\.discord\.com$/.test(origin),
       isLocal: origin === "http://127.0.0.1"
     };
+    // Checks if origin is associated in Discord or localy installed software.
     if(!trust.isKnown && !trust.isDiscordService && !trust.isLocal) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not trusted)");
-      return wss.close(1008,"Client is not trusted.");
+      wss.close(1008,"Client is not trusted.");
+      return;
     }
+    // Checks if origin is associated with the current WebCord's instance.
     if(trust.isDiscordService || trust.isLocal) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not supported)");
-      return wss.close(1008,"Client is not supported.");
+      wss.close(1008,"Client is not supported.");
+      return;
     }
+    // Send handshake
     wss.send(JSON.stringify(messages.handShake));
     wss.once("message", (data, isBinary) => {
       let parsedData:unknown = data;
@@ -177,11 +187,12 @@ export default async function startServer(window:Electron.BrowserWindow) {
         parsedData = (data as Buffer).toString();
       if(isJsonSyntaxCorrect(parsedData as string))
         parsedData = JSON.parse(parsedData as string);
-      // Invite response handling
+      // Invitation response handling
       if(isResponse(parsedData, ["INVITE_BROWSER", "GUILD_TEMPLATE_BROWSER"] as ("INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER")[])) {
         if(lock) {
           console.debug('[WSS] Blocked request "'+parsedData.cmd+'" (WSS locked).');
-          return wss.close(1013,"Server is busy, try again later.");
+          wss.close(1013,"Server is busy, try again later.");
+          return;
         }
         lock = true;
         // Replies to the browser, so it finds the communication successful.

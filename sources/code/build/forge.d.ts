@@ -33,12 +33,12 @@ type Redeclare<I, M> = Omit<I, keyof M> & M;
 
 type MPConfig = unknown | {
   /** Maker or publisher specific set of options. */
-  options?: unknown
+  options?: unknown;
 };
 
 interface MPBase {
   /** A Node.js package name that provides the maker or publisher functionality. */
-  name: string,
+  name: string;
   /** Overrides the platform that this maker or publisher will be used on.  */
   platforms?: ForgePlatform[] | null;
   /** A maker or publisher specific configuration object, usually containing the `options` property. */
@@ -48,8 +48,8 @@ interface MPBase {
 // Maker types
 
 interface MakerAppImage extends MPBase {
-  name: "@reforged/maker-appimage",
-  config?: MakerAppImageConfig
+  name: "@reforged/maker-appimage";
+  config?: MakerAppImageConfig;
 }
 
 interface MakerDeb extends MPBase {
@@ -58,8 +58,8 @@ interface MakerDeb extends MPBase {
 }
 
 interface MakerRpm extends MPBase {
-  name: "@electron-forge/maker-rpm",
-  config?: MakerRpmConfig
+  name: "@electron-forge/maker-rpm";
+  config?: MakerRpmConfig;
 }
 
 /*interface MakerSnap extends MPBase {
@@ -68,25 +68,25 @@ interface MakerRpm extends MPBase {
 }*/
 
 interface MakerFlatpak extends MPBase {
-  name: "@electron-forge/maker-flatpak",
-  config?: MakerFlatpakConfig
+  name: "@electron-forge/maker-flatpak";
+  config?: MakerFlatpakConfig;
 }
 
 interface MakerZIP extends MPBase {
-  name: "@electron-forge/maker-zip",
-  config?: MakerZIPConfig
+  name: "@electron-forge/maker-zip";
+  config?: MakerZIPConfig;
 }
 
 interface MakerDMG extends MPBase {
-  name: "@electron-forge/maker-dmg",
-  config?: MakerDMGConfig
+  name: "@electron-forge/maker-dmg";
+  config?: MakerDMGConfig;
 }
 
 // Publisher types
 
 interface PublisherGitHub extends MPBase {
-  name: "@electron-forge/publisher-github",
-  config?: PublisherGitHubConfig
+  name: "@electron-forge/publisher-github";
+  config?: PublisherGitHubConfig;
 }
 
 // Config type

@@ -29,7 +29,7 @@ async function getCommit():Promise<string | null> {
     .toString()
     .split(": ")[1]
     ?.trim();
-  if(refsPath)
+  if(refsPath !== undefined)
     return (await readFile(resolve(projectPath, ".git", refsPath)))
       .toString()
       .trim();
@@ -155,7 +155,7 @@ const config: ForgeConfigFile = {
       config: {
         prerelease: getBuildID() === "devel",
         repository: {
-          owner: packageJson.data.author ? new Person(packageJson.data.author).name : "SpacingBat3",
+          owner: packageJson.data.author !== undefined ? new Person(packageJson.data.author).name : "SpacingBat3",
           name: "WebCord"
         },
         draft: false
@@ -167,7 +167,7 @@ const config: ForgeConfigFile = {
       /** Generates `buildInfo.json` file and saves it somewhe. */
       async function writeBuildInfo() {
         const buildConfig: buildInfo = {
-          ...(platform === "win32" && AppUserModelId ? { AppUserModelId } : {}),
+          ...(platform === "win32" && AppUserModelId !== undefined ? { AppUserModelId } : {}),
           type: getBuildID(),
           commit: getBuildID() === "devel" ? (await getCommit())??undefined : undefined,
           features: {

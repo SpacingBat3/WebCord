@@ -164,11 +164,11 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       return [...new Set(mediaTypes)]
         .map(media => {
           const mediaType = media === "video" ? "camera" : media === "audio" ? "microphone" : null;
-          return mediaType && (
+          return mediaType !== null ? (
             supportsMediaAccessStatus ?
               systemPreferences.getMediaAccessStatus(mediaType) === "granted" :
               true
-          );
+          ) : null;
         })
         .reduce((previousValue,currentValue) => (previousValue??false) && (currentValue??false))??true;
     };
@@ -237,7 +237,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
             const promises:Promise<boolean>[] = [];
             (["camera","microphone"] as const).forEach(media => {
               if(systemPreferences.getMediaAccessStatus(media) === "not-determined" &&
-                  details.mediaTypes?.includes(media === "camera" ? "video" : "audio"))
+                  (details.mediaTypes?.includes(media === "camera" ? "video" : "audio")??false))
                 promises.push(systemPreferences.askForMediaAccess(media));
             });
             if(promises.length === 0)
@@ -342,16 +342,16 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       // Wrap new title style!
       const sections = title.split("|");
       const [dirty,client,section,group] = [
-        sections[0]?.includes("•")
+        (sections[0]?.includes("•")??false)
           ? true
-          : sections[0]?.includes("(")
+          : (sections[0]?.includes("(")??false)
             ? sections[0]?.match(/\(([0-9]+)\)/)?.[1] ?? "m"
             : false,
         app.getName(),
         sections[1]?.trim() ?? "",
         sections[2]?.trim() ?? null
       ];
-      win.setTitle((typeof dirty === "string" ? "["+dirty+"] " : dirty ? "*" : "") + client + " - " + section + (group ? " ("+group+")" : ""));
+      win.setTitle((typeof dirty === "string" ? "["+dirty+"] " : dirty ? "*" : "") + client + " - " + section + (group !== null ? " ("+group+")" : ""));
     }
     else if (title.includes("Discord") && !/[0-9]+/.test(win.webContents.getURL()))
       win.setTitle(title.replace("Discord",app.getName()));

@@ -27,7 +27,7 @@ function getAgentArch(arch: string): string {
  * @param replace Genarate user-agent from provided `replace` data.
  * @returns Fake Chrome/Chromium user agent string.
  */
-export function getUserAgent(chromeVersion: string, mobile?: boolean, replace?: {platform: string, version: string, device?: string}):string {
+export function getUserAgent(chromeVersion: string, mobile?: boolean, replace?: {platform: string; version: string; device?: string}):string {
   const userAgentPlatform = replace?.platform ?? process.platform;
   let fakeUserAgent:string;
   const osVersion:string = replace?.version ?? (typeof process.getSystemVersion === "function" ?
@@ -35,8 +35,8 @@ export function getUserAgent(chromeVersion: string, mobile?: boolean, replace?: 
     (userAgentPlatform === "darwin" ? "12.0" : release())
   );
   let WOW64: string;
-  const device:string = (replace?.device ? "; "+replace.device : "");
-  const mobileAgent = mobile ? " Mobile" : "";
+  const device:string = (replace?.device !== undefined ? "; "+replace.device : "");
+  const mobileAgent = (mobile??false) ? " Mobile" : "";
   switch (userAgentPlatform as NodeJS.Platform) {
     case "darwin":
       fakeUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X "+osVersion.replace(".","_")+") AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+mobileAgent+" Safari/537.36";

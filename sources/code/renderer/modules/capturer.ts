@@ -13,7 +13,7 @@ interface EMediaTrackConstraints extends MediaTrackConstraints {
 }
 
 function isMediaStreamConstrains(object:unknown): object is EMediaStreamConstraints {
-  if(!object || !(object instanceof Object)) return false;
+  if(!(object instanceof Object)) return false;
   for(const child of ["audio","video"] as const)
     if(!(child in object))
       return false;

@@ -57,7 +57,7 @@ export function context(parent: Electron.BrowserWindow): void {
         click: () => parent.webContents.replaceMisspelling(suggestion)
       });
     }
-    if (params.misspelledWord) {
+    if(params.misspelledWord !== "") {
       cmenu.splice(++position, 0, { type: "separator" });
       cmenu.splice(++position, 0, {
         label: strings.context.dictionaryAdd,
@@ -65,12 +65,12 @@ export function context(parent: Electron.BrowserWindow): void {
       });
       cmenu.splice(++position, 0, { type: "separator" });
     }
-    if (params.linkURL) {
+    if (params.linkURL !== "") {
       cmenu.push({
         label: strings.context.copyURL,
         click: () => clipboard.writeText(params.linkURL)
       });
-      if (params.linkText) cmenu.push({
+      if (params.linkText !== "") cmenu.push({
         label: strings.context.copyURLText,
         click: () => clipboard.writeText(params.linkText)
       });
