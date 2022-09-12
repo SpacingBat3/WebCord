@@ -158,9 +158,9 @@ export default async function startServer(window:Electron.BrowserWindow) {
   wsServer.on("connection", (wss, request) => {
     const origin = request.headers.origin??"https://discord.com";
     const trust = {
-      isKnown: knownIstancesList.filter(instance => instance[1].origin === origin).length === 0,
+      isKnown: knownIstancesList.filter(instance => instance[1].origin === origin).length !== 0,
       isDiscordService: /^https:\/\/[a-z]+\.discord\.com$/.test(origin),
-      isLocal: "http://127.0.0.1"
+      isLocal: origin === "http://127.0.0.1"
     };
     if(!trust.isKnown && !trust.isDiscordService && !trust.isLocal) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not trusted)");
