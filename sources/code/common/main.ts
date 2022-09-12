@@ -303,7 +303,7 @@ let overwriteMain: (() => unknown) | undefined;
       if(!enabledFeatures.includes(feature)) {
         const disabledFeatures = app.commandLine.getSwitchValue("disable-features");
         if(disabledFeatures === "") {
-          app.commandLine.appendSwitch("disable-features",enabledFeatures);
+          app.commandLine.appendSwitch("disable-features",feature);
         } else {
           app.commandLine.appendSwitch("disable-features",disabledFeatures+","+feature);
         }
