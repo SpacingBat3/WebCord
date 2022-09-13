@@ -75,7 +75,7 @@
         },
         "externalApp": {
             "title": "Abrindo link em um aplicativo externo",
-            "message": "Um website tentou redirecionar o link com uma origem diferente. Continuar mesmo assim?"
+            "message": "Um site tentou redirecionar o link para uma aplicação externa. Continuar mesmo assim?"
         },
         "screenShare": {
             "close": "Fechar",
