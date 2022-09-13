@@ -46,6 +46,8 @@ grouped in tables by platforms:
 
 <div align='right'><sup>* Platforms deprecated by Electron. </sup></div></div>
 
+There's also a list of community-maintained WebCord packages in [`Repos.md`].
+
 ### 2. Image/video/content does not load properly, is there anything I can do about it?
 Yes, this is probably an issue due to Content Security Policy header not
 including all URLs that are allowed to load. You can disable it [in Settings](./Settings.md)
@@ -99,3 +101,5 @@ Electron-based applications that does not depend on any specific Electron
 version/binary. This practise will save the disk space and other resources,
 since there's no need to run simultaneously multiple Electron binaries with 
 different Chromium engine versions.
+
+[`Repos.md`]: ./Repos.md "List of community-maintained software repositories providing WebCord."
