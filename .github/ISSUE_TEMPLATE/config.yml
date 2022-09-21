@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Questions
+  - name: Discord server
+    url: https://discord.gg/aw7WbDMua5
+    about: Talk, ask questions and give feedback via Discord.
+  - name: Discussions
     url: https://github.com/SpacingBat3/WebCord/discussions
-    about: Please ask questions in GitHub Discussions
+    about: Talk, ask questions and give feedback via GitHub Discussions.
   - name: Email
     url: mailto:git@spacingbat3.anonaddy.com
-    about: Contact me via e-mail.
+    about: Contact me via e-mail (I might respond with another e-mail address).

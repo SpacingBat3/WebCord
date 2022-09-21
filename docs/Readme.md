@@ -1,3 +1,15 @@
+<table class="alert-warn" align=center>
+<tr>
+    <td> ⚠️ </td>
+    <td>
+        WebCord development goes temporarily into <b>the maintenance-only mode</b>.
+        This is to show that any abnormal lack of activity isn't going to mean it is
+        no longer maintained. See https://github.com/SpacingBat3/WebCord/discussions/260
+        for more details how this might affect WebCord development and when I plan to
+        end this.
+    </td>
+</tr>
+</table>
 <p align='right'><sub>
   Znasz 🇵🇱? Przejdź <a href='pl/Readme.md' title='Polski plik README'>tutaj</a>.
 </sub></p>
@@ -13,9 +25,9 @@
 
 # WebCord
 
-[![Build][badge2]][badge2url] [![Weblate badge][l10nbadge]][l10n]
-[![GitHub downloads][dlbadge]][downloads]
-
+[![CodeQL][codeql-badge]][codeql-url] [![Build][build-badge]][build-url]
+[![Weblate badge][l10nbadge]][l10n] [![GitHub downloads][dlbadge]][downloads]
+[![Discord server][discord-badge]][discord-url]
 
 A Discord and [Fosscord] client implemented directly without [Discord API][discordapi].
 Made in 🇵🇱 with the [Electron][electron] framework.
@@ -83,7 +95,7 @@ You may also read [Features](Features.md) to know which features have been imple
 It is strongly advised to read the [application license](../LICENSE) as well.
 
 - [List of WebCord's features](Features.md)
-- [Community maintained repositories providing WebCord](Community.md)
+- [Community maintained repositories providing WebCord](Repos.md)
 - [Frequently Asked Questions](FAQ.md)
   - *[Which file I should download?](FAQ.md#1-which-file-i-should-download)*
   - *[Content does not load properly...](FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
@@ -175,11 +187,8 @@ you don't even need to be familiar with programming at all!
 
 [dlbadge]: https://img.shields.io/github/downloads/SpacingBat3/WebCord/total.svg?label=Downloads&color=%236586B3
 [downloads]: https://github.com/SpacingBat3/WebCord/releases "Releases"
-[badge2]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
-[badge2url]: https://github.com/SpacingBat3/WebCord/actions/workflows/build.yml "Build state"
-
-
-
+[build-badge]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
+[build-url]: https://github.com/SpacingBat3/WebCord/actions/workflows/build.yml "Build state"
 [l10nbadge]: https://hosted.weblate.org/widgets/webcord/-/svg-badge.svg
 [l10n]: https://hosted.weblate.org/engage/webcord/ "Help at WebCord's localization"
 [Sentry]: https://sentry.io "Application Monitoring and Error Tracking Software"
@@ -192,3 +201,7 @@ you don't even need to be familiar with programming at all!
 [discordapi]: https://discord.com/developers/docs/reference "Official Discord REST API documentation"
 [chromiumbounty]: https://bughunters.google.com/about/rules/5745167867576320/chrome-vulnerability-reward-program-rules "Chrome Vulnerability Reward Program Rules"
 [Electron#Security]: https://www.electronjs.org/docs/latest/tutorial/security "Security | Electron Documentation"
+[codeql-badge]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/CodeQL?label=Analysis&logo=github&logoColor=white
+[codeql-url]: https://github.com/SpacingBat3/WebCord/actions/workflows/codeql-analysis.yml "CodeQL Analysis status"
+[discord-badge]: https://img.shields.io/discord/972965161721811026?color=%2349a4d3&label=Support&logo=discord&logoColor=white
+[discord-url]: https://discord.gg/aw7WbDMua5 "Official support server on Discord!"
