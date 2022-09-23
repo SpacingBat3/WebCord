@@ -108,6 +108,11 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
   }
   const contextMenu = Menu.buildFromTemplate([
     {
+      label: strings.tray.toggle,
+      click: toogleVisibility
+    },
+    { type: "separator" },
+    {
       label: strings.windows.about,
       click: () => showAboutPanel(parent)
     },
@@ -120,10 +125,6 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
       click: () => void createGithubIssue().catch(commonCatches.throw)
     },
     { type: "separator" },
-    {
-      label: strings.tray.toggle,
-      click: toogleVisibility
-    },
     {
       label: strings.tray.quit,
       click: () => app.quit()
