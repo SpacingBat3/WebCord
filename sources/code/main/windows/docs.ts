@@ -38,8 +38,8 @@ export default async function loadDocsWindow(parent: Electron.BrowserWindow) {
   const docsWindow = initWindow("docs", parent, {
     minWidth: appInfo.minWinWidth,
     minHeight: appInfo.minWinHeight,
-    width: 800,
-    height: 720
+    width: 720,
+    height: 600
   });
   if(docsWindow === undefined) return;
   handleEvents(docsWindow).catch(commonCatches.throw);

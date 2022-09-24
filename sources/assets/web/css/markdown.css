@@ -4,9 +4,20 @@
     --header-height: 36px;
 }
 
-h1, h2 {
-    border-bottom: 2px solid var(--color-input-bg);
-    padding-bottom: 5px;
+p, li, div {
+    font-size: 11pt;
+}
+
+img {
+    max-height: 256px;
+}
+
+code, pre {
+    font-size: 9pt;
+}
+
+sup {
+    font-size: 8pt;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -15,6 +26,19 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 1em;
     margin-bottom: 0.5em;
     scroll-margin-top: 0.5em;
+}
+
+h1, h2 {
+    border-bottom: 2px solid var(--color-input-bg);
+    padding-bottom: 5px;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+h1#webcord {
+    font-size: xx-large;
 }
 
 #markdown-body > h1:first-child,
@@ -78,7 +102,7 @@ article {
 #markdown-header p {
     font-family: var(--font-primary);
     color: var(--color-font-header);
-    font-size: 18pt;
+    font-size: 16pt;
     font-weight: bold;
 }
 
