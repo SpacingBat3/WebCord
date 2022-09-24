@@ -48,12 +48,12 @@ grouped in tables by platforms:
 
 There's also a list of community-maintained WebCord packages in [`Repos.md`].
 
-### 2. Image/video/content does not load properly, is there anything I can do about it?
+## 2. Image/video/content does not load properly, is there anything I can do about it?
 Yes, this is probably an issue due to Content Security Policy header not
 including all URLs that are allowed to load. You can disable it [in Settings](./Settings.md)
 as a workaround.
 
-### 3. How to get a microphone permission for WebCord?
+## 3. How to get a microphone permission for WebCord?
 If you granted it via the application settings, this warning may indicate a
 wrong configuration in your system audio settings – for some reason, Electron
 doesn't seems to get access to microphone when there's no default / fallback
@@ -64,7 +64,7 @@ there's no icon in tray nor Electron/WebCord process running in the background!
 Currently, this bug could be encountered on Linux, it's state is unknown for the
 other platforms.
 
-### 4. Why Electron?
+## 4. Why Electron?
 
 I've seen a long discussion about Electron being criticized and even through
 I don't find it a perfect software, I think it is the best for me currently as
@@ -78,7 +78,7 @@ For instance, if I would like to rewrite WebCord for the GTK3/4 WebView with
 `node-gtk`, I would have to use different API for Windows since `node-gtk` does
 not work currently on Windows platforms. For people thinking that QT could be a
 solution for native implementation, I don't think that QT always integrates
-well with every theme or can be easily themed.
+well with every theme (i.e. *it is damn ugly!*) or can be easily themed.
 
 As of the alternatives that are close to the Electron, the only software that
 seemed to be promising as of the switching was NW.js, yet it is more designed
@@ -101,5 +101,22 @@ Electron-based applications that does not depend on any specific Electron
 version/binary. This practise will save the disk space and other resources,
 since there's no need to run simultaneously multiple Electron binaries with 
 different Chromium engine versions.
+
+## 5. Is this project violating Discord's Terms of Service?
+
+At the current state, it modifies the style of the page via CSS injection and
+tweaks the JavaScript, so I believe **yes**. However, I focus in WebCord on
+spoofing and hiding all modifications done in way Discord can't be sure what and
+how modifications were done (e.g. stylesheets are injected without HTML, so they
+can't be programatically catched via `MutationObserver`), so even when WebCord
+does any modifications, including injecting custom stylesheets, **you should be safe**.
+
+In my eyes, WebCord is the last client from which you should expect to be banned
+by violating the Discord's Terms of Service. I see more risk at using clients
+that directly sends requests to Discord via API, where it could be easy to
+detect abnormal requests that can be send by clients, especially when the API
+version got bumped at official client, or official client mods, which usually
+don't hide the fact they modify something and even sometimes does use directly
+the API without informing the user about it.
 
 [`Repos.md`]: ./Repos.md "List of community-maintained software repositories providing WebCord."

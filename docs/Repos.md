@@ -1,15 +1,19 @@
-# List of community-maintained software repositories providing WebCord.
+## Community-maintained repositories with WebCord.
 
-Most of outside WebCord builds are actually provided by the community!
-This list includes known repositories, with their maintainers.
+Most of WebCord builds outside of GitHub releases are actually provided by the
+community!
 
-| Name               | Maintainer    | Platform           | Homepage                     | Badge (WebCord version)                           |
-| ------------------ | ------------- | ------------------ | ---------------------------- | ------------------------------------------------- |
-| Pi-Apps            | [Botspot]     | RPiOS (Debian,ARM) | [pi-apps.io][pi-apps-home]   | [![Pi-Apps][pi-apps-badge]][pi-apps]              |
-| Pi-Ware            | [oxmc]        | Linux (ARM)        | [pi-ware.ml][pi-ware-home]   | [![Pi-Ware][pi-ware-badge]][pi-ware]              |
-| Debian repository  | [Itai]        | Debian (x86,ARM)   | [itai-nelken.github.io][deb] | [![Unofficial APT repository][debian-badge]][deb] |
-| Flathub repository | [Multiple]    | Linux (x86,ARM)    | [(FlatHub page)][flathub]    | (None, see [website][flathub] for version)        |
-| Scoop/Extras       | [lukesampson] | Windows (x86)      | [scoop.sh]                   | (None)                                            |
+The table below includes known repositories, with their maintainers.
+
+| Name               | Maintainer    | Platform             | Homepage                     | Badge (WebCord version)                           |
+| ------------------ | ------------- | -------------------- | ---------------------------- | ------------------------------------------------- |
+| Pi-Apps            | [Botspot]     | RPiOS (Debian,ARM)   | [pi-apps.io][pi-apps-home]   | [![Pi-Apps][pi-apps-badge]][pi-apps]              |
+| Pi-Ware            | [oxmc]        | Linux (ARM)          | [pi-ware.ml][pi-ware-home]   | [![Pi-Ware][pi-ware-badge]][pi-ware]              |
+| Debian repository  | [Itai]        | Debian (x86,ARM)     | [itai-nelken.github.io][deb] | [![Unofficial APT repository][debian-badge]][deb] |
+| Flathub repository | [Multiple]    | Linux (x86,ARM)      | [(FlatHub page)][flathub]    | (None, see [website][flathub] for version)        |
+| Scoop/Extras       | [lukesampson] | Windows (x86)        | [scoop.sh]                   | (None)                                            |
+| AUR/`webcord`      | [Hanabishi]   | Arch Linux (x86,ARM) | [(AUR page)][src-aur]        | (None, check [AUR][src-aur] for version)          |
+| AUR/`webcord-bin`  | [Hanabishi]   | Arch Linux (x86,ARM) | [(AUR page)][bin-aur]        | (None, check [AUR][src-aur] for version)          |
 
 <!-- Gibberish below: -->
 
@@ -23,8 +27,11 @@ This list includes known repositories, with their maintainers.
 [deb]: https://itai-nelken.github.io/Webcord_debian-repo/ "Unofficial Debian repository (Homepage)"
 [Multiple]: https://github.com/flathub/io.github.spacingbat3.webcord/graphs/contributors
 [flathub]: https://flathub.org/apps/details/io.github.spacingbat3.webcord "Community-maintained Flathub repository."
+[src-aur]: https://aur.archlinux.org/packages/webcord "PKGBUILD for \"stable\" releases built from source."
+[bin-aur]: https://aur.archlinux.org/packages/webcord-bin "PKGBUILD for \"stable\" releases re-packaged from binaries."
 [Botspot]: https://github.com/Botspot
 [Itai]: https://github.com/Itai-Nelken
 [oxmc]: https://github.com/oxmc
 [lukesampson]: https://github.com/lukesampson
+[Hanabishi]: https://github.com/HanabishiRecca
 [scoop.sh]: https://scoop.sh/
