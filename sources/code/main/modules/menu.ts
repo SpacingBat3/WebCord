@@ -108,6 +108,20 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
   }
   const contextMenu = Menu.buildFromTemplate([
     {
+      label: app.getName(),
+      icon: icons.tray.default.resize({height: 16}),
+      enabled: false
+    },
+    { type: "separator" },
+    ...(process.platform !== "win32" ? [{
+      label: strings.tray.toggle,
+      click: () => setImmediate(toogleVisibility)
+    }] : []),
+    {
+      label: strings.help.bugs,
+      click: () => void createGithubIssue().catch(commonCatches.throw)
+    },
+    {
       label: strings.windows.about,
       click: () => showAboutPanel(parent)
     },
@@ -115,15 +129,11 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
       label: strings.windows.docs,
       click: () => void loadDocsWindow(parent).catch(commonCatches.throw)
     },
-    {
-      label: strings.help.bugs,
-      click: () => void createGithubIssue().catch(commonCatches.throw)
-    },
     { type: "separator" },
-    {
+    ...(process.platform === "win32" ? [{
       label: strings.tray.toggle,
-      click: toogleVisibility
-    },
+      click: () => setImmediate(toogleVisibility)
+    }] : []),
     {
       label: strings.tray.quit,
       click: () => app.quit()
