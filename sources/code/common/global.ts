@@ -104,12 +104,45 @@ export const knownInstancesList = Object.freeze([
   ["Freecord",        new URL("https://app.freecord.ir/app"),    true   ],
 ] as const);
 
+/**
+ * An object which type includes information about the WebCord's build
+ * configuration and metadata.
+ */
 export interface buildInfo {
+  /**
+   * This build type. `devel` builds can have access to some features not meant
+   * to be in the production and have access to DevTools by the default.
+   */
   type: "release" | "devel";
+  /**
+   * Full commit hash, used for development builds packaged from git repository.
+   */
   commit?: string | undefined;
-  /** @platform win32 */
+  /**
+   * Application-specific identifier specific to Windows platforms, it should be
+   * `{Company}.{Product}[.SubProduct][.Version]` (all string slices should be
+   *  in `PascalCase`). Defaults to `SpacingBat3.WebCord`. For forks and
+   * community builds, the recommended value of `AppUserModelId` is
+   * `{AuthorOrPackager}.WebCord` or `{Author}.{Name}`.
+   * 
+   * @platform win32
+   */
   AppUserModelId?: string;
+  /**
+   * A list of features specific to this build.
+   */
   features: {
+    /**
+     * Used to disable notifications on new WebCord releases. It does not
+     * disable the update check through to still give an indication of used
+     * version in logs.
+     * 
+     * Notifications should be only disabled for builds whose have a different
+     * way of checking updates and/or updating the WebCord. This mostly applies
+     * to UNIX repositories where the it is a duty of the package manager to
+     * keep the package up-to-date with the upstream repository (in this case,
+     * <https://github.com/SpacingBat3/WebCord.git>).
+     */
     updateNotifications: boolean;
   };
 }
