@@ -32,6 +32,15 @@ export const discordFavicons = Object.freeze({
 });
 
 /**
+ * List of common GPU vendors based on integer indentifier.
+ */
+export const gpuVendors = Object.freeze({
+  nvidia: 0x10DE,
+  amd: 0x1002,
+  intel: 0x8086
+});
+
+/**
  * A generic TypeGuard, used to deeply check if `object` can be merged with another
  * `object` without loosing the existing type structure.
  * 

@@ -3,14 +3,23 @@
  */
 
 import { app } from "electron/main";
+import { gpuVendors } from "../../common/global";
 
 /** Whenever the current process is ran on *nix. */
 const isUnix = process.platform !== "win32" && process.platform !== "darwin";
 
+const isWayland = process.env["XDG_SESSION_TYPE"] === "wayland" || process.env["WAYLAND_DISPLAY"] !== undefined;
+const isWaylandNative = isWayland && (
+  process.argv.includes("--ozone-platform=wayland") ||
+  process.argv.includes("--ozone-hint=auto") ||
+  process.argv.includes("--ozone-hint=wayland")
+);
+
 interface partialGPU {
   gpuDevice: {
     active: boolean;
-    driverVendor: string;
+    vendorId: number;
+    deviceId: number;
   }[];
 }
 
@@ -22,7 +31,9 @@ function hasGPUDevices(object: unknown):object is partialGPU {
   for(const device of (object as partialGPU).gpuDevice) {
     if(!("active" in device) || typeof device.active !== "boolean")
       return false;
-    if(!("driverVendor" in device) || typeof device.driverVendor !== "string")
+    if(!("vendorId" in device) || typeof device.vendorId !== "number")
+      return false;
+    if(!("deviceId" in device) || typeof device.deviceId !== "number")
       return false;
   }
   return true;
@@ -41,45 +52,36 @@ export async function getRecommendedGPUFlags() {
   /**
      * Tries to guess the best GL backend for the current desktop enviroment
      * to use as native instead of ANGLE.
-     * It is `desktop` by default (all platforms) and `egl` for wayland (*nix).
+     * It is `desktop` by default (all platforms) and `egl` on WayLand (*nix).
      */
   let desktopGl:"desktop"|"egl";
 
-  if(isUnix && process.env["XDG_SESSION_TYPE"] === "wayland")
+  if(isUnix && isWayland)
     desktopGl = "egl";
   else
     desktopGl = "desktop";
-
+  let activeGPU = false;
   const flags:([string]|[string,string])[] = [];
   const gpuInfoResult = await app.getGPUInfo("basic");
   if(hasGPUDevices(gpuInfoResult))
-    for(const device of gpuInfoResult.gpuDevice) if(device.active) {
-      switch(device.driverVendor.toLowerCase()) {
+    loop: for(const device of gpuInfoResult.gpuDevice) if(device.active) switch(device.vendorId) {
       // Common desktop GPU vendors.
-        case "intel":
-        case "amd":
-        case "nvidia":
-          flags.push(
+      case gpuVendors.intel:
+      case gpuVendors.amd:
+      case gpuVendors.nvidia:
+        flags.push(
           // use GL/GLES instead ANGLE:
-            ["use-gl", desktopGl],
-            // enable VA-API:
-            ["enable-features", "VaapiVideoDecoder"],
-            ["disable-features", "UseChromeOSDirectVideoDecoder"]
-          );
-          break;
-        // Broadcom cards, commonly used in Raspberry Pi SBCs.
-        case "broadcom":
-          flags.push(
-          /* Even if it does anything, it is a placebo effect
-                         * (at least the last time I have checked, on VC6/RPi4)
-                         * – it will likely do not much harm, even on X11.
-                         */
-            ["use-gl", "egl"]
-          );
-          break;
-      }
-      break;
+          ["use-gl", desktopGl],
+          // enable VA-API:
+          ["enable-features", "VaapiVideoDecoder,VaapiVideoEncoder"],
+          ["disable-features", "UseChromeOSDirectVideoDecoder"]
+        );
+        activeGPU = true;
+        break loop;
     }
+  // Use OpenGL ES driver for Linux ARM devices.
+  if(!activeGPU && isUnix && process.arch === "arm64")
+    flags.push(["use-gl", "egl"]);
   return flags;
 }
 
@@ -94,11 +96,11 @@ export async function getRecommendedGPUFlags() {
 export function getRedommendedOSFlags() {
   const flags: ([string]|[string,string])[] = [];
   if(isUnix) {
-    if(process.argv.includes("--ozone-platform=wayland")) {
+    if(isWaylandNative) {
       flags.push(
         ["enable-features","UseOzonePlatform,WebRTCPipeWireCapturer,WaylandWindowDecorations"]
       );
-    } else if(process.env["XDG_SESSION_TYPE"] === "wayland") {
+    } else if(isWayland) {
       flags.push(
         ["enable-features","WebRTCPipeWireCapturer"]
       );
