@@ -1,4 +1,5 @@
-import type { Server } from "ws";
+import type { Server as WSServer } from "ws";
+import type { Server as HTTPServer } from "http";
 import kolor from "@spacingbat3/kolor";
 import { BrowserWindow, session } from "electron/main";
 
@@ -109,27 +110,52 @@ const messages = {
     nonce: null
   })
 };
+
 /** 
- * Tries to reserve the server using given (inclusive) port range.
+ * Tries to reserve the HTTP and WebSocket server using given (inclusive) port
+ * range.
  * @param start A minimum port that should be assigned to the server.
  * @param end A maximum port that should be assigned to the server.
- * 
- * @returns `Promise`, which always resolves (either to `Server<WebSocket>` on
- *          success or `null` on failure).
  */
 async function getServer(start:number,end:number) {
   const {WebSocketServer} = await import("ws");
+  const {createServer} = await import("http");
+
   function tryServer(port: number) {
-    return new Promise<readonly [Server, number] | null>(resolve => {
+    console.log("start"+port.toString());
+    return new Promise<readonly [WSServer, number, HTTPServer] | null>(resolve => {
       if(port > end) resolve(null);
-      const wss = new WebSocketServer({ host: "127.0.0.1", port: port++ });
-      wss.once("listening", () => {
-        resolve(Object.freeze([wss,port-1] as const));
-        wss.removeAllListeners("error");
+      const server = createServer((req,res) => {
+        if(req.url === "/" && req.method === "GET") {
+          let time:string;
+          switch(Math.floor(Math.random()*5)) {
+            case 0: time = "🕛"; break;
+            case 1: time = "🕐"; break;
+            case 2: time = "🕑"; break;
+            case 3: time = "🕒"; break;
+            case 4: time = "🕓"; break;
+            default: time = "time";
+          }
+          res.writeHead(501);
+          /* Do not take that seriously. I were "drunk" when writting this...
+           * or maybe I "lacked time" to find out what Discord exactly does and
+           * I've did this placeholder? Hell if I knew ;)
+           */
+          res.write(JSON.stringify({"description": "I'm too lazy and lack "+time+" to finish this… Buy me a 🍺 and maybe I'll change my mind!"}));
+          res.end();
+        } else {
+          res.writeHead(400);
+          res.write(JSON.stringify({"description": "Invalid request!"}));
+          res.end();
+        }
       });
-      wss.once("error", () => {
+      server.listen(port++,"127.0.0.1");
+      server.once("error", () => {
         resolve(tryServer(port));
-        wss.close();
+        server.close();
+      });
+      server.once("listening", () => {
+        resolve(Object.freeze([new WebSocketServer({ server }),port-1,server] as const));
       });
     });
   }
