@@ -97,11 +97,13 @@ export const protocols = Object.freeze({
  * ones.
  */
 export const knownInstancesList = Object.freeze([
-  /* NAME                            URL                           ACTIVE */
-  ["Discord",         new URL("https://discord.com/app"),            true ],
-  ["Discord Canary",  new URL("https://canary.discord.com/app"),     true ],
-  ["Fosscord",        new URL("https://staging.fosscord.com/app"),   true ],
-  ["Freecord",        new URL("https://app.freecord.ir/app"),        true ],
+  /* NAME                                    URL                           ACTIVE */
+  ["Discord",                  new URL("https://discord.com/app"),           true ],
+  ["Discord Canary",           new URL("https://canary.discord.com/app"),    true ],
+  ["Discord Public Test Beta", new URL("https://ptb.discord.com/app"),       true ],
+  ["Fosscord",                 new URL("https://dev.fosscord.com/app"),     false ],
+  ["Fosscord Staging",         new URL("https://staging.fosscord.com/app"),  true ],
+  ["Freecord",                 new URL("https://app.freecord.ir/app"),       true ],
 ] as const);
 
 /**
