@@ -305,7 +305,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     // Stop code execution on Fosscord instances.
     const currentInstance = knownInstancesList
       .find((value) => value[1].origin === new URL(win.webContents.getURL()).origin);
-    if (currentInstance?.[2] !== true) {
+    if (!(currentInstance?.[1].hostname.endsWith("discord.com")??true)) {
       setFavicon = faviconHash;
       icon = appInfo.icons.tray.default;
       win.flashFrame(false);
