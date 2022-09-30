@@ -93,11 +93,13 @@ w aplikacji. Szczególnie zaleca się również zapoznanie się z
 [licencją tego oprogramowania](../../LICENSE).
 
 - [Lista funkcji WebCord'a](../Features.md)
+- [Community maintained repositories providing WebCord](../Repos.md)
 - [Często zadawane pytania](../FAQ.md)
   - *[Który plik powinienem ściągnąć?](../FAQ.md#1-which-file-i-should-download)*
   - *[Treść nie wczytuje się prawidłowo...](../FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
   - *[Jak zezwolić na dostęp do mikrofonu?](../FAQ.md#3-how-to-get-a-microphone-permission-for-webcord)*
   - *[Dlaczego Electron?](../FAQ.md#4-why-electron)*
+  - *[Czy korzystanie z WebCord'a łamie Warunki Świadczenia Usługi?](../FAQ.md#5-is-this-project-violating-discords-terms-of-service)*
 - [Przęłączniki linii poleceń / budowania aplikacji](../Flags.md)
   - [Przełączniki linii poleceń](../Flags.md#command-line-runtime-flags)
   - [Przełączniki budowania](../Flags.md#build-flags)

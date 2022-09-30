@@ -101,6 +101,7 @@ It is strongly advised to read the [application license](../LICENSE) as well.
   - *[Content does not load properly...](FAQ.md#2-imagevideocontent-does-not-load-properly-is-there-anything-i-can-do-about-it)*
   - *[How to grant permission to microphone?](FAQ.md#3-how-to-get-a-microphone-permission-for-webcord)*
   - *[Why Electron?](FAQ.md#4-why-electron)*
+  - *[What about ToS?](FAQ.md#5-is-this-project-violating-discords-terms-of-service)*
 - [Command line / build flags](Flags.md)
   - [Command line (runtime) flags](Flags.md#command-line-runtime-flags)
   - [Build Flags](Flags.md#build-flags)
