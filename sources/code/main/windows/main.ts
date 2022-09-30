@@ -64,7 +64,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       enableWebSQL: false,
       webgl: configData.get().settings.advanced.webApi.webGl,
       safeDialogs: true, // prevents dialog spam by the website
-      autoplayPolicy: "no-user-gesture-required"
+      autoplayPolicy: "no-user-gesture-required",
+      disableBlinkFeatures: configData.get().settings.advanced.webApi.idleDetector ? "" : "IdleDetection"
     },
     ...(process.platform !== "win32" ? {icon: appInfo.icons.app} : {}),
   });

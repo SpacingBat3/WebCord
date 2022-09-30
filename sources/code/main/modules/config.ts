@@ -107,7 +107,8 @@ const defaultAppConfig = {
         gpu: false
       },
       webApi: {
-        webGl: true
+        webGl: true,
+        idleDetector: false
       },
       unix: {
         autoscroll: false
