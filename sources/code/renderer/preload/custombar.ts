@@ -8,7 +8,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const divs = document.body.getElementsByTagName("div");
   for (const element of divs) {
     const action = element.dataset["action"];
-    if (action){
+    if (action !== undefined){
       element.onclick = function (){
         ipc.send(action);
       };
