@@ -26,47 +26,6 @@ install();
 import crash, {commonCatches} from "../main/modules/error";
 crash();
 
-// Optional debug logging implementation by overwritting the global `console` method.
-console.debug = function (msg?:unknown, ...optionalParams:unknown[]) {
-  Promise.all([import("electron"),import("@spacingbat3/kolor")])
-    .then(([Electron,colors]) => [Electron.app.commandLine, colors.default] as const)
-    .then(([cmd,colors]) => {
-      if (cmd.hasSwitch("verbose")||cmd.hasSwitch("v"))
-        if(typeof msg === "string")
-          console.log(colors.gray(msg), ...optionalParams);
-        else
-          console.log(msg, ...optionalParams);
-    }).catch(commonCatches.print);
-};
-
-// Colorize output on errors/warnings
-{
-  const stdErr = console.error;
-  const stdWarn = console.warn;
-  console.error = (...data:unknown[]) => {
-    import("@spacingbat3/kolor").then(colors => colors.default).then(colors => {
-      data.map((message) => {
-        if(typeof message === "string")
-          return colors.red(message);
-        else
-          return message;
-      });
-      stdErr(...data);
-    }).catch(commonCatches.print);
-  };
-  console.warn = (...data:unknown[]) => {
-    import("@spacingbat3/kolor").then(colors => colors.default).then(colors => {
-      data.map((message) => {
-        if(typeof message === "string")
-          return colors.yellow(message);
-        else
-          return message;
-      });
-      stdWarn(...data);
-    }).catch(commonCatches.print);
-  };
-}
-
 import { app, BrowserWindow, dialog, session } from "electron/main";
 import { shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
@@ -142,6 +101,39 @@ let overwriteMain: (() => unknown) | undefined;
       .split("=")[0] === sw.symbol(flag)+(isNotUnix ? flag.toLowerCase() : flag)
       .replace("-",sw.break)
   )?.split("=")[1] ?? null;
+
+  // Colorize output on errors/warnings and handle debug logging.
+  {
+    const modules = Promise.all([
+      import("console"),
+      import("@spacingbat3/kolor").then(colors => colors.default)
+    ]);
+    console.error = (...data:unknown[]) => void modules.then(([console,colors]) => {
+      console.error(...data.map((message,index) => {
+        if(typeof message === "string" && index === 0)
+          return colors.red(message);
+        else
+          return message;
+      }));
+    }).catch(commonCatches.print);
+    console.warn = (...data:unknown[]) => void modules.then(([console,colors]) => {
+      console.warn(...data.map((message,index) => {
+        if(typeof message === "string" && index === 0)
+          return colors.red(message);
+        else
+          return message;
+      }));
+    }).catch(commonCatches.print);
+    console.debug = (...data:unknown[]) => void modules.then(([console,colors]) => {
+      if (hasSwitch("verbose")||hasSwitch("v"))
+        console.debug(...data.map((message,index) => {
+          if(typeof message === "string" && index === 0)
+            return colors.gray(message);
+          else
+            return message;
+        }));
+    }).catch(commonCatches.print);
+  }
 
   // Mitigations to "unsafe" command-line switches
   if (getBuildInfo().type !== "devel")
