@@ -173,12 +173,14 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         .reduce((previousValue,currentValue) => (previousValue??false) && (currentValue??false))??true;
     };
     /** Common handler for  */
-    const permissionHandler = function (webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null {
+    const permissionHandler = (type:"request"|"check",webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null => {
       // Verify URL adress of the permissions.
       try {
         const webContents = new URL(webContentsUrl);
-        if(webContents.origin !== trustedURLs[0] && webContents.protocol !== trustedURLs[1])
+        if(webContents.origin !== trustedURLs[0] && webContents.protocol !== trustedURLs[1]) {
+          console.debug("[PERM]: Origin of request for '%s' not trusted.", permission);
           return false;
+        }
       } catch {
         // Deny invalid URLs (and show warning).
         return null;
@@ -197,8 +199,12 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           else if("mediaType" in details && details.mediaType !== "unknown")
             callbackValue = getMediaTypesPermission([details.mediaType]) &&
               configData.get().settings.privacy.permissions[details.mediaType];
+          else if(process.versions.electron.startsWith("21."))
+            callbackValue = type === "request";
           else
             callbackValue = false;
+          if(!callbackValue)
+            console.debug("[PERM]: Permission denied for a request to media.");
           return callbackValue;
         }
         case "notifications":
@@ -211,7 +217,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     };
     win.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
       const requestUrl = (webContents !== null && webContents.getURL() !== "" ? webContents.getURL() : requestingOrigin);
-      const returnValue = permissionHandler(requestUrl,permission,details);
+      const returnValue = permissionHandler("check",requestUrl,permission,details);
       if(returnValue === null) {
         console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, new URL(requestUrl), permission);
         return false;
@@ -219,7 +225,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       return returnValue;
     });
     win.webContents.session.setPermissionRequestHandler((webContents, permission, callback, details) => {
-      const returnValue = permissionHandler(webContents.getURL(), permission, details);
+      const returnValue = permissionHandler("request",webContents.getURL(), permission, details);
       switch(returnValue) {
         // WebCord does not recognize the permission – it should be denied.
         case null:
@@ -456,8 +462,10 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         if(lock || win.getBrowserViews().length !== 0)
           return new Error("Main process is busy by another request.");
         // Fail when client has denied the permission to the capturer.
-        if(!configData.get().settings.privacy.permissions["display-capture"])
-          return new DOMException("Permission denied", "NotAllowedError");
+        if(!configData.get().settings.privacy.permissions["display-capture"]) {
+          resolvePromise("Permission denied");
+          return;
+        }
         lock = !app.commandLine.getSwitchValue("enable-features")
           .includes("WebRTCPipeWireCapturer") ||
           process.env["XDG_SESSION_TYPE"] !== "wayland" ||
