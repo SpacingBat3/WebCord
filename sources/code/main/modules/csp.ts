@@ -85,6 +85,7 @@ const csp: {base:CSP}&cspTP<CSP> = {
     "script-src": "'self' 'unsafe-eval' 'unsafe-inline' "+
       "https://cdn.discordapp.com/animations/",
     "worker-src": "'self'",
+    "font-src": "'self'",
     "style-src": "'self' 'unsafe-inline' https://cdn.discordapp.com",
     "img-src": "'self' blob: data: https://*.discordapp.net "+
       "https://*.discordapp.com https://*.discord.com",
@@ -137,10 +138,12 @@ const csp: {base:CSP}&cspTP<CSP> = {
   }),
   soundcloud: new CSP({ "frame-src": "https://w.soundcloud.com/player/" }),
   spotify: new CSP({
-    "script-src": "https://open.scdn.co",
-    "img-src": "https://open.scdn.co https://i.scdn.co/",
-    "connect-src": "wss://dealer.spotify.com https://api.spotify.com",
-    "frame-src": "https://open.spotify.com/embed/"
+    "script-src": "https://open.spotifycdn.com/cdn/build/embed/",
+    "img-src": "https://open.spotifycdn.com/cdn/images/ https://i.scdn.co/image/",
+    "style-src": "https://open.spotifycdn.com/cdn/build/embed/",
+    "connect-src": "wss://dealer.spotify.com https://api.spotify.com https://open.spotifycdn.com/cdn/generated-locales/embed/",
+    "frame-src": "https://open.spotify.com/",
+    "media-src": "https://p.scdn.co/mp3-preview/"
   }),
   streamable: new CSP({ "media-src": "https://streamable.com" }),
   twitch: new CSP({

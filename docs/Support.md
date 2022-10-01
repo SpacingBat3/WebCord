@@ -63,6 +63,35 @@ electron$v $path
 *(Replace `$v` and `$path` with actual version number and path to the extracted*
 *`app.asar`.)*
 
+## Supported enviroments
+
+### *nix on Wayland
+
+Currently, Wayland support is hit or miss and it is going to be greatly
+dependant on sofware bugs within Electron/Chromium or `xdg-desktop-portals`
+implementations (in case of screen share) or some kind of inconsistences.
+Moreover, many browsers run in XWayland by the default – in both Chromium and
+Firefox, native Wayland seems to be treated as an experimental feature and you
+will have to opt-in for it either via command-line flags or some kind of hidden,
+*advanced* configuration like `chrome://flags` or `about:config`. The same is
+with WebCord: you will have to put any flag that enables Wayland on Chromium
+like `--ozone-platform=wayland`, `--ozone-hint=auto` or `--ozone-hint=wayland`.
+The first one is going to be recommended since it also enables some integrations
+done in WebCord (two other flags might be supported as well in WebCord `3.8.5`
+or newer).
+
+So, while on upstream Wayland support varies, on WebCord side however I believe
+I did the most I could for it to work well on Wayland. Unlike many Electron
+apps, mine does integrate well with native portals and `PipeWireCapturer` for
+screen sharing on Wayland and XWayland (i.e. X11 with `XDG_SESSION=wayland` or
+`WAYLAND_DESKTOP` env being set to any value) by the default. I've also
+implemented some code for accelerated VA-API decoding / encoding and for
+automatically enabling OpenGL or GLES when the user has opted-in for
+experimental flags (which is broken on non-NVidia desktops, at least until
+`3.8.5` gets released).
+
+
+
 [repo]: https://github.com/SpacingBat3/WebCord "GitHub: SpacingBat3/WebCord"
 [issue3797]: https://github.com/electron/electron/issues/3797 "Add FreeBSD support to electron • Issue #3797 • electron/electron"
 [issue9662]: https://github.com/electron/electron/issues/9662 "musl libc support • Issue #9662 • electron/electron"

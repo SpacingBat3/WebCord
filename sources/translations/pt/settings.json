@@ -12,7 +12,14 @@
     "general": {
         "name": "Geral",
         "menuBar": {
-            "name": "Barra de menu"
+            "name": "Barra de menu",
+            "description": "Altera as configurações de visibilidade da barra nativa de menu.",
+            "labels": {
+                "hide": "Esconde a barra de menu automaticamente (tecla <kbd>ALT</kbd> altera a visibilidade)."
+            }
+        },
+        "tray": {
+            "description": "Altera a visibilidade do ícone na área de notificação do sistema."
         }
     }
 }
