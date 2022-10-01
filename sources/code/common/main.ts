@@ -27,15 +27,15 @@ import crash, {commonCatches} from "../main/modules/error";
 crash();
 
 // Optional debug logging implementation by overwritting the global `console` method.
-console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
+console.debug = function (msg?:unknown, ...optionalParams:unknown[]) {
   Promise.all([import("electron"),import("@spacingbat3/kolor")])
     .then(([Electron,colors]) => [Electron.app.commandLine, colors.default] as const)
     .then(([cmd,colors]) => {
       if (cmd.hasSwitch("verbose")||cmd.hasSwitch("v"))
-        if(typeof message === "string")
-          console.log(colors.gray(message), ...optionalParams);
+        if(typeof msg === "string")
+          console.log(colors.gray(msg), ...optionalParams);
         else
-          console.log(message, ...optionalParams);
+          console.log(msg, ...optionalParams);
     }).catch(commonCatches.print);
 };
 
@@ -43,23 +43,30 @@ console.debug = function (message?:unknown, ...optionalParams:unknown[]) {
 {
   const stdErr = console.error;
   const stdWarn = console.warn;
-  console.error = function (message?:unknown, ...optionalParams:unknown[]) {
+  console.error = (...data:unknown[]) => {
     import("@spacingbat3/kolor").then(colors => colors.default).then(colors => {
-      if(typeof message === "string")
-        stdErr(colors.red(message), ...optionalParams);
-      else
-        stdErr(message, ...optionalParams);
+      data.map((message) => {
+        if(typeof message === "string")
+          return colors.red(message);
+        else
+          return message;
+      });
+      stdErr(...data);
     }).catch(commonCatches.print);
   };
-  console.warn = function (message?, ...optionalParams:unknown[]) {
+  console.warn = (...data:unknown[]) => {
     import("@spacingbat3/kolor").then(colors => colors.default).then(colors => {
-      if(typeof message === "string")
-        stdWarn(colors.yellow(message), ...optionalParams);
-      else
-        stdWarn(message, ...optionalParams);
+      data.map((message) => {
+        if(typeof message === "string")
+          return colors.yellow(message);
+        else
+          return message;
+      });
+      stdWarn(...data);
     }).catch(commonCatches.print);
   };
 }
+
 import { app, BrowserWindow, dialog, session } from "electron/main";
 import { shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
@@ -136,18 +143,18 @@ let overwriteMain: (() => unknown) | undefined;
       .replace("-",sw.break)
   )?.split("=")[1] ?? null;
 
-  // Mitigations to *unsafe* command-line switches
+  // Mitigations to "unsafe" command-line switches
   if (getBuildInfo().type !== "devel")
     for(const cmdSwitch of [
       "inspect-brk",
       "inspect-port",
       "inspect",
       "inspect-publish-uid"
-    ]) if(app.commandLine.hasSwitch(cmdSwitch))
-    {
+    ]) if(app.commandLine.hasSwitch(cmdSwitch)) {
       console.info("Unsafe switch detected: '--"+cmdSwitch+"'! It will be removed from Chromium's cmdline…");
       app.commandLine.removeSwitch(cmdSwitch);
     }
+  // Show "help" message on proper flags
   if (hasSwitch("h")||hasSwitch("?")||hasSwitch("help")) {
     const argv0 = process.argv0.endsWith("electron") && process.argv.length > 2 ?
       (process.argv[0]??"") + ' "'+(process.argv[1]??"")+'"' : process.argv0;
