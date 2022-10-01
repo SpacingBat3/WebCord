@@ -14,6 +14,7 @@ The table below includes known repositories, with their maintainers.
 | Scoop/Extras       | [lukesampson] | Windows (x86)        | [scoop.sh]                   | (None)                                            |
 | AUR/`webcord`      | [Hanabishi]   | Arch Linux (x86,ARM) | [(AUR page)][src-aur]        | (None, check [AUR][src-aur] for version)          |
 | AUR/`webcord-bin`  | [Hanabishi]   | Arch Linux (x86,ARM) | [(AUR page)][bin-aur]        | (None, check [AUR][src-aur] for version)          |
+| CachyOS/`cachyos`  | [CachyOS]     | Arch Linux (x86,ARM) | [cachyos.org][cachyos]       | (None)                                            |
 
 <!-- Gibberish below: -->
 
@@ -35,3 +36,5 @@ The table below includes known repositories, with their maintainers.
 [lukesampson]: https://github.com/lukesampson
 [Hanabishi]: https://github.com/HanabishiRecca
 [scoop.sh]: https://scoop.sh/
+[CachyOS]: https://github.com/CachyOS/
+[cachyos]: https://wiki.cachyos.org/en/home/Repo "CachyOS Wiki – Adding repositories"
