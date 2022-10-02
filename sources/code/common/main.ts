@@ -104,29 +104,27 @@ let overwriteMain: (() => unknown) | undefined;
 
   // Colorize output on errors/warnings and handle debug logging.
   {
-    const modules = Promise.all([
-      import("console"),
-      import("@spacingbat3/kolor").then(colors => colors.default)
-    ]);
-    console.error = (...data:unknown[]) => void modules.then(([console,colors]) => {
-      console.error(...data.map((message,index) => {
+    const colors = import("@spacingbat3/kolor").then(colors => colors.default);
+    const std = console;
+    console.error = (...data:unknown[]) => void colors.then(colors => {
+      std.error(...data.map((message,index) => {
         if(typeof message === "string" && index === 0)
           return colors.red(message);
         else
           return message;
       }));
     }).catch(commonCatches.print);
-    console.warn = (...data:unknown[]) => void modules.then(([console,colors]) => {
-      console.warn(...data.map((message,index) => {
+    console.warn = (...data:unknown[]) => void colors.then(colors => {
+      std.warn(...data.map((message,index) => {
         if(typeof message === "string" && index === 0)
           return colors.red(message);
         else
           return message;
       }));
     }).catch(commonCatches.print);
-    console.debug = (...data:unknown[]) => void modules.then(([console,colors]) => {
+    console.debug = (...data:unknown[]) => void colors.then(colors => {
       if (hasSwitch("verbose")||hasSwitch("v"))
-        console.debug(...data.map((message,index) => {
+        std.log(...data.map((message,index) => {
           if(typeof message === "string" && index === 0)
             return colors.gray(message);
           else

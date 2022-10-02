@@ -1,4 +1,8 @@
+import type { ElectronLatest } from "../../common/global";
 import { commonCatches } from "./error";
+
+const SafeStorage: Promise<ElectronLatest["safeStorage"]|undefined> = (import("electron/main") as unknown as Promise<ElectronLatest>)
+  .then(main => main.safeStorage);
 
 async function fetchOrRead(file:string, signal?:AbortSignal) {
   const [
@@ -49,16 +53,19 @@ async function parseImports(cssString: string):Promise<string> {
 
 async function addStyle(path:string) {
   const [
-    { app, safeStorage, dialog },
+
+    { app, dialog },
     { readFile, writeFile },
-    { resolve, basename }
+    { resolve, basename },
+    safeStorage
   ] = await Promise.all([
     import("electron/main"),
     import("fs/promises"),
-    import("path")
+    import("path"),
+    SafeStorage
   ]);
   function optionalCrypt(buffer:Buffer) {
-    if(safeStorage.isEncryptionAvailable())
+    if(safeStorage?.isEncryptionAvailable() === true)
       return safeStorage.encryptString(buffer.toString());
     return buffer.toString();
   }
@@ -86,15 +93,17 @@ async function addStyle(path:string) {
  */
 async function loadStyles(webContents:Electron.WebContents) {
   const [
-    { app, safeStorage },
+    { app },
     { readFile, readdir },
     { watch, existsSync, mkdirSync, statSync },
-    { resolve }
+    { resolve },
+    safeStorage
   ] = await Promise.all([
     import("electron/main"),
     import("fs/promises"),
     import("fs"),
-    import("path")
+    import("path"),
+    SafeStorage
   ]);
   const stylesDir = resolve(app.getPath("userData"),"Themes");
   if(!existsSync(stylesDir)) mkdirSync(stylesDir, {recursive:true});
@@ -111,13 +120,13 @@ async function loadStyles(webContents:Electron.WebContents) {
         Promise.all(promises).then(dataArray => {
           const themeIDs:Promise<string>[] = [];
           const decrypt = async (string:Buffer) => {
-            if(!safeStorage.isEncryptionAvailable() && !app.isReady())
+            if(safeStorage?.isEncryptionAvailable() === false && !app.isReady())
               await app.whenReady();
-            if(!safeStorage.isEncryptionAvailable())
+            if(safeStorage?.isEncryptionAvailable() === false)
               return string.toString();
             if(!string.toString("utf-8").includes("�"))
               throw new Error("One of loaded styles was not encrypted and could not be loaded.");
-            return safeStorage.decryptString(string);
+            return safeStorage ? safeStorage.decryptString(string) : string.toString();
           };
           for(const data of dataArray)
             themeIDs.push(
