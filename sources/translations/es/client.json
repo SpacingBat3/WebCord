@@ -30,7 +30,78 @@
             "redo": "Rehacer"
         },
         "view": {
-            "groupName": "Ver"
+            "groupName": "Ver",
+            "reload": "",
+            "forceReload": "",
+            "devTools": "",
+            "resetZoom": "",
+            "zoomIn": "",
+            "zoomOut": "",
+            "fullScreen": ""
+        },
+        "window": {
+            "groupName": "",
+            "mobileMode": ""
         }
+    },
+    "dialog": {
+        "externalApp": {
+            "message": "",
+            "title": ""
+        },
+        "screenShare": {
+            "sound": {
+                "unavailable": "",
+                "system": ""
+            },
+            "close": "",
+            "source": {
+                "entire": "",
+                "screen": ""
+            }
+        },
+        "ver": {
+            "devel": "",
+            "updateBadge": "",
+            "updateTitle": "",
+            "update": "",
+            "recent": "",
+            "downgrade": ""
+        },
+        "common": {
+            "warning": "",
+            "continue": "",
+            "error": "",
+            "yes": "",
+            "no": "",
+            "source": ""
+        },
+        "permission": {
+            "request": {
+                "denied": ""
+            },
+            "check": {
+                "denied": ""
+            }
+        },
+        "mod": {
+            "nodeExt": "",
+            "crx": ""
+        }
+    },
+    "log": {
+        "singleInstance": "",
+        "listenPort": ""
+    },
+    "windows": {
+        "settings": "",
+        "about": "",
+        "docs": "",
+        "invite": ""
+    },
+    "help": {
+        "groupName": "",
+        "repo": "",
+        "bugs": ""
     }
 }
