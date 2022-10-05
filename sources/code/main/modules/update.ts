@@ -5,12 +5,16 @@
 import { app, Notification, net } from "electron/main";
 import { shell } from "electron/common";
 import { appInfo, getBuildInfo } from "../../common/modules/client";
-import fetch from "electron-fetch";
+import fetchPolyfill from "electron-fetch";
 import l10n from "../../common/modules/l10n";
 import * as semver from "semver";
 import kolor from "@spacingbat3/kolor";
 import { commonCatches } from "./error";
 import { AppConfig } from "./config";
+
+const fetch = (global.fetch as typeof global.fetch|undefined) ?
+  global.fetch :
+  fetchPolyfill;
 
 /**
  * Checks and notifies users about the updates.
@@ -29,7 +33,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
   // An alias to app's repository name.
   const repoName = appInfo.repository.name;
   let updateMsg: string, showGui = false;
-  const githubApi:Record<string,string> = await (await fetch("https://api.github.com/repos/" + repoName + "/releases/latest")).json();
+  const githubApi = await ((await fetch("https://api.github.com/repos/" + repoName + "/releases/latest")).json() as Promise<Record<string,string>>);
   if(githubApi["tag_name"] === undefined || githubApi["html_url"] === undefined) return;
   switch(semver.compare(githubApi["tag_name"],app.getVersion())) {
     case 0:

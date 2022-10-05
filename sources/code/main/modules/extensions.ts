@@ -7,7 +7,7 @@ const SafeStorage: Promise<ElectronLatest["safeStorage"]|undefined> = (import("e
 async function fetchOrRead(file:string, signal?:AbortSignal) {
   const [
     { readFile },
-    fetch
+    fetchPolyfill
   ] = await Promise.all([
     import("fs/promises"),
     import("electron-fetch").then(fetch => fetch.default)
@@ -16,8 +16,10 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
   const url = new URL(file);
   if(url.protocol === "file:")
     return { read: readFile(url.pathname, {signal}) };
-  else
+  else if((fetch as typeof global.fetch|undefined) !== undefined)
     return { download: fetch(url.href, (signal ? {signal} : {})) };
+  else
+    return { download: fetchPolyfill(url.href, (signal) ? {signal} : {})};
 }
 
 /**

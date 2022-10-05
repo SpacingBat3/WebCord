@@ -41,6 +41,56 @@ import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
+import { parseArgs } from "util";
+import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
+
+const argvOptions = Object.freeze({
+  "help": { type: "boolean", short: "h" },
+  /** An alias to `help` command-line option. */
+  "info": { type: "boolean", short: "?" },
+  "version": { type: "boolean", short: "v" },
+  "start-minimized": { type: "boolean", short: "m" },
+  "export-l10n": { type: "string" },
+  "verbose": { type: "boolean", short: "v" },
+  "user-agent-mobile": { type: "boolean" },
+  "user-agent-version": { type: "string" },
+  "user-agent-device": { type: "string" },
+  "user-agent-platform": { type: "string" },
+  "force-audio-share-support": { type: "boolean" },
+  "add-css-theme": { type: "string" },
+  "gpu-info": { type: "string" }
+} as const);
+
+const argv = Object.freeze(
+  (parseArgs as undefined|typeof import("util").parseArgs) ?
+    // Use native method if supported by Electron (needs Node 18+)
+    parseArgs({options: argvOptions, strict: true}) :
+    // Use polyfill, for compatibility with the older Node versions
+    parseArgsPolyfill({options: argvOptions, strict: true})
+);
+{
+  const stdWarn=console.warn,stdError=console.error;
+  console.error = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
+    .then(kolor => kolor.default)
+    .then(kolor => {
+      stdError(typeof message === "string" ? kolor.red(message) : message, ...optionalParams);
+    })
+  );
+
+  console.warn = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
+    .then(kolor => kolor.default)
+    .then(kolor => {
+      stdWarn(typeof message === "string" ? kolor.yellow(message) : message, ...optionalParams);
+    })
+  );
+}
+console.debug = ((message:unknown,...optionalParams:unknown[]) => void Promise.all([
+  import("console").then(console => console.default),
+  import("@spacingbat3/kolor").then(kolor => kolor.default)
+] as const).then(([console,kolor]) => {
+  if(argv.values.verbose === true)
+    console.debug(typeof message === "string" ? kolor.yellow(message) : message, ...optionalParams);
+}));
 
 // Set AppUserModelID on Windows
 {
@@ -69,72 +119,16 @@ const userAgent: Partial<{
 let overwriteMain: (() => unknown) | undefined;
 
 {
-  /** Whenever current platform is not unix (i.e. is Windows). */
-  const isNotUnix = process.platform === "win32";
-  
-  /** Constant variable with platform-specific switch properties. */
-  const sw = {
-    /** A symbol that indentifies the switch from the other arguments. */
-    symbol: (sw:string) => isNotUnix ? "/" : sw.length === 1 ? "-" : "--",
-    /** A character that separates words in switch. */
-    break: isNotUnix ? "" : "-"
-  };
-  
   /** Renders a line from the list of the parameters and their descripiton. */
   const renderLine = (parameters:string[], description:string, length?:number) => {
-    const parameter = parameters.map(p => sw.symbol(p)+p.replace("-",sw.break)).join("  ");
+    const parameter = parameters.map(p => (p.length === 1 ? "-" : "--")+p).join("  ");
     // eslint-disable-next-line no-control-regex
     const spaceBetween = (length ?? 30) - parameter.replace(/\x1B\[[^m]+m/g, "").length;
     return "  "+kolor.green(parameter)+" ".repeat(spaceBetween)+kolor.gray(description);
   };
-  
-  /** Searchs and checks whenever given switch argument exists. */
-  const hasSwitch = (flag:string) => process.argv.find(
-    arg => (isNotUnix ? arg.toLowerCase() : arg)
-      .split("=")[0] === sw.symbol(flag)+(isNotUnix ? flag.toLowerCase() : flag)
-      .replace("-",sw.break)
-  ) !== undefined;
-
-  /** Returns the value of given switch argument of `null` if it does not exists.*/
-  const getSwitchValue = (flag:string) => process.argv.find(
-    arg => (isNotUnix ? arg.toLowerCase() : arg)
-      .split("=")[0] === sw.symbol(flag)+(isNotUnix ? flag.toLowerCase() : flag)
-      .replace("-",sw.break)
-  )?.split("=")[1] ?? null;
-
-  // Colorize output on errors/warnings and handle debug logging.
-  {
-    const colors = import("@spacingbat3/kolor").then(colors => colors.default);
-    const std = console;
-    console.error = (...data:unknown[]) => void colors.then(colors => {
-      std.error(...data.map((message,index) => {
-        if(typeof message === "string" && index === 0)
-          return colors.red(message);
-        else
-          return message;
-      }));
-    }).catch(commonCatches.print);
-    console.warn = (...data:unknown[]) => void colors.then(colors => {
-      std.warn(...data.map((message,index) => {
-        if(typeof message === "string" && index === 0)
-          return colors.red(message);
-        else
-          return message;
-      }));
-    }).catch(commonCatches.print);
-    console.debug = (...data:unknown[]) => void colors.then(colors => {
-      if (hasSwitch("verbose")||hasSwitch("v"))
-        std.log(...data.map((message,index) => {
-          if(typeof message === "string" && index === 0)
-            return colors.gray(message);
-          else
-            return message;
-        }));
-    }).catch(commonCatches.print);
-  }
 
   // Mitigations to "unsafe" command-line switches
-  if (getBuildInfo().type !== "devel")
+  if(getBuildInfo().type !== "devel")
     for(const cmdSwitch of [
       "inspect-brk",
       "inspect-port",
@@ -145,7 +139,7 @@ let overwriteMain: (() => unknown) | undefined;
       app.commandLine.removeSwitch(cmdSwitch);
     }
   // Show "help" message on proper flags
-  if (hasSwitch("h")||hasSwitch("?")||hasSwitch("help")) {
+  if(argv.values.help === true || argv.values.info === true) {
     const argv0 = process.argv0.endsWith("electron") && process.argv.length > 2 ?
       (process.argv[0]??"") + ' "'+(process.argv[1]??"")+'"' : process.argv0;
     console.log([
@@ -178,27 +172,29 @@ let overwriteMain: (() => unknown) | undefined;
     ].sort().join("\n")+"\n");
     app.exit();
   }
-  if (hasSwitch("version") || hasSwitch("V")) {
+  if(argv.values.version === true) {
     console.log(app.getName() + " v" + app.getVersion());
     app.exit();
   }
-  if (hasSwitch("user-agent-mobile"))
+  if(argv.values["user-agent-mobile"] === true)
     userAgent.mobile = true;
 
-  if(hasSwitch("user-agent-platform") || hasSwitch("user-agent-version") || hasSwitch("user-agent-device"))
+  if("user-agent-device" in argv.values ||
+      "user-agent-version" in argv.values ||
+      "user-agent-platform" in argv.values)
     userAgent.replace = {
-      platform: getSwitchValue("user-agent-platform") ?? process.platform,
-      version: getSwitchValue("user-agent-version") ?? process.getSystemVersion(),
-      device: getSwitchValue("user-agent-device") ?? ""
+      platform: argv.values["user-agent-platform"] ?? process.platform,
+      version: argv.values["user-agent-version"] ?? process.getSystemVersion(),
+      device: argv.values["user-agent-device"] ?? ""
     };
     
-  if (hasSwitch("start-minimized") || hasSwitch("m"))
+  if(argv.values["start-minimized"] === true)
     startHidden = true;
-  if (hasSwitch("export-l10n")) {
+  if("export-l10n" in argv.values) {
     overwriteMain = () => {
       const locale = new l10n;
-      const directory = getSwitchValue("export-l10n");
-      if(directory === null) return;
+      const directory = argv.values["export-l10n"];
+      if(directory === undefined) return;
       const filePromise: Promise<void>[] = [];
       for (const file of Object.keys(locale) as (keyof typeof locale)[])
         filePromise.push(
@@ -230,8 +226,8 @@ let overwriteMain: (() => unknown) | undefined;
       });
     };
   }
-  if (hasSwitch("gpu-info")) {
-    const param = getSwitchValue("gpu-info");
+  if("gpu-info" in argv.values) {
+    const param = argv.values["gpu-info"];
     switch(param) {
       case "basic":
       case "complete":
@@ -247,11 +243,11 @@ let overwriteMain: (() => unknown) | undefined;
         throw new Error("Flag 'gpu-info' should include a value of type '\"basic\"|\"complete\"'.");
     }
   }
-  if(hasSwitch("force-audio-share-support"))
+  if(argv.values["force-audio-share-support"] === true)
     screenShareAudio = true;
-  if(hasSwitch("add-css-theme")) {
-    const path = getSwitchValue("add-css-theme");
-    if(path === null || !existsSync(path))
+  if("add-css-theme" in argv.values) {
+    const path = argv.values["add-css-theme"];
+    if(path === undefined || !existsSync(path))
       throw new Error("Flag 'add-css-theme' should include a value of type '{path}'.");
     if(!path.endsWith(".theme.css"))
       throw new Error("Value of flag 'add-css-theme' should point to '*.theme.css' file.");
