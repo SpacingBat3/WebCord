@@ -13,7 +13,8 @@
             "name": "Tray",
             "description": "Changes the visibility of the icon in the system tray.",
             "labels": {
-                "disable": "Disable hiding window to the system tray functionality."
+                "disable": "Disable hiding window to the system tray functionality.",
+                "quitOnClose": "Close tray when closing the window."
             }
         },
         "taskbar": {

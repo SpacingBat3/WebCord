@@ -148,11 +148,15 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
     app.once("before-quit", () => willQuit = true);
     parent.on("close", (event) => {
       if (!willQuit) {
-        event.preventDefault();
-        parent.hide();
+        if(!appConfig.get().settings.general.tray.quitOnClose) {
+          event.preventDefault();
+          parent.hide();
+        }
       }
     });
   }
+
+
   return tray;
 }
 

@@ -63,7 +63,8 @@ const defaultAppConfig = {
         hide: false
       },
       tray: {
-        disable: false
+        disable: false,
+        quitOnClose: false
       },
       taskbar: {
         flash: true
