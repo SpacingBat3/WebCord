@@ -211,7 +211,7 @@ export type ElectronLatest = typeof import("electron/main") & {
  */
 export const sanitizeConfig = {
   /** Allow tags that modifies text style and/or has a semantic meaning. */
-  ALLOWED_TAGS: ["b", "i", "u", "s", "em", "kbd", "strong", "code", "small"],
+  ALLOWED_TAGS: ["b", "i", "u", "s", "em", "kbd", "strong", "code", "small", "br"],
   /** Block every attribute */
   ALLOWED_ATTR: []
 };
