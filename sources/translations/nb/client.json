@@ -76,17 +76,6 @@
         "externalApp": {
             "message": "La en nettside videresende lenken med forskjellig opphav til det eksterne programmet?",
             "title": "Åpner lenke i eksternt program"
-        },
-        "screenShare": {
-            "close": "",
-            "sound": {
-                "system": "",
-                "unavailable": ""
-            },
-            "source": {
-                "entire": "",
-                "screen": ""
-            }
         }
     },
     "help": {
