@@ -97,7 +97,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
   const strings = (new l10n()).client;
   const {icons} = appInfo;
   const tray = new Tray(icons.tray.default);
-  function toogleVisibility() {
+  function toggleVisibility() {
     if(parent.isVisible() && parent.isFocused()) {
       parent.hide();
     } else if (!parent.isVisible()) {
@@ -115,7 +115,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
     { type: "separator" },
     ...(process.platform !== "win32" ? [{
       label: strings.tray.toggle,
-      click: () => setImmediate(toogleVisibility)
+      click: () => setImmediate(toggleVisibility)
     }] : []),
     {
       label: strings.help.bugs,
@@ -132,7 +132,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
     { type: "separator" },
     ...(process.platform === "win32" ? [{
       label: strings.tray.toggle,
-      click: () => setImmediate(toogleVisibility)
+      click: () => setImmediate(toggleVisibility)
     }] : []),
     {
       label: strings.tray.quit,
@@ -141,7 +141,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
   ]);
   tray.setContextMenu(contextMenu);
   tray.setToolTip(app.getName());
-  tray.on("click", toogleVisibility);
+  tray.on("click", toggleVisibility);
   // Exit to the tray
   {
     let willQuit = false;

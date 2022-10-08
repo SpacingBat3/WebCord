@@ -170,7 +170,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     if((object as PackageJsonProperties).name.match(/^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/) === null)
       return "'"+(object as PackageJsonProperties).name+"' is not a valid Node.js package name.";
     
-    // Check 8: `version` is a `semver`-parsable string
+    // Check 8: `version` is a `semver`-parseable string
     if(typeof (object as PackageJsonProperties).version === "string") {
       if (valid((object as PackageJsonProperties).version) === null)
         return "Version "+(object as PackageJsonProperties).version+" can't be parsed to 'semver'.";
