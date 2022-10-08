@@ -218,7 +218,11 @@ export default async function startServer(window:Electron.BrowserWindow) {
         if(child === undefined) return;
         const path = parsedData.cmd === "INVITE_BROWSER" ?
           "/invite/" : "/template/";
-        void child.loadURL(origin+path+parsedData.args.code);
+        const windowOrigin = new URL(window.webContents.getURL()).origin;
+        const type = /^https?:\/\/(?:[a-z]+\.)?discord\.com$/;
+        const childOrigin = type.test(origin) && type.test(windowOrigin) ?
+          windowOrigin : origin;
+        void child.loadURL(childOrigin+path+parsedData.args.code);
         child.webContents.once("did-finish-load", () => {
           child.show();
         });
