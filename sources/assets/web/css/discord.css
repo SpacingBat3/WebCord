@@ -63,9 +63,8 @@ img[src*="423864076095979522"] ~ :is(h1,h2,h3,h4,h5,h6) > span > span {
 
 /* Mobile interface tweaks */
 @media screen and (max-width: 480px) {
-    div.expression-picker-chat-input-button:nth-child(1),
-    div.expression-picker-chat-input-button:nth-child(2),
-    div.expression-picker-chat-input-button:nth-child(3) {
+    div[class|="channelTextArea"] > div[class|="scrollableContainer"] >
+    div[class|="inner"] > div[class|="buttons"] > :not(:last-child) {
         display: none;
     }
 }
