@@ -64,9 +64,9 @@ const argvOptions = Object.freeze({
 const argv = Object.freeze(
   (parseArgs as undefined|typeof import("util").parseArgs) ?
     // Use native method if supported by Electron (needs Node 18+)
-    parseArgs({options: argvOptions, strict: true}) :
+    parseArgs({options: argvOptions, strict: false}) :
     // Use polyfill, for compatibility with the older Node versions
-    parseArgsPolyfill({options: argvOptions, strict: true})
+    parseArgsPolyfill({options: argvOptions, strict: false})
 );
 {
   const stdWarn=console.warn,stdError=console.error;
@@ -183,9 +183,15 @@ let overwriteMain: (() => unknown) | undefined;
       "user-agent-version" in argv.values ||
       "user-agent-platform" in argv.values)
     userAgent.replace = {
-      platform: argv.values["user-agent-platform"] ?? process.platform,
-      version: argv.values["user-agent-version"] ?? process.getSystemVersion(),
-      device: argv.values["user-agent-device"] ?? ""
+      platform: typeof argv.values["user-agent-platform"] === "string" ?
+        argv.values["user-agent-platform"] :
+        process.platform,
+      version: typeof argv.values["user-agent-version"] === "string" ?
+        argv.values["user-agent-version"] :
+        process.getSystemVersion(),
+      device: typeof argv.values["user-agent-device"] === "string" ?
+        argv.values["user-agent-device"] :
+        ""
     };
     
   if(argv.values["start-minimized"] === true)
@@ -194,7 +200,8 @@ let overwriteMain: (() => unknown) | undefined;
     overwriteMain = () => {
       const locale = new l10n;
       const directory = argv.values["export-l10n"];
-      if(directory === undefined) return;
+      if(directory !== "string")
+        throw new TypeError("Parameter 'export-l10n' should contain a string value!");
       const filePromise: Promise<void>[] = [];
       for (const file of Object.keys(locale) as (keyof typeof locale)[])
         filePromise.push(
@@ -247,7 +254,7 @@ let overwriteMain: (() => unknown) | undefined;
     screenShareAudio = true;
   if("add-css-theme" in argv.values) {
     const path = argv.values["add-css-theme"];
-    if(path === undefined || !existsSync(path))
+    if(path === undefined || typeof path !== "string" || !existsSync(path))
       throw new Error("Flag 'add-css-theme' should include a value of type '{path}'.");
     if(!path.endsWith(".theme.css"))
       throw new Error("Value of flag 'add-css-theme' should point to '*.theme.css' file.");
