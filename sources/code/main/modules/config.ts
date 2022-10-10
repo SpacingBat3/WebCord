@@ -169,13 +169,13 @@ class Config<T> {
    * @param object A JavaScript object that will be merged with the configuration object.
    */
 
-  public set(object: Partial<typeof this.defaultConfig>): void {
+  public set(object: Partial<T>): void {
     const oldObject = this.get();
     const newObject = deepmerge(oldObject, object);
     if(objectsAreSameType(newObject, oldObject)) this.write(newObject);
   }
   /** Returns the entire parsed configuration file in form of the JavaScript object. */
-  public get(): typeof this.defaultConfig {
+  public get(): T {
     const parsedConfig:unknown = this.read();
     const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig);
     if(objectsAreSameType(mergedConfig, this.defaultConfig))
