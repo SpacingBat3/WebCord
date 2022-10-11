@@ -22,6 +22,13 @@
             "labels": {
                 "flash": "Spraw, aby przycisk błyskał przy nowych wiadomościach."
             }
+        },
+        "window": {
+            "name": "Główne okno WebCorda",
+            "description": "Kontroluje wygląd i zachowanie okna wyświetlającego interfejs klienta Discorda.",
+            "labels": {
+                "transparent": "Zezwól na przezroczyste tło okna."
+            }
         }
     },
     "privacy": {

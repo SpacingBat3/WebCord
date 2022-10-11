@@ -67,6 +67,9 @@ const defaultAppConfig = {
       },
       taskbar: {
         flash: true
+      },
+      window: {
+        transparent: false
       }
     },
     privacy: {
