@@ -16,10 +16,10 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
   const url = new URL(file);
   if(url.protocol === "file:")
     return { read: readFile(url.pathname, {signal}) };
-  else if((fetch as typeof global.fetch|undefined) !== undefined)
-    return { download: fetch(url.href, (signal ? {signal} : {})) };
+  else if((global.fetch as typeof global.fetch|undefined) !== undefined)
+    return { download: fetch(url.href, signal ? {signal} : {})};
   else
-    return { download: fetchPolyfill(url.href, (signal) ? {signal} : {})};
+    return { download: fetchPolyfill(url.href, signal ? {signal} : {})};
 }
 
 /**
@@ -28,13 +28,13 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
  * 
  * **Experimental** – it is unknown if that would work properly for all themes.
  */
-async function parseImports(cssString: string):Promise<string> {
+async function parseImports(cssString: string, maxTries=5):Promise<string> {
   const anyImport = /^@import .+?$/gm;
   if(!anyImport.test(cssString)) return cssString;
   const promises:Promise<string>[] = [];
-  for (const singleImport of cssString.match(anyImport)??[]) {
+  cssString.match(anyImport)?.forEach(singleImport => {
     const matches = singleImport.match(/^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m);
-    if(matches?.[0] === undefined || matches[1] === undefined) break;
+    if(matches?.[0] === undefined || matches[1] === undefined) return;
     const file = matches[1];
     promises.push(fetchOrRead(file)
       .then(data => {
@@ -45,10 +45,21 @@ async function parseImports(cssString: string):Promise<string> {
       })
       .then(content => cssString = cssString.replace(singleImport, content))
     );
+  });
+  try {
+    await Promise.all(promises);
+  } catch(error) {
+    if(maxTries > 0) {
+      console.warn("Couldn't resolve CSS theme imports, retrying again...");
+      maxTries--;
+    }
+    else if(error instanceof Error)
+      throw error;
+    else
+      throw new Error("Couldn't resolve CSS theme imports, aborting...");
   }
-  await Promise.allSettled(promises);
   if(anyImport.test(cssString)) {
-    return parseImports(cssString);
+    return parseImports(cssString, maxTries);
   }
   return cssString;
 }
@@ -138,6 +149,7 @@ async function loadStyles(webContents:Electron.WebContents) {
                  * `!important` (this should fix most styles).
                  */
                 .then(data => data.replaceAll(/((?:--|color|background)[^:;{]*:(?![^:]*?!important)[^:;]*)(;|})/g, "$1 !important$2"))
+                .then(data => {console.dir(data); return data;})
                 .then(data => webContents.insertCSS(data))
             );
           callback(themeIDs);
