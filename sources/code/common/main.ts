@@ -69,7 +69,7 @@ const argv = Object.freeze(
     parseArgsPolyfill({options: argvOptions, strict: false})
 );
 {
-  const stdWarn=console.warn,stdError=console.error;
+  const stdWarn=console.warn,stdError=console.error,stdDebug=console.debug;
   console.error = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
     .then(kolor => kolor.default)
     .then(kolor => {
@@ -83,14 +83,13 @@ const argv = Object.freeze(
       stdWarn(typeof message === "string" ? kolor.yellow(message) : message, ...optionalParams);
     })
   );
+  console.debug = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
+    .then(kolor => kolor.default)
+    .then(kolor => {
+      if(argv.values.verbose === true)
+        stdDebug(typeof message === "string" ? kolor.gray(message) : message, ...optionalParams);
+    }));
 }
-console.debug = ((message:unknown,...optionalParams:unknown[]) => void Promise.all([
-  import("console").then(console => console.default),
-  import("@spacingbat3/kolor").then(kolor => kolor.default)
-] as const).then(([console,kolor]) => {
-  if(argv.values.verbose === true)
-    console.debug(typeof message === "string" ? kolor.yellow(message) : message, ...optionalParams);
-}));
 
 // Set AppUserModelID on Windows
 {
