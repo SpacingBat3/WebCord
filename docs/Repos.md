@@ -14,8 +14,9 @@ The table below includes known repositories, with their maintainers.
 | Scoop/Extras       | [lukesampson] | Windows (x86)        | [scoop.sh]                   | (None)                                            |
 | AUR/`webcord`      | [Hanabishi]   | Arch Linux (x86,ARM) | [(AUR page)][src-aur]        | (None, check [AUR][src-aur] for version)          |
 | AUR/`webcord-bin`  | [Hanabishi]   | Arch Linux (x86,ARM) | [(AUR page)][bin-aur]        | (None, check [AUR][src-aur] for version)          |
+| CachyOS/`cachyos`  | [CachyOS]     | Arch Linux (x86,ARM) | [cachyos.org][cachyos-repo]  | (None)                                            |
 
-<!-- Gibberish below: -->
+<!-- "Gibberish" below: -->
 
 [pi-apps]: https://github.com/Botspot/pi-apps "An app center with open source software for Raspberry Pi OS. (GitHub)"
 [pi-apps-home]: https://pi-apps.io/ "An app center with open source software for Raspberry Pi OS. (Homepage)"
@@ -35,3 +36,5 @@ The table below includes known repositories, with their maintainers.
 [lukesampson]: https://github.com/lukesampson
 [Hanabishi]: https://github.com/HanabishiRecca
 [scoop.sh]: https://scoop.sh/
+[CachyOS]: https://github.com/CachyOS/
+[cachyos-repo]: https://wiki.cachyos.org/en/home/Repo "CachyOS Wiki – Adding repositories"

@@ -53,7 +53,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     minHeight: appInfo.minWinHeight,
     height: mainWindowState.initState.height,
     width: mainWindowState.initState.width,
-    backgroundColor: appInfo.backgroundColor,
+    backgroundColor: configData.get().settings.general.window.transparent ? "#0000" : appInfo.backgroundColor,
+    transparent: configData.get().settings.general.window.transparent,
     show: false,
     frame: !useCustomBar,
     webPreferences: {

@@ -99,11 +99,17 @@ function showAppLicense() {
       .then(fs => fs.readFile)
       .then(read => read(resolve(getAppPath(), "LICENSE")))
       .then(data => data.toString())
+      // Replace "(c)" with the actuall copyright symbol
+      .then(text => text.replaceAll("(c)","©"))
+      // Fix end-of-line characters
+      .then(text => text.replace(/(?<!\r?\n)\r?\n(?!\r?\n)/g," ").replace(/\r?\n/g,"<br>"))
+      // Improve overall text formatting
+      .then(text => text.replace(/"([^"]+)"/g,"<em>$1</em>").replace("MIT License","<strong>MIT License</strong>"))
       .then(license => {
         const dialog = document.createElement("div");
         const content = document.createElement("div");
         dialog.classList.add("dialog");
-        content.innerText = license.replace(/(?<!\r?\n)\r?\n(?!\r?\n)/g," ");
+        content.innerHTML = sanitize(license, sanitizeConfig);
         dialog.appendChild(content);
         document.getElementById("licenses")?.appendChild(dialog);
         const animations = [...dialog.getAnimations(), ...content.getAnimations()];

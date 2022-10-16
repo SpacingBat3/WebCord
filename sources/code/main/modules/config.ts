@@ -3,12 +3,22 @@
  */
 
 import * as fs from "fs";
-import { app, BrowserWindow, screen, safeStorage } from "electron/main";
+import {
+  app,
+  BrowserWindow,
+  screen,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+  // @ts-ignore
+  safeStorage as SafeStorage
+} from "electron/main";
 import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
-import { objectsAreSameType } from "../../common/global";
+import { ElectronLatest, objectsAreSameType } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
 import { gte, major } from "semver";
+
+
+const safeStorage:ElectronLatest["safeStorage"]|undefined = SafeStorage as unknown as ElectronLatest["safeStorage"]|undefined;
 
 type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind";
 
@@ -37,7 +47,7 @@ export type cspTP<T> = {
   [P in keyof typeof defaultAppConfig["settings"]["advanced"]["cspThirdParty"]]: T
 };
 
-const canImmediatellyEncrypt = safeStorage.isEncryptionAvailable();
+const canImmediatellyEncrypt = safeStorage?.isEncryptionAvailable()??false;
 
 function isReadyToEncrypt() {
   if(process.platform === "darwin")
@@ -60,6 +70,9 @@ const defaultAppConfig = {
       },
       custombar: {
         use: false
+      },
+      window: {
+        transparent: false
       }
     },
     privacy: {
@@ -143,14 +156,14 @@ class Config<T> {
     const decodedData = JSON.stringify(object, null, this.spaces);
     let encodedData:string|Buffer = decodedData;
     if(this.#pathExtension === fileExt.encrypted)
-      encodedData = safeStorage.encryptString(decodedData);
+      encodedData = safeStorage?.encryptString(decodedData)??decodedData;
     fs.writeFileSync(this.#path+this.#pathExtension,encodedData);
   }
   private read(): unknown {
     const encodedData = fs.readFileSync(this.#path+this.#pathExtension);
     let decodedData = encodedData.toString();
     if(this.#pathExtension === fileExt.encrypted)
-      decodedData = safeStorage.decryptString(encodedData);
+      decodedData = safeStorage?.decryptString(encodedData)??encodedData.toString();
     return JSON.parse(decodedData);
   }
   /** 
@@ -162,13 +175,13 @@ class Config<T> {
    * @param object A JavaScript object that will be merged with the configuration object.
    */
 
-  public set(object: Partial<typeof this.defaultConfig>): void {
+  public set(object: Partial<T>): void {
     const oldObject = this.get();
     const newObject = deepmerge(oldObject, object);
     if(objectsAreSameType(newObject, oldObject)) this.write(newObject);
   }
   /** Returns the entire parsed configuration file in form of the JavaScript object. */
-  public get(): typeof this.defaultConfig {
+  public get(): T {
     const parsedConfig:unknown = this.read();
     const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig);
     if(objectsAreSameType(mergedConfig, this.defaultConfig))
@@ -181,7 +194,9 @@ class Config<T> {
       throw new Error("Cannot use encrypted configuration file when app is not ready yet!");
     // Set required properties of this config file.
     this.#path = path;
-    this.#pathExtension = encrypted&&safeStorage.isEncryptionAvailable()? fileExt.encrypted : fileExt.json;
+    this.#pathExtension = encrypted && (safeStorage?.isEncryptionAvailable() === true) ?
+      fileExt.encrypted :
+      fileExt.json;
     this.defaultConfig = defaultConfig;
     // Replace "spaces" if it is definied in the constructor.
     if (spaces !== undefined && spaces > 0)

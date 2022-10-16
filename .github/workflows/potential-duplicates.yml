@@ -1,0 +1,19 @@
+name: Check issues for potential duplicates
+on:
+  issues:
+    types: [opened, edited]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wow-actions/potential-duplicates@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          exclude: 'WebCord Discord Fosscord broken bug'
+          state: all
+          threshold: 0.6
+          reactions: 'confused'
+          comment: |
+            Potential duplicates: {{#issues}}
+              - [#{{ number }}] {{ title }} ({{ accuracy }}%)
+            {{/issues}}

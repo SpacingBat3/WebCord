@@ -29,7 +29,7 @@ function fetchFromWebsite(this: HTMLInputElement) {
   config = {[dotArray[dotArray.length-1]??0]: value};
   for(let n = dotArray.length-2; n >= 0; n--)
     config = {[dotArray[n]??0]: config};
-  console.dir({settings: config});
+
   ipcRenderer.send("settings-config-modified", {settings: config});
 }
 

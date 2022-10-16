@@ -27,6 +27,7 @@ export const discordFavicons = Object.freeze({
   default: "a2205eb4eb1cbf4ef7555e579bee3ba260574f3b", // seems always valid
   unread: [
     "ee9eef1403e76cb770d1c4a32265e8354e6af1a0", // works on FIFO pipe errors
+    "40f51a9b9ad411d2e0e897661a08305b4a76ec76", // produced by older Electron releases
     "541317111758ff00613b2ff56f284a2474bd3d81"  // seems to be valid otherwise
   ]
 });
@@ -195,13 +196,22 @@ export type SessionLatest = Electron.Session & {
   setDevicePermissionHandler: (handler: (()=>boolean)|null)=>void;
 };
 
+export type ElectronLatest = typeof import("electron/main") & {
+  /** An API that is unsupported on current Electron version. */
+  safeStorage: {
+    decryptString: (encrypted:Buffer)=>string;
+    encryptString: (plainText:string)=>Buffer;
+    isEncryptionAvailable: () => boolean;
+  };
+};
+
 /**
  * A sanitizer configuration that allows only for tags that modifies the code
  * formatting.
  */
 export const sanitizeConfig = {
   /** Allow tags that modifies text style and/or has a semantic meaning. */
-  ALLOWED_TAGS: ["b", "i", "u", "s", "em", "kbd", "strong", "code", "small"],
+  ALLOWED_TAGS: ["b", "i", "u", "s", "em", "kbd", "strong", "code", "small", "br"],
   /** Block every attribute */
   ALLOWED_ATTR: []
 };

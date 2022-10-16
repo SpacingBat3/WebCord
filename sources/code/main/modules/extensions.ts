@@ -1,9 +1,13 @@
+import type { ElectronLatest } from "../../common/global";
 import { commonCatches } from "./error";
+
+const SafeStorage: Promise<ElectronLatest["safeStorage"]|undefined> = (import("electron/main") as unknown as Promise<ElectronLatest>)
+  .then(main => main.safeStorage);
 
 async function fetchOrRead(file:string, signal?:AbortSignal) {
   const [
     { readFile },
-    fetch
+    fetchPolyfill
   ] = await Promise.all([
     import("fs/promises"),
     import("electron-fetch").then(fetch => fetch.default)
@@ -12,8 +16,10 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
   const url = new URL(file);
   if(url.protocol === "file:")
     return { read: readFile(url.pathname, {signal}) };
+  else if((global.fetch as typeof global.fetch|undefined) !== undefined)
+    return { download: fetch(url.href, signal ? {signal} : {})};
   else
-    return { download: fetch(url.href, (signal ? {signal} : {})) };
+    return { download: fetchPolyfill(url.href, signal ? {signal} : {})};
 }
 
 /**
@@ -22,13 +28,13 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
  * 
  * **Experimental** – it is unknown if that would work properly for all themes.
  */
-async function parseImports(cssString: string):Promise<string> {
+async function parseImports(cssString: string, maxTries=5):Promise<string> {
   const anyImport = /^@import .+?$/gm;
   if(!anyImport.test(cssString)) return cssString;
   const promises:Promise<string>[] = [];
-  for (const singleImport of cssString.match(anyImport)??[]) {
+  cssString.match(anyImport)?.forEach(singleImport => {
     const matches = singleImport.match(/^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m);
-    if(matches?.[0] === undefined || matches[1] === undefined) break;
+    if(matches?.[0] === undefined || matches[1] === undefined) return;
     const file = matches[1];
     promises.push(fetchOrRead(file)
       .then(data => {
@@ -39,26 +45,40 @@ async function parseImports(cssString: string):Promise<string> {
       })
       .then(content => cssString = cssString.replace(singleImport, content))
     );
+  });
+  try {
+    await Promise.all(promises);
+  } catch(error) {
+    if(maxTries > 0) {
+      console.warn("Couldn't resolve CSS theme imports, retrying again...");
+      maxTries--;
+    }
+    else if(error instanceof Error)
+      throw error;
+    else
+      throw new Error("Couldn't resolve CSS theme imports, aborting...");
   }
-  await Promise.allSettled(promises);
   if(anyImport.test(cssString)) {
-    return parseImports(cssString);
+    return parseImports(cssString, maxTries);
   }
   return cssString;
 }
 
 async function addStyle(path:string) {
   const [
-    { app, safeStorage, dialog },
+
+    { app, dialog },
     { readFile, writeFile },
-    { resolve, basename }
+    { resolve, basename },
+    safeStorage
   ] = await Promise.all([
     import("electron/main"),
     import("fs/promises"),
-    import("path")
+    import("path"),
+    SafeStorage
   ]);
   function optionalCrypt(buffer:Buffer) {
-    if(safeStorage.isEncryptionAvailable())
+    if(safeStorage?.isEncryptionAvailable() === true)
       return safeStorage.encryptString(buffer.toString());
     return buffer.toString();
   }
@@ -86,15 +106,17 @@ async function addStyle(path:string) {
  */
 async function loadStyles(webContents:Electron.WebContents) {
   const [
-    { app, safeStorage },
+    { app },
     { readFile, readdir },
     { watch, existsSync, mkdirSync, statSync },
-    { resolve }
+    { resolve },
+    safeStorage
   ] = await Promise.all([
     import("electron/main"),
     import("fs/promises"),
     import("fs"),
-    import("path")
+    import("path"),
+    SafeStorage
   ]);
   const stylesDir = resolve(app.getPath("userData"),"Themes");
   if(!existsSync(stylesDir)) mkdirSync(stylesDir, {recursive:true});
@@ -111,13 +133,13 @@ async function loadStyles(webContents:Electron.WebContents) {
         Promise.all(promises).then(dataArray => {
           const themeIDs:Promise<string>[] = [];
           const decrypt = async (string:Buffer) => {
-            if(!safeStorage.isEncryptionAvailable() && !app.isReady())
+            if(safeStorage?.isEncryptionAvailable() === false && !app.isReady())
               await app.whenReady();
-            if(!safeStorage.isEncryptionAvailable())
+            if(safeStorage?.isEncryptionAvailable() === false)
               return string.toString();
             if(!string.toString("utf-8").includes("�"))
               throw new Error("One of loaded styles was not encrypted and could not be loaded.");
-            return safeStorage.decryptString(string);
+            return safeStorage ? safeStorage.decryptString(string) : string.toString();
           };
           for(const data of dataArray)
             themeIDs.push(
@@ -127,6 +149,7 @@ async function loadStyles(webContents:Electron.WebContents) {
                  * `!important` (this should fix most styles).
                  */
                 .then(data => data.replaceAll(/((?:--|color|background)[^:;{]*:(?![^:]*?!important)[^:;]*)(;|})/g, "$1 !important$2"))
+                .then(data => {console.dir(data); return data;})
                 .then(data => webContents.insertCSS(data))
             );
           callback(themeIDs);

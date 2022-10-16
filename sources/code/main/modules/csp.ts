@@ -138,11 +138,14 @@ const csp: {base:CSP}&cspTP<CSP> = {
   }),
   soundcloud: new CSP({ "frame-src": "https://w.soundcloud.com/player/" }),
   spotify: new CSP({
-    "script-src": "https://open.spotifycdn.com/cdn/build/embed/",
+    "script-src": "https://open.spotifycdn.com/cdn/build/embed/ "+
+      "https://open.spotifycdn.com/cdn/build/embed-legacy/",
     "img-src": "https://open.spotifycdn.com/cdn/images/ https://i.scdn.co/image/",
-    "style-src": "https://open.spotifycdn.com/cdn/build/embed/",
-    "connect-src": "wss://dealer.spotify.com https://api.spotify.com https://open.spotifycdn.com/cdn/generated-locales/embed/",
-    "frame-src": "https://open.spotify.com/",
+    "style-src": "https://open.spotifycdn.com/cdn/build/embed/ "+
+      "https://open.spotifycdn.com/cdn/build/embed-legacy/",
+    "connect-src": "wss://dealer.spotify.com https://api.spotify.com "+
+      "https://open.spotifycdn.com/cdn/generated-locales/embed/",
+    "frame-src": "https://open.spotify.com/embed/",
     "media-src": "https://p.scdn.co/mp3-preview/"
   }),
   streamable: new CSP({ "media-src": "https://streamable.com" }),

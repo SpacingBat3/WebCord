@@ -68,7 +68,8 @@ input[type="radio"] {
     border-radius: 100%;
     background-color: var(--color-bg-secondary);
     border: solid var(--color-bg-secondary) 4px;
-    outline: solid var(--color-font-normal) 2px;
+    outline: none;
+    box-shadow: 0px 0px 0px 2px var(--color-font-normal);
 
 }
 

@@ -29,6 +29,13 @@
             "labels": {
                 "flash": "Flash taskbar button on new messages."
             }
+        },
+        "window": {
+            "name": "WebCord's main window",
+            "description": "Controls the look and behavior of the window displaying client interface.",
+            "labels": {
+                "transparent": "Allow for translucent window background."
+            }
         }
     },
     "privacy": {

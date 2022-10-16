@@ -170,7 +170,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     if((object as PackageJsonProperties).name.match(/^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/) === null)
       return "'"+(object as PackageJsonProperties).name+"' is not a valid Node.js package name.";
     
-    // Check 8: `version` is a `semver`-parsable string
+    // Check 8: `version` is a `semver`-parseable string
     if(typeof (object as PackageJsonProperties).version === "string") {
       if (valid((object as PackageJsonProperties).version) === null)
         return "Version "+(object as PackageJsonProperties).version+" can't be parsed to 'semver'.";
@@ -189,8 +189,9 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
             return "Package name '"+JSON.stringify(key)+"' is not a valid 'string'.";
           else if (typeof value !== "string")
             return "Version of the package '"+key+"' is not of type 'string'.";
-          else if (validRange(value) === null && value !== "latest") {
-            return "Version '"+value+"' of the package '"+key+"' is not SemVer-parsable.";
+          else if (validRange(value) === null && value !== "latest" &&
+              !/^[^/]+\/[^/]+$/.test(value)) {
+            return "Version '"+value+"' of the package '"+key+"' is not of the valid format.";
           }
       }
     }
