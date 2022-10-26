@@ -3,6 +3,7 @@ import l10n from "../../common/modules/l10n";
 import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { resolve } from "path";
 import { deepmerge } from "deepmerge-ts";
+import { styles } from "./extensions";
 
 /** A list of popup windows (i.e. non-local ones). */
 const popups = [
@@ -45,6 +46,12 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
   }, properties??{}));
   if(win.webContents.session === parent.webContents.session && !isPopup)
     throw new Error("Child took session from parent!");
+  // Style "popup" windows
+  if(isPopup)
+    win.webContents.on("did-finish-load", () => {
+      console.log("Senpai notice myee!");
+      void styles.load(win.webContents);
+    });
   win.setAutoHideMenuBar(true);
   win.setMenuBarVisibility(false);
   if(getBuildInfo().type === "release") win.removeMenu();

@@ -50,7 +50,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     minHeight: appInfo.minWinHeight,
     height: mainWindowState.initState.height,
     width: mainWindowState.initState.width,
-    backgroundColor: configData.get().settings.general.window.transparent ? "#0000" : appInfo.backgroundColor,
+    backgroundColor: appInfo.backgroundColor,
     transparent: configData.get().settings.general.window.transparent,
     show: false,
     webPreferences: {
@@ -369,7 +369,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   // Insert custom css styles:
 
-  win.webContents.on("did-finish-load", () => {
+  win.webContents.on("did-navigate", () => {
     if(new URL(win.webContents.getURL()).protocol === "https:") {
       styles.load(win.webContents)
         .catch(commonCatches.print);
@@ -379,6 +379,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         .then(buffer => buffer.toString())
         .then(data => win.webContents.insertCSS(data))
         .catch(commonCatches.print);
+      // Additionally, make window transparent if user has opted for it.
+      if(configData.get().settings.general.window.transparent)
+        win.setBackgroundColor("#000");
     }
   });
 

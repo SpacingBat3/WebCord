@@ -149,7 +149,6 @@ async function loadStyles(webContents:Electron.WebContents) {
                  * `!important` (this should fix most styles).
                  */
                 .then(data => data.replaceAll(/((?:--|color|background)[^:;{]*:(?![^:]*?!important)[^:;]*)(;|})/g, "$1 !important$2"))
-                .then(data => {console.dir(data); return data;})
                 .then(data => webContents.insertCSS(data))
             );
           callback(themeIDs);

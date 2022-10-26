@@ -429,9 +429,9 @@ app.on("web-contents-created", (_event, webContents) => {
   });
 
   // Remove menu from popups
-  webContents.on("did-create-window", (window) => {
-    window.removeMenu();
-  });
+  webContents.once("did-create-window", window => window.removeMenu());
+  // Style webContents
+  webContents.on("did-create-window", window => void styles.load(window.webContents));
 });
 
 if(new Date().getMonth() === 3 && new Date().getDate() === 1){
