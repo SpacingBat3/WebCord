@@ -4,6 +4,7 @@ import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { resolve } from "path";
 import { deepmerge } from "deepmerge-ts";
 import { styles } from "./extensions";
+import { commonCatches } from "./error";
 
 /** A list of popup windows (i.e. non-local ones). */
 const popups = [
@@ -48,9 +49,9 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
     throw new Error("Child took session from parent!");
   // Style "popup" windows
   if(isPopup)
-    win.webContents.on("did-finish-load", () => {
-      console.log("Senpai notice myee!");
-      void styles.load(win.webContents);
+    win.webContents.on("did-navigate", () => {
+      styles.load(win.webContents)
+        .catch(commonCatches.throw);
     });
   win.setAutoHideMenuBar(true);
   win.setMenuBarVisibility(false);
