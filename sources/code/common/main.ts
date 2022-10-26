@@ -323,7 +323,9 @@ function main(): void {
     overwriteMain();
   } else {
     // Run app normally
-    const updateInterval = setInterval(function () { checkVersion(updateInterval).catch(commonCatches.print); }, 1800000);
+    const updateInterval = setInterval(() => {
+      checkVersion(updateInterval).catch(commonCatches.print);
+    }, 30/*min*/*60000);
     checkVersion(updateInterval).catch(commonCatches.print);
     const mainWindow = createMainWindow({startHidden, screenShareAudio});
     
@@ -425,7 +427,14 @@ app.on("web-contents-created", (_event, webContents) => {
           overrideBrowserWindowOptions: {
             autoHideMenuBar: true,
             ...(window ? {BrowserWindow: window} : {}),
-            fullscreenable: false // not functional with 'children'
+            fullscreenable: false, // not functional with 'children'
+            webPreferences: {
+              nodeIntegration: false,
+              sandbox: true,
+              contextIsolation: true,
+              webSecurity: true,
+              enableWebSQL: false
+            }
           }
         };
       else

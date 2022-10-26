@@ -53,6 +53,8 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
       styles.load(win.webContents)
         .catch(commonCatches.throw);
     });
+  // Cleanup listeners
+  win.once("closed", () => win.removeAllListeners());
   win.setAutoHideMenuBar(true);
   win.setMenuBarVisibility(false);
   if(getBuildInfo().type === "release") win.removeMenu();
