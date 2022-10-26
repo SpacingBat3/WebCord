@@ -326,6 +326,12 @@ function main(): void {
     const updateInterval = setInterval(function () { checkVersion(updateInterval).catch(commonCatches.print); }, 1800000);
     checkVersion(updateInterval).catch(commonCatches.print);
     const mainWindow = createMainWindow({startHidden, screenShareAudio});
+    
+    // WebSocket server
+    import("../main/modules/socket")
+      .then(socket => socket.default())
+      .catch(commonCatches.print);
+
     // Show window on second instance
     app.on("second-instance", () => {
       if (!mainWindow.isVisible()) mainWindow.show();

@@ -1,5 +1,6 @@
 import type { Server } from "ws";
 import kolor from "@spacingbat3/kolor";
+import { BrowserWindow, session } from "electron/main";
 
 function wsLog(message:string, ...args:unknown[]) {
   console.log(kolor.bold(kolor.magentaBright("[WebSocket]"))+" "+message,...args);
@@ -144,7 +145,10 @@ async function getServer(start:number,end:number) {
  * 
  * @param window Parent window for invitation popup.
  */
-export default async function startServer(window:Electron.BrowserWindow) {
+export default async function startServer() {
+  const getMainWindow = () => BrowserWindow
+    .getAllWindows()
+    .find(window => window.webContents.session === session.defaultSession && window.getParentWindow() === null);
   const [
     {isJsonSyntaxCorrect, knownInstancesList: knownIstancesList},
     {initWindow},
@@ -158,6 +162,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
   ]);
   const [wsServer,wsPort] = await getServer(6463, 6472)??[null,6463] as const;
   if(wsServer === null) return;
+  
   wsLog(new L10N().client.log.listenPort,blue(underline(wsPort.toString())));
   let lock = false;
   wsServer.on("connection", (wss, request) => {
@@ -187,6 +192,12 @@ export default async function startServer(window:Electron.BrowserWindow) {
         parsedData = (data as Buffer).toString();
       if(isJsonSyntaxCorrect(parsedData as string))
         parsedData = JSON.parse(parsedData as string);
+      const parent = getMainWindow();
+      if(parent === undefined){
+        console.debug("[WSS] Closed connection due to lack of main window.");
+        wss.close(1013,"Server couldn't connect to main window, try again later.");
+        return;
+      }
       // Invitation response handling
       if(isResponse(parsedData, ["INVITE_BROWSER", "GUILD_TEMPLATE_BROWSER"] as ("INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER")[])) {
         if(lock) {
@@ -207,7 +218,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
         }));
         const winProperties = parsedData.cmd === "GUILD_TEMPLATE_BROWSER" ?
           {width: 960} : {};
-        const child = initWindow("invite", window, {...winProperties,...{
+        const child = initWindow("invite", parent, {...winProperties,...{
           webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -218,10 +229,10 @@ export default async function startServer(window:Electron.BrowserWindow) {
         if(child === undefined) return;
         const path = parsedData.cmd === "INVITE_BROWSER" ?
           "/invite/" : "/template/";
-        const windowOrigin = new URL(window.webContents.getURL()).origin;
+        const parentOrigin = new URL(parent.webContents.getURL()).origin;
         const type = /^https?:\/\/(?:[a-z]+\.)?discord\.com$/;
-        const childOrigin = type.test(origin) && type.test(windowOrigin) ?
-          windowOrigin : origin;
+        const childOrigin = type.test(origin) && type.test(parentOrigin) ?
+          parentOrigin : origin;
         void child.loadURL(childOrigin+path+parsedData.args.code);
         child.webContents.once("did-finish-load", () => {
           child.show();
@@ -237,8 +248,8 @@ export default async function startServer(window:Electron.BrowserWindow) {
         const path = parsedData.args.params.channelId !== undefined ?
           "/channels/"+parsedData.args.params.guildId+"/"+parsedData.args.params.channelId :
           "/channels/"+parsedData.args.params.guildId;
-        window.webContents.send("navigate", path);
-        window.show();
+        parent.webContents.send("navigate", path);
+        parent.show();
         wss.send(JSON.stringify({
           cmd: parsedData.cmd,
           data: null,

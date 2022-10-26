@@ -448,13 +448,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // Load extensions for builds of type "devel".
   if(getBuildInfo().type === "devel")
     void loadChromiumExtensions(win.webContents.session);
-    
-  // WebSocket server
-  import("../modules/socket")
-    .then(socket => socket.default)
-    .then(startServer => startServer(win))
-    .catch(commonCatches.print);
-  
+
   // IPC events validated by secret "API" key and sender frame.
   internalWindowEvents.on("api", (safeApi:string) => {
     /** Determines whenever another request to desktopCapturer is in process. */
