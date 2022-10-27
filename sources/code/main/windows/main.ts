@@ -269,15 +269,15 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   win.setAutoHideMenuBar(configData.get().settings.general.menuBar.hide);
   win.setMenuBarVisibility(!configData.get().settings.general.menuBar.hide);
   // Add English to the spellchecker
-  {
+  if(process.platform !== "darwin") {
     let valid = true;
     const spellCheckerLanguages = [app.getLocale(), "en-US"];
     if (app.getLocale() === "en-US") valid = false;
-    if (valid && process.platform !== "darwin")
-      for (const language of spellCheckerLanguages)
-        if (!win.webContents.session.availableSpellCheckerLanguages.includes(language))
-          valid = false;
-    if (valid) win.webContents.session.setSpellCheckerLanguages(spellCheckerLanguages);
+    if (valid) for (const language of spellCheckerLanguages)
+      if (!win.webContents.session.availableSpellCheckerLanguages.includes(language))
+        valid = false;
+    if (valid)
+      win.webContents.session.setSpellCheckerLanguages(spellCheckerLanguages);
   }
 
   // Keep window state
