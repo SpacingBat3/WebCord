@@ -195,6 +195,10 @@ export function getWebCordCSP(additionalPolicies: CSP[]|[] = []) {
     type cspFilter = (value:CSP|undefined) => value is CSP;
     if(cache && cache.configValues === Object.values(config).join())
       return cache.result;
+    else if(cache)
+      console.debug("[CSP] Policy changed! Recalculating cache...");
+    else
+      console.debug("[CSP] Initializing cache for quicker responses...");
     cache = {
       configValues: Object.values(config).join(),
       result: CSP.merge(
