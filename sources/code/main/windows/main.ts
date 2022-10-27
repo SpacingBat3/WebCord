@@ -381,7 +381,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         .catch(commonCatches.print);
       // Additionally, make window transparent if user has opted for it.
       if(configData.get().settings.general.window.transparent)
-        win.setBackgroundColor("#000");
+        win.webContents.once("did-stop-loading", () => win.setBackgroundColor("#0000"));
     }
   });
 
