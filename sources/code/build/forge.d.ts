@@ -9,7 +9,7 @@
 
 // Forge types
 
-import type { ForgeConfig } from "@electron-forge/shared-types";
+import type { ForgeConfig, ResolvedForgeConfig, ForgeHookMap } from "@electron-forge/shared-types";
 import type { OfficialPlatform } from "electron-packager";
 export type ForgePlatform = Exclude<OfficialPlatform | NodeJS.Platform, "android">;
 
@@ -37,6 +37,8 @@ type MPConfig = unknown | {
 };
 
 interface MPBase {
+  /** Whenever given maker should be used. */
+  enabled?: boolean;
   /** A Node.js package name that provides the maker or publisher functionality. */
   name: string;
   /** Overrides the platform that this maker or publisher will be used on.  */
@@ -98,4 +100,8 @@ export type ForgeConfigFile = Redeclare<Partial<ForgeConfig>, {
   publishers?: (
     PublisherGitHub
   )[];
+  hooks?: Redeclare<ForgeHookMap, {
+    packageAfterCopy: (ForgeConfig: ResolvedForgeConfig, path:string, electronVersion: string, platform: ForgePlatform) => unknown;
+    packageAfterExtract: (ForgeConfig: ResolvedForgeConfig, path:string, electronVersion: string, platform: ForgePlatform) => unknown;
+  }>;
 }>;

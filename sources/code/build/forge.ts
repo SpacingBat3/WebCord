@@ -163,7 +163,7 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: async (_ForgeConfig, path:string, _electronVersion: string, platform: ForgePlatform) => {
+    packageAfterCopy: async (_ForgeConfig, path, _electronVersion, platform) => {
       /** Generates `buildInfo.json` file and saves it somewhe. */
       async function writeBuildInfo() {
         const buildConfig: buildInfo = {
@@ -189,7 +189,7 @@ const config: ForgeConfigFile = {
       ]);
     },
     // Hardened Electron binary via Electron Fuses feature.
-    packageAfterExtract: (_ForgeConfig, path:string, _electronVersion: string, platform: ForgePlatform) =>
+    packageAfterExtract: (_ForgeConfig, path, _electronVersion, platform) =>
       flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
         [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,
