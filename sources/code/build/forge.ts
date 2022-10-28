@@ -74,14 +74,13 @@ const config: ForgeConfigFile = {
     quiet: true,
     ignore: [
       // Directories:
-      /sources\/app\/.build/,
+      /app\/build/,
       /out\//,
       /schemas\//,
       // Files:
       /\.eslintrc\.json$/,
       /tsconfig\.json$/,
-      /sources\/app\/forge\/config\..*/,
-      /sources\/code\/.*/,
+      /sources\/code\//,
       /sources\/assets\/icons\/app\.icns$/,
       // Hidden (for *nix OSes) files:
       /^\.[a-z]+$/,
@@ -95,7 +94,7 @@ const config: ForgeConfigFile = {
   makers: [
     {
       name: "@electron-forge/maker-zip",
-      platforms: ["win32"]
+      platforms: ["win32"],
     },
     {
       name: "@electron-forge/maker-dmg",
@@ -134,6 +133,40 @@ const config: ForgeConfigFile = {
           categories: desktopCategories
         }
       }
+    },
+    /*
+     * Since `maker-flatpak` is still silently failing, giving at normal
+     * circumstances an inadequate information about the error itself (only useless
+     * exit code), it is why I have it disabled by the default. Simply, I don't want
+     * to cause a confusion just because someone has not added a flathub repository
+     * for their user-wide Flathub environment.
+     * 
+     * It will stay as it is until either official maker will resolve this or my
+     * own maker implementation will be mature enough to be released.
+     */
+    {
+      name: "@electron-forge/maker-flatpak",
+      config: {
+        options: {
+          id: FlatpakId,
+          genericName: desktopGeneric,
+          categories: desktopCategories,
+          runtimeVersion: "21.08",
+          baseVersion: "21.08",
+          files: [
+            [
+              projectPath+"/docs",
+              "/share/docs/"+packageJson.data.name
+            ],
+            [
+              projectPath+"/LICENSE",
+              "/share/licenses/"+packageJson.data.name+"/LICENSE.txt"
+            ]
+          ],
+          icon: iconFile + ".png"
+        }
+      },
+      enabled: process.env["WEBCORD_FLATPAK"]?.toLowerCase() === "true"
     }
     /* Snaps are disabled until maker will be fixed to work without the
        multipass.
@@ -199,40 +232,5 @@ const config: ForgeConfigFile = {
       })
   }
 };
-
-/*
- * Since `maker-flatpak` is still silently failing, giving at normal
- * circumstances an inadequate information about the error itself (only useless
- * exit code), it is why I have it disabled by the default. Simply, I don't want
- * to cause a confusion just because someone has not added a flathub repository
- * for their user-wide Flathub environment.
- * 
- * It will stay as it is until either official maker will resolve this or my
- * own maker implementation will be mature enough to be released.
- */
-if(process.env["WEBCORD_FLATPAK"]?.toLowerCase() === "true")
-  config.makers?.push({
-    name: "@electron-forge/maker-flatpak",
-    config: {
-      options: {
-        id: FlatpakId,
-        genericName: desktopGeneric,
-        categories: desktopCategories,
-        runtimeVersion: "21.08",
-        baseVersion: "21.08",
-        files: [
-          [
-            projectPath+"/docs",
-            "/share/docs/"+packageJson.data.name
-          ],
-          [
-            projectPath+"/LICENSE",
-            "/share/licenses/"+packageJson.data.name+"/LICENSE.txt"
-          ]
-        ],
-        icon: iconFile + ".png"
-      }
-    }
-  });
 
 module.exports = config;
