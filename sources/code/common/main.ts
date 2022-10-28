@@ -44,30 +44,39 @@ import { styles } from "../main/modules/extensions";
 import { parseArgs } from "util";
 import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
 
-const argvOptions = Object.freeze({
-  "help": { type: "boolean", short: "h" },
-  /** An alias to `help` command-line option. */
-  "info": { type: "boolean", short: "?" },
-  "version": { type: "boolean", short: "v" },
-  "start-minimized": { type: "boolean", short: "m" },
-  "export-l10n": { type: "string" },
-  "verbose": { type: "boolean", short: "v" },
-  "user-agent-mobile": { type: "boolean" },
-  "user-agent-version": { type: "string" },
-  "user-agent-device": { type: "string" },
-  "user-agent-platform": { type: "string" },
-  "force-audio-share-support": { type: "boolean" },
-  "add-css-theme": { type: "string" },
-  "gpu-info": { type: "string" }
+const argvConfig = Object.freeze({
+  options: {
+    "help": { type: "boolean", short: "h" },
+    /** An alias to `help` command-line option. */
+    "info": { type: "boolean", short: "?" },
+    "version": { type: "boolean", short: "v" },
+    "start-minimized": { type: "boolean", short: "m" },
+    "export-l10n": { type: "string" },
+    "verbose": { type: "boolean", short: "v" },
+    "user-agent-mobile": { type: "boolean" },
+    "user-agent-version": { type: "string" },
+    "user-agent-device": { type: "string" },
+    "user-agent-platform": { type: "string" },
+    "force-audio-share-support": { type: "boolean" },
+    "add-css-theme": { type: "string" },
+    "gpu-info": { type: "string" }
+  },
+  strict: false,
+  args: process.argv
+    // Remove Electron binary from the list of arguments.
+    .slice(1)
+    // Remove path to the application from the list of arguments.
+    .filter(value => resolvePath(value) !== resolvePath(app.getAppPath()))
 } as const);
 
 const argv = Object.freeze(
   (parseArgs as undefined|typeof import("util").parseArgs) ?
     // Use native method if supported by Electron (needs Node 18+)
-    parseArgs({options: argvOptions, strict: false}) :
+    parseArgs(argvConfig) :
     // Use polyfill, for compatibility with the older Node versions
-    parseArgsPolyfill({options: argvOptions, strict: false})
+    parseArgsPolyfill(argvConfig)
 );
+
 {
   const stdWarn=console.warn,stdError=console.error,stdDebug=console.debug;
   console.error = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
