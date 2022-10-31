@@ -182,6 +182,8 @@ const csp: {base:CSP}&cspTP<CSP> = {
   }),
   youtube: new CSP({
     "img-src": "https://i.ytimg.com https://*.youtube.com",
+    "script-src": "https://www.youtube.com/iframe_api "+
+      "https://www.youtube.com/s/player/",
     "connect-src": "https://*.googlevideo.com",
     "media-src": "https://*.youtube.com",
     "frame-src": "https://www.youtube.com/embed/"
