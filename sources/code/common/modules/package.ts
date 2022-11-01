@@ -190,7 +190,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
           else if (typeof value !== "string")
             return "Version of the package '"+key+"' is not of type 'string'.";
           else if (validRange(value) === null && value !== "latest" &&
-              !/^[^/]+\/[^/]+$/.test(value)) {
+              !/^[a-z]*:?[^/:]+\/[^/:]+/.test(value)) {
             return "Version '"+value+"' of the package '"+key+"' is not of the valid format.";
           }
       }
