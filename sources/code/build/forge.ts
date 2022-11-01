@@ -5,17 +5,19 @@
 // Let's import some keys from the package.json:
 
 import type { buildInfo } from "../common/global";
-import packageJson, { Person } from "../common/modules/package";
+import { Person, PackageJSON } from "../common/modules/package";
 import { existsSync } from "fs";
 import { readFile, writeFile, rm } from "fs/promises";
 import { resolve } from "path";
 import type { ForgeConfigFile, ForgePlatform } from "./forge.d";
 import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
+const packageJson = new PackageJSON(["author","version","name"]);
 const projectPath = resolve(__dirname, "../../..");
 const AppUserModelId = process.env["WEBCORD_WIN32_APPID"];
 const FlatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
   "io.github.spacingbat3.webcord";
+const author = packageJson.data.author !== undefined ? new Person(packageJson.data.author).name : "SpacingBat3";
 
 // Global variables in the config:
 const iconFile = "sources/assets/icons/app";
@@ -99,6 +101,29 @@ const config: ForgeConfigFile = {
       name: "@electron-forge/maker-zip",
       platforms: ["win32"],
     },
+    // Finally, some kind of installer in the configuration for Windows!
+    {
+      name: "@electron-forge/maker-wix",
+      config: {
+        appUserModelId: AppUserModelId ?? author+".WebCord",
+        ui: { chooseDirectory: true },
+        features: {
+          autoUpdate: false,
+          autoLaunch: {
+            arguments: ["--start-minimized"],
+            enabled: true
+          }
+        },
+        name: "WebCord",
+        manufacturer: author,
+        icon: iconFile+".ico",
+        language: 0x0400,
+        version: "v"+packageJson.data.version+(getBuildID() === "devel" ? "-dev" : ""),
+        shortName: "WebCord",
+        programFilesFolderName: "WebCord",
+        shortcutFolderName: "WebCord"
+      }
+    },
     {
       name: "@electron-forge/maker-dmg",
       config: {
@@ -166,6 +191,18 @@ const config: ForgeConfigFile = {
               "/share/licenses/"+packageJson.data.name+"/LICENSE.txt"
             ]
           ],
+          modules: [
+            {
+              name: "zypak",
+              sources: [
+                {
+                  type: "git",
+                  url: "https://github.com/refi64/zypak",
+                  tag: "v2022.04"
+                }
+              ]
+            }
+          ],
           icon: iconFile + ".png"
         }
       },
@@ -191,7 +228,7 @@ const config: ForgeConfigFile = {
       config: {
         prerelease: getBuildID() === "devel",
         repository: {
-          owner: packageJson.data.author !== undefined ? new Person(packageJson.data.author).name : "SpacingBat3",
+          owner: author,
           name: "WebCord"
         },
         draft: false

@@ -22,6 +22,7 @@ import type { MakerRpmConfig } from "@electron-forge/maker-rpm/dist/Config";
 import type { MakerZIPConfig } from "@electron-forge/maker-zip/dist/MakerZIP";
 import type { MakerAppImageConfig } from "@reforged/maker-appimage/types/config";
 import type { MakerDMGConfig } from "@electron-forge/maker-dmg/dist/Config";
+import type { MakerWixConfig } from "@electron-forge/maker-wix";
 
 // Publisher config types
 
@@ -84,6 +85,11 @@ interface MakerDMG extends MPBase {
   config?: MakerDMGConfig;
 }
 
+interface MakerWix extends MPBase {
+  name: "@electron-forge/maker-wix";
+  config?: MakerWixConfig;
+}
+
 // Publisher types
 
 interface PublisherGitHub extends MPBase {
@@ -95,7 +101,7 @@ interface PublisherGitHub extends MPBase {
 
 export type ForgeConfigFile = Redeclare<Partial<ForgeConfig>, {
   makers?: (
-    MakerZIP | MakerAppImage | MakerDeb | MakerRpm | MakerDMG | MakerFlatpak //| MakerSnap
+    MakerZIP | MakerAppImage | MakerDeb | MakerRpm | MakerDMG | MakerFlatpak | MakerWix //| MakerSnap
   )[];
   publishers?: (
     PublisherGitHub
