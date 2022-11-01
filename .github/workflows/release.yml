@@ -36,6 +36,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Add WiX Toolset to PATH
+        if: ${{ matrix.runner == 'windows' }}
+        shell: bash
+        run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+
       - name: Publish distributables (${{ matrix.arch}})
         uses: nick-fields/retry@v2
         env:
