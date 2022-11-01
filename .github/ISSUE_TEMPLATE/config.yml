@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: FlatHub's bug tracker
+    url: https://github.com/flathub/io.github.spacingbat3.webcord/issues
+    about: Report issues regarding to Flatpaks (otherwise make sure it is reproducible ouside of the flatpaks).
   - name: Discord server
     url: https://discord.gg/aw7WbDMua5
     about: Talk, ask questions and give feedback via Discord.
