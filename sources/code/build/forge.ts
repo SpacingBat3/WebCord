@@ -25,7 +25,10 @@ const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Netwo
 // Some custom functions
 
 async function getCommit():Promise<string | null> {
-  const refsPath = (await readFile(resolve(projectPath, ".git/HEAD")))
+  const headPath = resolve(projectPath, ".git/HEAD");
+  if(!existsSync(headPath))
+    return null;
+  const refsPath = (await readFile(headPath))
     .toString()
     .split(": ")[1]
     ?.trim();
