@@ -69,7 +69,8 @@ const defaultAppConfig = {
         flash: true
       },
       window: {
-        transparent: false
+        transparent: false,
+        hideOnClose: true
       }
     },
     privacy: {

@@ -144,7 +144,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
   tray.on("click", toggleVisibility);
   // Exit to the tray
   {
-    let willQuit = false;
+    let willQuit = new AppConfig().get().settings.general.window.hideOnClose;
     app.once("before-quit", () => willQuit = true);
     parent.on("close", (event) => {
       if (!willQuit) {

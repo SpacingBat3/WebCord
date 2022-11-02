@@ -27,7 +27,8 @@
             "name": "WebCord's main window",
             "description": "Controls the look and behavior of the window displaying client interface.",
             "labels": {
-                "transparent": "Allow for translucent window background."
+                "transparent": "Allow for translucent window background.",
+                "hideOnClose": "Hide window to tray with the close button."
             }
         }
     },
