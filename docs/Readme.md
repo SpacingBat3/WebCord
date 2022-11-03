@@ -59,7 +59,7 @@ of testing the app at runtime. All of this is hardened by ESLint, which forbidds
 some TypeScript practises like the use of `any` type and enforces some cosmetic
 aspects of the code to keep it more consistent.
 
-Unlike to official Discord client, WebCord's policy about Electron also makes it
+Unlike the official Discord client, WebCord's policy about Electron also makes it
 to use the latest major release currently supported and available at the package
 time. This makes WebCord use more up-to-date Electron releases with more recent
 Chromium engine.
@@ -120,8 +120,8 @@ It is strongly advised to read the [application license](../LICENSE) as well.
 ## History
 
 At first, this project was a fork of the [Discord-Electron], but then eventually
-I had rewritten it as *Electron Discord Web App* project, which is currently
-called *WebCord*.
+I rewritten it as *Electron Discord Web App* project, which is now
+refered to as *WebCord*.
 
 At its early days, it had a very simple concept: a better web app implementation
 than Nativefier was, at least in terms of the features. Since I were too young
