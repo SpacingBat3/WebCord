@@ -98,7 +98,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     const headersOverwrite:{"Content-Security-Policy"?:[string]} = {};
     if (configData.get().settings.advanced.csp.enabled)
-      headersOverwrite["Content-Security-Policy"] = [getWebCordCSP().toString()];
+      headersOverwrite["Content-Security-Policy"] = [getWebCordCSP()];
     callback({
       responseHeaders: {
         ...details.responseHeaders,
