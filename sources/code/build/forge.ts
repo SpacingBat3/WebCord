@@ -69,6 +69,10 @@ function getBuildID() {
 
 const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
+  rebuildConfig: {
+    disablePreGypCopy: true,
+    onlyModules: []
+  },
   packagerConfig: {
     executableName: packageJson.data.name, // name instead of the productName
     asar: env.asar,
@@ -91,10 +95,14 @@ const config: ForgeConfigFile = {
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
     ],
-    extendInfo: {
-      NSMicrophoneUsageDescription: "This lets this app to internally manage the microphone access.",
-      NSCameraUsageDescription: "This lets this app to internally manage the camera access."
-    }
+    usageDescription: {
+      Microphone: "This lets this app to internally manage the microphone access.",
+      Camera: "This lets this app to internally manage the camera access."
+    },
+    osxUniversal: {
+      mergeASARs: true
+    },
+    osxSign: true
   },
   makers: [
     {
@@ -122,7 +130,8 @@ const config: ForgeConfigFile = {
         shortName: "WebCord",
         programFilesFolderName: "WebCord",
         shortcutFolderName: "WebCord"
-      }
+      },
+      enabled: process.env["WEBCORD_WIX"]?.toLowerCase() === "true"
     },
     {
       name: "@electron-forge/maker-dmg",
