@@ -61,10 +61,37 @@ img[src*="423864076095979522"] ~ :is(h1,h2,h3,h4,h5,h6) > span > span {
     }
 }
 
+/* Hide "help" button. */
+div[class|=toolbar] > a {
+    display: none;
+}
+
+/* Fix popup position going negative. */
+div[id^=popout_][style] {
+    right: 16px !important;
+}
+
+/* Limit elements width to not take space above the screen width. */
+div[class|=layerContainer] * {
+    max-width: 100vw !important;
+}
+
 /* Mobile interface tweaks */
 @media screen and (max-width: 480px) {
-    div[class|="channelTextArea"] > div[class|="scrollableContainer"] >
-    div[class|="inner"] > div[class|="buttons"] > :not(:last-child) {
+    div[class|=channelTextArea] > div[class|=scrollableContainer] >
+    div[class|=inner] > div[class|=buttons] > :not(:last-child) {
         display: none;
+    }
+    /* Hide search input if the screen is too small to display toolbar right.*/
+    section[class|=title] > div[class|=toolbar] > div[class|=search] {
+        display: none;
+    }
+    /* Fix popup position being to far from the right. */
+    div[id^=popout_][style] {
+        right: 0px !important;
+    }
+    /* Fix size of some popups take slightly higher width than they should be. */
+    div[role=dialog] div[class|=header] {
+        box-sizing: border-box;
     }
 }
