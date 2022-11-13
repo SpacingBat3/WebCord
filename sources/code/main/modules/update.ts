@@ -42,7 +42,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     case 1:
       showGui = true;
       updateMsg = strings.dialog.ver.update +
-                " (v" + app.getVersion() + " → v" + githubApi["tag_name"].replace(/^v(.+)$/,"$1") + ")";
+        " (v" + app.getVersion() + " → v" + githubApi["tag_name"].replace(/^v(.+)$/,"$1") + ")";
       break;
     case -1:
     // Application is newer than remote version.
@@ -50,7 +50,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
         updateMsg = strings.dialog.ver.devel;
       else
         updateMsg = strings.dialog.ver.downgrade +
-                    " (v" + app.getVersion() + " → v" + githubApi["tag_name"].replace(/^v(.+)$/,"$1") + ")";
+          " (v" + app.getVersion() + " → v" + githubApi["tag_name"].replace(/^v(.+)$/,"$1") + ")";
       break;
     default:
     // If version can't be parsed by semver.
