@@ -16,7 +16,7 @@ type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"]
 };
 
 function generateConfig (config:AppConfig) {
-  const appConfig = deepmerge(config.get().settings, (new l10n()).settings);
+  const appConfig = deepmerge(config.value.settings, (new l10n()).settings);
   const finalConfig: PartialRecursive<generatedConfig> = appConfig as object;
   const websitesThirdParty: cspTP<string> = {
     algolia: "Algolia",

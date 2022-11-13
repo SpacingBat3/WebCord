@@ -286,7 +286,7 @@ let overwriteMain: (() => unknown) | undefined;
     console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value !== undefined ? "="+value : ""));
   };
   // Apply recommended GPU flags if user had opt in for them.
-  if(new AppConfig().get().settings.advanced.optimize.gpu)
+  if(new AppConfig().value.settings.advanced.optimize.gpu)
     getRecommendedGPUFlags().then(flags => {
       for(const flag of flags) if(!app.isReady()) {
         applyFlags(flag[0], flag[1]);
@@ -298,7 +298,7 @@ let overwriteMain: (() => unknown) | undefined;
   
   // Enable MiddleClickAutoscroll for all windows.
   if(process.platform !== "win32" &&
-      new AppConfig().get().settings.advanced.unix.autoscroll)
+      new AppConfig().value.settings.advanced.unix.autoscroll)
     applyFlags("enable-blink-features","MiddleClickAutoscroll");
 
   for(const flag of getRedommendedOSFlags())
@@ -381,7 +381,7 @@ app.on("web-contents-created", (_event, webContents) => {
 
   // Securely open some urls in external software.
   webContents.setWindowOpenHandler((details) => {
-    const config = new AppConfig().get().settings;
+    const config = new AppConfig().value.settings;
     if (!app.isReady()) return { action: "deny" };
     const openUrl = new URL(details.url);
     const sameOrigin = new URL(webContents.getURL()).origin === openUrl.origin;

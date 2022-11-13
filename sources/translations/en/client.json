@@ -73,6 +73,13 @@
             },
             "check": {
                 "denied": "%s: Permission check to %s denied."
+            },
+            "question": {
+                "title": "Permission request handler",
+                "message": "Do you want to grant Discord an access to the %s?",
+                "video": "camera",
+                "audio": "microphone",
+                "notifications": "notifications"
             }
         },
         "mod": {
