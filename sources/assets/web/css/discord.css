@@ -72,7 +72,7 @@ div[id^=popout_][style] {
 }
 
 /* Limit elements width to not take space above the screen width. */
-div[class|=layerContainer] * {
+div[class|=layerContainer] :not([class*=Tooltip]) {
     max-width: 100vw !important;
 }
 
