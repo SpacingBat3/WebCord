@@ -22,7 +22,7 @@ jobs:
             arch: x64,arm64,ia32
           - name: macOS
             runner: macos
-            arch: x64,arm64
+            arch: x64,arm64,universal
 
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}-latest
@@ -36,10 +36,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Add WiX Toolset to PATH
-        if: ${{ matrix.runner == 'windows' }}
-        shell: bash
-        run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+      - name: 'Cache TypeScript''s `tsbuildinfo.json`.'
+        uses: actions/cache@v3
+        with:
+          key: tsc-${{ hashFiles('app/build/info.json') }}
+          path: app/build/info.json
 
       - name: Publish distributables (${{ matrix.arch}})
         uses: nick-fields/retry@v2
