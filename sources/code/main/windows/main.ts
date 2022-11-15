@@ -16,6 +16,7 @@ import {
   BrowserView,
   systemPreferences
 } from "electron/main";
+import { getInputNodes, getOutputNodesName, getLinks, linkNodesNameToId, unlinkPorts  } from "node-pipewire";
 import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
@@ -26,6 +27,7 @@ import { commonCatches } from "../modules/error";
 
 import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
+import type { PipewireNode } from "node-pipewire/build/types";
 
 const configData = new AppConfig();
 
@@ -34,7 +36,23 @@ interface MainWindowFlags {
   screenShareAudio: boolean;
 }
 
+interface AudioInformation {
+  selectedAudioNodes: string[] | null;
+  chromiumInputNodes: PipewireNode[] | null;
+}
+
+const blacklistInputNodes: number[] = [];
+
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
+  
+  // get the actual input nodes from pipewire. If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
+  const inputNodes = getInputNodes();
+  const inputNode = inputNodes.find(node => node.name === "Chromium");
+  
+  if (inputNode) {
+    blacklistInputNodes.push(inputNode.id);
+  }
+    
   const l10nStrings = (new l10n()).client;
 
   const internalWindowEvents = new EventEmitter();
@@ -511,62 +529,117 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           types: lock ? ["screen", "window"] : ["screen"],
           fetchWindowIcons: lock
         });
-        if(lock) {
-          const view = new BrowserView({
-            webPreferences: {
-              preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js"),
-              nodeIntegration: false,
-              contextIsolation: true,
-              sandbox: false,
-              enableWebSQL: false,
-              webgl: false,
-              autoplayPolicy: "user-gesture-required"
-            }
-          });
+
+        // TODO: Add support for multiple displays. One for default and another for pipewire audios.
+        const view = new BrowserView({
+          webPreferences: {
+            preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js"),
+            nodeIntegration: false,
+            contextIsolation: true,
+            sandbox: false,
+            enableWebSQL: false,
+            webgl: false,
+            autoplayPolicy: "user-gesture-required"
+          }
+        });
+        if (lock){
           ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
             if(event.sender === view.webContents)
               return [await sources, flags.screenShareAudio];
             else
               return null;
           });
-          const autoResize = () => setImmediate(() => view.setBounds({
-            ...win.getBounds(),
-            x:0,
-            y:0,
-          }));
-          ipcMain.handleOnce("capturer-get-settings", () => {
-            return new AppConfig().value.screenShareStore;
-          });
-          ipcMain.once("closeCapturerView", (_event,data:unknown) => {
-            win.removeBrowserView(view);
-            view.webContents.delete();
-            win.removeListener("resize", autoResize);
-            ipcMain.removeHandler("capturer-get-settings");
-            resolvePromise(data);
-            lock = false;
-          });
-          win.setBrowserView(view);
-          void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
-          view.webContents.once("did-finish-load", () => {
-            autoResize();
-            win.on("resize", autoResize);
-          });
         } else {
-          sources.then(sources => resolvePromise({
-            audio: flags.screenShareAudio ? {
-              mandatory: {
-                chromeMediaSource: "desktop",
-                chromeMediaSourceId: sources[0]?.id
-              }
-            } : false,
-            video: {
-              mandatory: {
-                chromeMediaSource: "desktop",
-                chromeMediaSourceId: sources[0]?.id
-              }
-            }
-          })).catch(error => console.error(error));
+          ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
+            const outputNodesName = getOutputNodesName();
+            const inputNodes = getInputNodes();
+            const chromiumInputNodes = inputNodes.filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+
+            // Filter outputNodesName to remove the repeated names
+            const outputNodesNameFiltered = outputNodesName.filter((node, index) => {
+              return outputNodesName.indexOf(node) === index;
+            });
+
+            if(event.sender === view.webContents)
+              return [await sources, flags.screenShareAudio, outputNodesNameFiltered, chromiumInputNodes];
+            else
+              return null;
+          });
         }
+        const autoResize = () => setImmediate(() => view.setBounds({
+          ...win.getBounds(),
+          x:0,
+          y:0,
+        }));
+        ipcMain.handleOnce("capturer-get-settings", () => {
+          return new AppConfig().value.screenShareStore;
+        });
+        ipcMain.once("closeCapturerView", (_event, data:unknown, audioInfo?: AudioInformation) => {
+          win.removeBrowserView(view);
+          view.webContents.delete();
+          win.removeListener("resize", autoResize);
+          ipcMain.removeHandler("capturer-get-settings");
+
+          const sleep = async (ms:number) => await new Promise((resolve) => setTimeout(resolve, ms));
+
+          if(audioInfo && (audioInfo.chromiumInputNodes && audioInfo.selectedAudioNodes)){
+            const selectedAudioNodes = audioInfo.selectedAudioNodes;
+            const chromiumInput = audioInfo.chromiumInputNodes[0];
+
+            if (selectedAudioNodes.length > 0 && chromiumInput) {
+              // wait 2 seconds to make sure the audio is ready with new promise
+              sleep(2000).then(() => {
+                const newInputs = getInputNodes();
+                const chromiumInputNodes = newInputs.filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+                
+                // from the new chromium input nodes, get the ones that are not in the old ones
+                const screenShareNode = chromiumInputNodes.find((node) => {
+                  return chromiumInput.id !== node.id;
+                });
+
+                if (screenShareNode) {
+                  const links = getLinks();
+                  const chromiumLink = links.find((link) => {
+                    return chromiumInput.id === link.input_node_id;
+                  });
+
+                  // unlink mic from the screen-share (if it was linked, in my case it was)
+                  if (chromiumLink && screenShareNode.ports.length > 0 && screenShareNode.ports[0]) {
+                    unlinkPorts( screenShareNode.ports[0].id, chromiumLink.output_port_id );
+                  }
+
+                  // send to PW the name of selected audio nodes with the id of the new chromium input nodes
+                  const interval = setInterval(() => {
+                    // create an interval to check if the port of the screenShareNode exits
+                    const nodes = getInputNodes();
+                    const tempNode = nodes.find((node) => {
+                      return screenShareNode.id === node.id;
+                    });
+                    if (tempNode) {
+                      selectedAudioNodes.forEach((nodeName) => {
+                        // link the new chromium input node to the selected audio node
+                        linkNodesNameToId(nodeName, tempNode.id);
+                      });
+                    } else {
+                      clearInterval(interval);
+                    }
+                  }, 1000);
+                }
+              }).catch((err) => {
+                console.log("ERROR sleeping?:",err);
+              });
+            }
+          }
+        
+          resolvePromise(data);
+          lock = false;
+        });
+        win.setBrowserView(view);
+        void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
+        view.webContents.once("did-finish-load", () => {
+          autoResize();
+          win.on("resize", autoResize);
+        });
         return;
       });
     });
