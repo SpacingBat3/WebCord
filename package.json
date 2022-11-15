@@ -70,6 +70,7 @@
     "electron-fetch": "^1.7.3",
     "highlight.js": "^11.4.0",
     "marked": "^4.0.12",
+    "node-pipewire": "^1.0.8",
     "semver": "^7.3.5",
     "source-map-support": "^0.5.21",
     "spdx-expression-parse": "^3.0.1",
