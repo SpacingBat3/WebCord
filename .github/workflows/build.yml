@@ -39,11 +39,11 @@ jobs:
         if: ${{ matrix.deps == 'latest' }}
         run: npm update
 
-      - name: 'Cache TypeScript''s `tsbuildinfo.json`.'
+      - name: Cache compilation artifacts
         uses: actions/cache@v3
         with:
-          key: tsc-${{ hashFiles('app/build/info.json') }}
-          path: app/build/info.json
+          key: tsc
+          path: app
 
       - name: Run tests with ${{ matrix.deps }} dependencies
         run: npm test
