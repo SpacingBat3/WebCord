@@ -83,13 +83,13 @@ const config: ForgeConfigFile = {
     quiet: true,
     ignore: [
       // Directories:
-      /app\/build/,
-      /out\//,
-      /schemas\//,
+      /app\/(?:.*\/)?build\/?$/,
+      /out\/?$/,
+      /schemas\/?$/,
       // Files:
       /\.eslintrc\.json$/,
       /tsconfig\.json$/,
-      /sources\/code\//,
+      /sources\/code\/?$/,
       /sources\/assets\/icons\/app\.icns$/,
       // Hidden (for *nix OSes) files:
       /^\.[a-z]+$/,
