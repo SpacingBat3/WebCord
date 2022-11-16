@@ -529,11 +529,17 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           types: lock ? ["screen", "window"] : ["screen"],
           fetchWindowIcons: lock
         });
+        let capturerJS = "app/code/renderer/preload/capturer.js";
+        let capturerHTML = "sources/assets/web/html/capturer.html";
 
-        // TODO: Add support for multiple displays. One for default and another for pipewire audios.
+        if (!lock) {
+          capturerJS = "app/code/renderer/preload/pipewire-capturer.js";
+          capturerHTML = "sources/assets/web/html/pipewire-capturer.html";
+        }
+
         const view = new BrowserView({
           webPreferences: {
-            preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js"),
+            preload: resolve(app.getAppPath(), capturerJS),
             nodeIntegration: false,
             contextIsolation: true,
             sandbox: false,
@@ -635,7 +641,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           lock = false;
         });
         win.setBrowserView(view);
-        void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
+        void view.webContents.loadFile(resolve(app.getAppPath(), capturerHTML));
         view.webContents.once("did-finish-load", () => {
           autoResize();
           win.on("resize", autoResize);
