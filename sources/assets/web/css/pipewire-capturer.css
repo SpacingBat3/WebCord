@@ -25,7 +25,18 @@ html, body {
 
 #capturer-list {
     max-width: calc(100% - 100px);
-    margin: 50px;
+    margin: 0, 0, 50px, 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    overflow: hidden;
+    justify-content: center;
+}
+
+#capturer-audio-list {
+    max-width: calc(100% - 100px);
+    margin: 0, 0, 50px, 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
@@ -83,6 +94,49 @@ html, body {
     overflow: hidden;
 }
 
+.capturer-audio-item {
+    display: flex;
+    margin: 4px;
+}
+.capturer-audio-button {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 100px;
+    margin: 0;
+    border: 0;
+    border-radius: 3px;
+    padding: 4px;
+    color: #FFFFFF;
+    background: var(--color-input-bg);
+    text-align: left;
+    transition: background-color .15s, box-shadow .15s;
+}
+
+.capturer-audio-button:hover {
+    background: var(--color-accent);
+}
+
+.capturer-audio-button-disabled,
+.capturer-audio-button-disabled:hover,
+.capturer-audio-button-disabled:focus {
+    background-color: var(--color-bg-secondary);
+    cursor: not-allowed;
+}
+
+.capturer-audio-label {
+    color: #dcddde;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+}
+
+.capturer-audio-button-selected {
+    background: var(--color-accent);
+}
+
 #capturer-buttons {
     position: fixed;
     display: flex;
@@ -138,4 +192,20 @@ input[type="checkbox"]#capturer-sound {
 #capturer-buttons > *:disabled {
     background-color: var(--color-bg-secondary);
     cursor: not-allowed;
+}
+
+#capturer-audio-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 50px;
+}
+
+#capturer-video-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 50px;
 }

@@ -1,4 +1,5 @@
 import {ipcRenderer as ipc} from "electron/renderer";
+import type { PipewireNode } from "node-pipewire/build/types";
 import L10N from "../../common/modules/l10n";
 import type {AppConfig} from "../../main/modules/config";
 
@@ -53,11 +54,40 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
   }
 }
 
+function renderCapturerAudioContainer(sources: string[], ) {
+  const list = document.getElementById("capturer-audio-list");
+  if(list === null) throw new Error("Element of ID: 'capturer-list' does not exists!");
+  for (const source of sources) {
+    // Item
+    const item = document.createElement("li");
+    item.className = "capturer-audio-item";
+
+    // Button
+    const button = document.createElement("button");
+    button.className = "capturer-audio-button";
+    button.setAttribute("id", source);
+    button.setAttribute("title", source);
+
+    // Label
+    const label = document.createElement("span");
+    label.className = "capturer-audio-label";
+    label.innerText = source;
+    button.appendChild(label);
+
+    item.appendChild(button);
+    list.appendChild(item);
+  }
+}
+
 type ExpectedIncomingResult = [
   /** List of sources fetched from the Electron API. */
   sources: Electron.DesktopCapturerSource[],
   /** Whenever audio has been enforced by command-line flags. */
-  screenShareAudio: boolean
+  screenShareAudio: boolean,
+  /** List of audio sources fetch from Pipewire */
+  audioSources?: string[],
+  /** List of input sources of Chromium */
+  inputSources?: PipewireNode[]
 ];
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -68,9 +98,11 @@ window.addEventListener("DOMContentLoaded", () => {
       if(result === null) {
         ipc.send("closeCapturerView", new Error("Unknown sources list."));
       } else {
+        const selectedAudioNodes: string[] = [];
         {
           const l10n = new L10N().client.dialog.screenShare;
           const closeButton = document.getElementById("capturer-close") as HTMLButtonElement|null;
+
           if((process.platform === "win32" || result[1]) && audioButton) {
             audioSupport = true;
             audioButton.disabled = false;
@@ -79,11 +111,28 @@ window.addEventListener("DOMContentLoaded", () => {
               .then((settings:AppConfig["defaultConfig"]["screenShareStore"]) => {
                 audioButton.checked = settings.audio;
               });
-            audioButton.addEventListener("click", () => ipc.send("settings-config-modified", {
-              screenShareStore: {
-                audio: audioButton.checked
-              }
-            }));
+            audioButton.addEventListener("click", () => {
+              ipc.send("settings-config-modified", {
+                screenShareStore: {
+                  audio: audioButton.checked
+                }
+              });
+
+              [...document.querySelectorAll(".capturer-audio-button")].map((button) => {
+                // add or remove the class ".capturer-audio-button-disabled" to the button
+                button.classList.toggle("capturer-audio-button-disabled", !audioButton.checked);
+
+                // add or remove the attribute "disabled" to the button
+                if (audioButton.checked) {
+                  button.removeAttribute("disabled");
+                } else {
+                  button.setAttribute("disabled", "");
+                  // clear the selected audio nodes
+                  selectedAudioNodes.length = 0;
+                  button.classList.remove("capturer-audio-button-selected");
+                }
+              });
+            });
           } else if(audioButton) {
             audioButton.title = l10n.sound.unavailable;
             audioButton.disabled = true;
@@ -100,7 +149,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
               }
               ipc.send("closeCapturerView", {
-                audio: audioSupport && (audioButton?.checked ?? false) ? {
+                audio: audioSupport && ((audioButton?.checked ?? false) && selectedAudioNodes.length > 0) ? {
                   mandatory: {
                     chromeMediaSource: "desktop"
                   }
@@ -110,7 +159,11 @@ window.addEventListener("DOMContentLoaded", () => {
                     chromeMediaSource: "desktop",
                     chromeMediaSourceId: source.id
                   }
-                }
+                },
+              },
+              {
+                selectedAudioNodes: result[2] ? selectedAudioNodes : null,
+                chromiumInputNodes: result[3] ?? null
               });
             })
           );
@@ -118,6 +171,41 @@ window.addEventListener("DOMContentLoaded", () => {
             ?.addEventListener("click", () => ipc.send("closeCapturerView", "Permission denied"));
         } catch(reason) {
           ipc.send("closeCapturerView", reason);
+        }
+
+        if (result[2] && result[2].length > 0) {
+          try {
+            renderCapturerAudioContainer(result[2]);
+            [...document.querySelectorAll(".capturer-audio-button")].map(button => {
+              const checkDisabled = setInterval(() => {
+                if (audioButton) {
+                  button.classList.toggle("capturer-audio-button-disabled", !audioButton.checked);
+                  if (audioButton.checked) {
+                    button.removeAttribute("disabled");
+                  } else {
+                    button.setAttribute("disabled", "");
+                  }
+                  clearInterval(checkDisabled);
+                }
+              }, 200);
+
+              button.addEventListener("click", () => {
+                const id = button.getAttribute("id");
+                if (id !== null) {
+                  if (selectedAudioNodes.includes(id)) {
+                    selectedAudioNodes.splice(selectedAudioNodes.indexOf(id), 1);
+                    button.classList.remove("capturer-audio-button-selected");
+                  }else {
+                    selectedAudioNodes.push(id);
+                    button.classList.add("capturer-audio-button-selected");
+                  }
+                }
+              });
+            });
+          }
+          catch(reason) {
+            ipc.send("closeCapturerView", reason);
+          }
         }
       }
     })
