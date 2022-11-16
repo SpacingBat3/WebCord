@@ -118,7 +118,7 @@ let startHidden = false;
  * 
  * **Might bring undesirable consequences on unsupported platforms**.
  */
-let screenShareAudio = true;
+let screenShareAudio = false;
 createPwThread();
 
 const userAgent: Partial<{

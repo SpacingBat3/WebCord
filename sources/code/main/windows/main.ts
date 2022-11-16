@@ -45,13 +45,31 @@ const blacklistInputNodes: number[] = [];
 
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   
-  // get the actual input nodes from pipewire. If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
-  const inputNodes = getInputNodes();
-  const inputNode = inputNodes.find(node => node.name === "Chromium");
-  
-  if (inputNode) {
-    blacklistInputNodes.push(inputNode.id);
-  }
+  let pipewireAudio = false;
+  let testAudioAttempts = 0;
+  const testAudioInterval: NodeJS.Timeout = setInterval(() => {
+    // get the actual input nodes from pipewire. 
+    const inputNodes = getInputNodes();
+    
+    if (inputNodes.length > 0) {
+      //If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
+      const chromiumInputNodes = inputNodes.filter(node => node.name === "Chromium");
+    
+      if (chromiumInputNodes.length > 0) {
+        chromiumInputNodes.forEach(node => {
+          blacklistInputNodes.push(node.id);
+        });
+      }
+      flags.screenShareAudio = true;
+      pipewireAudio = true;
+      clearInterval(testAudioInterval);
+    } else{
+      testAudioAttempts++;
+      if (testAudioAttempts === 5) {
+        clearInterval(testAudioInterval);
+      }
+    }
+  }, 1000);
     
   const l10nStrings = (new l10n()).client;
 
@@ -532,7 +550,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         let capturerJS = "app/code/renderer/preload/capturer.js";
         let capturerHTML = "sources/assets/web/html/capturer.html";
 
-        if (!lock) {
+        if (pipewireAudio) {
           capturerJS = "app/code/renderer/preload/pipewire-capturer.js";
           capturerHTML = "sources/assets/web/html/pipewire-capturer.html";
         }
@@ -548,7 +566,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
             autoplayPolicy: "user-gesture-required"
           }
         });
-        if (lock){
+        
+        if (!pipewireAudio){
           ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
             if(event.sender === view.webContents)
               return [await sources, flags.screenShareAudio];
