@@ -8,6 +8,7 @@
     --nav-width: 60vw;
     --nav-elements: 3;
     --animation: cubic-bezier(0.4, 0, 0.2, 1);
+    --copied-text: "Copied!"; /* This should be replaced from the other side */
 }
 
 p, li, div, code {
@@ -334,4 +335,9 @@ a:focus-visible, button:focus-visible {
     outline: none;
     padding-left: 8px;
     border-left: solid 1px rgb(var(--color-accent-light));
+}
+
+.copiable {
+    position: relative;
+    cursor: pointer;
 }

@@ -26,6 +26,7 @@ export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.
     appRepo: packageJson.data.homepage
   };
   if(aboutPanel === undefined) return;
+  aboutPanel.webContents.session.setPermissionCheckHandler((_webContents, permission) => permission === "clipboard-sanitized-write");
   ipc.once("about.close", (event) => {
     if(!aboutPanel.isDestroyed() && event.senderFrame.url === aboutPanel.webContents.getURL())
       aboutPanel.close();

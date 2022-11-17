@@ -155,8 +155,9 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
     document.getElementById("checksum")
   ];
   if(versions)
-    versions.innerText = process.versions.electron+" / "+
-            process.versions.chrome+" / "+process.versions.node;
+    versions.innerHTML = sanitize(`<span class="copiable">${process.versions.electron}</span> / ` +
+    `<span class="copiable">${process.versions.chrome}</span class="copiable"> / ` +
+    `<span class="copiable">${process.versions.node}</span>`);
   if(features) {
     for(const [key, value] of Object.entries(details.buildInfo.features) as [keyof buildInfo["features"], boolean][])
       if(value !== defaultBuildInfo.features[key])
@@ -170,6 +171,11 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
     }
   }
   if(checksum) checksum.innerText = (await getAppHash("sha256", "base64")) ?? "N/A";
+  // Add copiable text to clipboard
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  for(const element of document.querySelectorAll(".copiable") as NodeListOf<HTMLElement>) {
+    element.addEventListener("click", () => { navigator.clipboard.writeText(element.innerText).catch(console.error); });
+  }
 }
 
 function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promise<aboutWindowDetails>) {
