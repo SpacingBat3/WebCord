@@ -13,7 +13,9 @@
     "start": "tsc && electron .",
     "package": "tsc && electron-forge package",
     "make": "tsc && electron-forge make",
-    "publish": "tsc && electron-forge publish"
+    "publish": "tsc && electron-forge publish",
+    "enablePW": "npm i node-pipewire@1.0.8",
+    "disablePW": "npm i ./fake-module/node-pipewire-1.0.0.tgz"
   },
   "author": {
     "name": "SpacingBat3",
