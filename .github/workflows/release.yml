@@ -22,12 +22,12 @@ jobs:
             arch: x64,arm64,ia32
           - name: macOS
             runner: macos
-            arch: x64,arm64
+            arch: x64,arm64,universal
 
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -36,10 +36,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Add WiX Toolset to PATH
-        if: ${{ matrix.runner == 'windows' }}
-        shell: bash
-        run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+      - name: Cache compilation artifacts
+        uses: actions/cache@v3
+        with:
+          key: tsc
+          path: app
 
       - name: Publish distributables (${{ matrix.arch}})
         uses: nick-fields/retry@v2

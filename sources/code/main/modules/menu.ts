@@ -26,7 +26,14 @@ const devel = getBuildInfo().type === "devel";
 
 sideBar.on("hide", (contents: Electron.WebContents) => {
   console.debug("[EVENT] Hiding menu bar...");
-  contents.insertCSS("div[class|=sidebar]{ width: 0px !important; }").then(cssKey => {
+  contents.insertCSS([
+    // Make left sidebar hidden
+    "div[class|=sidebar]{ width: 0px !important; }",
+    // Make settings sidebar hidden
+    "div[class|=sidebarRegion]{ display: none !important; }",
+    // Make settings content fit entire available space.
+    "div[class|=contentColumn]{ max-width: 100%; }"
+  ].join("\n")).then(cssKey => {
     sideBar.once("show", () => {
       console.debug("[EVENT] Showing menu bar...");
       contents.removeInsertedCSS(cssKey).catch(commonCatches.throw);
@@ -76,7 +83,7 @@ export function context(parent: Electron.BrowserWindow): void {
       });
       cmenu.push({ type: "separator" });
     }
-    if (devel || appConfig.get().settings.advanced.devel.enabled) {
+    if (devel || appConfig.value.settings.advanced.devel.enabled) {
       cmenu.push({
         label: strings.context.inspectElement,
         click: () => parent.webContents.inspectElement(params.x, params.y)
@@ -147,7 +154,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
     let willQuit = false;
     app.once("before-quit", () => willQuit = true);
     parent.on("close", (event) => {
-      if (!willQuit && new AppConfig().get().settings.general.window.hideOnClose) {
+      if (!willQuit && new AppConfig().value.settings.general.window.hideOnClose) {
         event.preventDefault();
         parent.hide();
       }
@@ -173,7 +180,7 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
         // Extensions (Work In Progress state)
         /*{
 					label: strings.menubar.file.addon.groupName,
-					visible: devel || appConfig.get().devel,
+					visible: devel || appConfig.value.devel,
 					//click: () => {}
 				},*/
         { type: "separator" },
@@ -226,7 +233,7 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
           label: strings.menubar.view.devTools,
           id: "devTools",
           role: "toggleDevTools",
-          enabled: devel || appConfig.get().settings.advanced.devel.enabled
+          enabled: devel || appConfig.value.settings.advanced.devel.enabled
         },
         { type: "separator" },
         // Zoom settings (reset, zoom in, zoom out)

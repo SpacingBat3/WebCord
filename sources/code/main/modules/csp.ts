@@ -210,7 +210,7 @@ const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
 let cache: Readonly<{configValues: string; result:string}> | undefined;
 
 export function getWebCordCSP(additionalPolicies: CSPBuilder[]|[] = []) {
-  const config = new AppConfig().get().settings.advanced.cspThirdParty;
+  const config = new AppConfig().value.settings.advanced.cspThirdParty;
     type parties = keyof typeof config;
     type cspFilter = (value:CSPBuilder|undefined) => value is CSPBuilder;
     if(cache && cache.configValues === Object.values(config).join())
