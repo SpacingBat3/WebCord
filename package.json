@@ -13,9 +13,7 @@
     "start": "tsc && electron .",
     "package": "tsc && electron-forge package",
     "make": "tsc && electron-forge make",
-    "publish": "tsc && electron-forge publish",
-    "enablePW": "npm i node-pipewire@1.0.8",
-    "disablePW": "npm i ./fake-module/node-pipewire-1.0.0.tgz"
+    "publish": "tsc && electron-forge publish"
   },
   "author": {
     "name": "SpacingBat3",
@@ -72,13 +70,15 @@
     "electron-fetch": "^1.7.3",
     "highlight.js": "^11.4.0",
     "marked": "^4.0.12",
-    "node-pipewire": "^1.0.8",
     "semver": "^7.3.5",
     "source-map-support": "^0.5.21",
     "spdx-expression-parse": "^3.0.1",
     "tslib": "^2.3.1",
     "twemoji-colr-font": "^14.0.2",
     "ws": "^8.5.0"
+  },
+  "optionalDependencies": {
+    "node-pipewire": "^1.0.10"
   },
   "config": {
     "forge": "./app/code/build/forge.js"
