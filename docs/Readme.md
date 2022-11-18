@@ -120,7 +120,7 @@ It is strongly advised to read the [application license](../LICENSE) as well.
 ## History
 
 At first, this project was a fork of the [Discord-Electron], but then eventually
-I rewritten it as *Electron Discord Web App* project, which is now
+I rewrote it as *Electron Discord Web App* project, which is now
 refered to as *WebCord*.
 
 At its early days, it had a very simple concept: a better web app implementation
