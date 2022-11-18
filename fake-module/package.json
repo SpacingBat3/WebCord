@@ -1,7 +1,0 @@
-{
-  "name": "node-pipewire",
-  "version": "1.0.0",
-  "description": "fake module to imitate node-pipewire",
-  "main": "build/index.js",
-  "types": "build/index.d.ts"
-}
