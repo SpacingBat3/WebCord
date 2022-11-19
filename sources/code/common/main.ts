@@ -41,11 +41,16 @@ import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
-import { parseArgs } from "util";
+import { parseArgs, stripVTControlCharacters } from "util";
 import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
 
 const argvConfig = Object.freeze({
   options: {
+    /**
+     * Used internally by [`@spacingbat3/kolor`](https://www.npmjs.com/package/@spacingbat3/kolor)
+     * module.
+     */
+    "color": { type: "string" },
     "help": { type: "boolean", short: "h" },
     /** An alias to `help` command-line option. */
     "info": { type: "boolean", short: "?" },
@@ -128,11 +133,19 @@ let overwriteMain: (() => unknown) | undefined;
 
 {
   /** Renders a line from the list of the parameters and their descripiton. */
-  const renderLine = (parameters:string[], description:string, length?:number) => {
-    const parameter = parameters.map(p => (p.length === 1 ? "-" : "--")+p).join("  ");
-    // eslint-disable-next-line no-control-regex
-    const spaceBetween = (length ?? 30) - parameter.replace(/\x1B\[[^m]+m/g, "").length;
-    return "  "+kolor.green(parameter)+" ".repeat(spaceBetween)+kolor.gray(description);
+  const renderLine = (key:keyof typeof argvConfig.options, description:string, type?:string, length = 32) => {
+    const option = argvConfig.options[key];
+    const parameter = [
+      "--"+key,
+      type !== undefined ? "="+kolor.yellow(type) :
+        option.type === "string" ? "="+kolor.yellow("{string}") : "",
+      "short" in option ? "   "+"-"+option.short : ""
+    ].join("");
+    const spaceBetween = length - stripVTControlCharacters(parameter).length;
+    const formattedDesc = description
+      .replaceAll(type??/^$/g, type !== undefined ? kolor.yellow(type) : "")
+      .replaceAll(/(--?[a-zA-Z-]+)/g,kolor.green("$1"));
+    return "  "+kolor.green(parameter)+" ".repeat(spaceBetween > 0 ? spaceBetween : 0)+kolor.gray(formattedDesc);
   };
 
   // Mitigations to "unsafe" command-line switches
@@ -159,22 +172,20 @@ let overwriteMain: (() => unknown) | undefined;
       " " + kolor.red(argv0) + kolor.green(" [options]\n"),
       " " + kolor.underline("Options:")
     ].join("\n")+"\n"+[
-      renderLine(["help", "h", "?"],"Show this help message."),
-      renderLine(["version","V"],"Show current application version."),
-      renderLine(["start-minimized", "m"],"Hide application at first run."),
-      renderLine(["export-l10n=" + kolor.yellow("{dir}")], "Export currently loaded translation files from")+"\n"+
-      " ".repeat(32)+kolor.gray("the application to the ") + kolor.yellow("{dir}") + kolor.gray(" directory."),
-      renderLine(["verbose","v"], "Show debug messages."),
-      renderLine(
-        ["gpu-info=" + kolor.yellow("basic") + kolor.blue("|") + kolor.yellow("complete")],
-        "Shows GPU information as JS object."
-      ),
-      renderLine(["user-agent-mobile"], "Whenever use 'mobile' variant of user agent."),
-      renderLine(["user-agent-platform=" + kolor.yellow("{any}")], "Platform to replace in the user agent."),
-      renderLine(["user-agent-version="  + kolor.yellow("{any}")], "Version of platform in user agent."),
-      renderLine(["user-agent-device"], "Device identifier in the user agent (Android)."),
-      renderLine(["force-audio-share-support"], "Force support for sharing audio in screen share."),
-      renderLine(["add-css-theme=" + kolor.yellow("{path}")], "Adds theme to WebCord from "+kolor.yellow("{path}")+".")/*,
+      renderLine("color","Whenever colorize console font.", "always|auto|never"),
+      renderLine("help","Show this help message."),
+      renderLine("info","An alias for --help."),
+      renderLine("version","Show current application version."),
+      renderLine("start-minimized","Hide application at first run."),
+      renderLine("export-l10n", "Export localization files to {dir} directory", "{dir}."),
+      renderLine("verbose", "Show debug messages."),
+      renderLine("gpu-info","Shows GPU information as JS object.", "basic|complete"),
+      renderLine("user-agent-mobile", "Whenever use 'mobile' variant of user agent."),
+      renderLine("user-agent-platform", "Platform to replace in the user agent."),
+      renderLine("user-agent-version", "Version of platform in user agent."),
+      renderLine("user-agent-device", "Device identifier in the user agent (Android)."),
+      renderLine("force-audio-share-support", "Force support for sharing audio in screen share."),
+      renderLine("add-css-theme", "Adds theme to WebCord from {path}.", "{path}")/*,
       renderLine(["remove-css-theme=" + kolor.yellow("{name}")], "Removes WebCord theme by "+kolor.yellow("{name}")),
       renderLine(["list-css-themes"], "Lists currently added WebCord themes")*/
     ].sort().join("\n")+"\n");
