@@ -79,26 +79,20 @@ function npkg() {
 # ```
 function lftest () {
     mapfile -t FILES < <(git diff --staged --name-only);
-    local has_meta has_lock;
-    has_meta=false;
-    has_lock=false;
+    local no_meta no_lock;
+    unset -v no_lock no_meta;
     for file in "${FILES[@]}"; do
         if [[ "$file" == "package-lock.json" ]]; then
-            has_lock=true
+            no_lock=true;
         elif [[ "$file" == "package.json" ]]; then
-            has_meta=true
+            no_meta=true;
         fi
+        [[ $no_lock && $no_meta ]] && break;
     done;
-    if [[  "$has_meta" == "false" && "$has_lock" == "true" ]]; then
-        echo >&2;
-        echo "locktest: test failed!" >&2;
-        printf '    %s\n' \
-            "It seems that you've tried to commit a lock file without any changes"\
-            "done in 'package-lock.json'! This operation will be blocked as lockfile"\
-            "should not be bumped unless a development tree has changed in some way"\
-            "or commit is made that bumps package version and the new tag is going"\
-            "to be released" >&2
-        echo >&2;
+    if [[ "$no_meta" != "$no_lock" ]]; then
+        printf '\n%s (%s)\n\n' \
+            "locktest: test failed!" \
+            "you need to commit both package-lock.json and package.json" >&2
         return 1;
     fi
 }
