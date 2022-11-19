@@ -54,7 +54,7 @@ const argvConfig = Object.freeze({
     "help": { type: "boolean", short: "h" },
     /** An alias to `help` command-line option. */
     "info": { type: "boolean", short: "?" },
-    "version": { type: "boolean", short: "v" },
+    "version": { type: "boolean", short: "V" },
     "start-minimized": { type: "boolean", short: "m" },
     "export-l10n": { type: "string" },
     "verbose": { type: "boolean", short: "v" },
@@ -192,7 +192,14 @@ let overwriteMain: (() => unknown) | undefined;
     app.exit();
   }
   if(argv.values.version === true) {
-    console.log(app.getName() + " v" + app.getVersion());
+    const buildInfo = getBuildInfo();
+    console.log(
+      app.getName() + " v" + app.getVersion()+", "+(
+        buildInfo.type === "release" ? "stable" : "development"
+      )+" build"+(
+        buildInfo.commit !== undefined ? ", commit hash "+buildInfo.commit : ""
+      )
+    );
     app.exit();
   }
   if(argv.values["user-agent-mobile"] === true)
