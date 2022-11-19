@@ -49,7 +49,7 @@ const argvConfig = Object.freeze({
     "help": { type: "boolean", short: "h" },
     /** An alias to `help` command-line option. */
     "info": { type: "boolean", short: "?" },
-    "version": { type: "boolean", short: "v" },
+    "version": { type: "boolean", short: "V" },
     "start-minimized": { type: "boolean", short: "m" },
     "export-l10n": { type: "string" },
     "verbose": { type: "boolean", short: "v" },
