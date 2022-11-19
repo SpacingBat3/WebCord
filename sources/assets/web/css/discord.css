@@ -11,7 +11,7 @@ div[class|=scroller] > div[class|=listItem]:nth-last-child(3) > * {
 
 /* Assign 'rainbow' color to my nickname! */
 img[src*="423864076095979522"] ~ :is(h1,h2,h3,h4,h5,h6) > span > span {
-    animation: rainbow linear 20s infinite;        
+    animation: rainbow linear 20s infinite;
 }
 
 :root {
