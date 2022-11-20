@@ -36,11 +36,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Cache compilation artifacts
+      - name: TSC cache
         uses: actions/cache@v3
         with:
-          key: tsc
-          path: app
+          key: tsc-${{ matrix.build }}
+          path: |
+            app
+            cache/tsc.json
 
       - name: Publish distributables (${{ matrix.arch}})
         uses: nick-fields/retry@v2

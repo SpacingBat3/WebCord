@@ -7,8 +7,8 @@
   "main": "app/code/common/main.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "tsc & eslint --ext .json,.ts . & wait",
-    "lint": "eslint --ext .json,.ts .",
+    "test": "tsc & eslint --cache --cache-location cache/eslint.json --ext .json,.ts . & wait",
+    "lint": "eslint --cache --cache-location cache/eslint.json --ext .json,.ts .",
     "build": "tsc",
     "start": "tsc && electron .",
     "package": "tsc && electron-forge package",

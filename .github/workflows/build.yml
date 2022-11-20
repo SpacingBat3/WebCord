@@ -39,11 +39,20 @@ jobs:
         if: ${{ matrix.deps == 'latest' }}
         run: npm update
 
-      - name: Cache compilation artifacts
+      - name: TSC cache
         uses: actions/cache@v3
         with:
-          key: tsc
-          path: app
+          key: tsc-${{ matrix.deps }}
+          path: |
+            app
+            cache/tsc.json
+      
+      - name: ESLint cache
+        uses: actions/cache@v3
+        with:
+          key: eslint-${{ matrix.deps }}
+          path: |
+            cache/eslint.json
 
       - name: Run tests with ${{ matrix.deps }} dependencies
         run: npm test
@@ -81,11 +90,13 @@ jobs:
         if: ${{ matrix.build == 'latest' }}
         run: npm update
 
-      - name: Cache compilation artifacts
+      - name: TSC cache
         uses: actions/cache@v3
         with:
-          key: tsc
-          path: app
+          key: tsc-${{ matrix.build }}
+          path: |
+            app
+            cache/tsc.json
 
       - name: Generate distributables (${{ matrix.arch }})
         uses: nick-fields/retry@v2

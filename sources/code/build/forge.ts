@@ -84,6 +84,7 @@ const config: ForgeConfigFile = {
     ignore: [
       // Directories:
       /app\/(?:.*\/)?build\/?$/,
+      /cache\/?$/,
       /out\/?$/,
       /schemas\/?$/,
       // Files:
