@@ -2,6 +2,40 @@ import type { Server } from "ws";
 import kolor from "@spacingbat3/kolor";
 import { BrowserWindow, session } from "electron/main";
 
+/**
+ * A list of standard status codes used within WebSocket communication at
+ * connection close. Currently, not all are documented there, althrough all were
+ * listed, with some additional ones took from MDN.
+ * 
+ * Reference: [MDN], [RFC6455].
+ * 
+ * [MDN]: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
+ * [RFC6455]: https://www.rfc-editor.org/rfc/rfc6455.html#section-7.4.1
+ */
+const enum SocketClose {
+  /** Emmited on normal server closure. */
+  Ok = 1000,
+  /** Emmited when endpoint is going away, e.g. on navigation or server failure. */
+  GoingAway,
+  ProtocolError,
+  UnsupportedData,
+  /** **Reserved**. It currently has no meaning, but that might change in the future. */
+  Reserved,
+  /** **Reserved**. Indicates lack of the status/code, althrough it was expected. */
+  NoStatusReveived,
+  /** **Reserved**. Emmited when connection was closed abnormally, where status code was expected. */
+  AbnormalClosure,
+  InvalidPayload,
+  PolicyViolation,
+  MessageTooBig,
+  MandatoryExtension,
+  InternalError,
+  ServiceRestart,
+  /** Emmited when server is terminating connection due to the temporarily condition, e.g. server overload. */
+  TryAgainLater,
+  BadGateway
+}
+
 function wsLog(message:string, ...args:unknown[]) {
   console.log(kolor.bold(kolor.magentaBright("[WebSocket]")), message,...args);
 }
@@ -177,13 +211,13 @@ export default async function startServer() {
     // Checks if origin is associated in Discord or localy installed software.
     if(!trust.isKnown && !trust.isDiscordService && !trust.isLocal) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not trusted)");
-      wss.close(1008,"Client is not trusted.");
+      wss.close(SocketClose.PolicyViolation,"Client is not trusted.");
       return;
     }
     // Checks if origin is associated with the current WebCord's instance.
     if(trust.isDiscordService || trust.isLocal) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not supported)");
-      wss.close(1008,"Client is not supported.");
+      wss.close(SocketClose.PolicyViolation,"Client is not supported.");
       return;
     }
     // Send handshake
@@ -197,14 +231,14 @@ export default async function startServer() {
       const parent = getMainWindow();
       if(parent === undefined){
         console.debug("[WSS] Closed connection due to lack of main window.");
-        wss.close(1013,"Server couldn't connect to main window, try again later.");
+        wss.close(SocketClose.TryAgainLater,"Server couldn't connect to main window, try again later.");
         return;
       }
       // Invitation response handling
       if(isResponse(parsedData, ["INVITE_BROWSER", "GUILD_TEMPLATE_BROWSER"] as ("INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER")[])) {
         if(lock) {
           console.debug('[WSS] Blocked request "'+parsedData.cmd+'" (WSS locked).');
-          wss.close(1013,"Server is busy, try again later.");
+          wss.close(SocketClose.TryAgainLater,"Server is busy, try again later.");
           return;
         }
         lock = true;
@@ -262,7 +296,7 @@ export default async function startServer() {
       // RPC response handling
       else if(isResponse(parsedData, "AUTHORIZE")) {
         wsLog("Received RPC authorization request, but "+kolor.bold("RPC is not implemented yet")+".");
-        wss.close(1007, "Request of type: 'AUTHORIZE' is currently not supported.");
+        wss.close(SocketClose.InvalidPayload, "Request of type: 'AUTHORIZE' is currently not supported.");
       }
       // Unknown response error
       else if(isResponse(parsedData)) {
@@ -271,18 +305,18 @@ export default async function startServer() {
         const msg = "Request of type: '"+type+"' is currently not supported.";
         console.error("[WS] "+msg);
         console.debug("[WS] Request %s", JSON.stringify(parsedData,undefined,4));
-        wss.close(1007, msg);
+        wss.close(SocketClose.InvalidPayload, msg);
       }
       // Unknown text message error
       else if(!isBinary) {
         const msg = "Could not handle the packed text data: '"+(data as Buffer).toString()+"'.";
         console.error("[WS] "+msg);
-        wss.close(1007, msg);
+        wss.close(SocketClose.InvalidPayload, msg);
       }
       // Unknown binary data transfer error
       else {
         console.error("[WS] Unknown data transfer (not text).");
-        wss.close(1003, "Unknown data transfer");
+        wss.close(SocketClose.UnsupportedData, "Unknown data transfer");
       }
     });
   });
