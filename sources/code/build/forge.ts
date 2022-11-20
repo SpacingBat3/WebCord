@@ -112,6 +112,9 @@ const config: ForgeConfigFile = {
     },
     // Finally, some kind of installer in the configuration for Windows!
     {
+      name: "@electron-forge/maker-squirrel"
+    },
+    {
       name: "@electron-forge/maker-wix",
       config: {
         appUserModelId: appUserModelId ?? author+".WebCord",
@@ -132,7 +135,7 @@ const config: ForgeConfigFile = {
         programFilesFolderName: "WebCord",
         shortcutFolderName: "WebCord"
       },
-      enabled: process.env["WEBCORD_WIX"]?.toLowerCase() === "true"
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
     },
     {
       name: "@electron-forge/maker-dmg",
@@ -216,21 +219,22 @@ const config: ForgeConfigFile = {
           icon: iconFile + ".png"
         }
       },
-      enabled: process.env["WEBCORD_FLATPAK"]?.toLowerCase() === "true"
-    }
-    /* Snaps are disabled until maker will be fixed to work without the
-       multipass.
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
+    },
+    /* Snap maker still seems to fail for me, not sure why through... */
     {
       name: "@electron-forge/maker-snap",
       config: {
         features: {
           audio: true,
-          browserSandbox: true
+          passwords: true,
+          webgl: true
         },
         grade: (getBuildID() === "release" ? "stable" : "devel"),
-      }
-    },
-    */
+        confinement: (getBuildID() === "release" ? "strict" : "devmode")
+      },
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
+    }
   ],
   publishers: [
     {
@@ -241,7 +245,7 @@ const config: ForgeConfigFile = {
           owner: author,
           name: "WebCord"
         },
-        draft: false
+        draft: getBuildID() === "release"
       }
     }
   ],
@@ -279,7 +283,31 @@ const config: ForgeConfigFile = {
         [FuseV1Options.RunAsNode]: getBuildID() === "devel",
         [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: getBuildID() === "devel",
         [FuseV1Options.EnableNodeCliInspectArguments]: getBuildID() === "devel"
-      })
+      }),
+    // Fix file names of Windows makers:
+    postMake: (_forgeConfig, makeResults) => Promise.all(makeResults
+      // Currently, only Windows makers are affected – filter them out
+      .filter(result => result.platform === "win32")
+      .map(async result => {
+        // Import modules
+        const p = await import("path"), fs = import("fs/promises");
+        // Set list of new artifacts
+        result.artifacts = await Promise.all(result.artifacts
+          // Filter artifacts without arch.
+          .filter(artifact => p.basename(artifact).includes(result.arch))
+          // Rename artifacts to include arch suffix.
+          .map(async artifact => {
+            const ext = p.extname(artifact);
+            const newArtifact = p.resolve(
+              p.dirname(artifact),
+              p.basename(artifact,ext)+"-"+result.arch+ext
+            );
+            await (await fs).rename(artifact,newArtifact);
+            return newArtifact;
+          })
+        );
+        return result;
+      }))
   }
 };
 

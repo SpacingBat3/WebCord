@@ -15,14 +15,15 @@ export type ForgePlatform = Exclude<OfficialPlatform | NodeJS.Platform, "android
 
 // Maker config types
 
-import type { MakerDebConfig } from "@electron-forge/maker-deb/dist/Config";
-//import { MakerSnapConfig } from "@electron-forge/maker-snap/dist/Config";
-import type { MakerFlatpakConfig } from "@electron-forge/maker-flatpak/dist/Config";
-import type { MakerRpmConfig } from "@electron-forge/maker-rpm/dist/Config";
-import type { MakerZIPConfig } from "@electron-forge/maker-zip/dist/MakerZIP";
-import type { MakerAppImageConfig } from "@reforged/maker-appimage/types/config";
-import type { MakerDMGConfig } from "@electron-forge/maker-dmg/dist/Config";
-import type { MakerWixConfig } from "@electron-forge/maker-wix";
+import type { MakerDebConfig }      from "@electron-forge/maker-deb";
+import type { MakerSnapConfig }     from "@electron-forge/maker-snap";
+import type { MakerFlatpakConfig }  from "@electron-forge/maker-flatpak";
+import type { MakerRpmConfig }      from "@electron-forge/maker-rpm";
+import type { MakerZIPConfig }      from "@electron-forge/maker-zip";
+import type { MakerAppImageConfig } from "@reforged/maker-appimage";
+import type { MakerDMGConfig }      from "@electron-forge/maker-dmg";
+import type { MakerWixConfig }      from "@electron-forge/maker-wix";
+import type { MakerSquirrelConfig } from "@electron-forge/maker-squirrel";
 
 // Publisher config types
 
@@ -65,10 +66,10 @@ interface MakerRpm extends MPBase {
   config?: MakerRpmConfig;
 }
 
-/*interface MakerSnap extends MPBase {
-  name: "@electron-forge/maker-snap",
-  config?: MakerSnapConfig
-}*/
+interface MakerSnap extends MPBase {
+  name: "@electron-forge/maker-snap";
+  config?: MakerSnapConfig;
+}
 
 interface MakerFlatpak extends MPBase {
   name: "@electron-forge/maker-flatpak";
@@ -90,6 +91,11 @@ interface MakerWix extends MPBase {
   config?: MakerWixConfig;
 }
 
+interface MakerSquirrel extends MPBase {
+  name: "@electron-forge/maker-squirrel";
+  config?: MakerSquirrelConfig;
+}
+
 // Publisher types
 
 interface PublisherGitHub extends MPBase {
@@ -101,7 +107,7 @@ interface PublisherGitHub extends MPBase {
 
 export type ForgeConfigFile = Redeclare<Partial<ForgeConfig>, {
   makers?: (
-    MakerZIP | MakerAppImage | MakerDeb | MakerRpm | MakerDMG | MakerFlatpak | MakerWix //| MakerSnap
+    MakerZIP | MakerAppImage | MakerDeb | MakerRpm | MakerDMG | MakerFlatpak | MakerWix | MakerSquirrel | MakerSnap
   )[];
   publishers?: (
     PublisherGitHub
