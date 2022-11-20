@@ -49,7 +49,6 @@ export const gpuVendors = Object.freeze({
  * @param object2 An object used for the type comparasion.
  */
 export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
-
   // False when parameters are not objects.
   if(!(object1 instanceof Object && object2 instanceof Object)) return false;
 	
@@ -59,7 +58,7 @@ export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
   const results = Object.keys({...object1,...object2}).map(key => {
     if(key in object1 && key in object2) {
       const key1:unknown = object1[key as keyof unknown], key2:unknown = object2[key as keyof unknown];
-      if(typeof (key1 === null ? false : key1) === typeof (key2 === null ? false : key2)) {
+      if(typeof key1 === typeof (key2 === null ? false : key2) || key1 === key2) {
         if(typeof key1 === "object" && key1 !== null) {
           if(Array.isArray(key1)&&Array.isArray(key2))
             return true;

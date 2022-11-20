@@ -182,7 +182,7 @@ class Config<T> {
       console.debug(newObject);
   }
   /** Returns the entire parsed configuration file in form of the JavaScript object. */
-  public get value(): T {
+  public get value(): Readonly<T> {
     const parsedConfig:unknown = this.read();
     const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig);
     if(objectsAreSameType(mergedConfig, this.defaultConfig))
