@@ -286,21 +286,23 @@ const config: ForgeConfigFile = {
       }),
     // Fix file names of Windows makers:
     postMake: (_forgeConfig, makeResults) => Promise.all(makeResults
-      // Currently, only Windows makers are affected – filter them out
-      .filter(result => result.platform === "win32")
       .map(async result => {
+        // Ignore other platforms
+        if(result.platform !== "win32")
+          return result;
         // Import modules
         const p = await import("path"), fs = import("fs/promises");
         // Set list of new artifacts
         result.artifacts = await Promise.all(result.artifacts
-          // Filter artifacts without arch.
-          .filter(artifact => p.basename(artifact).includes(result.arch))
           // Rename artifacts to include arch suffix.
           .map(async artifact => {
             const ext = p.extname(artifact);
+            const basename = p.basename(artifact,ext);
+            // Ignore artifacts that doesn't need to be fixed.
+            if(basename.includes(result.arch))
+              return artifact;
             const newArtifact = p.resolve(
-              p.dirname(artifact),
-              p.basename(artifact,ext)+"-"+result.arch+ext
+              p.dirname(artifact), basename+"-"+result.arch+ext
             );
             await (await fs).rename(artifact,newArtifact);
             return newArtifact;
