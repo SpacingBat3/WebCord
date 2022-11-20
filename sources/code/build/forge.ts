@@ -245,7 +245,7 @@ const config: ForgeConfigFile = {
           owner: author,
           name: "WebCord"
         },
-        draft: getBuildID() === "release"
+        draft: false
       }
     }
   ],
