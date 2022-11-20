@@ -6,7 +6,7 @@ import { app, Notification, net } from "electron/main";
 import { shell } from "electron/common";
 import { appInfo, getBuildInfo } from "../../common/modules/client";
 import fetchPolyfill from "electron-fetch";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import * as semver from "semver";
 import kolor from "@spacingbat3/kolor";
 import { commonCatches } from "./error";
@@ -28,7 +28,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
   // When app is not ready, wait until it is ready.
   if (!app.isReady()) await app.whenReady();
   // Initialize app translation.
-  const strings = new l10n().client;
+  const strings = new L10N().client;
   // An alias to app's repository name.
   const repoName = appInfo.repository.name;
   let updateMsg: string, showGui = false;

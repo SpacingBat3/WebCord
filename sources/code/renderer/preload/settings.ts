@@ -3,7 +3,7 @@
  */
 import { ipcRenderer } from "electron/renderer";
 import type { htmlConfig } from "../../main/windows/settings";
-import type { ConfigElement, checkListRecord } from "../../main/modules/config";
+import type { configElement, checkListRecord } from "../../main/modules/config";
 import { getBuildInfo } from "../../common/modules/client";
 import { wLog, sanitizeConfig, knownInstancesList } from "../../common/global";
 import { sanitize } from "dompurify";
@@ -13,8 +13,25 @@ type keys = <T>(o:T) => (keyof T)[];
 //type generatedConfigGenericOld = Record<string,ConfigElement&Partial<Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>>;
 
 type generatedConfigGeneric = {"name":string} & Record<string, Partial<Record<"name"|"description",string>> & (
-  Exclude<ConfigElement, checkListRecord> | (checkListRecord&{"labels": Record<string,string|undefined>})
+  Exclude<configElement, checkListRecord> | (checkListRecord&{"labels": Record<string,string|undefined>})
 )>;
+
+interface CommonForm {
+  id: string;
+  label:string;
+  isChecked: boolean;
+  description?: string;
+  enabled?: boolean;
+}
+
+interface CheckBoxForm extends CommonForm {
+  type: "checkbox";
+}
+
+interface RadioForm extends CommonForm {
+  type: "radio";
+  value: string;
+}
 
 const buildType = getBuildInfo().type;
 
@@ -55,6 +72,38 @@ function checkPlatformKey(key:string) {
     default:
       return true;
   }
+}
+
+function createForm(form:CheckBoxForm|RadioForm){
+  const inputForm = document.createElement("fieldset");
+  const inputTag = document.createElement("input");
+  const inputLabel = document.createElement("label");
+  inputTag.type = form.type;
+  inputTag.name = form.id;
+  inputTag.checked = form.isChecked;
+  switch(form.type){
+    case "checkbox":
+      inputTag.id = form.id;
+      break;
+    case "radio":
+      inputTag.id = form.id+form.value;
+      inputTag.value = form.value;
+      break;
+  }
+  inputLabel.setAttribute("for", inputTag.id);
+  if(form.description !== undefined) {
+    inputTag.title = form.description;
+    inputLabel.title = form.description;
+  }
+  if(!(form.enabled??true)) {
+    inputTag.disabled = true;
+    inputLabel.classList.add("disabled");
+  }
+  inputTag.addEventListener("change", fetchFromWebsite);
+  inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""), sanitizeConfig);
+  inputForm.appendChild(inputTag);
+  inputForm.appendChild(inputLabel);
+  return inputForm;
 }
 
 function generateSettings(optionsGroups: htmlConfig) {
@@ -119,55 +168,6 @@ function generateSettings(optionsGroups: htmlConfig) {
       }
     });
   });
-}
-
-interface CommonForm {
-  id: string;
-  label:string;
-  isChecked: boolean;
-  description?: string;
-  enabled?: boolean;
-}
-
-interface CheckBoxForm extends CommonForm {
-  type: "checkbox";
-}
-
-interface RadioForm extends CommonForm {
-  type: "radio";
-  value: string;
-}
-
-function createForm(form:CheckBoxForm|RadioForm){
-  const inputForm = document.createElement("fieldset");
-  const inputTag = document.createElement("input");
-  const inputLabel = document.createElement("label");
-  inputTag.type = form.type;
-  inputTag.name = form.id;
-  inputTag.checked = form.isChecked;
-  switch(form.type){
-    case "checkbox":
-      inputTag.id = form.id;
-      break;
-    case "radio":
-      inputTag.id = form.id+form.value;
-      inputTag.value = form.value;
-      break;
-  }
-  inputLabel.setAttribute("for", inputTag.id);
-  if(form.description !== undefined) {
-    inputTag.title = form.description;
-    inputLabel.title = form.description;
-  }
-  if(!(form.enabled??true)) {
-    inputTag.disabled = true;
-    inputLabel.classList.add("disabled");
-  }
-  inputTag.addEventListener("change", fetchFromWebsite);
-  inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""), sanitizeConfig);
-  inputForm.appendChild(inputTag);
-  inputForm.appendChild(inputLabel);
-  return inputForm;
 }
 
 window.addEventListener("load", () => {

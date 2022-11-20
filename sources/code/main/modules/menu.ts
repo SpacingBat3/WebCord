@@ -15,7 +15,7 @@ const appConfig = new AppConfig();
 
 import { EventEmitter } from "events";
 import { createGithubIssue } from "./bug";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import loadSettingsWindow from "../windows/settings";
 import loadDocsWindow from "../windows/docs";
 import showAboutPanel from "../windows/about";
@@ -44,7 +44,7 @@ sideBar.on("hide", (contents: Electron.WebContents) => {
 // Contex Menu with spell checker
 
 export function context(parent: Electron.BrowserWindow): void {
-  const strings = (new l10n()).client;
+  const strings = (new L10N()).client;
   parent.webContents.on("context-menu", (_event, params) => {
     const cmenu: (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] = [
       { type: "separator" },
@@ -101,7 +101,7 @@ export function context(parent: Electron.BrowserWindow): void {
 // Tray menu
 
 export function tray(parent: Electron.BrowserWindow): Electron.Tray {
-  const strings = (new l10n()).client;
+  const strings = (new L10N()).client;
   const {icons} = appInfo;
   const tray = new Tray(icons.tray.default);
   function toggleVisibility() {
@@ -166,7 +166,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 // Menu Bar
 
 export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.Menu {
-  const strings = (new l10n()).client;
+  const strings = (new L10N()).client;
   const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
   const menu = Menu.buildFromTemplate([
     // File

@@ -4,7 +4,7 @@ import { generateSafeKey, navigate } from "../modules/api";
 import { wLog } from "../../common/global";
 import { appInfo } from "../../common/modules/client";
 import desktopCapturerPicker from "../modules/capturer";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 
 if (window.location.protocol === "file:") {
   window.addEventListener("load", () => {
@@ -15,7 +15,7 @@ if (window.location.protocol === "file:") {
   contextBridge.exposeInMainWorld(
     "webcord",
     {
-      l10n: (new l10n()).web
+      l10n: (new L10N()).web
     }
   );
 } else {

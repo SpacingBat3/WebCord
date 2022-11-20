@@ -28,7 +28,7 @@ type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reserv
 
 export type checkListRecord = Partial<Record<checkListKeys,boolean|null>>;
 
-export type ConfigElement = checkListRecord | {
+export type configElement = checkListRecord | {
   radio: number;
 } | {
   dropdown: number;
@@ -39,7 +39,7 @@ export type ConfigElement = checkListRecord | {
 };
 
 interface AppConfigBase {
-  settings: Record<string, Record<string, ConfigElement>>;
+  settings: Record<string, Record<string, configElement>>;
   update: Record<string, unknown>;
 }
 
@@ -271,18 +271,18 @@ const workaroundLinuxMinMaxEvents = (() => {
   }
 })();
 
-interface windowStatus {
+interface WindowStatus {
   width: number;
   height: number;
   isMaximized: boolean;
 }
 
-export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>> {
+export class WinStateKeeper extends Config<Partial<Record<string, WindowStatus>>> {
   private windowName: string;
   /**
    * An object containing width and height of the window watched by `WinStateKeeper`
    */
-  public initState: Readonly<windowStatus>;
+  public initState: Readonly<WindowStatus>;
   private setState(window: BrowserWindow, eventType?: string) {
     let event = eventType;
     // Workaround: fix `*maximize` events being detected as `resize`:
@@ -363,7 +363,7 @@ export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>
 }
 
 void import("electron/main")
-  .then(Electron => Electron.ipcMain)
+  .then(electron => electron.ipcMain)
   .then(ipc => ipc.on("settings-config-modified",
     (event, config:AppConfig["defaultConfig"]) => {
       // Only permit the local pages.

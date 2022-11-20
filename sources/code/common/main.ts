@@ -31,7 +31,7 @@ import { shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
 import { protocols, SessionLatest, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
-import l10n from "./modules/l10n";
+import L10N from "./modules/l10n";
 import createMainWindow from "../main/windows/main";
 import { AppConfig } from "../main/modules/config";
 import kolor from "@spacingbat3/kolor";
@@ -107,9 +107,9 @@ const argv = Object.freeze(
 
 // Set AppUserModelID on Windows
 {
-  const {AppUserModelId} = getBuildInfo();
-  if(process.platform === "win32" && AppUserModelId !== undefined)
-    app.setAppUserModelId(AppUserModelId);
+  const {AppUserModelId:id} = getBuildInfo();
+  if(process.platform === "win32" && id !== undefined)
+    app.setAppUserModelId(id);
 }
 
 // Handle command line switches:
@@ -224,7 +224,7 @@ let overwriteMain: (() => unknown) | undefined;
     startHidden = true;
   if("export-l10n" in argv.values) {
     overwriteMain = () => {
-      const locale = new l10n;
+      const locale = new L10N;
       const directory = argv.values["export-l10n"];
       if(directory !== "string")
         throw new TypeError("Parameter 'export-l10n' should contain a string value!");
@@ -372,7 +372,7 @@ function main(): void {
 
 if (!singleInstance && !overwriteMain) {
   app.on("ready", () => {
-    console.log((new l10n()).client.log.singleInstance);
+    console.log((new L10N()).client.log.singleInstance);
     app.quit();
   });
 } else {
@@ -424,7 +424,7 @@ app.on("web-contents-created", (_event, webContents) => {
       (config.advanced.redirection.warn || protocolMeta.allow || !isMainWindow)
     ) {
       const window = BrowserWindow.fromWebContents(webContents);
-      const strings = (new l10n).client.dialog;
+      const strings = (new L10N).client.dialog;
       const options: Electron.MessageBoxSyncOptions = {
         type: "warning",
         title: strings.common.warning + ": " + strings.externalApp.title,

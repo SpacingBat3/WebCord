@@ -3,19 +3,19 @@ import kolor from "@spacingbat3/kolor";
 import { BrowserWindow, session } from "electron/main";
 
 function wsLog(message:string, ...args:unknown[]) {
-  console.log(kolor.bold(kolor.magentaBright("[WebSocket]"))+" "+message,...args);
+  console.log(kolor.bold(kolor.magentaBright("[WebSocket]")), message,...args);
 }
 
 interface Response<C extends string, T extends string|never> {
   /** Response type/command. */
   cmd: C;
   /** Response arguments. */
-  args: ResponseArgs<C, T>;
+  args: responseArgs<C, T>;
   /** Nonce indentifying the communication. */
   nonce: string;
 }
 
-type ResponseArgs<C extends string, T extends string|never> =
+type responseArgs<C extends string, T extends string|never> =
 C extends "INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER" ? {
   /** An invitation code. */
   code: string;
@@ -25,13 +25,13 @@ C extends "INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER" ? {
   client_id: string;
 } : C extends "DEEP_LINK" ? T extends string ? {
   type: T;
-  params: ResponseParams<T>;
+  params: responseParams<T>;
 } : {
   type: string;
   params: Record<string,unknown>;
 } : Record<string,unknown>;
 
-type ResponseParams<T extends string> = T extends "CHANNEL" ? {
+type responseParams<T extends string> = T extends "CHANNEL" ? {
   guildId: string;
   channelId?: string;
   search: string;
@@ -152,18 +152,20 @@ export default async function startServer() {
   const [
     {isJsonSyntaxCorrect, knownInstancesList: knownIstancesList},
     {initWindow},
-    {underline, blue},
-    L10N
+    {underline, blue}
   ] = await Promise.all([
     import("../../common/global"),
     import("./parent"),
     import("@spacingbat3/kolor").then(kolor => kolor.default),
-    import("../../common/modules/l10n").then(l10n => l10n.default)
   ]);
   const [wsServer,wsPort] = await getServer(6463, 6472)??[null,6463] as const;
   if(wsServer === null) return;
-  
-  wsLog(new L10N().client.log.listenPort,blue(underline(wsPort.toString())));
+  void import("../../common/modules/l10n")
+    .then(l10n => new l10n.default())
+    .then(l10n => wsLog(
+      l10n.client.log.listenPort,
+      blue(underline(wsPort.toString()))
+    ));
   let lock = false;
   wsServer.on("connection", (wss, request) => {
     const origin = request.headers.origin??"https://discord.com";

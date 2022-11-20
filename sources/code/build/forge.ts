@@ -4,7 +4,7 @@
 
 // Let's import some keys from the package.json:
 
-import type { buildInfo } from "../common/global";
+import type { BuildInfo } from "../common/global";
 import { Person, PackageJSON } from "../common/modules/package";
 import { existsSync } from "fs";
 import { readFile, writeFile, rm } from "fs/promises";
@@ -14,8 +14,8 @@ import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
 const packageJson = new PackageJSON(["author","version","name"]);
 const projectPath = resolve(__dirname, "../../..");
-const AppUserModelId = process.env["WEBCORD_WIN32_APPID"];
-const FlatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
+const appUserModelId = process.env["WEBCORD_WIN32_APPID"];
+const flatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
   "io.github.spacingbat3.webcord";
 const author = packageJson.data.author !== undefined ? new Person(packageJson.data.author).name : "SpacingBat3";
 
@@ -113,7 +113,7 @@ const config: ForgeConfigFile = {
     {
       name: "@electron-forge/maker-wix",
       config: {
-        appUserModelId: AppUserModelId ?? author+".WebCord",
+        appUserModelId: appUserModelId ?? author+".WebCord",
         ui: { chooseDirectory: true },
         features: {
           autoUpdate: false,
@@ -185,7 +185,7 @@ const config: ForgeConfigFile = {
       name: "@electron-forge/maker-flatpak",
       config: {
         options: {
-          id: FlatpakId,
+          id: flatpakId,
           genericName: desktopGeneric,
           categories: desktopCategories,
           runtimeVersion: "21.08",
@@ -245,11 +245,11 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: async (_ForgeConfig, path, _electronVersion, platform) => {
+    packageAfterCopy: async (_forgeConfig, path, _electronVersion, platform) => {
       /** Generates `buildInfo.json` file and saves it somewhe. */
       async function writeBuildInfo() {
-        const buildConfig: buildInfo = {
-          ...(platform === "win32" && AppUserModelId !== undefined ? { AppUserModelId } : {}),
+        const buildConfig: BuildInfo = {
+          ...(platform === "win32" && appUserModelId !== undefined ? { AppUserModelId: appUserModelId } : {}),
           type: getBuildID(),
           commit: getBuildID() === "devel" ? (await getCommit())??undefined : undefined,
           features: {
@@ -271,7 +271,7 @@ const config: ForgeConfigFile = {
       ]);
     },
     // Hardened Electron binary via Electron Fuses feature.
-    packageAfterExtract: (_ForgeConfig, path, _electronVersion, platform) =>
+    packageAfterExtract: (_forgeConfig, path, _electronVersion, platform) =>
       flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
         [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,

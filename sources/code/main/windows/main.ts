@@ -20,7 +20,7 @@ import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import { loadChromiumExtensions, styles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 
@@ -35,7 +35,7 @@ interface MainWindowFlags {
 }
 
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
-  const l10nStrings = (new l10n()).client;
+  const l10nStrings = (new L10N()).client;
 
   const internalWindowEvents = new EventEmitter();
 
