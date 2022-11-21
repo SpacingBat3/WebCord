@@ -16,7 +16,6 @@ import {
   BrowserView,
   systemPreferences
 } from "electron/main";
-import { getInputNodes, getOutputNodesName, getLinks, linkNodesNameToId, unlinkPorts  } from "node-pipewire";
 import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
@@ -47,29 +46,34 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   
   let pipewireAudio = false;
   let testAudioAttempts = 0;
-  const testAudioInterval: NodeJS.Timeout = setInterval(() => {
-    // get the actual input nodes from pipewire. 
-    const inputNodes = getInputNodes();
-    
-    if (inputNodes.length > 0) {
-      //If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
-      const chromiumInputNodes = inputNodes.filter(node => node.name === "Chromium");
-    
-      if (chromiumInputNodes.length > 0) {
-        chromiumInputNodes.forEach(node => {
-          blacklistInputNodes.push(node.id);
-        });
-      }
-      flags.screenShareAudio = true;
-      pipewireAudio = true;
-      clearInterval(testAudioInterval);
-    } else{
-      testAudioAttempts++;
-      if (testAudioAttempts === 5) {
+  
+  import("node-pipewire").then((pw) => {
+    const testAudioInterval: NodeJS.Timeout = setInterval(() => {
+      // get the actual input nodes from pipewire. 
+      const inputNodes = pw.getInputNodes();
+      
+      if (inputNodes.length > 0) {
+        //If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
+        const chromiumInputNodes = inputNodes.filter(node => node.name === "Chromium");
+      
+        if (chromiumInputNodes.length > 0) {
+          chromiumInputNodes.forEach(node => {
+            blacklistInputNodes.push(node.id);
+          });
+        }
+        flags.screenShareAudio = true;
+        pipewireAudio = true;
         clearInterval(testAudioInterval);
+      } else{
+        testAudioAttempts++;
+        if (testAudioAttempts === 5) {
+          clearInterval(testAudioInterval);
+        }
       }
-    }
-  }, 1000);
+    }, 1000);
+  }).catch((err) => {
+    console.log(err);
+  });
     
   const l10nStrings = (new l10n()).client;
 
@@ -575,21 +579,27 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               return null;
           });
         } else {
-          ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
-            const outputNodesName = getOutputNodesName();
-            const inputNodes = getInputNodes();
-            const chromiumInputNodes = inputNodes.filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+          import("node-pipewire").then((pw) => {
+            ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
+              const outputNodesName = pw.getOutputNodesName();
+              const inputNodes = pw.getInputNodes();
+              const chromiumInputNodes = inputNodes.filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
 
-            // Filter outputNodesName to remove the repeated names
-            const outputNodesNameFiltered = outputNodesName.filter((node, index) => {
-              return outputNodesName.indexOf(node) === index;
+              // Filter outputNodesName to remove the repeated names
+              const outputNodesNameFiltered = outputNodesName.filter((node, index) => {
+                return outputNodesName.indexOf(node) === index;
+              });
+           
+
+              if(event.sender === view.webContents)
+                return [await sources, flags.screenShareAudio, outputNodesNameFiltered, chromiumInputNodes];
+              else
+                return null;
             });
-
-            if(event.sender === view.webContents)
-              return [await sources, flags.screenShareAudio, outputNodesNameFiltered, chromiumInputNodes];
-            else
-              return null;
+          }).catch((error) => {
+            console.error(error);
           });
+
         }
         const autoResize = () => setImmediate(() => view.setBounds({
           ...win.getBounds(),
@@ -605,16 +615,19 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           win.removeListener("resize", autoResize);
           ipcMain.removeHandler("capturer-get-settings");
 
-          const sleep = async (ms:number) => await new Promise((resolve) => setTimeout(resolve, ms));
 
           if(audioInfo && (audioInfo.chromiumInputNodes && audioInfo.selectedAudioNodes)){
             const selectedAudioNodes = audioInfo.selectedAudioNodes;
             const chromiumInput = audioInfo.chromiumInputNodes[0];
 
             if (selectedAudioNodes.length > 0 && chromiumInput) {
-              // wait 2 seconds to make sure the audio is ready with new promise
-              sleep(2000).then(() => {
-                const newInputs = getInputNodes();
+              import("node-pipewire").then(async (pw) => {
+                // wait 2 seconds to make sure the audio is ready with new promise
+                // TODO: find a better way to do this. Maybe a callback from the capturer
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                // const screenShareAudio: PipewireNode = await pw.waitForNewNode("Chromium", "Input");
+
+                const newInputs = pw.getInputNodes();
                 const chromiumInputNodes = newInputs.filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
                 
                 // from the new chromium input nodes, get the ones that are not in the old ones
@@ -623,35 +636,35 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                 });
 
                 if (screenShareNode) {
-                  const links = getLinks();
+                  const links = pw.getLinks();
                   const chromiumLink = links.find((link) => {
                     return chromiumInput.id === link.input_node_id;
                   });
 
                   // unlink mic from the screen-share (if it was linked, in my case it was)
                   if (chromiumLink && screenShareNode.ports.length > 0 && screenShareNode.ports[0]) {
-                    unlinkPorts( screenShareNode.ports[0].id, chromiumLink.output_port_id );
+                    pw.unlinkPorts( screenShareNode.ports[0].id, chromiumLink.output_port_id );
                   }
 
                   // send to PW the name of selected audio nodes with the id of the new chromium input nodes
                   const interval = setInterval(() => {
                     // create an interval to check if the port of the screenShareNode exits
-                    const nodes = getInputNodes();
+                    const nodes = pw.getInputNodes();
                     const tempNode = nodes.find((node) => {
                       return screenShareNode.id === node.id;
                     });
                     if (tempNode) {
                       selectedAudioNodes.forEach((nodeName) => {
                         // link the new chromium input node to the selected audio node
-                        linkNodesNameToId(nodeName, tempNode.id);
+                        pw.linkNodesNameToId(nodeName, tempNode.id);
                       });
                     } else {
                       clearInterval(interval);
                     }
                   }, 1000);
                 }
-              }).catch((err) => {
-                console.log("ERROR sleeping?:",err);
+              }).catch((error) => {
+                console.error(error);
               });
             }
           }
