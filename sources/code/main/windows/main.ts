@@ -623,27 +623,24 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
             if (selectedAudioNodes.length > 0 && chromiumInput) {
               import("node-pipewire").then(async (pw) => {
                 // wait 2 seconds to make sure the audio is ready with new promise
-                // TODO: find a better way to do this. Maybe a callback from the capturer
-                await new Promise((resolve) => setTimeout(resolve, 2000));
-                // const screenShareAudio: PipewireNode = await pw.waitForNewNode("Chromium", "Input");
+                let screenShareNode: PipewireNode | undefined = undefined;
+                try {
+                  screenShareNode = await pw.waitForNewNode("Chromium", "Input");
+                } catch (error) {
+                  console.log("Error waiting for new node");
+                  console.error(error);
+                }
 
-                const newInputs = pw.getInputNodes();
-                const chromiumInputNodes = newInputs.filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
-                
-                // from the new chromium input nodes, get the ones that are not in the old ones
-                const screenShareNode = chromiumInputNodes.find((node) => {
-                  return chromiumInput.id !== node.id;
-                });
-
-                if (screenShareNode) {
+                if (screenShareNode !== undefined) {
+                  const screenSharePort = screenShareNode.ports.find((port) => port.direction === "Input");
                   const links = pw.getLinks();
-                  const chromiumLink = links.find((link) => {
-                    return chromiumInput.id === link.input_node_id;
+                  const micLink = links.find((link) => {
+                    return screenSharePort?.id === link.input_port_id;
                   });
 
                   // unlink mic from the screen-share (if it was linked, in my case it was)
-                  if (chromiumLink && screenShareNode.ports.length > 0 && screenShareNode.ports[0]) {
-                    pw.unlinkPorts( screenShareNode.ports[0].id, chromiumLink.output_port_id );
+                  if (micLink && typeof screenSharePort?.id === "number") {
+                    pw.unlinkPorts(screenSharePort.id, micLink.output_port_id );
                   }
 
                   // send to PW the name of selected audio nodes with the id of the new chromium input nodes
@@ -651,7 +648,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                     // create an interval to check if the port of the screenShareNode exits
                     const nodes = pw.getInputNodes();
                     const tempNode = nodes.find((node) => {
-                      return screenShareNode.id === node.id;
+                      return screenShareNode?.id === node.id;
                     });
                     if (tempNode) {
                       selectedAudioNodes.forEach((nodeName) => {
