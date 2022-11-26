@@ -8,6 +8,7 @@ import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { AppConfig, WinStateKeeper } from "../modules/config";
 import {
   app,
+  dialog,
   BrowserWindow,
   net,
   ipcMain,
@@ -19,7 +20,7 @@ import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import { loadChromiumExtensions, styles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 import loadSettingsWindow from "../windows/settings";
@@ -35,7 +36,7 @@ interface MainWindowFlags {
 }
 
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
-  const l10nStrings = (new l10n()).client;
+  const l10nStrings = (new L10N()).client;
 
   const internalWindowEvents = new EventEmitter();
 
@@ -53,8 +54,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     minHeight: appInfo.minWinHeight,
     height: mainWindowState.initState.height,
     width: mainWindowState.initState.width,
-    backgroundColor: configData.get().settings.general.window.transparent ? "#0000" : appInfo.backgroundColor,
-    transparent: configData.get().settings.general.window.transparent,
+    backgroundColor: appInfo.backgroundColor,
+    transparent: configData.value.settings.general.window.transparent,
     show: false,
     frame: !useCustomBar,
     webPreferences: {
@@ -67,7 +68,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         standard: "Arial" // `sans-serif` as default font.
       },
       enableWebSQL: false,
-      webgl: configData.get().settings.advanced.webApi.webGl,
+      webgl: configData.value.settings.advanced.webApi.webGl,
       safeDialogs: true, // prevents dialog spam by the website
       autoplayPolicy: "no-user-gesture-required"
     },
@@ -128,14 +129,14 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     const retry = setInterval(() => {
       if (net.isOnline()) {
         clearInterval(retry);
-        void win.loadURL(knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].href);
+        void win.loadURL(knownInstancesList[new AppConfig().value.settings.advanced.currentInstance.radio][1].href);
       }
     }, 1000);
   });
   win.webContents.once("did-finish-load", () => {
     console.debug("[PAGE] Starting to load the Discord page...");
     if (!flags.startHidden) win.show();
-    setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].href);}, 1500);
+    setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().value.settings.advanced.currentInstance.radio][1].href);}, 1500);
   });
   if (mainWindowState.initState.isMaximized) win.maximize();
 
@@ -143,10 +144,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     const headersOverwrite:{"Content-Security-Policy"?:[string]} = {};
-    if (configData.get().settings.advanced.csp.enabled) {
-      console.debug("[CSP] Overwritting Discord CSP.");
-      headersOverwrite["Content-Security-Policy"] = [getWebCordCSP().toString()];
-    }
+    if (configData.value.settings.advanced.csp.enabled)
+      headersOverwrite["Content-Security-Policy"] = [getWebCordCSP()];
     callback({
       responseHeaders: {
         ...details.responseHeaders,
@@ -166,7 +165,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     },
     (details, callback) => {
 
-      const configData = (new AppConfig()).get().settings.privacy.blockApi;
+      const configData = (new AppConfig()).value.settings.privacy.blockApi;
             
       const cancel = configData.science ||
                 configData.typingIndicator ||
@@ -197,7 +196,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   {
     /** List of domains, urls or protocols accepted by permission handlers. */
     const trustedURLs = [
-      knownInstancesList[new AppConfig().get().settings.advanced.currentInstance.radio][1].origin,
+      knownInstancesList[new AppConfig().value.settings.advanced.currentInstance.radio][1].origin,
       "devtools://"
     ];
     const getMediaTypesPermission = (mediaTypes: unknown[] = []) => {
@@ -207,7 +206,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           supportsMediaAccessStatus ?
             systemPreferences.getMediaAccessStatus("screen") === "granted" :
             true
-        ) && new AppConfig().get().settings.privacy.permissions["display-capture"];
+        ) && (
+          new AppConfig().value.settings.privacy.permissions["display-capture"]
+        );
       return [...new Set(mediaTypes)]
         .map(media => {
           const mediaType = media === "video" ? "camera" : media === "audio" ? "microphone" : null;
@@ -241,12 +242,13 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               if(!callbackValue)
                 break;
               else
-                callbackValue = configData.get().settings.privacy.permissions[type];
+                callbackValue = configData.value.settings.privacy.permissions[type]??false;
           }
           else if("mediaType" in details && details.mediaType !== "unknown")
-            callbackValue = getMediaTypesPermission([details.mediaType]) &&
-              configData.get().settings.privacy.permissions[details.mediaType];
-          else if(process.versions.electron.startsWith("21."))
+            callbackValue = getMediaTypesPermission([details.mediaType]) && (
+              configData.value.settings.privacy.permissions[details.mediaType]??false
+            );
+          else if(parseInt(process.versions.electron.split(".",1)[0]??"0") > 20)
             callbackValue = type === "request";
           else
             callbackValue = false;
@@ -257,7 +259,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         case "notifications":
         case "fullscreen":
         case "background-sync":
-          return configData.get().settings.privacy.permissions[permission];
+          return configData.value.settings.privacy.permissions[permission]??false;
         default:
           return null;
       }
@@ -266,12 +268,37 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       const requestUrl = (webContents !== null && webContents.getURL() !== "" ? webContents.getURL() : requestingOrigin);
       const returnValue = permissionHandler("check",requestUrl,permission,details);
       if(returnValue === null) {
-        console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`, new URL(requestUrl), permission);
+        console.warn(
+          `[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.check.denied}`,
+          new URL(requestUrl),
+          permission
+        );
         return false;
       }
       return returnValue;
     });
     win.webContents.session.setPermissionRequestHandler((webContents, permission, callback, details) => {
+      type nullPermissions = "video"|"audio"|"notifications";
+      const dialogLock = new Set<nullPermissions>();
+      async function permissionDialog(permission:nullPermissions) {
+        if(dialogLock.has(permission)) return false;
+        dialogLock.add(permission);
+        const {response} = await dialog.showMessageBox(win,{
+          type: "question",
+          title: l10nStrings.dialog.permission.question.title,
+          message: l10nStrings.dialog.permission.question.message.replace("%s", l10nStrings.dialog.permission.question[permission]),
+          buttons: [l10nStrings.dialog.common.no, l10nStrings.dialog.common.yes],
+          defaultId: 0,
+          cancelId: 0,
+          normalizeAccessKeys: true
+        });
+        dialogLock.delete(permission);
+        const value = response === 1;
+        const config = configData.value;
+        config.settings.privacy.permissions[permission] = value;
+        configData.value = config;
+        return value;
+      }
       const returnValue = permissionHandler("request",webContents.getURL(), permission, details);
       switch(returnValue) {
         // WebCord does not recognize the permission – it should be denied.
@@ -285,45 +312,56 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           break;
         // Either WebCord or system denies the request.
         default:
-          // macOS: try asking for media access whenever possible.
-          if(permission === "media" && process.platform === "darwin") {
+          if(permission === "media") {
             const promises:Promise<boolean>[] = [];
             (["camera","microphone"] as const).forEach(media => {
-              if(systemPreferences.getMediaAccessStatus(media) === "not-determined" &&
-                  (details.mediaTypes?.includes(media === "camera" ? "video" : "audio")??false))
+              const permission = media === "camera" ? "video" : "audio";
+              if(!(details.mediaTypes?.includes(permission)??false))
+                return;
+              // macOS: try asking for media access whenever possible.
+              if(process.platform === "darwin" && systemPreferences.getMediaAccessStatus(media) === "not-determined")
                 promises.push(systemPreferences.askForMediaAccess(media));
+              // any: Ask user for permission if it is set to "null"
+              if(configData.value.settings.privacy.permissions[permission] === null)
+                promises.push(permissionDialog(permission));
+              else
+                promises.push(Promise.resolve(configData.value.settings.privacy.permissions[permission] === true));
             });
             if(promises.length === 0)
               Promise.all(promises)
                 // Re-check permissions and return their values.
-                .then(() => callback(getMediaTypesPermission(details.mediaTypes)))
+                .then(dialogs => dialogs.reduce((prev,cur) => prev && cur, true))
+                .then(result => result && getMediaTypesPermission(details.mediaTypes))
+                .then(result => callback(result))
                 // Deny on failure.
                 .catch(() => callback(false));
             else
               // Deny if no changes were done.
               callback(false);
             break;
-          }
+          } else if(permission === "notifications" && configData.value.settings.privacy.permissions.notifications === null)
+            permissionDialog(permission)
+              .then(value => callback(value))
+              .catch(() => callback(false));
           else
-            // Deny on non-macOS platfomrs or non-media permissions.
             callback(false);
           break;
       }
     });
   }
   void win.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/load.html"));
-  win.setAutoHideMenuBar(configData.get().settings.general.menuBar.hide);
-  win.setMenuBarVisibility(!configData.get().settings.general.menuBar.hide);
+  win.setAutoHideMenuBar(configData.value.settings.general.menuBar.hide);
+  win.setMenuBarVisibility(!configData.value.settings.general.menuBar.hide);
   // Add English to the spellchecker
-  {
+  if(process.platform !== "darwin") {
     let valid = true;
     const spellCheckerLanguages = [app.getLocale(), "en-US"];
     if (app.getLocale() === "en-US") valid = false;
-    if (valid && process.platform !== "darwin")
-      for (const language of spellCheckerLanguages)
-        if (!win.webContents.session.availableSpellCheckerLanguages.includes(language))
-          valid = false;
-    if (valid) win.webContents.session.setSpellCheckerLanguages(spellCheckerLanguages);
+    if (valid) for (const language of spellCheckerLanguages)
+      if (!win.webContents.session.availableSpellCheckerLanguages.includes(language))
+        valid = false;
+    if (valid)
+      win.webContents.session.setSpellCheckerLanguages(spellCheckerLanguages);
   }
 
   // Keep window state
@@ -334,7 +372,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   // Load all menus:
   getMenu.context(win);
-  const tray = !configData.get().settings.general.tray.disable ? getMenu.tray(win) : null;
+  const tray = !configData.value.settings.general.tray.disable ? getMenu.tray(win) : null;
   if(typeof packageJson.data.repository === "object")
     getMenu.bar(packageJson.data.repository.url, win);
   else
@@ -383,7 +421,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         icon = icon.resize({height:22});
       tray.setImage(icon);
     }
-    win.flashFrame(flash&&configData.get().settings.general.taskbar.flash);
+    win.flashFrame(flash&&configData.value.settings.general.taskbar.flash);
     setFavicon = faviconHash;
   });
 
@@ -415,7 +453,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   // Insert custom css styles:
 
-  win.webContents.on("did-finish-load", () => {
+  win.webContents.on("did-navigate", () => {
     if(new URL(win.webContents.getURL()).protocol === "https:") {
       styles.load(win.webContents)
         .catch(commonCatches.print);
@@ -436,6 +474,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           .then(data => win.webContents.insertCSS(data))
           .catch(commonCatches.print);
       }
+      // Additionally, make window transparent if user has opted for it.
+      if(configData.value.settings.general.window.transparent)
+        win.webContents.once("did-stop-loading", () => win.setBackgroundColor("#0000"));
     }
   });
 
@@ -478,12 +519,12 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       // Menu bar
       if (object?.settings?.general?.menuBar?.hide !== undefined) {
         console.debug("[Settings] Updating menu bar state...");
-        win.setAutoHideMenuBar(config.get().settings.general.menuBar.hide);
-        win.setMenuBarVisibility(!config.get().settings.general.menuBar.hide);
+        win.setAutoHideMenuBar(config.value.settings.general.menuBar.hide);
+        win.setMenuBarVisibility(!config.value.settings.general.menuBar.hide);
       }
       // Custom Discord instance switch
       if(object?.settings?.advanced?.currentInstance?.radio !== undefined) {
-        void win.loadURL(knownInstancesList[config.get().settings.advanced.currentInstance.radio][1].href);
+        void win.loadURL(knownInstancesList[config.value.settings.advanced.currentInstance.radio][1].href);
       }
       // CSP
       if(
@@ -502,13 +543,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // Load extensions for builds of type "devel".
   if(getBuildInfo().type === "devel")
     void loadChromiumExtensions(win.webContents.session);
-    
-  // WebSocket server
-  import("../modules/socket")
-    .then(socket => socket.default)
-    .then(startServer => startServer(win))
-    .catch(commonCatches.print);
-  
+
   // IPC events validated by secret "API" key and sender frame.
   internalWindowEvents.on("api", (safeApi:string) => {
     /** Determines whenever another request to desktopCapturer is in process. */
@@ -521,7 +556,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         if(lock || win.getBrowserViews().length !== 0)
           return new Error("Main process is busy by another request.");
         // Fail when client has denied the permission to the capturer.
-        if(!configData.get().settings.privacy.permissions["display-capture"]) {
+        if(!configData.value.settings.privacy.permissions["display-capture"]) {
           resolvePromise("Permission denied");
           return;
         }
@@ -557,7 +592,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
             y:0,
           }));
           ipcMain.handleOnce("capturer-get-settings", () => {
-            return new AppConfig().get().screenShareStore;
+            return new AppConfig().value.screenShareStore;
           });
           ipcMain.once("closeCapturerView", (_event,data:unknown) => {
             win.removeBrowserView(view);

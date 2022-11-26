@@ -49,7 +49,6 @@ export const gpuVendors = Object.freeze({
  * @param object2 An object used for the type comparasion.
  */
 export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
-
   // False when parameters are not objects.
   if(!(object1 instanceof Object && object2 instanceof Object)) return false;
 	
@@ -59,8 +58,8 @@ export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
   const results = Object.keys({...object1,...object2}).map(key => {
     if(key in object1 && key in object2) {
       const key1:unknown = object1[key as keyof unknown], key2:unknown = object2[key as keyof unknown];
-      if(typeof key1 === typeof key2) {
-        if(typeof key1 === "object") {
+      if(typeof key1 === typeof (key2 === null ? false : key2) || key1 === key2) {
+        if(typeof key1 === "object" && key1 !== null) {
           if(Array.isArray(key1)&&Array.isArray(key2))
             return true;
           else
@@ -111,7 +110,7 @@ export const knownInstancesList = Object.freeze([
  * An object which type includes information about the WebCord's build
  * configuration and metadata.
  */
-export interface buildInfo {
+export interface BuildInfo {
   /**
    * This build type. `devel` builds can have access to some features not meant
    * to be in the production and have access to DevTools by the default.
@@ -150,13 +149,13 @@ export interface buildInfo {
   };
 }
 
-export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo> {
+export function isPartialBuildInfo(object: unknown): object is Partial<BuildInfo> {
   // #1 Element is object.
   if (!(object instanceof Object))
     return false;
   // #2 'type' property contains 'release' and 'devel' strings if defined.
   if("type" in object)
-    switch ((object as buildInfo).type) {
+    switch ((object as BuildInfo).type) {
       case "release":
       case "devel":
         break;
@@ -166,14 +165,14 @@ export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo
         return false;
     }
   // #3 If object contains 'commit' property, it should be of type 'string'.
-  if ("commit" in object && !(typeof (object as buildInfo).commit === "string"))
+  if ("commit" in object && !(typeof (object as BuildInfo).commit === "string"))
     return false;
 
   /** List of valid properties for the `.features` object. */
   const features = ["updateNotifications"];
   // #4 If object contains the 'features' property, it should be an object.
   if ("features" in object)
-    if (!((object as buildInfo).features instanceof Object))
+    if (!((object as BuildInfo).features instanceof Object))
       return false;
     else for(const property of features)
     // #5 `features` properties are of type `boolean`.
@@ -182,7 +181,7 @@ export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo
           return false;
 
   // #6 On Windows, AppUserModelID should be of 'string' type
-  if (process.platform === "win32" && !(typeof (object as buildInfo).AppUserModelId === "string"))
+  if (process.platform === "win32" && !(typeof (object as BuildInfo).AppUserModelId === "string"))
     return false;
   return true;
 }

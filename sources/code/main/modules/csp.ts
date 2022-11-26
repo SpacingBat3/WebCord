@@ -17,70 +17,87 @@ const cspKeysRegExp = new RegExp("(?<="+cspKeys.join("|")+")\\s+");
 
 type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 
-class CSP {
-  readonly #values: {
-    object: cspObject;
-    string: string;
-  };
-  #string2object(value: string) {
-    const raw = value.split(/;\s+/);
-    const record: cspObject = {};
-    for(const element of raw) {
-      const [rule, value] = element.split(cspKeysRegExp);
-      if(rule === undefined || value === undefined) return;
-      if(cspKeys.includes(rule as keyof typeof record))
-        record[rule as keyof typeof record] = value;
-    }
-    return record;
+/**
+ * A class used to manipulate and build Content Security Policy from objects
+ * and strings with the specific structure.
+ */
+class CSPBuilder {
+  #value!: cspObject;
+  /**
+   * Converts CSP-like string to builder-compilant object.
+   */
+  #string2object(value: string):cspObject {
+    return Object.fromEntries(value
+      .split(/;\s+/)
+      .map(element => element.split(cspKeysRegExp,2) as [string|undefined, string|undefined])
+      .filter((element => element[0] !== undefined && element[1] !== undefined &&
+        cspKeys.includes(element[0] as (typeof cspKeys)[number])) as
+        (v:[string|undefined,string|undefined]) => v is [typeof cspKeys[number],string]
+      )
+    );
   }
-  #object2string(object: cspObject) {
-    return Object.entries(object)
+  /**
+   * Generates final Content Security Policy string, which can be used directly
+   * in HTTP headers.
+   */
+  public build() {
+    return Object.entries(this.value)
       .map(entry => entry.join(" "))
       .join("; ");
   }
-  public toObject() {
-    return this.#values.object;
-  }
-  public toString() {
-    return this.#values.string;
-  }
-  public static merge(...policies:CSP[]):CSP {
-    let partial: cspObject = {};
-    for(const policy of policies) {
-      const policyObject = policy.toObject();
-      if(Object.entries(partial).length === 0)
-        partial = policyObject;
-      else {
-        const keys = new Set([...Object.keys(partial), ...Object.keys(policyObject)]) as Set<keyof cspObject>;
-        for(const key of keys){
-          const policy = policyObject[key];
-          if(policy !== undefined)
-            if(key in partial)
-              partial[key] += " "+policy;
-            else
-              partial[key] = policy;
-        }
-          
-      }
-    }
-    return new CSP(partial);
-  }
-  constructor(value: string|cspObject) {
-    if(typeof value !== "string")
-      this.#values = {
-        object: value,
-        string: this.#object2string(value)
-      };
+  public set value(value: string|cspObject) {
+    if(value instanceof Object && Object
+      .keys(value)
+      .map(key => cspKeys.includes(key as typeof cspKeys[number]))
+      .reduce((prev,cur) => prev && cur, true)
+    )
+      this.#value = value;
+    else if(typeof value === "string")
+      this.#value = this.#string2object(value);
     else
-      this.#values = {
-        object: this.#string2object(value) ?? {},
-        string: this.#object2string(this.#string2object(value) ?? {})
-      };
+      throw new TypeError("Value of type other than 'cspObject' or 'string' cannot be assigned to the class.");
+  }
+  public get value():cspObject {
+    return this.#value;
+  }
+  /**
+   * Merges two or more builders into one.
+   * 
+   * @param builders Any `CSPBuilder` which should be merged with another ones.
+   * 
+   * @returns Computed `CSPBuilder` with merged object values from the `builders`.
+   */
+  public static merge(...builders:CSPBuilder[]):CSPBuilder {
+    if(builders.find(builder => !(builder instanceof CSPBuilder)) !== undefined)
+      throw new TypeError("One of the argument is not a 'CSPBuilder' class!");
+    switch(builders.length) {
+      case 1: return (builders as [CSPBuilder])[0];
+      default: return new CSPBuilder(builders
+        .map(builder => builder.value)
+        .filter(value => Object.keys(value).length !== 0)
+        .reduce((prev,cur,index) => {
+          if(index === 0) return cur;
+          (Object.keys(cur) as (keyof cspObject)[]).forEach(key => {
+            const policy = cur[key];
+            if(policy === undefined)
+              return;
+            if(prev[key] !== undefined)
+              prev[key] += " " + policy;
+            else
+              prev[key] = policy;
+          },{});
+          return prev;
+        })
+      );
+    }
+  }
+  constructor(value: string|cspObject = {}) {
+    this.value = value;
   }
 }
 
-const csp: {base:CSP}&cspTP<CSP> = {
-  base: new CSP({
+const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
+  base: new CSPBuilder({
     "default-src": "'self'",
     "script-src": "'self' 'unsafe-eval' 'unsafe-inline' "+
       "https://cdn.discordapp.com/animations/",
@@ -100,11 +117,11 @@ const csp: {base:CSP}&cspTP<CSP> = {
     "frame-src": "https://discordapp.com/domain-migration "+
       "https://*.discordsays.com https://*.watchanimeattheoffice.com",
   }),
-  algolia: new CSP({
+  algolia: new CSPBuilder({
     "connect-src": "https://*.algolianet.com https://*.algolia.net"
   }),
-  audius: new CSP({ "frame-src": "https://audius.co/embed/" }),
-  gif: new CSP ({
+  audius: new CSPBuilder({ "frame-src": "https://audius.co/embed/" }),
+  gif: new CSPBuilder ({
     "img-src": "https://i.imgur.com https://*.gfycat.com "+
       "https://media.tenor.co https://media.tenor.com "+
       "https://c.tenor.com https://*.giphy.com",
@@ -112,32 +129,32 @@ const csp: {base:CSP}&cspTP<CSP> = {
       "https://media.tenor.co https://media.tenor.com "+
       "https://c.tenor.com https://*.giphy.com",
   }),
-  googleStorageApi: new CSP({
+  googleStorageApi: new CSPBuilder({
     "connect-src": "https://discord-attachments-uploads-prd.storage.googleapis.com/"
   }),
-  hcaptcha: new CSP({
+  hcaptcha: new CSPBuilder({
     "script-src": "https://*.hcaptcha.com https://hcaptcha.com",
     "style-src": "https://*.hcaptcha.com https://hcaptcha.com",
     "img-src": "https://*.hcaptcha.com https://hcaptcha.com",
     "connect-src": "https://*.hcaptcha.com https://hcaptcha.com",
     "frame-src": "https://*.hcaptcha.com https://hcaptcha.com",
   }),
-  paypal: new CSP({
+  paypal: new CSPBuilder({
     "script-src": "https://www.paypalobjects.com https://checkout.paypal.com",
     "img-src": "https://checkout.paypal.com",
     "frame-src": "https://checkout.paypal.com",
     "child-src": "'self' https://checkout.paypal.com"
 
   }),
-  reddit: new CSP({
+  reddit: new CSPBuilder({
     "script-src": "https://www.redditstatic.com",
     "img-src": "https://www.redditstatic.com",
     "connect-src": "https://v.redd.it",
     "media-src": "https://v.redd.it",
     "frame-src": "https://www.redditmedia.com/mediaembed/"
   }),
-  soundcloud: new CSP({ "frame-src": "https://w.soundcloud.com/player/" }),
-  spotify: new CSP({
+  soundcloud: new CSPBuilder({ "frame-src": "https://w.soundcloud.com/player/" }),
+  spotify: new CSPBuilder({
     "script-src": "https://open.spotifycdn.com/cdn/build/embed/ "+
       "https://open.spotifycdn.com/cdn/build/embed-legacy/",
     "img-src": "https://open.spotifycdn.com/cdn/images/ https://i.scdn.co/image/",
@@ -148,8 +165,8 @@ const csp: {base:CSP}&cspTP<CSP> = {
     "frame-src": "https://open.spotify.com/embed/",
     "media-src": "https://p.scdn.co/mp3-preview/"
   }),
-  streamable: new CSP({ "media-src": "https://streamable.com" }),
-  twitch: new CSP({
+  streamable: new CSPBuilder({ "media-src": "https://streamable.com" }),
+  twitch: new CSPBuilder({
     "script-src": "https://static.twitchcdn.net/assets/",
     "worker-src": "blob: https://player.twitch.tv",
     "style-src": "https://static.twitchcdn.net/assets/",
@@ -162,7 +179,7 @@ const csp: {base:CSP}&cspTP<CSP> = {
       "https://*.hls.ttvnw.net/v1/segment/",
     "frame-src": "https://player.twitch.tv"
   }),
-  twitter: new CSP({
+  twitter: new CSPBuilder({
     "script-src": "https://abs.twimg.com/web-video-player/",
     "img-src": "https://pbs.twimg.com/ext_tw_video_thumb/",
     "connect-src": "https://api.twitter.com/1.1/guest/activate.json "+
@@ -171,7 +188,7 @@ const csp: {base:CSP}&cspTP<CSP> = {
     "media-src": "https://twitter.com/i/videos/tweet/",
     "frame-src": "https://twitter.com/i/videos/tweet/"
   }),
-  vimeo: new CSP({
+  vimeo: new CSPBuilder({
     "script-src": "https://f.vimeocdn.com/p/",
     "style-src": "https://f.vimeocdn.com/p/",
     "img-src": "https://i.vimeocdn.com",
@@ -180,35 +197,42 @@ const csp: {base:CSP}&cspTP<CSP> = {
     "media-src": "https://vod-progressive.akamaized.net",
     "frame-src": "https://player.vimeo.com"
   }),
-  youtube: new CSP({
+  youtube: new CSPBuilder({
     "img-src": "https://i.ytimg.com https://*.youtube.com",
+    "script-src": "https://www.youtube.com/iframe_api "+
+      "https://www.youtube.com/s/player/",
     "connect-src": "https://*.googlevideo.com",
     "media-src": "https://*.youtube.com",
     "frame-src": "https://www.youtube.com/embed/"
   })
 };
 
-let cache: {configValues: string; result:CSP} | undefined;
-export function getWebCordCSP(additionalPolicies: CSP[]|[] = []) {
-  const config = new AppConfig().get().settings.advanced.cspThirdParty;
+let cache: Readonly<{configValues: string; result:string}> | undefined;
+
+export function getWebCordCSP(additionalPolicies: CSPBuilder[]|[] = []) {
+  const config = new AppConfig().value.settings.advanced.cspThirdParty;
     type parties = keyof typeof config;
-    type cspFilter = (value:CSP|undefined) => value is CSP;
+    type cspFilter = (value:CSPBuilder|undefined) => value is CSPBuilder;
     if(cache && cache.configValues === Object.values(config).join())
       return cache.result;
-    cache = {
+    else if(cache)
+      console.debug("[CSP] Policy changed! Recalculating cache...");
+    else
+      console.debug("[CSP] Initializing cache for quicker responses...");
+    cache = Object.freeze({
       configValues: Object.values(config).join(),
-      result: CSP.merge(
-        csp.base,
+      result: CSPBuilder.merge(
+        builders.base,
         ...Object.keys(config)
           .map((key) => {
             if(config[key as parties])
-              return csp[key as parties];
+              return builders[key as parties];
             else
               return undefined;
           })
-          .filter(((value) => value !== undefined) as cspFilter),
+          .filter(((value) => value instanceof CSPBuilder) as cspFilter),
         ...additionalPolicies
-      )
-    };
+      ).build()
+    });
     return cache.result;
 }

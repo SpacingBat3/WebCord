@@ -1,5 +1,5 @@
 /* l10nSupport – app localization implementation */
-import * as path from "path";
+import { resolve, dirname } from "path";
 import { readFileSync, existsSync } from "fs";
 import { deepmerge } from "deepmerge-ts";
 import { app } from "electron/main";
@@ -43,27 +43,46 @@ langDialog.once("show-error", (localizedStrings: string) => {
  * 
  * In other situations, an error message will occur and fallback strings will be used instead. 
  */
-class l10n {
+class L10N {
+  /**
+   * Parses locale to get a list of associated locale names, ordered by best
+   * match. This list also includes the initial property.
+   */
+  #altLocales<T extends string>(locale:T):string[]&{0:T} {
+    const separator = locale.includes("_") ? "_" : locale.includes("-") ? "-" : null;
+    if(separator === null) return [
+      locale,
+      locale.toLowerCase() + "_" + locale.toUpperCase(),
+      locale.toLowerCase() + "-" + locale.toUpperCase(),
+      locale === locale.toLowerCase() ? locale.toUpperCase() : locale.toLowerCase()
+    ];
+    return [
+      locale,
+      separator === "-" ? locale.replace("-","_") : locale.replace("_","-"),
+      ...locale.split(separator).filter(value => value !== ""),
+      locale.toUpperCase(),
+      locale.toLowerCase()
+    ];
+  }
+  /** List of associated locales with the current user's locale. */
+  public locales = Object.freeze(this.#altLocales(getLocale()));
+
+  /** A list of paths from which WebCord will load the localization files. */
+  public searchPaths = Object.freeze([
+    // Internal (inside `app.asar`) localization files paths
+    ...this.locales.map(lang => resolve(getAppPath(), "sources/translations", lang)),
+    // External (in `resources`) localization files paths
+    ...this.locales.map(lang => resolve(dirname(getAppPath()), "translations", lang))
+  ]);
+
   private loadFile<T extends keyof typeof defaultTranslations>(type: T): typeof defaultTranslations[T] {
     /**
 		 * Computed strings (mixed localized and fallback object)
 		 */
     let finalStrings: typeof defaultTranslations[T] | unknown = defaultTranslations[type];
-    /**
-		 * Translated strings in the native user language.
-		 * 
-		 * @todo
-		 * Make `localStrings` not overwrite `l10nStrings`
-		 * when it is of wrong type.
-		 */
-    let localStrings: unknown;
-
-    let internalStringsFile = path.resolve(getAppPath(), "sources/translations/" + getLocale() + "/" + type.toString())+".json";
-    const externalStringsFile = path.resolve(path.dirname(getAppPath()), "translations/" + getLocale() + "/" + type.toString())+".json";
-    /* Handle unofficial translations */
-
-    if (!existsSync(internalStringsFile))
-      internalStringsFile = externalStringsFile;
+    const localeFile = this.searchPaths
+      .map(dir => resolve(dir, type+".json"))
+      .find(file => existsSync(file));
 
     if (process.type === "browser" && process.platform === "win32" && !app.isReady())
       console.warn([
@@ -71,14 +90,16 @@ class l10n {
         "       because the app hasn't still emitted the 'ready' event!",
         "[WARN] In this case, English strings will be used as a fallback."
       ].join("\n"));
-    if (existsSync(internalStringsFile)) {
-      localStrings = JSON.parse(readFileSync(internalStringsFile).toString());
-      finalStrings = deepmerge(defaultTranslations[type], localStrings);
+
+    if (localeFile !== undefined) {
+      console.debug("[L10N] Computing strings for locale list: "+this.locales.join(", "));
+      finalStrings = deepmerge(defaultTranslations[type], JSON.parse(readFileSync(localeFile).toString()));
     }
+
     if (objectsAreSameType(finalStrings, defaultTranslations[type])) {
       return finalStrings;
     } else {
-      langDialog.emit("show-error", internalStringsFile);
+      langDialog.emit("show-error", localeFile);
       return defaultTranslations[type];
     }
   }
@@ -92,4 +113,4 @@ class l10n {
   }
 }
 
-export default l10n;
+export default L10N;

@@ -6,7 +6,7 @@
         /* Whenever incremental compilation is enabled */
         "incremental": true,
         /* File containing saved information about incremental compilation */
-        "tsBuildInfoFile": "app/.build/info.json",
+        "tsBuildInfoFile": "cache/tsc.json",
         /* Whenever sourcemaps should be made for emitted JavaScript files */
         "sourceMap": true,
         /* Directrory in which are placed all emitted files */

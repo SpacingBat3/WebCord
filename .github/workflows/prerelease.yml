@@ -22,12 +22,12 @@ jobs:
             arch: x64,arm64,ia32
           - name: macOS
             runner: macos
-            arch: x64,arm64
+            arch: x64,arm64,universal
 
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -35,6 +35,14 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: TSC cache
+        uses: actions/cache@v3
+        with:
+          key: tsc-${{ matrix.build }}
+          path: |
+            app
+            cache/tsc.json
 
       - name: Publish distributables (${{ matrix.arch}})
         uses: nick-fields/retry@v2

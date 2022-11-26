@@ -1,20 +1,55 @@
 import type { Server } from "ws";
 import kolor from "@spacingbat3/kolor";
+import { BrowserWindow, session } from "electron/main";
+
+/**
+ * A list of standard status codes used within WebSocket communication at
+ * connection close. Currently, not all are documented there, althrough all were
+ * listed, with some additional ones took from MDN.
+ * 
+ * Reference: [MDN], [RFC6455].
+ * 
+ * [MDN]: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
+ * [RFC6455]: https://www.rfc-editor.org/rfc/rfc6455.html#section-7.4.1
+ */
+const enum SocketClose {
+  /** Emmited on normal server closure. */
+  Ok = 1000,
+  /** Emmited when endpoint is going away, e.g. on navigation or server failure. */
+  GoingAway,
+  ProtocolError,
+  UnsupportedData,
+  /** **Reserved**. It currently has no meaning, but that might change in the future. */
+  Reserved,
+  /** **Reserved**. Indicates lack of the status/code, althrough it was expected. */
+  NoStatusReveived,
+  /** **Reserved**. Emmited when connection was closed abnormally, where status code was expected. */
+  AbnormalClosure,
+  InvalidPayload,
+  PolicyViolation,
+  MessageTooBig,
+  MandatoryExtension,
+  InternalError,
+  ServiceRestart,
+  /** Emmited when server is terminating connection due to the temporarily condition, e.g. server overload. */
+  TryAgainLater,
+  BadGateway
+}
 
 function wsLog(message:string, ...args:unknown[]) {
-  console.log(kolor.bold(kolor.magentaBright("[WebSocket]"))+" "+message,...args);
+  console.log(kolor.bold(kolor.magentaBright("[WebSocket]")), message,...args);
 }
 
 interface Response<C extends string, T extends string|never> {
   /** Response type/command. */
   cmd: C;
   /** Response arguments. */
-  args: ResponseArgs<C, T>;
+  args: responseArgs<C, T>;
   /** Nonce indentifying the communication. */
   nonce: string;
 }
 
-type ResponseArgs<C extends string, T extends string|never> =
+type responseArgs<C extends string, T extends string|never> =
 C extends "INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER" ? {
   /** An invitation code. */
   code: string;
@@ -24,13 +59,13 @@ C extends "INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER" ? {
   client_id: string;
 } : C extends "DEEP_LINK" ? T extends string ? {
   type: T;
-  params: ResponseParams<T>;
+  params: responseParams<T>;
 } : {
   type: string;
   params: Record<string,unknown>;
 } : Record<string,unknown>;
 
-type ResponseParams<T extends string> = T extends "CHANNEL" ? {
+type responseParams<T extends string> = T extends "CHANNEL" ? {
   guildId: string;
   channelId?: string;
   search: string;
@@ -144,21 +179,27 @@ async function getServer(start:number,end:number) {
  * 
  * @param window Parent window for invitation popup.
  */
-export default async function startServer(window:Electron.BrowserWindow) {
+export default async function startServer() {
+  const getMainWindow = () => BrowserWindow
+    .getAllWindows()
+    .find(window => window.webContents.session === session.defaultSession && window.getParentWindow() === null);
   const [
     {isJsonSyntaxCorrect, knownInstancesList: knownIstancesList},
     {initWindow},
-    {underline, blue},
-    L10N
+    {underline, blue}
   ] = await Promise.all([
     import("../../common/global"),
     import("./parent"),
     import("@spacingbat3/kolor").then(kolor => kolor.default),
-    import("../../common/modules/l10n").then(l10n => l10n.default)
   ]);
   const [wsServer,wsPort] = await getServer(6463, 6472)??[null,6463] as const;
   if(wsServer === null) return;
-  wsLog(new L10N().client.log.listenPort,blue(underline(wsPort.toString())));
+  void import("../../common/modules/l10n")
+    .then(l10n => new l10n.default())
+    .then(l10n => wsLog(
+      l10n.client.log.listenPort,
+      blue(underline(wsPort.toString()))
+    ));
   let lock = false;
   wsServer.on("connection", (wss, request) => {
     const origin = request.headers.origin??"https://discord.com";
@@ -170,13 +211,13 @@ export default async function startServer(window:Electron.BrowserWindow) {
     // Checks if origin is associated in Discord or localy installed software.
     if(!trust.isKnown && !trust.isDiscordService && !trust.isLocal) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not trusted)");
-      wss.close(1008,"Client is not trusted.");
+      wss.close(SocketClose.PolicyViolation,"Client is not trusted.");
       return;
     }
     // Checks if origin is associated with the current WebCord's instance.
     if(trust.isDiscordService || trust.isLocal) {
       console.debug("[WSS] Blocked request from origin '"+origin+"'. (not supported)");
-      wss.close(1008,"Client is not supported.");
+      wss.close(SocketClose.PolicyViolation,"Client is not supported.");
       return;
     }
     // Send handshake
@@ -187,11 +228,17 @@ export default async function startServer(window:Electron.BrowserWindow) {
         parsedData = (data as Buffer).toString();
       if(isJsonSyntaxCorrect(parsedData as string))
         parsedData = JSON.parse(parsedData as string);
+      const parent = getMainWindow();
+      if(parent === undefined){
+        console.debug("[WSS] Closed connection due to lack of main window.");
+        wss.close(SocketClose.TryAgainLater,"Server couldn't connect to main window, try again later.");
+        return;
+      }
       // Invitation response handling
       if(isResponse(parsedData, ["INVITE_BROWSER", "GUILD_TEMPLATE_BROWSER"] as ("INVITE_BROWSER"|"GUILD_TEMPLATE_BROWSER")[])) {
         if(lock) {
           console.debug('[WSS] Blocked request "'+parsedData.cmd+'" (WSS locked).');
-          wss.close(1013,"Server is busy, try again later.");
+          wss.close(SocketClose.TryAgainLater,"Server is busy, try again later.");
           return;
         }
         lock = true;
@@ -207,7 +254,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
         }));
         const winProperties = parsedData.cmd === "GUILD_TEMPLATE_BROWSER" ?
           {width: 960} : {};
-        const child = initWindow("invite", window, {...winProperties,...{
+        const child = initWindow("invite", parent, {...winProperties,...{
           webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -218,10 +265,10 @@ export default async function startServer(window:Electron.BrowserWindow) {
         if(child === undefined) return;
         const path = parsedData.cmd === "INVITE_BROWSER" ?
           "/invite/" : "/template/";
-        const windowOrigin = new URL(window.webContents.getURL()).origin;
+        const parentOrigin = new URL(parent.webContents.getURL()).origin;
         const type = /^https?:\/\/(?:[a-z]+\.)?discord\.com$/;
-        const childOrigin = type.test(origin) && type.test(windowOrigin) ?
-          windowOrigin : origin;
+        const childOrigin = type.test(origin) && type.test(parentOrigin) ?
+          parentOrigin : origin;
         void child.loadURL(childOrigin+path+parsedData.args.code);
         child.webContents.once("did-finish-load", () => {
           child.show();
@@ -237,8 +284,8 @@ export default async function startServer(window:Electron.BrowserWindow) {
         const path = parsedData.args.params.channelId !== undefined ?
           "/channels/"+parsedData.args.params.guildId+"/"+parsedData.args.params.channelId :
           "/channels/"+parsedData.args.params.guildId;
-        window.webContents.send("navigate", path);
-        window.show();
+        parent.webContents.send("navigate", path);
+        parent.show();
         wss.send(JSON.stringify({
           cmd: parsedData.cmd,
           data: null,
@@ -249,7 +296,7 @@ export default async function startServer(window:Electron.BrowserWindow) {
       // RPC response handling
       else if(isResponse(parsedData, "AUTHORIZE")) {
         wsLog("Received RPC authorization request, but "+kolor.bold("RPC is not implemented yet")+".");
-        wss.close(1007, "Request of type: 'AUTHORIZE' is currently not supported.");
+        wss.close(SocketClose.InvalidPayload, "Request of type: 'AUTHORIZE' is currently not supported.");
       }
       // Unknown response error
       else if(isResponse(parsedData)) {
@@ -258,18 +305,18 @@ export default async function startServer(window:Electron.BrowserWindow) {
         const msg = "Request of type: '"+type+"' is currently not supported.";
         console.error("[WS] "+msg);
         console.debug("[WS] Request %s", JSON.stringify(parsedData,undefined,4));
-        wss.close(1007, msg);
+        wss.close(SocketClose.InvalidPayload, msg);
       }
       // Unknown text message error
       else if(!isBinary) {
         const msg = "Could not handle the packed text data: '"+(data as Buffer).toString()+"'.";
         console.error("[WS] "+msg);
-        wss.close(1007, msg);
+        wss.close(SocketClose.InvalidPayload, msg);
       }
       // Unknown binary data transfer error
       else {
         console.error("[WS] Unknown data transfer (not text).");
-        wss.close(1003, "Unknown data transfer");
+        wss.close(SocketClose.UnsupportedData, "Unknown data transfer");
       }
     });
   });

@@ -5,7 +5,7 @@ import { nativeImage } from "electron/common";
 import { getAppPath, getName } from "./electron";
 import { deepmerge } from "deepmerge-ts";
 import { resolve } from "path";
-import { buildInfo, isPartialBuildInfo } from "../global";
+import { BuildInfo, isPartialBuildInfo } from "../global";
 import packageJson, { Person } from "./package";
 import { readFileSync } from "fs";
 
@@ -39,7 +39,7 @@ function generateIcon(set: "application"|"tray", variant?: "unread"|"ping")  {
   }
 }
 
-export const defaultBuildInfo: Readonly<buildInfo> = Object.freeze({
+export const defaultBuildInfo: Readonly<BuildInfo> = Object.freeze({
   type: "devel",
   ...(process.platform === "win32" ? {AppUserModelId: "SpacingBat3.WebCord"} : {}),
   features: {
@@ -52,12 +52,12 @@ export const defaultBuildInfo: Readonly<buildInfo> = Object.freeze({
  * of simplicity for the packagers, it assumes it is a partial file – any values
  * can be ommited, but the config itself still needs to be of valid types) and
  * default values. */
-export function getBuildInfo(): Readonly<buildInfo> {
+export function getBuildInfo(): Readonly<BuildInfo> {
   try {
     const data = readFileSync(resolve(getAppPath(), "buildInfo.json"));
     const buildInfo:unknown = JSON.parse(data.toString());
     if (isPartialBuildInfo(buildInfo))
-      return Object.freeze(deepmerge(defaultBuildInfo, buildInfo) as buildInfo);
+      return Object.freeze(deepmerge(defaultBuildInfo, buildInfo) as BuildInfo);
     else
       return defaultBuildInfo;
   } catch {

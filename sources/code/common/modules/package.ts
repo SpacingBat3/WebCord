@@ -92,7 +92,7 @@ export class Person {
     
     // Check #2: When Person is string, it shall be in `name <email> [url]` format.
     if (typeof variable === "string"){
-      const match = variable.match(moduleRegexp.personMagic);
+      const match = moduleRegexp.personMagic.exec(variable);
       return (
         match?.[1] !== undefined
       ) && (
@@ -107,7 +107,7 @@ export class Person {
       this.email = (value as PersonObject).email;
       this.url   = (value as PersonObject).url;
     } else {
-      const match = (value as string).match(moduleRegexp.personMagic);
+      const match = moduleRegexp.personMagic.exec((value as string));
       this.name  = (match?.[1] ?? "[Anonymous]").trimEnd();
       this.email = match?.[2] ??   undefined;
       this.url   = match?.[3] ??   undefined;
@@ -167,7 +167,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     }
     
     // Check 7: `name` field is correct package name.
-    if((object as PackageJsonProperties).name.match(/^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/) === null)
+    if((/^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.exec((object as PackageJsonProperties).name)) === null)
       return "'"+(object as PackageJsonProperties).name+"' is not a valid Node.js package name.";
     
     // Check 8: `version` is a `semver`-parseable string
@@ -190,7 +190,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
           else if (typeof value !== "string")
             return "Version of the package '"+key+"' is not of type 'string'.";
           else if (validRange(value) === null && value !== "latest" &&
-              !/^[^/]+\/[^/]+$/.test(value)) {
+              !/^[a-z]*:?[^/:]+\/[^/:]+/.test(value)) {
             return "Version '"+value+"' of the package '"+key+"' is not of the valid format.";
           }
       }

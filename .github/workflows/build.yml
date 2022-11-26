@@ -39,6 +39,21 @@ jobs:
         if: ${{ matrix.deps == 'latest' }}
         run: npm update
 
+      - name: TSC cache
+        uses: actions/cache@v3
+        with:
+          key: tsc-${{ matrix.deps }}
+          path: |
+            app
+            cache/tsc.json
+      
+      - name: ESLint cache
+        uses: actions/cache@v3
+        with:
+          key: eslint-${{ matrix.deps }}
+          path: |
+            cache/eslint.json
+
       - name: Run tests with ${{ matrix.deps }} dependencies
         run: npm test
   make:
@@ -56,17 +71,17 @@ jobs:
             arch: x64,arm64,ia32
           - runner: macos
             name: macOS
-            arch: x64,arm64
+            arch: x64,arm64,universal
 
     name: '${{ matrix.name }} (${{ matrix.build }})'
     runs-on: ${{ matrix.runner }}-latest
     needs: ['test']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -74,6 +89,14 @@ jobs:
       - name: Update dependencies
         if: ${{ matrix.build == 'latest' }}
         run: npm update
+
+      - name: TSC cache
+        uses: actions/cache@v3
+        with:
+          key: tsc-${{ matrix.build }}
+          path: |
+            app
+            cache/tsc.json
 
       - name: Generate distributables (${{ matrix.arch }})
         uses: nick-fields/retry@v2

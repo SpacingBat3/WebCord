@@ -1,13 +1,13 @@
 import { ipcMain } from "electron/main";
 import { AppConfig } from "../modules/config";
 import { appInfo } from "../../common/modules/client";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import { initWindow } from "../modules/parent";
 import { deepmerge } from "deepmerge-ts";
 import type { cspTP } from "../modules/config";
 import type { PartialRecursive } from "../../common/global";
 
-type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"] & {
+type generatedConfig = AppConfig["defaultConfig"]["settings"] & L10N["settings"] & {
   advanced: {
     cspThirdParty: {
       labels: Record<keyof Omit<AppConfig["defaultConfig"]["settings"]["advanced"]["cspThirdParty"], "labels">, string>;
@@ -16,7 +16,7 @@ type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"]
 };
 
 function generateConfig (config:AppConfig) {
-  const appConfig = deepmerge(config.get().settings, (new l10n()).settings);
+  const appConfig = deepmerge(config.value.settings, (new L10N()).settings);
   const finalConfig: PartialRecursive<generatedConfig> = appConfig as object;
   const websitesThirdParty: cspTP<string> = {
     algolia: "Algolia",

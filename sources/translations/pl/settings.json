@@ -34,7 +34,8 @@
             "name": "Główne okno WebCorda",
             "description": "Kontroluje wygląd i zachowanie okna wyświetlającego interfejs klienta Discorda.",
             "labels": {
-                "transparent": "Zezwól na przezroczyste tło okna."
+                "transparent": "Zezwól na przezroczyste tło okna.",
+                "hideOnClose": "Ukrywaj okno do zasobnika przyciskiem zamykania."
             }
         }
     },

@@ -31,7 +31,7 @@ import { shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
 import { protocols, SessionLatest, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
-import l10n from "./modules/l10n";
+import L10N from "./modules/l10n";
 import createMainWindow from "../main/windows/main";
 import { AppConfig } from "../main/modules/config";
 import kolor from "@spacingbat3/kolor";
@@ -41,33 +41,47 @@ import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
-import { parseArgs } from "util";
+import { parseArgs, stripVTControlCharacters } from "util";
 import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
 
-const argvOptions = Object.freeze({
-  "help": { type: "boolean", short: "h" },
-  /** An alias to `help` command-line option. */
-  "info": { type: "boolean", short: "?" },
-  "version": { type: "boolean", short: "v" },
-  "start-minimized": { type: "boolean", short: "m" },
-  "export-l10n": { type: "string" },
-  "verbose": { type: "boolean", short: "v" },
-  "user-agent-mobile": { type: "boolean" },
-  "user-agent-version": { type: "string" },
-  "user-agent-device": { type: "string" },
-  "user-agent-platform": { type: "string" },
-  "force-audio-share-support": { type: "boolean" },
-  "add-css-theme": { type: "string" },
-  "gpu-info": { type: "string" }
+const argvConfig = Object.freeze({
+  options: {
+    /**
+     * Used internally by [`@spacingbat3/kolor`](https://www.npmjs.com/package/@spacingbat3/kolor)
+     * module.
+     */
+    "color": { type: "string" },
+    "help": { type: "boolean", short: "h" },
+    /** An alias to `help` command-line option. */
+    "info": { type: "boolean", short: "?" },
+    "version": { type: "boolean", short: "V" },
+    "start-minimized": { type: "boolean", short: "m" },
+    "export-l10n": { type: "string" },
+    "verbose": { type: "boolean", short: "v" },
+    "user-agent-mobile": { type: "boolean" },
+    "user-agent-version": { type: "string" },
+    "user-agent-device": { type: "string" },
+    "user-agent-platform": { type: "string" },
+    "force-audio-share-support": { type: "boolean" },
+    "add-css-theme": { type: "string" },
+    "gpu-info": { type: "string" }
+  },
+  strict: false,
+  args: process.argv
+    // Remove Electron binary from the list of arguments.
+    .slice(1)
+    // Remove path to the application from the list of arguments.
+    .filter(value => resolvePath(value) !== resolvePath(app.getAppPath()))
 } as const);
 
 const argv = Object.freeze(
   (parseArgs as undefined|typeof import("util").parseArgs) ?
     // Use native method if supported by Electron (needs Node 18+)
-    parseArgs({options: argvOptions, strict: false}) :
+    parseArgs(argvConfig) :
     // Use polyfill, for compatibility with the older Node versions
-    parseArgsPolyfill({options: argvOptions, strict: false})
+    parseArgsPolyfill(argvConfig)
 );
+
 {
   const stdWarn=console.warn,stdError=console.error,stdDebug=console.debug;
   console.error = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
@@ -93,9 +107,9 @@ const argv = Object.freeze(
 
 // Set AppUserModelID on Windows
 {
-  const {AppUserModelId} = getBuildInfo();
-  if(process.platform === "win32" && AppUserModelId !== undefined)
-    app.setAppUserModelId(AppUserModelId);
+  const {AppUserModelId:id} = getBuildInfo();
+  if(process.platform === "win32" && id !== undefined)
+    app.setAppUserModelId(id);
 }
 
 // Handle command line switches:
@@ -119,11 +133,19 @@ let overwriteMain: (() => unknown) | undefined;
 
 {
   /** Renders a line from the list of the parameters and their descripiton. */
-  const renderLine = (parameters:string[], description:string, length?:number) => {
-    const parameter = parameters.map(p => (p.length === 1 ? "-" : "--")+p).join("  ");
-    // eslint-disable-next-line no-control-regex
-    const spaceBetween = (length ?? 30) - parameter.replace(/\x1B\[[^m]+m/g, "").length;
-    return "  "+kolor.green(parameter)+" ".repeat(spaceBetween)+kolor.gray(description);
+  const renderLine = (key:keyof typeof argvConfig.options, description:string, type?:string, length = 32) => {
+    const option = argvConfig.options[key];
+    const parameter = [
+      "--"+key,
+      type !== undefined ? "="+kolor.yellow(type) :
+        option.type === "string" ? "="+kolor.yellow("{string}") : "",
+      "short" in option ? "   "+"-"+option.short : ""
+    ].join("");
+    const spaceBetween = length - stripVTControlCharacters(parameter).length;
+    const formattedDesc = description
+      .replaceAll(type??/^$/g, type !== undefined ? kolor.yellow(type) : "")
+      .replaceAll(/(--?[a-zA-Z-]+)/g,kolor.green("$1"));
+    return "  "+kolor.green(parameter)+" ".repeat(spaceBetween > 0 ? spaceBetween : 0)+kolor.gray(formattedDesc);
   };
 
   // Mitigations to "unsafe" command-line switches
@@ -150,29 +172,34 @@ let overwriteMain: (() => unknown) | undefined;
       " " + kolor.red(argv0) + kolor.green(" [options]\n"),
       " " + kolor.underline("Options:")
     ].join("\n")+"\n"+[
-      renderLine(["help", "h", "?"],"Show this help message."),
-      renderLine(["version","V"],"Show current application version."),
-      renderLine(["start-minimized", "m"],"Hide application at first run."),
-      renderLine(["export-l10n=" + kolor.yellow("{dir}")], "Export currently loaded translation files from")+"\n"+
-      " ".repeat(32)+kolor.gray("the application to the ") + kolor.yellow("{dir}") + kolor.gray(" directory."),
-      renderLine(["verbose","v"], "Show debug messages."),
-      renderLine(
-        ["gpu-info=" + kolor.yellow("basic") + kolor.blue("|") + kolor.yellow("complete")],
-        "Shows GPU information as JS object."
-      ),
-      renderLine(["user-agent-mobile"], "Whenever use 'mobile' variant of user agent."),
-      renderLine(["user-agent-platform=" + kolor.yellow("{any}")], "Platform to replace in the user agent."),
-      renderLine(["user-agent-version="  + kolor.yellow("{any}")], "Version of platform in user agent."),
-      renderLine(["user-agent-device"], "Device identifier in the user agent (Android)."),
-      renderLine(["force-audio-share-support"], "Force support for sharing audio in screen share."),
-      renderLine(["add-css-theme=" + kolor.yellow("{path}")], "Adds theme to WebCord from "+kolor.yellow("{path}")+".")/*,
+      renderLine("color","Whenever colorize console font.", "always|auto|never"),
+      renderLine("help","Show this help message."),
+      renderLine("info","An alias for --help."),
+      renderLine("version","Show current application version."),
+      renderLine("start-minimized","Hide application at first run."),
+      renderLine("export-l10n", "Export localization files to {dir} directory", "{dir}."),
+      renderLine("verbose", "Show debug messages."),
+      renderLine("gpu-info","Shows GPU information as JS object.", "basic|complete"),
+      renderLine("user-agent-mobile", "Whenever use 'mobile' variant of user agent."),
+      renderLine("user-agent-platform", "Platform to replace in the user agent."),
+      renderLine("user-agent-version", "Version of platform in user agent."),
+      renderLine("user-agent-device", "Device identifier in the user agent (Android)."),
+      renderLine("force-audio-share-support", "Force support for sharing audio in screen share."),
+      renderLine("add-css-theme", "Adds theme to WebCord from {path}.", "{path}")/*,
       renderLine(["remove-css-theme=" + kolor.yellow("{name}")], "Removes WebCord theme by "+kolor.yellow("{name}")),
       renderLine(["list-css-themes"], "Lists currently added WebCord themes")*/
     ].sort().join("\n")+"\n");
     app.exit();
   }
   if(argv.values.version === true) {
-    console.log(app.getName() + " v" + app.getVersion());
+    const buildInfo = getBuildInfo();
+    console.log(
+      app.getName() + " v" + app.getVersion()+", "+(
+        buildInfo.type === "release" ? "stable" : "development"
+      )+" build"+(
+        buildInfo.commit !== undefined ? ", commit hash "+buildInfo.commit : ""
+      )
+    );
     app.exit();
   }
   if(argv.values["user-agent-mobile"] === true)
@@ -197,7 +224,7 @@ let overwriteMain: (() => unknown) | undefined;
     startHidden = true;
   if("export-l10n" in argv.values) {
     overwriteMain = () => {
-      const locale = new l10n;
+      const locale = new L10N;
       const directory = argv.values["export-l10n"];
       if(directory !== "string")
         throw new TypeError("Parameter 'export-l10n' should contain a string value!");
@@ -277,7 +304,7 @@ let overwriteMain: (() => unknown) | undefined;
     console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value !== undefined ? "="+value : ""));
   };
   // Apply recommended GPU flags if user had opt in for them.
-  if(new AppConfig().get().settings.advanced.optimize.gpu)
+  if(new AppConfig().value.settings.advanced.optimize.gpu)
     getRecommendedGPUFlags().then(flags => {
       for(const flag of flags) if(!app.isReady()) {
         applyFlags(flag[0], flag[1]);
@@ -289,7 +316,7 @@ let overwriteMain: (() => unknown) | undefined;
   
   // Enable MiddleClickAutoscroll for all windows.
   if(process.platform !== "win32" &&
-      new AppConfig().get().settings.advanced.unix.autoscroll)
+      new AppConfig().value.settings.advanced.unix.autoscroll)
     applyFlags("enable-blink-features","MiddleClickAutoscroll");
 
   for(const flag of getRedommendedOSFlags())
@@ -323,9 +350,17 @@ function main(): void {
     overwriteMain();
   } else {
     // Run app normally
-    const updateInterval = setInterval(function () { checkVersion(updateInterval).catch(commonCatches.print); }, 1800000);
+    const updateInterval = setInterval(() => {
+      checkVersion(updateInterval).catch(commonCatches.print);
+    }, 30/*min*/*60000);
     checkVersion(updateInterval).catch(commonCatches.print);
     const mainWindow = createMainWindow({startHidden, screenShareAudio});
+    
+    // WebSocket server
+    import("../main/modules/socket")
+      .then(socket => socket.default())
+      .catch(commonCatches.print);
+
     // Show window on second instance
     app.on("second-instance", () => {
       if (!mainWindow.isVisible()) mainWindow.show();
@@ -337,7 +372,7 @@ function main(): void {
 
 if (!singleInstance && !overwriteMain) {
   app.on("ready", () => {
-    console.log((new l10n()).client.log.singleInstance);
+    console.log((new L10N()).client.log.singleInstance);
     app.quit();
   });
 } else {
@@ -364,7 +399,7 @@ app.on("web-contents-created", (_event, webContents) => {
 
   // Securely open some urls in external software.
   webContents.setWindowOpenHandler((details) => {
-    const config = new AppConfig().get().settings;
+    const config = new AppConfig().value.settings;
     if (!app.isReady()) return { action: "deny" };
     const openUrl = new URL(details.url);
     const sameOrigin = new URL(webContents.getURL()).origin === openUrl.origin;
@@ -389,7 +424,7 @@ app.on("web-contents-created", (_event, webContents) => {
       (config.advanced.redirection.warn || protocolMeta.allow || !isMainWindow)
     ) {
       const window = BrowserWindow.fromWebContents(webContents);
-      const strings = (new l10n).client.dialog;
+      const strings = (new L10N).client.dialog;
       const options: Electron.MessageBoxSyncOptions = {
         type: "warning",
         title: strings.common.warning + ": " + strings.externalApp.title,
@@ -419,7 +454,14 @@ app.on("web-contents-created", (_event, webContents) => {
           overrideBrowserWindowOptions: {
             autoHideMenuBar: true,
             ...(window ? {BrowserWindow: window} : {}),
-            fullscreenable: false // not functional with 'children'
+            fullscreenable: false, // not functional with 'children'
+            webPreferences: {
+              nodeIntegration: false,
+              sandbox: true,
+              contextIsolation: true,
+              webSecurity: true,
+              enableWebSQL: false
+            }
           }
         };
       else
@@ -429,9 +471,9 @@ app.on("web-contents-created", (_event, webContents) => {
   });
 
   // Remove menu from popups
-  webContents.on("did-create-window", (window) => {
-    window.removeMenu();
-  });
+  webContents.once("did-create-window", window => window.removeMenu());
+  // Style webContents
+  webContents.on("did-create-window", window => void styles.load(window.webContents));
 });
 
 if(new Date().getMonth() === 3 && new Date().getDate() === 1){

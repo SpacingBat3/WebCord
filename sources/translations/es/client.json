@@ -7,9 +7,9 @@
         "copy": "Copiar",
         "paste": "Pegar",
         "cut": "Cortar",
-        "dictionaryAdd": "Agregar a el diccionario local",
+        "dictionaryAdd": "Agregar al diccionario local",
         "copyURL": "Copiar la dirección del enlace",
-        "copyURLText": "Copiar el texto del enlace",
+        "copyURLText": "Copiar texto del enlace",
         "inspectElement": "Inspeccionar"
     },
     "menubar": {
@@ -30,7 +30,78 @@
             "redo": "Rehacer"
         },
         "view": {
-            "groupName": "Ver"
+            "groupName": "Ver",
+            "forceReload": "Forzar refrescado",
+            "zoomIn": "Acercar",
+            "fullScreen": "Alternar pantalla completa",
+            "reload": "Refrescar",
+            "resetZoom": "Tamaño real",
+            "devTools": "Alternar las herramientas de desarollador",
+            "zoomOut": "Alejar"
+        },
+        "window": {
+            "mobileMode": "Ocultar barra lateral",
+            "groupName": "Ventana"
         }
+    },
+    "dialog": {
+        "ver": {
+            "downgrade": "¡Tu versión de producción es más nueva que la estable!",
+            "updateBadge": "[ACTUALIZACIÓN]",
+            "updateTitle": "¡Actualización disponible!",
+            "update": "¡Una nueva version de la aplicación esta disponible!",
+            "recent": "¡La aplicación está actualizada!",
+            "devel": "Está utilizando la compilación que no es de producción."
+        },
+        "permission": {
+            "request": {
+                "denied": "Permiso de: %s para %s fue negada."
+            },
+            "check": {
+                "denied": "Comprobación de permisos de:%s para %s denegada."
+            }
+        },
+        "mod": {
+            "nodeExt": "Add-on WebCord en Node.js",
+            "crx": "Extensión de Chrome/Chromium"
+        },
+        "screenShare": {
+            "source": {
+                "entire": "Pantalla de la computadora",
+                "screen": "Pantalla"
+            },
+            "close": "Cerrar",
+            "sound": {
+                "unavailable": "Compartir el audio no esta disponible en esta plataforma.",
+                "system": "Compartir con el audio del dispositivo."
+            }
+        },
+        "common": {
+            "error": "Error",
+            "warning": "Advertencia",
+            "continue": "&Continuar",
+            "yes": "&Si",
+            "no": "&No",
+            "source": "Origen"
+        },
+        "externalApp": {
+            "title": "Abriendo enlace en aplicación externa",
+            "message": "Un sitio web intenta redirigir el enlace con diferente origen a una aplicación externa. ¿Continuar de todos modos?"
+        }
+    },
+    "help": {
+        "groupName": "Ayuda",
+        "repo": "Repositorio",
+        "bugs": "Reportar un bug"
+    },
+    "windows": {
+        "about": "Acerca de",
+        "docs": "Documentación",
+        "settings": "Configuración",
+        "invite": "Invitar"
+    },
+    "log": {
+        "singleInstance": "Cambiando a una ventana existente...",
+        "listenPort": "Recibiendo en el puerto %s."
     }
 }

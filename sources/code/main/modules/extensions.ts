@@ -1,7 +1,7 @@
 import type { ElectronLatest } from "../../common/global";
 import { commonCatches } from "./error";
 
-const SafeStorage: Promise<ElectronLatest["safeStorage"]|undefined> = (import("electron/main") as unknown as Promise<ElectronLatest>)
+const safeStoragePromise: Promise<ElectronLatest["safeStorage"]|undefined> = (import("electron/main") as unknown as Promise<ElectronLatest>)
   .then(main => main.safeStorage);
 
 async function fetchOrRead(file:string, signal?:AbortSignal) {
@@ -33,7 +33,7 @@ async function parseImports(cssString: string, maxTries=5):Promise<string> {
   if(!anyImport.test(cssString)) return cssString;
   const promises:Promise<string>[] = [];
   cssString.match(anyImport)?.forEach(singleImport => {
-    const matches = singleImport.match(/^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m);
+    const matches = /^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m.exec(singleImport);
     if(matches?.[0] === undefined || matches[1] === undefined) return;
     const file = matches[1];
     promises.push(fetchOrRead(file)
@@ -75,7 +75,7 @@ async function addStyle(path:string) {
     import("electron/main"),
     import("fs/promises"),
     import("path"),
-    SafeStorage
+    safeStoragePromise
   ]);
   function optionalCrypt(buffer:Buffer) {
     if(safeStorage?.isEncryptionAvailable() === true)
@@ -116,7 +116,7 @@ async function loadStyles(webContents:Electron.WebContents) {
     import("fs/promises"),
     import("fs"),
     import("path"),
-    SafeStorage
+    safeStoragePromise
   ]);
   const stylesDir = resolve(app.getPath("userData"),"Themes");
   if(!existsSync(stylesDir)) mkdirSync(stylesDir, {recursive:true});
@@ -149,7 +149,6 @@ async function loadStyles(webContents:Electron.WebContents) {
                  * `!important` (this should fix most styles).
                  */
                 .then(data => data.replaceAll(/((?:--|color|background)[^:;{]*:(?![^:]*?!important)[^:;]*)(;|})/g, "$1 !important$2"))
-                .then(data => {console.dir(data); return data;})
                 .then(data => webContents.insertCSS(data))
             );
           callback(themeIDs);

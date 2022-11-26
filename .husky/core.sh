@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+# shellcheck shell=bash
 #
-# Core utilities fo hooks
+# Core utilities for hooks
 #
 
 # `npkg` – finds first available Node package manager and wraps it for common
@@ -12,9 +13,12 @@
 # ```
 function npkg() {
     echo "$0";
+    local PKG;
+    local SUPPORT;
     # A path to Node.js package manager.
-    local PKG="$(command -v npm || command -v yarn || command -v pnpm || echo "false")";
-    local SUPPORT=(install test run add);
+    PKG="$(command -v npm || command -v yarn || command -v pnpm || echo "false")";
+    # A list of supported package manager commands
+    SUPPORT=(install test run add);
     function _install() {
         case "${PKG##*/}" in
             "npm"|"yarn"|"pnpm") printf "install";;
@@ -75,17 +79,18 @@ function npkg() {
 # ```
 function lftest () {
     mapfile -t FILES < <(git diff --staged --name-only);
-
-    has_meta=false;
-    has_lock=false;
+    local no_meta no_lock;
+    no_lock=false;
+    no_meta=false;
     for file in "${FILES[@]}"; do
         if [[ "$file" == "package-lock.json" ]]; then
-            has_lock=true
+            no_lock=true;
         elif [[ "$file" == "package.json" ]]; then
-            has_meta=true
+            no_meta=true;
         fi
+        [[ $no_lock && $no_meta ]] && break;
     done;
-    if [[  "$has_meta" == "false" && "$has_lock" == "true" ]]; then
+    if [[  "$no_meta" == "true" && "$no_lock" == "false" ]]; then
         echo >&2;
         echo "locktest: test failed!" >&2;
         printf '    %s\n' \

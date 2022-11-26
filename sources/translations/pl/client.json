@@ -73,6 +73,13 @@
             },
             "check": {
                 "denied": "%s: Sprawdzenie uprawnień do elementu „%s” odrzucone."
+            },
+            "question": {
+                "title": "Obsługa żądań uprawnień",
+                "message": "Czy chcesz pozwolić Discordowi na dostęp do %s?",
+                "audio": "mikrofonu",
+                "video": "kamery",
+                "notifications": "powiadomień"
             }
         },
         "mod": {

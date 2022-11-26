@@ -4,18 +4,20 @@
 
 // Let's import some keys from the package.json:
 
-import type { buildInfo } from "../common/global";
-import packageJson, { Person } from "../common/modules/package";
+import type { BuildInfo } from "../common/global";
+import { Person, PackageJSON } from "../common/modules/package";
 import { existsSync } from "fs";
 import { readFile, writeFile, rm } from "fs/promises";
 import { resolve } from "path";
 import type { ForgeConfigFile, ForgePlatform } from "./forge.d";
 import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
+const packageJson = new PackageJSON(["author","version","name"]);
 const projectPath = resolve(__dirname, "../../..");
-const AppUserModelId = process.env["WEBCORD_WIN32_APPID"];
-const FlatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
+const appUserModelId = process.env["WEBCORD_WIN32_APPID"];
+const flatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
   "io.github.spacingbat3.webcord";
+const author = packageJson.data.author !== undefined ? new Person(packageJson.data.author).name : "SpacingBat3";
 
 // Global variables in the config:
 const iconFile = "sources/assets/icons/app";
@@ -25,7 +27,10 @@ const desktopCategories = (["Network", "InstantMessaging"] as unknown as ["Netwo
 // Some custom functions
 
 async function getCommit():Promise<string | null> {
-  const refsPath = (await readFile(resolve(projectPath, ".git/HEAD")))
+  const headPath = resolve(projectPath, ".git/HEAD");
+  if(!existsSync(headPath))
+    return null;
+  const refsPath = (await readFile(headPath))
     .toString()
     .split(": ")[1]
     ?.trim();
@@ -64,6 +69,10 @@ function getBuildID() {
 
 const config: ForgeConfigFile = {
   buildIdentifier: getBuildID,
+  rebuildConfig: {
+    disablePreGypCopy: true,
+    onlyModules: []
+  },
   packagerConfig: {
     executableName: packageJson.data.name, // name instead of the productName
     asar: env.asar,
@@ -74,28 +83,59 @@ const config: ForgeConfigFile = {
     quiet: true,
     ignore: [
       // Directories:
-      /sources\/app\/.build/,
-      /out\//,
-      /schemas\//,
+      /app\/(?:.*\/)?build\/?$/,
+      /cache\/?$/,
+      /out\/?$/,
+      /schemas\/?$/,
       // Files:
       /\.eslintrc\.json$/,
       /tsconfig\.json$/,
-      /sources\/app\/forge\/config\..*/,
-      /sources\/code\/.*/,
+      /sources\/code\/?$/,
       /sources\/assets\/icons\/app\.icns$/,
       // Hidden (for *nix OSes) files:
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
     ],
-    extendInfo: {
-      NSMicrophoneUsageDescription: "This lets this app to internally manage the microphone access.",
-      NSCameraUsageDescription: "This lets this app to internally manage the camera access."
-    }
+    usageDescription: {
+      Microphone: "This lets this app to internally manage the microphone access.",
+      Camera: "This lets this app to internally manage the camera access."
+    },
+    osxUniversal: {
+      mergeASARs: true
+    },
+    osxSign: true
   },
   makers: [
     {
       name: "@electron-forge/maker-zip",
-      platforms: ["win32"]
+      platforms: ["win32"],
+    },
+    // Finally, some kind of installer in the configuration for Windows!
+    {
+      name: "@electron-forge/maker-squirrel"
+    },
+    {
+      name: "@electron-forge/maker-wix",
+      config: {
+        appUserModelId: appUserModelId ?? author+".WebCord",
+        ui: { chooseDirectory: true },
+        features: {
+          autoUpdate: false,
+          autoLaunch: {
+            arguments: ["--start-minimized"],
+            enabled: true
+          }
+        },
+        name: "WebCord",
+        manufacturer: author,
+        icon: iconFile+".ico",
+        language: 0x0400,
+        version: "v"+packageJson.data.version+(getBuildID() === "devel" ? "-dev" : ""),
+        shortName: "WebCord",
+        programFilesFolderName: "WebCord",
+        shortcutFolderName: "WebCord"
+      },
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
     },
     {
       name: "@electron-forge/maker-dmg",
@@ -134,20 +174,67 @@ const config: ForgeConfigFile = {
           categories: desktopCategories
         }
       }
-    }
-    /* Snaps are disabled until maker will be fixed to work without the
-       multipass.
+    },
+    /*
+     * Since `maker-flatpak` is still silently failing, giving at normal
+     * circumstances an inadequate information about the error itself (only useless
+     * exit code), it is why I have it disabled by the default. Simply, I don't want
+     * to cause a confusion just because someone has not added a flathub repository
+     * for their user-wide Flathub environment.
+     * 
+     * It will stay as it is until either official maker will resolve this or my
+     * own maker implementation will be mature enough to be released.
+     */
+    {
+      name: "@electron-forge/maker-flatpak",
+      config: {
+        options: {
+          id: flatpakId,
+          genericName: desktopGeneric,
+          categories: desktopCategories,
+          runtimeVersion: "21.08",
+          baseVersion: "21.08",
+          files: [
+            [
+              projectPath+"/docs",
+              "/share/docs/"+packageJson.data.name
+            ],
+            [
+              projectPath+"/LICENSE",
+              "/share/licenses/"+packageJson.data.name+"/LICENSE.txt"
+            ]
+          ],
+          modules: [
+            {
+              name: "zypak",
+              sources: [
+                {
+                  type: "git",
+                  url: "https://github.com/refi64/zypak",
+                  tag: "v2022.04"
+                }
+              ]
+            }
+          ],
+          icon: iconFile + ".png"
+        }
+      },
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
+    },
+    /* Snap maker still seems to fail for me, not sure why through... */
     {
       name: "@electron-forge/maker-snap",
       config: {
         features: {
           audio: true,
-          browserSandbox: true
+          passwords: true,
+          webgl: true
         },
         grade: (getBuildID() === "release" ? "stable" : "devel"),
-      }
-    },
-    */
+        confinement: (getBuildID() === "release" ? "strict" : "devmode")
+      },
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
+    }
   ],
   publishers: [
     {
@@ -155,7 +242,7 @@ const config: ForgeConfigFile = {
       config: {
         prerelease: getBuildID() === "devel",
         repository: {
-          owner: packageJson.data.author !== undefined ? new Person(packageJson.data.author).name : "SpacingBat3",
+          owner: author,
           name: "WebCord"
         },
         draft: false
@@ -163,11 +250,11 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: async (_ForgeConfig, path:string, _electronVersion: string, platform: ForgePlatform) => {
+    packageAfterCopy: async (_forgeConfig, path, _electronVersion, platform) => {
       /** Generates `buildInfo.json` file and saves it somewhe. */
       async function writeBuildInfo() {
-        const buildConfig: buildInfo = {
-          ...(platform === "win32" && AppUserModelId !== undefined ? { AppUserModelId } : {}),
+        const buildConfig: BuildInfo = {
+          ...(platform === "win32" && appUserModelId !== undefined ? { AppUserModelId: appUserModelId } : {}),
           type: getBuildID(),
           commit: getBuildID() === "devel" ? (await getCommit())??undefined : undefined,
           features: {
@@ -189,50 +276,41 @@ const config: ForgeConfigFile = {
       ]);
     },
     // Hardened Electron binary via Electron Fuses feature.
-    packageAfterExtract: (_ForgeConfig, path:string, _electronVersion: string, platform: ForgePlatform) =>
+    packageAfterExtract: (_forgeConfig, path, _electronVersion, platform) =>
       flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
         [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,
         [FuseV1Options.RunAsNode]: getBuildID() === "devel",
         [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: getBuildID() === "devel",
         [FuseV1Options.EnableNodeCliInspectArguments]: getBuildID() === "devel"
-      })
+      }),
+    // Fix file names of Windows makers:
+    postMake: (_forgeConfig, makeResults) => Promise.all(makeResults
+      .map(async result => {
+        // Ignore other platforms
+        if(result.platform !== "win32")
+          return result;
+        // Import modules
+        const p = await import("path"), fs = import("fs/promises");
+        // Set list of new artifacts
+        result.artifacts = await Promise.all(result.artifacts
+          // Rename artifacts to include arch suffix.
+          .map(async artifact => {
+            const ext = p.extname(artifact);
+            const basename = p.basename(artifact,ext);
+            // Ignore artifacts that doesn't need to be fixed.
+            if(basename.includes(result.arch))
+              return artifact;
+            const newArtifact = p.resolve(
+              p.dirname(artifact), basename+"-"+result.arch+ext
+            );
+            await (await fs).rename(artifact,newArtifact);
+            return newArtifact;
+          })
+        );
+        return result;
+      }))
   }
 };
-
-/*
- * Since `maker-flatpak` is still silently failing, giving at normal
- * circumstances an inadequate information about the error itself (only useless
- * exit code), it is why I have it disabled by the default. Simply, I don't want
- * to cause a confusion just because someone has not added a flathub repository
- * for their user-wide Flathub environment.
- * 
- * It will stay as it is until either official maker will resolve this or my
- * own maker implementation will be mature enough to be released.
- */
-if(process.env["WEBCORD_FLATPAK"]?.toLowerCase() === "true")
-  config.makers?.push({
-    name: "@electron-forge/maker-flatpak",
-    config: {
-      options: {
-        id: FlatpakId,
-        genericName: desktopGeneric,
-        categories: desktopCategories,
-        runtimeVersion: "21.08",
-        baseVersion: "21.08",
-        files: [
-          [
-            projectPath+"/docs",
-            "/share/docs/"+packageJson.data.name
-          ],
-          [
-            projectPath+"/LICENSE",
-            "/share/licenses/"+packageJson.data.name+"/LICENSE.txt"
-          ]
-        ],
-        icon: iconFile + ".png"
-      }
-    }
-  });
 
 module.exports = config;

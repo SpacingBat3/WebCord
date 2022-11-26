@@ -54,6 +54,9 @@
         "indent": "off",
         "semi": "off",
         "quotes": "off",
+        "no-use-before-define": "off",
+        "no-unused-vars": "off",
+        "no-unused-expressions": "off",
 
         /*** ESLint built-in rules ***/
         "valid-typeof": "error",
@@ -75,17 +78,34 @@
         }],
         "@typescript-eslint/semi": "warn",
         "@typescript-eslint/quotes": ["warn", "double", {"avoidEscape": true }],
-        // TODO: Define naming conventions (to replace camelcase rule).
-        /*"@typescript-eslint/naming-convention": ["warn", {
-          "selector": "default",
-          "format": ["camelCase", "PascalCase"],
-          "leadingUnderscore": "allow"
+        "@typescript-eslint/no-use-before-define": "warn",
+        "@typescript-eslint/no-unused-expressions": "warn",
+        "@typescript-eslint/naming-convention": ["warn",{
+          "selector": "variableLike",
+          "format": ["camelCase"]
         },{
-          "selector": "property",
-          "format": ["camelCase", "PascalCase","UPPER_CASE","snake_case"],
-          "leadingUnderscore": "forbid"
-        }],*/
-
+          "selector": "variable",
+          "modifiers": ["destructured"],
+          "format": ["camelCase","PascalCase"]
+        },{
+          "selector": "parameter",
+          "format": ["camelCase"],
+          "modifiers": ["unused"],
+          "leadingUnderscore": "require"
+        },{
+          "selector": "typeLike",
+          "format": ["PascalCase"]
+        },{
+          "selector": "typeAlias",
+          "format": ["camelCase","PascalCase"]
+        },{
+          "selector": "typeParameter",
+          "format": ["PascalCase"],
+          "custom": {
+            "regex": "^[A-Z]$",
+            "match": true
+          }
+        }],
         /*** TypeScript ESLint plugin rules ***/
         "@typescript-eslint/switch-exhaustiveness-check": "warn",
         "@typescript-eslint/strict-boolean-expressions": ["error", {
@@ -112,6 +132,8 @@
         "@typescript-eslint/no-unused-vars": "error",
         // Interfaces compile faster.
         "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+        // RegExp.prototype.exec might run faster, according to TypeScript ESLint.
+        "@typescript-eslint/prefer-regexp-exec": "error",
 
         /*** Import plugin rules ***/
         "import/no-unused-modules": ["error", {

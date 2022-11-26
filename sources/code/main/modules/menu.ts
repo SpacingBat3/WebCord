@@ -15,7 +15,7 @@ const appConfig = new AppConfig();
 
 import { EventEmitter } from "events";
 import { createGithubIssue } from "./bug";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import loadSettingsWindow from "../windows/settings";
 import loadDocsWindow from "../windows/docs";
 import showAboutPanel from "../windows/about";
@@ -26,7 +26,14 @@ const devel = getBuildInfo().type === "devel";
 
 sideBar.on("hide", (contents: Electron.WebContents) => {
   console.debug("[EVENT] Hiding menu bar...");
-  contents.insertCSS("div[class|=sidebar]{ width: 0px !important; }").then(cssKey => {
+  contents.insertCSS([
+    // Make left sidebar hidden
+    "div[class|=sidebar]{ width: 0px !important; }",
+    // Make settings sidebar hidden
+    "div[class|=sidebarRegion]{ display: none !important; }",
+    // Make settings content fit entire available space.
+    "div[class|=contentColumn]{ max-width: 100%; }"
+  ].join("\n")).then(cssKey => {
     sideBar.once("show", () => {
       console.debug("[EVENT] Showing menu bar...");
       contents.removeInsertedCSS(cssKey).catch(commonCatches.throw);
@@ -37,7 +44,7 @@ sideBar.on("hide", (contents: Electron.WebContents) => {
 // Contex Menu with spell checker
 
 export function context(parent: Electron.BrowserWindow): void {
-  const strings = (new l10n()).client;
+  const strings = (new L10N()).client;
   parent.webContents.on("context-menu", (_event, params) => {
     const cmenu: (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] = [
       { type: "separator" },
@@ -76,7 +83,7 @@ export function context(parent: Electron.BrowserWindow): void {
       });
       cmenu.push({ type: "separator" });
     }
-    if (devel || appConfig.get().settings.advanced.devel.enabled) {
+    if (devel || appConfig.value.settings.advanced.devel.enabled) {
       cmenu.push({
         label: strings.context.inspectElement,
         click: () => parent.webContents.inspectElement(params.x, params.y)
@@ -94,7 +101,7 @@ export function context(parent: Electron.BrowserWindow): void {
 // Tray menu
 
 export function tray(parent: Electron.BrowserWindow): Electron.Tray {
-  const strings = (new l10n()).client;
+  const strings = (new L10N()).client;
   const {icons} = appInfo;
   const tray = new Tray(icons.tray.default);
   function toggleVisibility() {
@@ -147,7 +154,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
     let willQuit = false;
     app.once("before-quit", () => willQuit = true);
     parent.on("close", (event) => {
-      if (!willQuit) {
+      if (!willQuit && new AppConfig().value.settings.general.window.hideOnClose) {
         event.preventDefault();
         parent.hide();
       }
@@ -159,7 +166,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 // Menu Bar
 
 export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.Menu {
-  const strings = (new l10n()).client;
+  const strings = (new L10N()).client;
   const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
   const menu = Menu.buildFromTemplate([
     // File
@@ -173,7 +180,7 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
         // Extensions (Work In Progress state)
         /*{
 					label: strings.menubar.file.addon.groupName,
-					visible: devel || appConfig.get().devel,
+					visible: devel || appConfig.value.devel,
 					//click: () => {}
 				},*/
         { type: "separator" },
@@ -226,7 +233,7 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
           label: strings.menubar.view.devTools,
           id: "devTools",
           role: "toggleDevTools",
-          enabled: devel || appConfig.get().settings.advanced.devel.enabled
+          enabled: devel || appConfig.value.settings.advanced.devel.enabled
         },
         { type: "separator" },
         // Zoom settings (reset, zoom in, zoom out)

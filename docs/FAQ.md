@@ -50,8 +50,8 @@ There's also a list of community-maintained WebCord packages in [`Repos.md`].
 
 ## 2. Image/video/content does not load properly, is there anything I can do about it?
 Yes, this is probably an issue due to Content Security Policy header not
-including all URLs that are allowed to load. You can disable it [in Settings](./Settings.md)
-as a workaround.
+including all URLs that are allowed to load. You can disable it in WebCord
+settings as a workaround.
 
 ## 3. How to get a microphone permission for WebCord?
 If you granted it via the application settings, this warning may indicate a
