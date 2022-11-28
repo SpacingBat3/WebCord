@@ -1,1 +1,37 @@
-{}
+{
+    "offline": {
+        "description": "تأكد من أنك متصل بالإنترنت.",
+        "title": "تعذر الاتصال بخدمة دسكورد."
+    },
+    "aboutWindow": {
+        "nav": {
+            "credits": "الإشادات",
+            "licenses": "الرُّخص",
+            "about": "حول"
+        },
+        "about": {
+            "appDescription": "عميل لدسكورد ووِبكورد بمزايا تركز على الخصوصية.",
+            "appRepo": "مستودع GitHub",
+            "featuresTitle": "خيارات البناء",
+            "featuresDefault": "افتراضي",
+            "checksumTitle": "المجموع الاختباري"
+        },
+        "credits": {
+            "people": {
+                "author": "المؤلف والمُصين والمطور الرئيس.",
+                "contributors": {
+                    "default": "مساهم في البرمجة."
+                }
+            }
+        },
+        "licenses": {
+            "appLicenseTitle": "رخصة التطبيق",
+            "appLicenseBody": "%s تطبيق حر، تستطيع استخدامه وتعديله وإعادة نشره حسب شروط ترخيص MIT الذي يجب أن يُنشر مع هذا البرنامج.",
+            "showLicense": "أظهر الترخيص",
+            "thirdPartyLicensesTitle": "تراخيص الجهات الخارجية",
+            "thirdPartyLicensesBody": "يعتمد ٪s على برامج الجهات الخارجية التالية:",
+            "licensedUnder": "بموجب ترخيص %s",
+            "packageAuthors": "مطوروا %s"
+        }
+    }
+}
