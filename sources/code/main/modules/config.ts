@@ -17,7 +17,6 @@ import { ElectronLatest, objectsAreSameType, PartialRecursive } from "../../comm
 import { deepmerge } from "deepmerge-ts";
 import { gte, major } from "semver";
 
-
 const safeStorage:ElectronLatest["safeStorage"]|undefined = SafeStorage as unknown as ElectronLatest["safeStorage"]|undefined;
 
 type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind";
