@@ -41,7 +41,7 @@ import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
-import { parseArgs, stripVTControlCharacters } from "util";
+import { parseArgs, stripVTControlCharacters, debug } from "util";
 import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
 
 const argvConfig = Object.freeze({
@@ -100,7 +100,8 @@ const argv = Object.freeze(
   console.debug = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
     .then(kolor => kolor.default)
     .then(kolor => {
-      if(argv.values.verbose === true)
+      if((__filename.startsWith(app.getAppPath()) ?
+        debug("webcord").enabled : false) || argv.values.verbose === true)
         stdDebug(typeof message === "string" ? kolor.gray(message) : message, ...optionalParams);
     }));
 }
@@ -222,6 +223,10 @@ let overwriteMain: (() => unknown) | undefined;
     
   if(argv.values["start-minimized"] === true)
     startHidden = true;
+  if(argv.values.verbose === true) {
+    process.env["NODE_DEBUG"] = "*";
+    process.env["DEBUG"] = "*";
+  }
   if("export-l10n" in argv.values) {
     overwriteMain = () => {
       const locale = new L10N;
