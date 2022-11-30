@@ -50,7 +50,7 @@ function isReadyToEncrypt() {
     return app.isReady();
 }
 
-const defaultAppConfig = {
+const defaultAppConfig = Object.freeze({
   settings: {
     general: {
       menuBar: {
@@ -131,7 +131,7 @@ const defaultAppConfig = {
   screenShareStore: {
     audio: false
   }
-};
+});
 
 const fileExt = Object.freeze({
   json: ".json",
@@ -246,8 +246,8 @@ interface WindowStatus {
   isMaximized: boolean;
 }
 
-export class WinStateKeeper extends Config<Partial<Record<string, WindowStatus>>> {
-  private windowName: string;
+export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, WindowStatus>>> {
+  private windowName: T;
   /**
    * An object containing width and height of the window watched by `WinStateKeeper`
    */
@@ -256,22 +256,22 @@ export class WinStateKeeper extends Config<Partial<Record<string, WindowStatus>>
     switch(eventType) {
       case "maximize":
       case "unmaximize":
-        this.value = {
-          [this.windowName]: {
+        this.value = Object.freeze({
+          [this.windowName]: Object.freeze({
             width: this.value[this.windowName]?.width ?? window.getNormalBounds().width,
             height: this.value[this.windowName]?.height ?? window.getNormalBounds().height,
             isMaximized: window.isMaximized()
-          }
-        };
+          })
+        });
         break;
       default:
-        this.value = {
-          [this.windowName]: {
+        this.value = Object.freeze({
+          [this.windowName]: Object.freeze({
             width: window.getNormalBounds().width,
             height: window.getNormalBounds().height,
             isMaximized: window.isMaximized()
-          }
-        };
+          })
+        });
     }
     console.debug("[WIN] State changed to: "+JSON.stringify(this.value[this.windowName]));
     console.debug("[WIN] Electron event: "+(eventType??"not definied"));
@@ -297,26 +297,26 @@ export class WinStateKeeper extends Config<Partial<Record<string, WindowStatus>>
    * @param path Path to application's configuration. Defaults to `app.getPath('userData')+/windowState.json`
    * @param spaces Number of spaces that will be used for indentation of the configuration file.
    */
-  constructor(windowName: string, path = resolve(app.getPath("userData"),"windowState"), spaces?: number) {
-    const defaults = {
+  constructor(windowName: T, path = resolve(app.getPath("userData"),"windowState"), spaces?: number) {
+    const defaults = Object.freeze({
       width: appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3),
       height: appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3),
-    };
-    const defaultConfig = {
-      [windowName]: {
+    });
+    // Initialize class
+    super(path, true, Object.freeze({
+      [windowName]: Object.freeze({
         width: defaults.width,
         height: defaults.height,
         isMaximized: false
-      }
-    };
-    // Initialize class
-    super(path,true,defaultConfig,spaces);
+      } satisfies WindowStatus)
+    }) as unknown as Partial<Record<T, WindowStatus>>, spaces);
+
     this.windowName = windowName;
-    this.initState = {
+    this.initState = Object.freeze({
       width: this.value[this.windowName]?.width ?? defaults.width,
       height: this.value[this.windowName]?.height ?? defaults.height,
       isMaximized: this.value[this.windowName]?.isMaximized ?? false
-    };
+    });
   }
 }
 

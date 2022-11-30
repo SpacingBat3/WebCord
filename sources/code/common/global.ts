@@ -2,6 +2,8 @@
  * Global.ts – non-Electron depending globally-used module declarations
  */
 
+import type { Config } from "dompurify";
+
 /**
  * Outputs a fancy log message in the (DevTools) console.
  * 
@@ -25,11 +27,11 @@ export function isJsonSyntaxCorrect(string: string) {
 export const discordFavicons = Object.freeze({
   /** Default favicon (without *blue dot* indicator). */
   default: "a2205eb4eb1cbf4ef7555e579bee3ba260574f3b", // seems always valid
-  unread: [
+  unread: Object.freeze([
     "ee9eef1403e76cb770d1c4a32265e8354e6af1a0", // works on FIFO pipe errors
     "40f51a9b9ad411d2e0e897661a08305b4a76ec76", // produced by older Electron releases
     "541317111758ff00613b2ff56f284a2474bd3d81"  // seems to be valid otherwise
-  ]
+  ])
 });
 
 /**
@@ -39,7 +41,7 @@ export const gpuVendors = Object.freeze({
   nvidia: 0x10DE,
   amd: 0x1002,
   intel: 0x8086
-});
+} as const) satisfies Record<string,number>;
 
 /**
  * A generic TypeGuard, used to deeply check if `object` can be merged with another
@@ -103,8 +105,12 @@ export const knownInstancesList = Object.freeze([
   ["Discord Public Test Beta", new URL("https://ptb.discord.com/app"),       true ],
   ["Fosscord",                 new URL("https://dev.fosscord.com/app"),     false ],
   ["Fosscord Staging",         new URL("https://staging.fosscord.com/app"),  true ],
-  ["Freecord",                 new URL("https://app.freecord.ir/app"),       true ],
-] as const);
+  ["Freecord",                 new URL("https://app.freecord.ir/app"),       true ]
+] as const) satisfies readonly (readonly [
+  name: string,
+  url: URL,
+  active: boolean
+])[];
 
 /**
  * An object which type includes information about the WebCord's build
@@ -190,12 +196,14 @@ export function isPartialBuildInfo(object: unknown): object is Partial<BuildInfo
  * A sanitizer configuration that allows only for tags that modifies the code
  * formatting.
  */
-export const sanitizeConfig = {
+export const sanitizeConfig = Object.freeze({
   /** Allow tags that modifies text style and/or has a semantic meaning. */
   ALLOWED_TAGS: ["b", "i", "u", "s", "em", "kbd", "strong", "code", "small", "br"],
   /** Block every attribute */
   ALLOWED_ATTR: []
-};
+} satisfies {
+  readonly [P in keyof Config]: Config[P] extends (infer T)[]|infer H ? readonly T[]|H : Config[P]
+});
 
 /**
  * Like {@link Partial<T>}, except it also makes all subproperties in T

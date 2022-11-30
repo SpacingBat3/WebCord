@@ -40,11 +40,11 @@ import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
-import { parseArgs, stripVTControlCharacters, debug } from "util";
+import { parseArgs, ParseArgsConfig, stripVTControlCharacters, debug } from "util";
 import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
 
-const argvConfig = Object.freeze({
-  options: {
+const argvConfig = Object.freeze(({
+  options: Object.freeze({
     /**
      * Used internally by [`@spacingbat3/kolor`](https://www.npmjs.com/package/@spacingbat3/kolor)
      * module.
@@ -64,14 +64,14 @@ const argvConfig = Object.freeze({
     "force-audio-share-support": { type: "boolean" },
     "add-css-theme": { type: "string" },
     "gpu-info": { type: "string" }
-  },
+  }),
   strict: false,
-  args: process.argv
+  args: Object.freeze(process.argv)
     // Remove Electron binary from the list of arguments.
     .slice(1)
     // Remove path to the application from the list of arguments.
     .filter(value => resolvePath(value) !== resolvePath(app.getAppPath()))
-} as const);
+} as const) satisfies ParseArgsConfig);
 
 const argv = Object.freeze(
   (parseArgs as undefined|typeof import("util").parseArgs) ?

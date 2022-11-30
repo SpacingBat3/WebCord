@@ -39,13 +39,13 @@ function generateIcon(set: "application"|"tray", variant?: "unread"|"ping")  {
   }
 }
 
-export const defaultBuildInfo: Readonly<BuildInfo> = Object.freeze({
+export const defaultBuildInfo = Object.freeze({
   type: "devel",
   ...(process.platform === "win32" ? {AppUserModelId: "SpacingBat3.WebCord"} : {}),
   features: {
     updateNotifications: false
   }
-});
+} as const satisfies Readonly<BuildInfo>);
 
 /**
  * Resolves the `buildInfo` using the file (for compatibility reasons and sake
@@ -85,4 +85,4 @@ export const appInfo = Object.freeze({
   minWinHeight: 412,
   minWinWidth: 312,
   backgroundColor: "#36393F"
-});
+} as const);
