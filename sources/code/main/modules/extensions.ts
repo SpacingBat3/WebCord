@@ -1,7 +1,6 @@
-import type { ElectronLatest } from "../../common/global";
 import { commonCatches } from "./error";
 
-const safeStoragePromise: Promise<ElectronLatest["safeStorage"]|undefined> = (import("electron/main") as unknown as Promise<ElectronLatest>)
+const safeStoragePromise = (import("electron/main"))
   .then(main => main.safeStorage);
 
 async function fetchOrRead(file:string, signal?:AbortSignal) {
@@ -78,7 +77,7 @@ async function addStyle(path:string) {
     safeStoragePromise
   ]);
   function optionalCrypt(buffer:Buffer) {
-    if(safeStorage?.isEncryptionAvailable() === true)
+    if(safeStorage.isEncryptionAvailable())
       return safeStorage.encryptString(buffer.toString());
     return buffer.toString();
   }
@@ -133,13 +132,13 @@ async function loadStyles(webContents:Electron.WebContents) {
         Promise.all(promises).then(dataArray => {
           const themeIDs:Promise<string>[] = [];
           const decrypt = async (string:Buffer) => {
-            if(safeStorage?.isEncryptionAvailable() === false && !app.isReady())
+            if(!safeStorage.isEncryptionAvailable() && !app.isReady())
               await app.whenReady();
-            if(safeStorage?.isEncryptionAvailable() === false)
+            if(!safeStorage.isEncryptionAvailable())
               return string.toString();
             if(!string.toString("utf-8").includes("�"))
               throw new Error("One of loaded styles was not encrypted and could not be loaded.");
-            return safeStorage ? safeStorage.decryptString(string) : string.toString();
+            return safeStorage.decryptString(string);
           };
           for(const data of dataArray)
             themeIDs.push(

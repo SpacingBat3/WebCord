@@ -186,24 +186,6 @@ export function isPartialBuildInfo(object: unknown): object is Partial<BuildInfo
   return true;
 }
 
-export type SessionLatest = Electron.Session & {
-  /**
-	 * A method that is unsupported within your Electron version, but valid
-	 * for Electron releases supporting WebHID API, which are versions from
-	 * range `>=14.1.0 && <15.0.0 || >=15.1.0`.
-	 */
-  setDevicePermissionHandler: (handler: (()=>boolean)|null)=>void;
-};
-
-export type ElectronLatest = typeof import("electron/main") & {
-  /** An API that is unsupported on current Electron version. */
-  safeStorage: {
-    decryptString: (encrypted:Buffer)=>string;
-    encryptString: (plainText:string)=>Buffer;
-    isEncryptionAvailable: () => boolean;
-  };
-};
-
 /**
  * A sanitizer configuration that allows only for tags that modifies the code
  * formatting.
