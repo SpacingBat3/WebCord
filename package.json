@@ -10,10 +10,14 @@
     "test": "tsc & eslint --cache --cache-location cache/eslint.json --ext .json,.ts . & wait",
     "lint": "eslint --cache --cache-location cache/eslint.json --ext .json,.ts .",
     "build": "tsc",
+    "compile": "tsc",
+    "tsc": "tsc",
+    "watch": "tsc --watch",
     "start": "tsc && electron .",
     "package": "tsc && electron-forge package",
     "make": "tsc && electron-forge make",
-    "publish": "tsc && electron-forge publish"
+    "publish": "tsc && electron-forge publish",
+    "prepack": "tsc && electron-forge package && echo 'This script will now fail to cancel creating a Node package...' && exit 1"
   },
   "author": {
     "name": "SpacingBat3",
