@@ -1,0 +1,114 @@
+{
+    "context": {
+        "copy": "انسخ",
+        "cut": "قص",
+        "dictionaryAdd": "أضف للقاموس المحلي",
+        "copyURL": "انسخ عنوان الرابط",
+        "copyURLText": "انسخ نص الرابط",
+        "inspectElement": "افحص",
+        "paste": "الصق"
+    },
+    "menubar": {
+        "view": {
+            "reload": "أعد التحميل",
+            "groupName": "اعرض",
+            "forceReload": "افرض إعادة التحميل",
+            "zoomOut": "صغّر العرض",
+            "zoomIn": "كبّر العرض",
+            "resetZoom": "الحجم الفعلي",
+            "devTools": "بدل أدوات المطور",
+            "fullScreen": "بدل وضع ملء الشاشة"
+        },
+        "enabled": "مُفعَّل",
+        "file": {
+            "groupName": "ملف",
+            "quit": "أنهِ",
+            "relaunch": "أعد التشغيل",
+            "addon": {
+                "groupName": "الإضافات",
+                "loadNode": "حمل إضافة Node.js",
+                "loadChrome": "حمل إضافة كروم"
+            }
+        },
+        "edit": {
+            "groupName": "حرّر",
+            "undo": "تراجع",
+            "redo": "أعِد"
+        },
+        "window": {
+            "groupName": "النافذة",
+            "mobileMode": "أخفِ الشريط الجانبي"
+        }
+    },
+    "windows": {
+        "about": "حول",
+        "docs": "التوثيق",
+        "invite": "ادعُ",
+        "settings": "الإعدادات"
+    },
+    "dialog": {
+        "common": {
+            "error": "خطأ",
+            "warning": "تحذير",
+            "continue": "&استمر",
+            "yes": "&نعم",
+            "no": "&لا",
+            "source": "المصدر"
+        },
+        "ver": {
+            "updateTitle": "يتوفر تحديث!",
+            "update": "يتوفر إصدار جديد!",
+            "devel": "أنت تستخدم الإصدار التجريبي.",
+            "downgrade": "إصدارك أحدث من الإصدار المستقر!",
+            "updateBadge": "[تحديث]",
+            "recent": "التطبيق محدث!"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: رُفض طلب منح الوصول لـ %s."
+            },
+            "check": {
+                "denied": "%s: رُفض طلب التحقق من %s."
+            },
+            "question": {
+                "title": "مُعالج طلب الأذونات",
+                "message": "هل تريد منح دسكورد حق الوصول لـ %s؟",
+                "video": "الكاميرا",
+                "audio": "الميكروفون",
+                "notifications": "الإشعارات"
+            }
+        },
+        "mod": {
+            "crx": "إضافة كروم/كروميوم",
+            "nodeExt": "إضافة Node.js لويبكورد"
+        },
+        "externalApp": {
+            "title": "فتح الرابط في تطبيق خارجي",
+            "message": "يحاول موقع إلكتروني إعادة توجيه الرابط لتطبيق خارجي. هل تريد الاستمرار؟"
+        },
+        "screenShare": {
+            "close": "أغلق",
+            "sound": {
+                "unavailable": "لا تتوفر ميزة مشاركة الصوت في هذه المنصة.",
+                "system": "شارك مع صوت الجهاز."
+            },
+            "source": {
+                "entire": "شاشة الحاسوب",
+                "screen": "الشاشة"
+            }
+        }
+    },
+    "help": {
+        "groupName": "المساعدة",
+        "repo": "المستودع",
+        "bugs": "بلّغ عن خطأ"
+    },
+    "log": {
+        "singleInstance": "التبديل إلى النافذة الحالية...",
+        "listenPort": "يُستمع في المنفذ %s."
+    },
+    "tray": {
+        "toggle": "بدّل",
+        "quit": "أنهِ"
+    }
+}
