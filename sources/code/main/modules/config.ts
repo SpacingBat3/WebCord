@@ -252,7 +252,7 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
    * An object containing width and height of the window watched by `WinStateKeeper`
    */
   public initState: Readonly<WindowStatus>;
-  private setState(window: BrowserWindow, eventType?: string) {
+  private setState(window: BrowserWindow, eventType = "resize") {
     switch(eventType) {
       case "maximize":
       case "unmaximize":
@@ -261,20 +261,21 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
             width: this.value[this.windowName]?.width ?? window.getNormalBounds().width,
             height: this.value[this.windowName]?.height ?? window.getNormalBounds().height,
             isMaximized: window.isMaximized()
-          })
+          } satisfies WindowStatus)
         });
         break;
       default:
+        if(!window.isMaximized()) return;
         this.value = Object.freeze({
           [this.windowName]: Object.freeze({
             width: window.getNormalBounds().width,
             height: window.getNormalBounds().height,
-            isMaximized: window.isMaximized()
-          })
+            isMaximized: this.value[this.windowName]?.isMaximized ?? false
+          } satisfies WindowStatus)
         });
     }
+    console.debug("[WIN] Electron event: "+(eventType));
     console.debug("[WIN] State changed to: "+JSON.stringify(this.value[this.windowName]));
-    console.debug("[WIN] Electron event: "+(eventType??"not definied"));
   }
 
   /**
@@ -285,7 +286,7 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
 
   public watchState(window: BrowserWindow):void {
     // Timeout is needed to give some time for resize to end on Linux:
-    window.on("resize", () => setTimeout(()=>this.setState(window, "resize"),100));
+    window.on("resize", () => setImmediate(()=>this.setState(window)));
     window.on("unmaximize", () => this.setState(window, "unmaximize"));
     window.on("maximize", () => this.setState(window, "maximize"));
   }

@@ -92,7 +92,11 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     if (!flags.startHidden) win.show();
     setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().value.settings.advanced.currentInstance.radio][1].href);}, 1500);
   });
-  if (mainWindowState.initState.isMaximized) win.maximize();
+  if (mainWindowState.initState.isMaximized)
+    if(!flags.startHidden || win.isVisible())
+      win.maximize();
+    else
+      win.once("show", () => win.maximize());
 
   // CSP
 
