@@ -265,7 +265,7 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
         });
         break;
       default:
-        if(!window.isMaximized()) return;
+        if(window.isMaximized()) return;
         this.value = Object.freeze({
           [this.windowName]: Object.freeze({
             width: window.getNormalBounds().width,
@@ -286,7 +286,8 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
 
   public watchState(window: BrowserWindow):void {
     // Timeout is needed to give some time for resize to end on Linux:
-    window.on("resize", () => setImmediate(()=>this.setState(window)));
+    window.on("resized",() => console.log("foo"));
+    window.on("resize", () => setTimeout(()=>this.setState(window), 100));
     window.on("unmaximize", () => this.setState(window, "unmaximize"));
     window.on("maximize", () => this.setState(window, "maximize"));
   }
