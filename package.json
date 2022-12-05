@@ -7,17 +7,17 @@
   "main": "app/code/common/main.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "tsc -b & eslint --cache --cache-location cache/eslint.json --ext .json,.ts . & wait",
+    "test": "tsc & eslint --cache --cache-location cache/eslint.json --ext .json,.ts . & wait",
     "lint": "eslint --cache --cache-location cache/eslint.json --ext .json,.ts .",
-    "build": "tsc -b",
+    "build": "tsc",
     "compile": "tsc",
     "tsc": "tsc",
     "watch": "tsc --watch",
     "start": "tsc && electron .",
-    "package": "tsc -b && electron-forge package",
-    "make": "tsc -b && electron-forge make",
-    "publish": "tsc -b && electron-forge publish",
-    "prepack": "tsc -b && electron-forge package && echo 'This script will now fail to cancel creating a Node package...' && exit 1"
+    "package": "tsc && electron-forge package",
+    "make": "tsc && electron-forge make",
+    "publish": "tsc && electron-forge publish",
+    "prepack": "tsc && electron-forge package && echo 'This script will now fail to cancel creating a Node package...' && exit 1"
   },
   "author": {
     "name": "SpacingBat3",

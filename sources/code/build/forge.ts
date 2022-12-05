@@ -85,7 +85,6 @@ const config: ForgeConfigFile = {
       /*********** Directories: **********/
       /app\/(?:.*\/)?build\/?$/,
       /cache\/?$/,
-      /configs\/?$/,
       /out\/?$/,
       /schemas\/?$/,
       /************** Files: *************/
