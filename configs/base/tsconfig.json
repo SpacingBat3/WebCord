@@ -1,0 +1,24 @@
+// Base configuration for other TSConfigs of WebCord repository.
+{
+  "extends": "@tsconfig/node16-strictest/tsconfig.json",
+  "compilerOptions": {
+    /** Enable all options needed for project references */
+    "composite": true,
+    /** Set emitted JavaScript language version */
+    "target": "ES2022",
+    /* Whenever incremental compilation is enabled */
+    "incremental": true,
+    /* Whenever sourcemaps should be made for emitted JavaScript files */
+    "sourceMap": true,
+    /* Whenever comments are emitted to files */
+    "removeComments": true,
+    /* Use `tslib` for import helpers. */
+    "importHelpers": true,
+    /* Enforce consistent casing for imported module names */
+    "forceConsistentCasingInFileNames": true,
+    /* Use *nix end-of-line character for emitted files */
+    "newLine": "lf",
+    /* Do not emit anything when there's an error in source files */
+    "noEmitOnError": true
+  }
+}

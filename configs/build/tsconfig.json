@@ -1,0 +1,19 @@
+// TSConfig for Electron Forge configuration of this project.
+{
+  "extends": "../base/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "../../",
+    "moduleResolution": "Node16",
+    /* File containing saved information about incremental compilation */
+    "tsBuildInfoFile": "../../cache/tsc-build.json",
+    /* Directrory in which are placed all emitted files */
+    "outDir": "../../app",
+    /* Limit module resolution to project's path only */
+    "typeRoots": ["../../node_modules/@types"]
+  },
+  "files": [
+    "../../sources/code/build/forge.ts",
+    "../../sources/code/common/modules/package.ts",
+    "../../sources/code/common/global.ts"
+  ]
+}
