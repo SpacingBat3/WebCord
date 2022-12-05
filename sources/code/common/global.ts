@@ -106,11 +106,7 @@ export const knownInstancesList = Object.freeze([
   ["Fosscord",                 new URL("https://dev.fosscord.com/app"),     false ],
   ["Fosscord Staging",         new URL("https://staging.fosscord.com/app"),  true ],
   ["Freecord",                 new URL("https://app.freecord.ir/app"),       true ]
-] as const) satisfies readonly (readonly [
-  name: string,
-  url: URL,
-  active: boolean
-])[];
+] as const) satisfies readonly (readonly [ name: string, url: URL, active: boolean ])[];
 
 /**
  * An object which type includes information about the WebCord's build
