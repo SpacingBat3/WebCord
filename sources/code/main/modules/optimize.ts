@@ -3,7 +3,7 @@
  */
 
 import { app } from "electron/main";
-import { gpuVendors } from "../../common/global";
+import { GPUVendors } from "../../common/global";
 
 /** Whenever the current process is ran on *nix. */
 const isUnix = process.platform !== "win32" && process.platform !== "darwin";
@@ -66,9 +66,9 @@ export async function getRecommendedGPUFlags() {
   if(hasGPUDevices(gpuInfoResult))
     loop: for(const device of gpuInfoResult.gpuDevice) if(device.active) switch(device.vendorId) {
       // Common desktop GPU vendors.
-      case gpuVendors.intel:
-      case gpuVendors.amd:
-      case gpuVendors.nvidia:
+      case GPUVendors.Intel:
+      case GPUVendors.AMD:
+      case GPUVendors.NVIDIA:
         flags.push(
           // use GL/GLES instead ANGLE:
           ["use-gl", desktopGl],

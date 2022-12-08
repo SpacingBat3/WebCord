@@ -35,13 +35,14 @@ export const discordFavicons = Object.freeze({
 });
 
 /**
- * List of common GPU vendors based on integer indentifier.
+ * List of Vendor IDs of common GPU manufacturers. This is usually represented
+ * as a hexadecimal number, so it should be also listed here as such.
  */
-export const gpuVendors = Object.freeze({
-  nvidia: 0x10DE,
-  amd: 0x1002,
-  intel: 0x8086
-} as const) satisfies Record<string,number>;
+export const enum GPUVendors {
+  AMD = 0x1002,
+  NVIDIA = 0x10DE,
+  Intel = 0x8086
+}
 
 /**
  * A generic TypeGuard, used to deeply check if `object` can be merged with another
