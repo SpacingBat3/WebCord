@@ -225,6 +225,14 @@ let overwriteMain: (() => unknown) | undefined;
   if(argv.values.verbose === true) {
     process.env["NODE_DEBUG"] = "*";
     process.env["DEBUG"] = "*";
+    // Enable Chromium logs
+    app.commandLine.appendSwitch("enable-logging");
+    // Set maximum logging to "verbose" level.
+    app.commandLine.appendSwitch("log-level","-1");
+    app.commandLine.appendSwitch("v","-1");
+  } else {
+    // Make Chromium logs actually less verbose by default.
+    app.commandLine.appendSwitch("log-level","3");
   }
   if("export-l10n" in argv.values) {
     overwriteMain = () => {
@@ -332,6 +340,7 @@ let overwriteMain: (() => unknown) | undefined;
     ["MediaSessionService","HardwareMediaKeyHandling"].forEach((feature) => {
       if(!enabledFeatures.includes(feature)) {
         const disabledFeatures = app.commandLine.getSwitchValue("disable-features");
+        console.debug("[FEATURE] Disabling '%s'...",feature);
         if(disabledFeatures === "") {
           app.commandLine.appendSwitch("disable-features",feature);
         } else {
@@ -490,3 +499,30 @@ if(new Date().getMonth() === 3 && new Date().getDate() === 1){
   // Something's wrong with your date. Websites won't load, so crash the application.
   throw new NotAnError("Invalid date! I think you should check your calendar...");
 }
+
+app.on("child-process-gone", (_event, details) => {
+  const name = (details.name ?? details.type).replace(" ", "");
+  let reason:string,tip:string|null = null;
+  switch(details.reason) {
+    case "oom":
+      reason = "Computer memory seem to be at poor condition.";
+      tip = "Just let it forget some stuff, I guess?";
+      break;
+    case "launch-failed":
+      reason = "Process is too lazy to start working!";
+      tip = "Try to motivate it a little... :/.";
+      break;
+    case "abnormal-exit":
+      reason = "Process left us unexpectedly!";
+      tip = `Rest in peace, ${name}... :(`;
+      break;
+    case "integrity-failure":
+      reason = "Process was an impostor!";
+      break;
+    default: reason = details.reason;
+  }
+  if(details.reason !== "killed" && details.reason !== "clean-exit" && argv.values.verbose !== true) {
+    console.error(kolor.bold("[%s:%d]")+" %s", name, details.exitCode, reason);
+    if(tip !== null) setImmediate(() => console.error(kolor.bold("[%s:TIP]")+" %s", name, tip));
+  }
+});
