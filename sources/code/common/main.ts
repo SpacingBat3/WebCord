@@ -29,23 +29,22 @@ crash();
 import { app, BrowserWindow, dialog, session } from "electron/main";
 import { shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
-import { protocols, SessionLatest, knownInstancesList } from "./global";
+import { protocols, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
 import L10N from "./modules/l10n";
 import createMainWindow from "../main/windows/main";
 import { AppConfig } from "../main/modules/config";
 import kolor from "@spacingbat3/kolor";
 import { resolve as resolvePath, relative } from "path";
-import { major } from "semver";
 import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
-import { parseArgs, stripVTControlCharacters } from "util";
+import { parseArgs, ParseArgsConfig, stripVTControlCharacters, debug } from "util";
 import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
 
-const argvConfig = Object.freeze({
-  options: {
+const argvConfig = Object.freeze(({
+  options: Object.freeze({
     /**
      * Used internally by [`@spacingbat3/kolor`](https://www.npmjs.com/package/@spacingbat3/kolor)
      * module.
@@ -65,14 +64,14 @@ const argvConfig = Object.freeze({
     "force-audio-share-support": { type: "boolean" },
     "add-css-theme": { type: "string" },
     "gpu-info": { type: "string" }
-  },
+  }),
   strict: false,
-  args: process.argv
+  args: Object.freeze(process.argv)
     // Remove Electron binary from the list of arguments.
     .slice(1)
     // Remove path to the application from the list of arguments.
     .filter(value => resolvePath(value) !== resolvePath(app.getAppPath()))
-} as const);
+} as const) satisfies ParseArgsConfig);
 
 const argv = Object.freeze(
   (parseArgs as undefined|typeof import("util").parseArgs) ?
@@ -100,7 +99,8 @@ const argv = Object.freeze(
   console.debug = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
     .then(kolor => kolor.default)
     .then(kolor => {
-      if(argv.values.verbose === true)
+      if((__filename.startsWith(app.getAppPath()) ?
+        debug("webcord").enabled : false) || argv.values.verbose === true)
         stdDebug(typeof message === "string" ? kolor.gray(message) : message, ...optionalParams);
     }));
 }
@@ -222,6 +222,18 @@ let overwriteMain: (() => unknown) | undefined;
     
   if(argv.values["start-minimized"] === true)
     startHidden = true;
+  if(argv.values.verbose === true) {
+    process.env["NODE_DEBUG"] = "*";
+    process.env["DEBUG"] = "*";
+    // Enable Chromium logs
+    app.commandLine.appendSwitch("enable-logging");
+    // Set maximum logging to "verbose" level.
+    app.commandLine.appendSwitch("log-level","-1");
+    app.commandLine.appendSwitch("v","-1");
+  } else {
+    // Make Chromium logs actually less verbose by default.
+    app.commandLine.appendSwitch("log-level","3");
+  }
   if("export-l10n" in argv.values) {
     overwriteMain = () => {
       const locale = new L10N;
@@ -328,6 +340,7 @@ let overwriteMain: (() => unknown) | undefined;
     ["MediaSessionService","HardwareMediaKeyHandling"].forEach((feature) => {
       if(!enabledFeatures.includes(feature)) {
         const disabledFeatures = app.commandLine.getSwitchValue("disable-features");
+        console.debug("[FEATURE] Disabling '%s'...",feature);
         if(disabledFeatures === "") {
           app.commandLine.appendSwitch("disable-features",feature);
         } else {
@@ -387,9 +400,7 @@ app.on("web-contents-created", (_event, webContents) => {
     webContents.session.setPermissionCheckHandler(() => false);
     webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => callback(false));
   }
-  // Block HID request only when Electron supports handling them.
-  if(major(process.versions.electron) >= 16 || /^(?:14|15)\.1\.\d+.*$/.test(process.versions.electron))
-    (webContents.session as SessionLatest).setDevicePermissionHandler(() => false);
+  webContents.session.setDevicePermissionHandler(() => false);
   // Block navigation to the different origin.
   webContents.on("will-navigate", (event, url) => {
     const originUrl = webContents.getURL();
@@ -488,3 +499,30 @@ if(new Date().getMonth() === 3 && new Date().getDate() === 1){
   // Something's wrong with your date. Websites won't load, so crash the application.
   throw new NotAnError("Invalid date! I think you should check your calendar...");
 }
+
+app.on("child-process-gone", (_event, details) => {
+  const name = (details.name ?? details.type).replace(" ", "");
+  let reason:string,tip:string|null = null;
+  switch(details.reason) {
+    case "oom":
+      reason = "Computer memory seem to be at poor condition.";
+      tip = "Just let it forget some stuff, I guess?";
+      break;
+    case "launch-failed":
+      reason = "Process is too lazy to start working!";
+      tip = "Try to motivate it a little... :/.";
+      break;
+    case "abnormal-exit":
+      reason = "Process left us unexpectedly!";
+      tip = `Rest in peace, ${name}... :(`;
+      break;
+    case "integrity-failure":
+      reason = "Process was an impostor!";
+      break;
+    default: reason = details.reason;
+  }
+  if(details.reason !== "killed" && details.reason !== "clean-exit" && argv.values.verbose !== true) {
+    console.error(kolor.bold("[%s:%d]")+" %s", name, details.exitCode, reason);
+    if(tip !== null) setImmediate(() => console.error(kolor.bold("[%s:TIP]")+" %s", name, tip));
+  }
+});

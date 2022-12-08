@@ -82,17 +82,17 @@ const config: ForgeConfigFile = {
     ],
     quiet: true,
     ignore: [
-      // Directories:
+      /*********** Directories: **********/
       /app\/(?:.*\/)?build\/?$/,
       /cache\/?$/,
       /out\/?$/,
       /schemas\/?$/,
-      // Files:
+      /************** Files: *************/
       /\.eslintrc\.json$/,
       /tsconfig\.json$/,
       /sources\/code\/?$/,
       /sources\/assets\/icons\/app\.icns$/,
-      // Hidden (for *nix OSes) files:
+      /********** Hidden files: **********/
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
     ],
@@ -111,9 +111,7 @@ const config: ForgeConfigFile = {
       platforms: ["win32"],
     },
     // Finally, some kind of installer in the configuration for Windows!
-    {
-      name: "@electron-forge/maker-squirrel"
-    },
+    { name: "@electron-forge/maker-squirrel" },
     {
       name: "@electron-forge/maker-wix",
       config: {

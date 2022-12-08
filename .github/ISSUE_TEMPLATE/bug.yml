@@ -39,9 +39,14 @@ body:
           required: true
         - label: |
             I can confirm that this is not an issue with the Discord website,
-            but it is a problem specific to the WebCord itself. I have tested
-            if this bug occurs on Chromium/Chrome or any other Chromium-based
-            browser that uses unpatched/upstream Chromium engine.
+            but it is a problem specific to the WebCord itself.
+        - label: /
+            I have verified this issue is not a bug within Chromium engine by
+            checking, if this bug can be reproduced in Discord web on
+            Chromium/Chrome or any other Chromium-based browser that uses
+            unpatched/upstream Chromium engine (i.e. browsers which treats
+            fixing Chromium bugs out of their scope and doesn't do anything
+            about them, either to patch or mitigate them).
         - label: |
             I have tried running the build from the `master` branch and it does
             not have any fixes implemented according to my issue.

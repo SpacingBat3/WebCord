@@ -234,8 +234,8 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
       throw new TypeError("While parsing `package.json`: "+this.checkPackageJsonComplete(packageJSON));
     const newObj: Partial<Pick<PackageJsonProperties, T[number]>> = {};
     for (const key of Array.from(new Set(keys)))
-      (newObj as Record<string,unknown>)[key] = packageJSON[key];
-    this.data = newObj as Pick<PackageJsonProperties, T[number]>;
+      (newObj as Record<string,unknown>)[key] = Object.freeze(packageJSON[key]);
+    this.data = Object.freeze(newObj as Pick<PackageJsonProperties, T[number]>);
   }
 }
 
