@@ -7,12 +7,17 @@ import {
   app,
   BrowserWindow,
   screen,
-  safeStorage
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+  // @ts-ignore
+  safeStorage as SafeStorage
 } from "electron/main";
 import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
-import { objectsAreSameType, PartialRecursive } from "../../common/global";
+import { ElectronLatest, objectsAreSameType, PartialRecursive } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
+import { gte, major } from "semver";
+
+const safeStorage:ElectronLatest["safeStorage"]|undefined = SafeStorage as unknown as ElectronLatest["safeStorage"]|undefined;
 
 type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind";
 
@@ -41,7 +46,7 @@ export type cspTP<T> = {
   [P in keyof typeof defaultAppConfig["settings"]["advanced"]["cspThirdParty"]]: T
 };
 
-const canImmediatellyEncrypt = safeStorage.isEncryptionAvailable();
+const canImmediatellyEncrypt = safeStorage?.isEncryptionAvailable()??false;
 
 function isReadyToEncrypt() {
   if(process.platform === "darwin")
@@ -148,14 +153,14 @@ class Config<T> {
     const decodedData = JSON.stringify(object, null, this.spaces);
     let encodedData:string|Buffer = decodedData;
     if(this.#pathExtension === fileExt.encrypted)
-      encodedData = safeStorage.encryptString(decodedData);
+      encodedData = safeStorage?.encryptString(decodedData)??decodedData;
     fs.writeFileSync(this.#path+this.#pathExtension,encodedData);
   }
   private read(): unknown {
     const encodedData = fs.readFileSync(this.#path+this.#pathExtension);
     let decodedData = encodedData.toString();
     if(this.#pathExtension === fileExt.encrypted)
-      decodedData = safeStorage.decryptString(encodedData);
+      decodedData = safeStorage?.decryptString(encodedData)??encodedData.toString();
     return JSON.parse(decodedData);
   }
   /** 
@@ -189,7 +194,7 @@ class Config<T> {
       throw new Error("Cannot use encrypted configuration file when app is not ready yet!");
     // Set required properties of this config file.
     this.#path = path;
-    this.#pathExtension = encrypted && safeStorage.isEncryptionAvailable() ?
+    this.#pathExtension = encrypted && (safeStorage?.isEncryptionAvailable() === true) ?
       fileExt.encrypted :
       fileExt.json;
     this.defaultConfig = Object.freeze(defaultConfig);
@@ -240,6 +245,31 @@ export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigB
   }
 }
 
+// === WINDOW STATE KEEPER CLASS ===
+
+/**
+ * Whenever to apply a workaround for "maximize" and "unmaximize" events.
+ * 
+ * This allows WebCord to work on very old and deprecated Electron releases.
+ */
+const workaroundLinuxMinMaxEvents = (() => {
+  if(process.platform !== "linux")
+    return false;
+  const {electron} = process.versions;
+  if(major(electron) <= 12 || major(electron) > 17)
+    return false;
+  switch(major(electron)) {
+    case 14:
+      return gte(electron, "14.2.5");
+    case 15:
+      return gte(electron, "15.3.6");
+    case 16:
+      return gte(electron, "16.0.8");
+    default:
+      return false;
+  }
+})();
+
 interface WindowStatus {
   width: number;
   height: number;
@@ -253,7 +283,14 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
    */
   public initState: Readonly<WindowStatus>;
   private setState(window: BrowserWindow, eventType = "resize") {
-    switch(eventType) {
+    let event = eventType;
+    // Workaround: fix `*maximize` events being detected as `resize`:
+    if(workaroundLinuxMinMaxEvents)
+      if(eventType === "resize" && window.isMaximized())
+        event = "maximize";
+      else if (eventType === "resize" && (this.value[this.windowName]?.isMaximized??false))
+        event = "unmaximize";
+    switch(event) {
       case "maximize":
       case "unmaximize":
         this.value = Object.freeze({
@@ -276,6 +313,9 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
     }
     console.debug("[WIN] Electron event: "+(eventType));
     console.debug("[WIN] State changed to: "+JSON.stringify(this.value[this.windowName]));
+    console.debug("[WIN] Electron event: "+(eventType??"not definied"));
+    if(workaroundLinuxMinMaxEvents && event !== eventType)
+      console.debug("[WIN] Actual event calculated by WebCord: "+(event??"unknown"));
   }
 
   /**
@@ -286,10 +326,11 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
 
   public watchState(window: BrowserWindow):void {
     // Timeout is needed to give some time for resize to end on Linux:
-    window.on("resized",() => console.log("foo"));
     window.on("resize", () => setTimeout(()=>this.setState(window), 100));
-    window.on("unmaximize", () => this.setState(window, "unmaximize"));
-    window.on("maximize", () => this.setState(window, "maximize"));
+    if(!workaroundLinuxMinMaxEvents){
+      window.on("unmaximize", () => this.setState(window, "unmaximize"));
+      window.on("maximize", () => this.setState(window, "maximize"));
+    }
   }
 
   /**

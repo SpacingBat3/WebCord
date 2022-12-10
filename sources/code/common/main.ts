@@ -29,13 +29,14 @@ crash();
 import { app, BrowserWindow, dialog, session } from "electron/main";
 import { shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
-import { protocols, knownInstancesList } from "./global";
+import { protocols, SessionLatest, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
 import L10N from "./modules/l10n";
 import createMainWindow from "../main/windows/main";
 import { AppConfig } from "../main/modules/config";
 import kolor from "@spacingbat3/kolor";
 import { resolve as resolvePath, relative } from "path";
+import { major } from "semver";
 import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
@@ -400,7 +401,9 @@ app.on("web-contents-created", (_event, webContents) => {
     webContents.session.setPermissionCheckHandler(() => false);
     webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => callback(false));
   }
-  webContents.session.setDevicePermissionHandler(() => false);
+  // Block HID request only when Electron supports handling them.
+  if(major(process.versions.electron) >= 16 || /^(?:14|15)\.1\.\d+.*$/.test(process.versions.electron))
+    (webContents.session as SessionLatest).setDevicePermissionHandler(() => false);
   // Block navigation to the different origin.
   webContents.on("will-navigate", (event, url) => {
     const originUrl = webContents.getURL();
