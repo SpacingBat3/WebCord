@@ -86,8 +86,7 @@
                 "message": "Möchtest du Discord Zugriff auf \"%s\" gewähren?",
                 "video": "Kamera",
                 "audio": "Mikrofon",
-                "notifications": "Benachrichtigungen",
-                "title": ""
+                "notifications": "Benachrichtigungen"
             }
         },
         "screenShare": {

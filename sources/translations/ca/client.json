@@ -63,13 +63,6 @@
             },
             "check": {
                 "denied": "%s: Comprovació de permisos a %s denegada."
-            },
-            "question": {
-                "video": "",
-                "audio": "",
-                "title": "",
-                "message": "",
-                "notifications": ""
             }
         },
         "mod": {

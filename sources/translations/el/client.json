@@ -69,13 +69,6 @@
             },
             "check": {
                 "denied": "%s: Απορρίφθηκε ο έλεγχος άδειας για %s."
-            },
-            "question": {
-                "audio": "",
-                "message": "",
-                "video": "",
-                "title": "",
-                "notifications": ""
             }
         },
         "mod": {
