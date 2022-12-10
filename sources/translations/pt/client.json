@@ -67,6 +67,13 @@
             },
             "check": {
                 "denied": "%s: Verificação de permissão para %s negada."
+            },
+            "question": {
+                "title": "",
+                "audio": "",
+                "notifications": "",
+                "message": "",
+                "video": ""
             }
         },
         "mod": {

@@ -67,6 +67,13 @@
             },
             "request": {
                 "denied": "%s: Tilgangsforespørsel til %s ble ikke innvilget."
+            },
+            "question": {
+                "audio": "",
+                "video": "",
+                "notifications": "",
+                "message": "",
+                "title": ""
             }
         },
         "mod": {
@@ -76,6 +83,17 @@
         "externalApp": {
             "message": "La en nettside videresende lenken med forskjellig opphav til det eksterne programmet?",
             "title": "Åpner lenke i eksternt program"
+        },
+        "screenShare": {
+            "source": {
+                "screen": "",
+                "entire": ""
+            },
+            "sound": {
+                "unavailable": "",
+                "system": ""
+            },
+            "close": ""
         }
     },
     "help": {

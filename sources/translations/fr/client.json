@@ -73,6 +73,13 @@
             },
             "request": {
                 "denied": "%s : demande de permission à %s refusée."
+            },
+            "question": {
+                "message": "",
+                "title": "",
+                "notifications": "",
+                "video": "",
+                "audio": ""
             }
         },
         "mod": {
