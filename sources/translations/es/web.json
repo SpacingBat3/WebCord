@@ -1,6 +1,6 @@
 {
     "offline": {
-        "title": "No se puede conectar a los servidores de Discord.",
+        "title": "No se puede conectar al servicio Discord.",
         "description": "Por favor asegurece de estar conectado a internet."
     },
     "aboutWindow": {
