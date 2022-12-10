@@ -81,6 +81,12 @@
             },
             "check": {
                 "denied": "%s: Berechtigungsprüfung auf %s abgelehnt."
+            },
+            "question": {
+                "message": "Möchtest du Discord Zugriff auf \"%s\" gewähren?",
+                "video": "Kamera",
+                "audio": "Mikrofon",
+                "notifications": "Benachrichtigungen"
             }
         },
         "screenShare": {

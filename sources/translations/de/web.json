@@ -9,7 +9,8 @@
             "appDescription": "Discord- und Fosscord-Webclient mit datenschutzfreundlichen Funktionen.",
             "appRepo": "GitHub-Repository",
             "featuresDefault": "Standard",
-            "checksumTitle": "Prüfsumme"
+            "checksumTitle": "Prüfsumme",
+            "featuresTitle": "Buildparameter"
         },
         "credits": {
             "people": {

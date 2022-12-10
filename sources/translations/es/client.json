@@ -59,6 +59,13 @@
             },
             "check": {
                 "denied": "Comprobación de permisos de:%s para %s denegada."
+            },
+            "question": {
+                "audio": "Micrófono",
+                "video": "Cámara",
+                "notifications": "Notificaciones",
+                "title": "Gestor de las solicitudes de permisos",
+                "message": "¿Quieres conceder a Discord acceso a %s?"
             }
         },
         "mod": {
