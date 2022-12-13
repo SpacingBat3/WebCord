@@ -37,7 +37,6 @@ interface MainWindowFlags {
 
 interface AudioInformation {
   selectedAudioNodes: string[] | null;
-  chromiumInputNodes: PipewireNode[] | null;
 }
 
 const blacklistInputNodes: number[] = [];
@@ -582,17 +581,16 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           import("node-pipewire").then((pw) => {
             ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
               const outputNodesName = pw.getOutputNodesName();
-              const inputNodes = pw.getInputNodes();
-              const chromiumInputNodes = inputNodes.filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+              const chromiumInputNodes = pw.getInputNodes().filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+              blacklistInputNodes.push(...chromiumInputNodes.map((node) => node.id));
 
               // Filter outputNodesName to remove the repeated names
               const outputNodesNameFiltered = outputNodesName.filter((node, index) => {
                 return outputNodesName.indexOf(node) === index;
               });
-           
 
               if(event.sender === view.webContents)
-                return [await sources, flags.screenShareAudio, outputNodesNameFiltered, chromiumInputNodes];
+                return [await sources, flags.screenShareAudio, outputNodesNameFiltered];
               else
                 return null;
             });
@@ -616,13 +614,11 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           ipcMain.removeHandler("capturer-get-settings");
 
 
-          if(audioInfo && (audioInfo.chromiumInputNodes && audioInfo.selectedAudioNodes)){
+          if(audioInfo?.selectedAudioNodes){
             const selectedAudioNodes = audioInfo.selectedAudioNodes;
-            const chromiumInput = audioInfo.chromiumInputNodes[0];
 
-            if (selectedAudioNodes.length > 0 && chromiumInput) {
+            if (selectedAudioNodes.length > 0) {
               import("node-pipewire").then(async (pw) => {
-                // wait 2 seconds to make sure the audio is ready with new promise
                 let screenShareNode: PipewireNode | undefined = undefined;
                 try {
                   screenShareNode = await pw.waitForNewNode("Chromium", "Input");
@@ -631,7 +627,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                   console.error(error);
                 }
 
-                if (screenShareNode !== undefined) {
+                if (screenShareNode) {
                   const screenSharePort = screenShareNode.ports.find((port) => port.direction === "Input");
                   const links = pw.getLinks();
                   const micLink = links.find((link) => {
@@ -645,16 +641,20 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
                   // send to PW the name of selected audio nodes with the id of the new chromium input nodes
                   const interval = setInterval(() => {
-                    // create an interval to check if the port of the screenShareNode exits
-                    const nodes = pw.getInputNodes();
-                    const tempNode = nodes.find((node) => {
+                    // check if the port of the screenShareNode exits
+                    const targetNode = pw.getInputNodes().find((node) => {
                       return screenShareNode?.id === node.id;
                     });
-                    if (tempNode) {
-                      selectedAudioNodes.forEach((nodeName) => {
-                        // link the new chromium input node to the selected audio node
-                        pw.linkNodesNameToId(nodeName, tempNode.id);
-                      });
+                    if (targetNode) {
+                      try {
+                        selectedAudioNodes.forEach((nodeName) => {
+                          // link the the selected audio nodes to the target node
+                          pw.linkNodesNameToId(nodeName, targetNode.id);
+                        });
+                      } catch (error) {
+                        console.log("Error linking nodes");
+                        console.error(error);
+                      }
                     } else {
                       clearInterval(interval);
                     }

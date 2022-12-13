@@ -1,5 +1,4 @@
 import {ipcRenderer as ipc} from "electron/renderer";
-import type { PipewireNode } from "node-pipewire/build/types";
 import L10N from "../../common/modules/l10n";
 import type {AppConfig} from "../../main/modules/config";
 
@@ -86,8 +85,6 @@ type ExpectedIncomingResult = [
   screenShareAudio: boolean,
   /** List of audio sources fetch from Pipewire */
   audioSources?: string[],
-  /** List of input sources of Chromium */
-  inputSources?: PipewireNode[]
 ];
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -163,7 +160,6 @@ window.addEventListener("DOMContentLoaded", () => {
               },
               {
                 selectedAudioNodes: result[2] ? selectedAudioNodes : null,
-                chromiumInputNodes: result[3] ?? null
               });
             })
           );
