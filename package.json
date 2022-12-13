@@ -78,7 +78,7 @@
     "ws": "^8.5.0"
   },
   "optionalDependencies": {
-    "node-pipewire": "^1.0.12"
+    "node-pipewire": "^1.0.13"
   },
   "config": {
     "forge": "./app/code/build/forge.js"
