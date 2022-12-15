@@ -12,16 +12,14 @@ body:
             <td> ℹ️ </td>
             <td> This project is still on process to switch to YAML forms. </td> 
           </tr>
-        </table>
-        <table>
           <tr>
             <td> ⚠️ </td>
             <td>
               This bug report applies only to WebCord builds distributed
               officially. These are distributables available on the GitHub
-              releases and <code>webcord-git</code> PKGBUILD. <b>Please
-              do not open issues for unsupported distributable formats!</b>
-              Please reffer <a href=https://github.com/SpacingBat3/WebCord/blob/master/docs/FAQ.md#1-which-file-i-should-download>to the documentation</a>
+              releases and <code>webcord-git</code> PKGBUILD. <b>Please do not
+              open issues for unsupported distributable formats!</b> Please
+              reffer <a href=https://github.com/SpacingBat3/WebCord/blob/master/docs/FAQ.md#1-which-file-i-should-download>to the documentation</a>
               for a list of currently recommended distributables for each
               platform.
             </td> 
@@ -31,20 +29,31 @@ body:
     id: aknowledgments
     attributes:
       label: Aknowledgements
+      description: |
+        These checklists will help to understand if the reported issue is
+        specific to WebCord, keep discussion at the currently opened issue
+        tickets and so on. Please fill them according to the real state of this
+        bug. Some of the checkboxes are optional and they does not have to be
+        checked, altrough verifying all of the situations would most likely
+        help to resolve this issue faster.
       options:
         - label: |
-            I have checked that there's no other issue describing the same or
+            I have checked that there is no other issue describing the same or
             similar problem that I currently have, regardless if it has been
             closed or open.
           required: true
         - label: |
-            I can confirm that this is not an issue with the Discord website,
-            but it is a problem specific to the WebCord itself. I have tested
-            if this bug occurs on Chromium/Chrome or any other Chromium-based
-            browser that uses unpatched/upstream Chromium engine.
+            This bug affects [Discord website](https://discord.com/app).
         - label: |
-            I have tried running the build from the `master` branch and it does
-            not have any fixes implemented according to my issue.
+            This issue is confirmed to be reproduceable when WebCord is packaged
+            on at least all three latest supported Electron major releases.
+        - label: |
+            This issue is reproduceable in Chrome, Chromium or any
+            Chromium-based browser, e.g Brave or Edge (please write in
+            *Additional Context* which browser you have used if it is neither
+            Chrome nor unmodified Chromium).
+        - label: |
+            There are no fixes done to `master` which resolves this issue.
         - label: |
             My issue describes one of the unstable and/or not fully implemented
             features.
@@ -71,9 +80,9 @@ body:
     attributes:  
       label: Operating system architecture
       description: |
-        What type of the operating system you were using?
-        Is it for Intel/AMD processors or ARM single-board computers and devices?
-        Is it designed for the 32-bit instruction set or the 64-bit ones?
+        What type of the operating system you were using? Is it for Intel/AMD
+        processors or ARM single-board computers and devices? Is it designed for
+        the 32-bit instruction set or the 64-bit ones?
       multiple: true
       options:
         - ia32 (32-bit Intel/AMD)
@@ -88,8 +97,9 @@ body:
     attributes:
       label: Electron version
       description: |
-        An Electron version used by the application. You can find this in *About panel* menu.
-      placeholder: e.g. v15.3.0
+        An Electron version used by the application. You can find this at
+        *About* window.
+      placeholder: e.g. v22.0.0
     validations:
       required: true
       
@@ -99,7 +109,8 @@ body:
       label: Application version
       description: | 
         On which application version or versions you have encountered this bug?
-      placeholder: e.g. v3.3.0
+        You can check this at *About* window or using `--version` command-line flag.
+      placeholder: e.g. v4.0.0
     validations:
       required: true
 
@@ -117,5 +128,9 @@ body:
     attributes:
       label: Additional context
       description: |
-        Any workarounds? Screenshots? Other useful information about your device/OS?
+        Please write there additional details about this issue, like:
+          - workarounds and mitigations (if you have found any),
+          - OS details (e.g. if you are running app under XWayland or Wayland),
+          - hardware details (e.g. GPU vendor on issue with window/graphics rendering),
+          - screenshots or videos (please publish them directly into GitHub whenever possible).
       placeholder: An additional information about this issue, images, videos...

@@ -43,7 +43,7 @@ langDialog.once("show-error", (localizedStrings: string) => {
  * 
  * In other situations, an error message will occur and fallback strings will be used instead. 
  */
-class l10n {
+class L10N {
   /**
    * Parses locale to get a list of associated locale names, ordered by best
    * match. This list also includes the initial property.
@@ -113,4 +113,4 @@ class l10n {
   }
 }
 
-export default l10n;
+export default L10N;

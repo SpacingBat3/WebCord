@@ -34,7 +34,7 @@ export function getUserAgent(chromeVersion: string, mobile?: boolean, replace?: 
     process.getSystemVersion() :
     (userAgentPlatform === "darwin" ? "12.0" : release())
   );
-  let WOW64: string;
+  let wow64: string;
   const device:string = (replace?.device !== undefined ? "; "+replace.device : "");
   const mobileAgent = (mobile??false) ? " Mobile" : "";
   switch (userAgentPlatform as NodeJS.Platform) {
@@ -42,8 +42,8 @@ export function getUserAgent(chromeVersion: string, mobile?: boolean, replace?: 
       fakeUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X "+osVersion.replace(".","_")+") AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+mobileAgent+" Safari/537.36";
       break;
     case "win32":
-      osVersion.split(".")[0] === "10" ? WOW64 = "Win64; x64" : WOW64 = "WOW64";
-      fakeUserAgent = "Mozilla/5.0 (Windows NT "+osVersion+"; "+WOW64+") AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+mobileAgent+" Safari/537.36";
+      wow64 = osVersion.split(".")[0] === "10" ? "Win64; x64" : "WOW64";
+      fakeUserAgent = "Mozilla/5.0 (Windows NT "+osVersion+"; "+wow64+") AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+mobileAgent+" Safari/537.36";
       break;
     case "android":
       fakeUserAgent = "Mozilla/5.0 (Linux; Android "+osVersion+device+") AppleWebKit/537.36 (KHTML, like Gecko) Chrome/"+chromeVersion+mobileAgent+" Safari/537.36";

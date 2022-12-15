@@ -20,7 +20,7 @@ import * as getMenu from "../modules/menu";
 import { discordFavicons, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import { loadChromiumExtensions, styles } from "../modules/extensions";
 import { commonCatches } from "../modules/error";
 
@@ -131,7 +131,11 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     if (!flags.startHidden) win.show();
     setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().value.settings.advanced.currentInstance.radio][1].href);}, 1500);
   });
-  if (mainWindowState.initState.isMaximized) win.maximize();
+  if (mainWindowState.initState.isMaximized)
+    if(!flags.startHidden || win.isVisible())
+      win.maximize();
+    else
+      win.once("show", () => win.maximize());
 
   // CSP
 

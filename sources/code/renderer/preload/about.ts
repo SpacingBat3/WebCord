@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from "electron/renderer";
-import { buildInfo, sanitizeConfig } from "../../common/global";
+import { BuildInfo, sanitizeConfig } from "../../common/global";
 import { getAppPath, getAppHash } from "../../common/modules/electron";
 import { resolve } from "path";
 import L10N from "../../common/modules/l10n";
@@ -76,11 +76,11 @@ const locks = {
   dialog: false
 };
 
-interface aboutWindowDetails {
+interface AboutWindowDetails {
   appName: string;
   appVersion: string;
   appRepo: string|undefined;
-  buildInfo: buildInfo;
+  buildInfo: BuildInfo;
   responseId: number;
 }
 
@@ -131,7 +131,7 @@ function showAppLicense() {
   }
 }
 
-async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromise: Promise<aboutWindowDetails>) {
+async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromise: Promise<AboutWindowDetails>) {
   const nameElement = document.getElementById("appName");
   const versionElement = document.getElementById("appVersion");
   const repoElement = document.getElementById("appRepo");
@@ -158,7 +158,7 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
     versions.innerText = process.versions.electron+" / "+
             process.versions.chrome+" / "+process.versions.node;
   if(features) {
-    for(const [key, value] of Object.entries(details.buildInfo.features) as [keyof buildInfo["features"], boolean][])
+    for(const [key, value] of Object.entries(details.buildInfo.features) as [keyof BuildInfo["features"], boolean][])
       if(value !== defaultBuildInfo.features[key])
         if(features.innerText === "")
           features.innerText = key;
@@ -172,9 +172,9 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
   if(checksum) checksum.innerText = (await getAppHash("sha256", "base64")) ?? "N/A";
 }
 
-function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promise<aboutWindowDetails>) {
+function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promise<AboutWindowDetails>) {
   const packageJson = new PackageJSON(["dependencies", "devDependencies"]);
-  for (const id of Object.keys(l10n.licenses).filter((value)=>value.match(/^(?:licensedUnder|packageAuthors)$/) === null)) {
+  for (const id of Object.keys(l10n.licenses).filter((value)=>(/^(?:licensedUnder|packageAuthors)$/.exec(value)) === null)) {
     const element = document.getElementById(id);
     if(element)
       void details
@@ -192,7 +192,7 @@ function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promis
     const npmLink = document.createElement("a");
     const title = document.createElement("h3");
     const copy = document.createElement("p");
-    npmLink.title = data.description.match(/^(?:.(?!\. ))*.\.?/)?.[0] ?? "";
+    npmLink.title = (/^(?:.(?!\. ))*.\.?/.exec(data.description))?.[0] ?? "";
     npmLink.href = "https://www.npmjs.com/package/"+packName+"/v/"+data.version;
     npmLink.relList.add("noreferrer");
     npmLink.target = "_blank";
@@ -222,7 +222,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if(content) content.innerText = l10n.nav[div.id.replace("-nav","") as keyof typeof l10n.nav];
   }
   // Get app details and inject them into the page
-  const details = ipc.invoke("about.getDetails") as Promise<aboutWindowDetails>;
+  const details = ipc.invoke("about.getDetails") as Promise<AboutWindowDetails>;
   generateAppContent(l10n, details).catch(e => {
     if(e instanceof Error)
       throw e;

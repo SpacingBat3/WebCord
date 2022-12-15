@@ -3,7 +3,7 @@
  */
 
 import { app } from "electron/main";
-import { gpuVendors } from "../../common/global";
+import { GPUVendors } from "../../common/global";
 
 /** Whenever the current process is ran on *nix. */
 const isUnix = process.platform !== "win32" && process.platform !== "darwin";
@@ -15,7 +15,7 @@ const isWaylandNative = isWayland && (
   process.argv.includes("--ozone-hint=wayland")
 );
 
-interface partialGPU {
+interface PartialGPU {
   gpuDevice: {
     active: boolean;
     vendorId: number;
@@ -23,12 +23,12 @@ interface partialGPU {
   }[];
 }
 
-function hasGPUDevices(object: unknown):object is partialGPU {
+function hasGPUDevices(object: unknown):object is PartialGPU {
   if(typeof object !== "object" || object === null)
     return false;
-  if(!("gpuDevice" in object) || !Array.isArray((object as partialGPU).gpuDevice))
+  if(!("gpuDevice" in object) || !Array.isArray((object as PartialGPU).gpuDevice))
     return false;
-  for(const device of (object as partialGPU).gpuDevice) {
+  for(const device of (object as PartialGPU).gpuDevice) {
     if(!("active" in device) || typeof device.active !== "boolean")
       return false;
     if(!("vendorId" in device) || typeof device.vendorId !== "number")
@@ -66,9 +66,9 @@ export async function getRecommendedGPUFlags() {
   if(hasGPUDevices(gpuInfoResult))
     loop: for(const device of gpuInfoResult.gpuDevice) if(device.active) switch(device.vendorId) {
       // Common desktop GPU vendors.
-      case gpuVendors.intel:
-      case gpuVendors.amd:
-      case gpuVendors.nvidia:
+      case GPUVendors.Intel:
+      case GPUVendors.AMD:
+      case GPUVendors.NVIDIA:
         flags.push(
           // use GL/GLES instead ANGLE:
           ["use-gl", desktopGl],

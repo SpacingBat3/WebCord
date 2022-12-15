@@ -2,6 +2,8 @@
  * Global.ts – non-Electron depending globally-used module declarations
  */
 
+import type { Config } from "dompurify";
+
 /**
  * Outputs a fancy log message in the (DevTools) console.
  * 
@@ -25,21 +27,22 @@ export function isJsonSyntaxCorrect(string: string) {
 export const discordFavicons = Object.freeze({
   /** Default favicon (without *blue dot* indicator). */
   default: "a2205eb4eb1cbf4ef7555e579bee3ba260574f3b", // seems always valid
-  unread: [
+  unread: Object.freeze([
     "ee9eef1403e76cb770d1c4a32265e8354e6af1a0", // works on FIFO pipe errors
     "40f51a9b9ad411d2e0e897661a08305b4a76ec76", // produced by older Electron releases
     "541317111758ff00613b2ff56f284a2474bd3d81"  // seems to be valid otherwise
-  ]
+  ])
 });
 
 /**
- * List of common GPU vendors based on integer indentifier.
+ * List of Vendor IDs of common GPU manufacturers. This is usually represented
+ * as a hexadecimal number, so it should be also listed here as such.
  */
-export const gpuVendors = Object.freeze({
-  nvidia: 0x10DE,
-  amd: 0x1002,
-  intel: 0x8086
-});
+export const enum GPUVendors {
+  AMD = 0x1002,
+  NVIDIA = 0x10DE,
+  Intel = 0x8086
+}
 
 /**
  * A generic TypeGuard, used to deeply check if `object` can be merged with another
@@ -49,7 +52,6 @@ export const gpuVendors = Object.freeze({
  * @param object2 An object used for the type comparasion.
  */
 export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
-
   // False when parameters are not objects.
   if(!(object1 instanceof Object && object2 instanceof Object)) return false;
 	
@@ -59,7 +61,7 @@ export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
   const results = Object.keys({...object1,...object2}).map(key => {
     if(key in object1 && key in object2) {
       const key1:unknown = object1[key as keyof unknown], key2:unknown = object2[key as keyof unknown];
-      if(typeof (key1 === null ? false : key1) === typeof (key2 === null ? false : key2)) {
+      if(typeof key1 === typeof (key2 === null ? false : key2) || key1 === key2) {
         if(typeof key1 === "object" && key1 !== null) {
           if(Array.isArray(key1)&&Array.isArray(key2))
             return true;
@@ -104,14 +106,14 @@ export const knownInstancesList = Object.freeze([
   ["Discord Public Test Beta", new URL("https://ptb.discord.com/app"),       true ],
   ["Fosscord",                 new URL("https://dev.fosscord.com/app"),     false ],
   ["Fosscord Staging",         new URL("https://staging.fosscord.com/app"),  true ],
-  ["Freecord",                 new URL("https://app.freecord.ir/app"),       true ],
-] as const);
+  ["Freecord",                 new URL("https://app.freecord.ir/app"),       true ]
+] as const) satisfies readonly (readonly [ name: string, url: URL, active: boolean ])[];
 
 /**
  * An object which type includes information about the WebCord's build
  * configuration and metadata.
  */
-export interface buildInfo {
+export interface BuildInfo {
   /**
    * This build type. `devel` builds can have access to some features not meant
    * to be in the production and have access to DevTools by the default.
@@ -150,13 +152,13 @@ export interface buildInfo {
   };
 }
 
-export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo> {
+export function isPartialBuildInfo(object: unknown): object is Partial<BuildInfo> {
   // #1 Element is object.
   if (!(object instanceof Object))
     return false;
   // #2 'type' property contains 'release' and 'devel' strings if defined.
   if("type" in object)
-    switch ((object as buildInfo).type) {
+    switch ((object as BuildInfo).type) {
       case "release":
       case "devel":
         break;
@@ -166,14 +168,14 @@ export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo
         return false;
     }
   // #3 If object contains 'commit' property, it should be of type 'string'.
-  if ("commit" in object && !(typeof (object as buildInfo).commit === "string"))
+  if ("commit" in object && !(typeof (object as BuildInfo).commit === "string"))
     return false;
 
   /** List of valid properties for the `.features` object. */
   const features = ["updateNotifications"];
   // #4 If object contains the 'features' property, it should be an object.
   if ("features" in object)
-    if (!((object as buildInfo).features instanceof Object))
+    if (!((object as BuildInfo).features instanceof Object))
       return false;
     else for(const property of features)
     // #5 `features` properties are of type `boolean`.
@@ -182,39 +184,23 @@ export function isPartialBuildInfo(object: unknown): object is Partial<buildInfo
           return false;
 
   // #6 On Windows, AppUserModelID should be of 'string' type
-  if (process.platform === "win32" && !(typeof (object as buildInfo).AppUserModelId === "string"))
+  if (process.platform === "win32" && !(typeof (object as BuildInfo).AppUserModelId === "string"))
     return false;
   return true;
 }
-
-export type SessionLatest = Electron.Session & {
-  /**
-	 * A method that is unsupported within your Electron version, but valid
-	 * for Electron releases supporting WebHID API, which are versions from
-	 * range `>=14.1.0 && <15.0.0 || >=15.1.0`.
-	 */
-  setDevicePermissionHandler: (handler: (()=>boolean)|null)=>void;
-};
-
-export type ElectronLatest = typeof import("electron/main") & {
-  /** An API that is unsupported on current Electron version. */
-  safeStorage: {
-    decryptString: (encrypted:Buffer)=>string;
-    encryptString: (plainText:string)=>Buffer;
-    isEncryptionAvailable: () => boolean;
-  };
-};
 
 /**
  * A sanitizer configuration that allows only for tags that modifies the code
  * formatting.
  */
-export const sanitizeConfig = {
+export const sanitizeConfig = Object.freeze({
   /** Allow tags that modifies text style and/or has a semantic meaning. */
   ALLOWED_TAGS: ["b", "i", "u", "s", "em", "kbd", "strong", "code", "small", "br"],
   /** Block every attribute */
   ALLOWED_ATTR: []
-};
+} satisfies {
+  readonly [P in keyof Config]: Config[P] extends (infer T)[]|infer H ? readonly T[]|H : Config[P]
+});
 
 /**
  * Like {@link Partial<T>}, except it also makes all subproperties in T

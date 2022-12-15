@@ -1,13 +1,13 @@
 import { ipcMain } from "electron/main";
 import { AppConfig } from "../modules/config";
 import { appInfo } from "../../common/modules/client";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import { initWindow } from "../modules/parent";
 import { deepmerge } from "deepmerge-ts";
 import type { cspTP } from "../modules/config";
 import type { PartialRecursive } from "../../common/global";
 
-type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"] & {
+type generatedConfig = AppConfig["defaultConfig"]["settings"] & L10N["settings"] & {
   advanced: {
     cspThirdParty: {
       labels: Record<keyof Omit<AppConfig["defaultConfig"]["settings"]["advanced"]["cspThirdParty"], "labels">, string>;
@@ -16,9 +16,9 @@ type generatedConfig = AppConfig["defaultConfig"]["settings"] & l10n["settings"]
 };
 
 function generateConfig (config:AppConfig) {
-  const appConfig = deepmerge(config.value.settings, (new l10n()).settings);
+  const appConfig = deepmerge(config.value.settings, (new L10N()).settings);
   const finalConfig: PartialRecursive<generatedConfig> = appConfig as object;
-  const websitesThirdParty: cspTP<string> = {
+  const websitesThirdParty = Object.freeze(({
     algolia: "Algolia",
     spotify: "Spotify",
     hcaptcha: "hCaptcha",
@@ -33,7 +33,7 @@ function generateConfig (config:AppConfig) {
     vimeo: "Vimeo",
     youtube: "YouTube",
     googleStorageApi: "Google Storage API"
-  };
+  } as const) satisfies cspTP<string>);
   // Append more third-party sites labels.
   Object.entries(websitesThirdParty).map(stringGroup => {
     if(finalConfig.advanced?.cspThirdParty?.labels && finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] === undefined)
@@ -45,19 +45,19 @@ function generateConfig (config:AppConfig) {
   return finalConfig as generatedConfig;
 }
 
-export type htmlConfig = [
-  ["general", generatedConfig["general"]],
-  ["privacy", generatedConfig["privacy"]],
-  ["advanced", generatedConfig["advanced"]]
-];
+type htmlConfigElement<T extends keyof generatedConfig> = readonly [T,generatedConfig[T]];
+
+export type htmlConfig = readonly (
+  Exclude<keyof generatedConfig, `$${string}`> extends infer T extends keyof generatedConfig ? htmlConfigElement<T> : never
+)[];
 
 export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electron.BrowserWindow|undefined {
   const config = generateConfig(new AppConfig());
-  const htmlConfig:htmlConfig = [
-    ["general", config.general],
-    ["privacy", config.privacy],
-    ["advanced", config.advanced]
-  ];
+  const htmlConfig = Object.freeze([
+    Object.freeze(["general", config.general] as const),
+    Object.freeze(["privacy", config.privacy] as const),
+    Object.freeze(["advanced", config.advanced] as const)
+  ] as const) satisfies htmlConfig;
   if(!parent.isVisible()) parent.show();
   const settingsWindow = initWindow("settings", parent, {
     minWidth: appInfo.minWinWidth,

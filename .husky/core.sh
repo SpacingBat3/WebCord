@@ -16,7 +16,7 @@ function npkg() {
     local PKG;
     local SUPPORT;
     # A path to Node.js package manager.
-    PKG="$(command -v npm || command -v yarn || command -v pnpm || echo "false")";
+    PKG="$(command -v npm || command -v yarn || command -v pnpm || echo false)";
     # A list of supported package manager commands
     SUPPORT=(install test run add);
     function _install() {
@@ -71,34 +71,50 @@ function npkg() {
     printf '\n%s\n\n' "npkg: Selected package manager: '${PKG##*/}'."
     "$PKG" "$("_$1")" "${@:2}"
 }
-# `lftest` – Tests if lockfile passes tests that allows for it to be commited.
+
+# `c_json` – `JSON.parse()` wrapper for BASH. Part of `core.sh`.
 #
 # **Usage:**
 # ```sh
-# lftest # Does not use any arguments.
+# c_json .[property] PATH
 # ```
-function lftest () {
-    mapfile -t FILES < <(git diff --staged --name-only);
-    local has_meta has_lock;
-    has_meta=false;
-    has_lock=false;
-    for file in "${FILES[@]}"; do
-        if [[ "$file" == "package-lock.json" ]]; then
-            has_lock=true
-        elif [[ "$file" == "package.json" ]]; then
-            has_meta=true
-        fi
-    done;
-    if [[  "$has_meta" == "false" && "$has_lock" == "true" ]]; then
-        echo >&2;
-        echo "locktest: test failed!" >&2;
-        printf '    %s\n' \
-            "It seems that you've tried to commit a lock file without any changes"\
-            "done in 'package-lock.json'! This operation will be blocked as lockfile"\
-            "should not be bumped unless a development tree has changed in some way"\
-            "or commit is made that bumps package version and the new tag is going"\
-            "to be released" >&2
-        echo >&2;
-        return 1;
+function c_json() {
+    local query file;
+    if [[ "$1" == "." ]]; then
+        query="";
+    else
+        query="$1";
     fi
+    file="$(tr -d '\n' <<< "${2//'"'/'\\"'}")";
+    node -e "console.log(JSON.parse(\"$file\")$query);";
+    return $?;
+}
+
+# `c_svcom` – A SemVer comparassion for BASH.
+#
+# **Usage:**
+# ```
+# c_svcom ()
+# ```
+function c_svcom() {
+    local sedrule subvr_1 subvr_2 vtype;
+    case "$1" in
+        maj{,or})  vtype=1    ;;
+        min{,ior}) vtype=2    ;;
+        patch)     vtype=3    ;;
+        *)         vtype="$1" ;;
+    esac
+    if [[ "$vtype" -lt 1 || "$vtype" -gt 3 ]]; then return 1; fi;
+    sedrule="s/.*\([\^<]\)\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\1 \\$((vtype+1))/";
+    mapfile -t subvr_1 < <(sed "$sedrule" <<< "$2");
+    mapfile -t subvr_2 < <(sed "$sedrule" <<< "$3");
+    if [[ "${subvr_1[0]}" != "${subvr_2[0]}" ]]; then return 2; fi;
+    if [[ "${subvr_1[1]}" -gt "${subvr_2[1]}" ]]; then
+        echo 1;
+    elif [[ "${subvr_1[1]}" -eq "${subvr_2[1]}" ]]; then
+        echo 0;
+    elif [[ "${subvr_1[1]}" -lt "${subvr_2[1]}" ]]; then
+        echo -1;
+    fi
+    return 3;
 }

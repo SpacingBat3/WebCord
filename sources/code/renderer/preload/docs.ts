@@ -44,10 +44,26 @@ function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
   mdBody.innerHTML = sanitize(marked.parse(readFileSync(mdFile).toString()));
 }
 
-function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdArticle: HTMLElement) {
-  loadMarkdown(mdBody, mdFile);
-  handleUrls(mdBody, mdArticle, mdHeader, mdFile);
-  fixImages(mdBody);
+function fixImages(container:HTMLElement) {
+  // Fix logo URL in Readme files.
+  const logo = container.querySelector<HTMLImageElement>('a[href="https://github.com/SpacingBat3/WebCord"] > picture > img');
+  const logoPicture = logo?.parentNode ?? null;
+  const logoAnchor = logoPicture?.parentElement ?? null;
+  if(logo===null||logoPicture===null||logoAnchor===null) return;
+  (logoPicture as HTMLPictureElement).remove();
+  if(/\/sources\/assets\/web/.exec(logo.src))
+    logo.src=logo.src.replace("/sources/assets/web","");
+  else
+    logo.src=logo.src.replace("/sources/assets","");
+  const newLogo = logo.cloneNode();
+  logoAnchor.appendChild(newLogo);
+    
+  // Remove badges (they require an internet connection).
+  for(const image of container.getElementsByTagName("img"))
+    if(image.src.startsWith("https:") && image.parentElement?.parentElement?.tagName === "P") {
+      image.parentElement.parentElement.remove();
+      break;
+    }
 }
 
 function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLElement, mdPrevious: string):void {
@@ -65,7 +81,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
           if(element) element.scrollIntoView({behavior: "smooth"});
         }
         // Handle markdown links and 'LICENSE' files.
-      } else if(link.href.match(/^file:\/\/.+(\.md|LICENSE)(#[a-z0-9-]+)?$/)) {
+      } else if(/^file:\/\/.+(\.md|LICENSE)(#[a-z0-9-]+)?$/.exec(link.href)) {
         const mdFile = fileURLToPath(link.href);
         const id = getId(link.href);
         const oldHeader = menuHeader.innerHTML;
@@ -105,26 +121,10 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
   }
 }
 
-function fixImages(container:HTMLElement) {
-  // Fix logo URL in Readme files.
-  const logo = container.querySelector<HTMLImageElement>('a[href="https://github.com/SpacingBat3/WebCord"] > picture > img');
-  const logoPicture = logo?.parentNode ?? null;
-  const logoAnchor = logoPicture?.parentElement ?? null;
-  if(logo===null||logoPicture===null||logoAnchor===null) return;
-  (logoPicture as HTMLPictureElement).remove();
-  if(logo.src.match("/sources/assets/web"))
-    logo.src=logo.src.replace("/sources/assets/web","");
-  else
-    logo.src=logo.src.replace("/sources/assets","");
-  const newLogo = logo.cloneNode();
-  logoAnchor.appendChild(newLogo);
-    
-  // Remove badges (they require an internet connection).
-  for(const image of container.getElementsByTagName("img"))
-    if(image.src.startsWith("https:") && image.parentElement?.parentElement?.tagName === "P") {
-      image.parentElement.parentElement.remove();
-      break;
-    }
+function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdArticle: HTMLElement) {
+  loadMarkdown(mdBody, mdFile);
+  handleUrls(mdBody, mdArticle, mdHeader, mdFile);
+  fixImages(mdBody);
 }
 
 document.addEventListener("readystatechange", () => {

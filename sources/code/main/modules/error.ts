@@ -98,7 +98,7 @@ export default function uncaughtExceptionHandler(): void {
         const regexAppPath = app.getAppPath().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         if (line.match(RegExp("at.*\\(" + regexAppPath + ".*\\).*", "g"))) {
           let modifiedLine = line;
-          const tsRule = line.match(/\(\/.*\.ts.*\)/);
+          const tsRule = /\(\/.*\.ts.*\)/.exec(line);
           if (tsRule?.[0] !== undefined)
             modifiedLine = line.replace(tsRule[0].replace(new RegExp("\\((" + regexAppPath + "\\/).*\\)"), "$1"), "");
           stackProcessed.push(modifiedLine);

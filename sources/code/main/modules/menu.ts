@@ -15,7 +15,7 @@ const appConfig = new AppConfig();
 
 import { EventEmitter } from "events";
 import { createGithubIssue } from "./bug";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import loadSettingsWindow from "../windows/settings";
 import loadDocsWindow from "../windows/docs";
 import showAboutPanel from "../windows/about";
@@ -44,64 +44,74 @@ sideBar.on("hide", (contents: Electron.WebContents) => {
 // Contex Menu with spell checker
 
 export function context(parent: Electron.BrowserWindow): void {
-  const strings = (new l10n()).client;
-  parent.webContents.on("context-menu", (_event, params) => {
-    const cmenu: (Electron.MenuItemConstructorOptions | Electron.MenuItem)[] = [
+  const { context } = (new L10N()).client;
+  parent.webContents.on("context-menu", (_event, params) => Menu.buildFromTemplate([
+    { type: "separator" },
+    // Dictionary suggestions
+    ...(params.dictionarySuggestions.map(suggestion => ({
+      label: suggestion,
+      click: () => parent.webContents.replaceMisspelling(suggestion)
+    } satisfies Electron.MenuItemConstructorOptions))),
+    // Add to dictionary
+    ...(params.misspelledWord !== "" ? [
       { type: "separator" },
-      { label: strings.context.cut, role: "cut", enabled: params.editFlags.canCut },
-      { label: strings.context.copy, role: "copy", enabled: params.editFlags.canCopy },
       {
-        label: strings.context.paste,
+        label: context.dictionaryAdd,
+        click: () => parent.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
+      },
+      { type: "separator" }
+    ] satisfies Electron.MenuItemConstructorOptions[] : []),
+    // Copy / Cut / Delete
+    ...(params.editFlags.canCopy || params.editFlags.canCut || params.editFlags.canDelete ? [
+      { label: context.cut, role: "cut", enabled: params.editFlags.canCut },
+      { label: context.copy, role: "copy", enabled: params.editFlags.canCopy },
+      {
+        label: context.paste,
         enabled: clipboard.availableFormats().length !== 0 && params.editFlags.canPaste,
         role: "paste"
       },
       { type: "separator" }
-    ];
-    let position = 0;
-    for (const suggestion of params.dictionarySuggestions) {
-      cmenu.splice(++position, 0, {
-        label: suggestion,
-        click: () => parent.webContents.replaceMisspelling(suggestion)
-      });
-    }
-    if(params.misspelledWord !== "") {
-      cmenu.splice(++position, 0, { type: "separator" });
-      cmenu.splice(++position, 0, {
-        label: strings.context.dictionaryAdd,
-        click: () => parent.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
-      });
-      cmenu.splice(++position, 0, { type: "separator" });
-    }
-    if (params.linkURL !== "") {
-      cmenu.push({
-        label: strings.context.copyURL,
+    ] satisfies Electron.MenuItemConstructorOptions[] : []),
+    // Copy link text / copy link url
+    ...(params.linkURL !== "" ? [
+      {
+        label: context.copyURL,
         click: () => clipboard.writeText(params.linkURL)
-      });
-      if (params.linkText !== "") cmenu.push({
-        label: strings.context.copyURLText,
+      },
+      params.linkText !== "" ? {
+        label: context.copyURLText,
         click: () => clipboard.writeText(params.linkText)
-      });
-      cmenu.push({ type: "separator" });
-    }
-    if (devel || appConfig.value.settings.advanced.devel.enabled) {
-      cmenu.push({
-        label: strings.context.inspectElement,
-        click: () => parent.webContents.inspectElement(params.x, params.y)
-      });
-      cmenu.push({ type: "separator" });
-    }
-    Menu.buildFromTemplate(cmenu).popup({
-      window: parent,
-      x: params.x,
-      y: params.y
-    });
-  });
+      } : {},
+      { type: "separator" }
+    ] satisfies Electron.MenuItemConstructorOptions[] : []),
+    // Copy image / image link
+    ...(params.mediaType === "image" ? [
+      {
+        label: context.copyImage,
+        click: () => parent.webContents.copyImageAt(params.x,params.y)
+      },
+      {
+        label: context.copyImageURL,
+        click: () => clipboard.writeText(params.srcURL)
+      },
+      { type: "separator" }
+    ] satisfies Electron.MenuItemConstructorOptions[] : []),
+    // Inspect (DevTools)
+    devel || appConfig.value.settings.advanced.devel.enabled ? {
+      label: context.inspectElement,
+      click: () => parent.webContents.inspectElement(params.x, params.y)
+    } : {}
+  ]).popup({
+    window: parent,
+    x: params.x,
+    y: params.y
+  }));
 }
 
 // Tray menu
 
 export function tray(parent: Electron.BrowserWindow): Electron.Tray {
-  const strings = (new l10n()).client;
+  const strings = (new L10N()).client;
   const {icons} = appInfo;
   const tray = new Tray(icons.tray.default);
   function toggleVisibility() {
@@ -166,7 +176,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 // Menu Bar
 
 export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.Menu {
-  const strings = (new l10n()).client;
+  const strings = (new L10N()).client;
   const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
   const menu = Menu.buildFromTemplate([
     // File

@@ -1,6 +1,7 @@
 # Ignore build / packaging artifacts
 out/
 app/
+cache/
 # Ignore Node package managers artifacts
 node_modules/
 # Ignore foreign lockfiles

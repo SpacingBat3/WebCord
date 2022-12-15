@@ -7,18 +7,12 @@ import {
   app,
   BrowserWindow,
   screen,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
-  // @ts-ignore
-  safeStorage as SafeStorage
+  safeStorage
 } from "electron/main";
 import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
-import { ElectronLatest, objectsAreSameType, PartialRecursive } from "../../common/global";
+import { objectsAreSameType, PartialRecursive } from "../../common/global";
 import { deepmerge } from "deepmerge-ts";
-import { gte, major } from "semver";
-
-
-const safeStorage:ElectronLatest["safeStorage"]|undefined = SafeStorage as unknown as ElectronLatest["safeStorage"]|undefined;
 
 type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind";
 
@@ -28,7 +22,7 @@ type checkListKeys = Exclude<lastKeyof<typeof defaultAppConfig.settings>, reserv
 
 export type checkListRecord = Partial<Record<checkListKeys,boolean|null>>;
 
-export type ConfigElement = checkListRecord | {
+export type configElement = checkListRecord | {
   radio: number;
 } | {
   dropdown: number;
@@ -39,7 +33,7 @@ export type ConfigElement = checkListRecord | {
 };
 
 interface AppConfigBase {
-  settings: Record<string, Record<string, ConfigElement>>;
+  settings: Record<string, Record<string, configElement>>;
   update: Record<string, unknown>;
 }
 
@@ -47,7 +41,7 @@ export type cspTP<T> = {
   [P in keyof typeof defaultAppConfig["settings"]["advanced"]["cspThirdParty"]]: T
 };
 
-const canImmediatellyEncrypt = safeStorage?.isEncryptionAvailable()??false;
+const canImmediatellyEncrypt = safeStorage.isEncryptionAvailable();
 
 function isReadyToEncrypt() {
   if(process.platform === "darwin")
@@ -56,7 +50,7 @@ function isReadyToEncrypt() {
     return app.isReady();
 }
 
-const defaultAppConfig = {
+const defaultAppConfig = Object.freeze({
   settings: {
     general: {
       menuBar: {
@@ -137,7 +131,7 @@ const defaultAppConfig = {
   screenShareStore: {
     audio: false
   }
-};
+});
 
 const fileExt = Object.freeze({
   json: ".json",
@@ -154,14 +148,14 @@ class Config<T> {
     const decodedData = JSON.stringify(object, null, this.spaces);
     let encodedData:string|Buffer = decodedData;
     if(this.#pathExtension === fileExt.encrypted)
-      encodedData = safeStorage?.encryptString(decodedData)??decodedData;
+      encodedData = safeStorage.encryptString(decodedData);
     fs.writeFileSync(this.#path+this.#pathExtension,encodedData);
   }
   private read(): unknown {
     const encodedData = fs.readFileSync(this.#path+this.#pathExtension);
     let decodedData = encodedData.toString();
     if(this.#pathExtension === fileExt.encrypted)
-      decodedData = safeStorage?.decryptString(encodedData)??encodedData.toString();
+      decodedData = safeStorage.decryptString(encodedData);
     return JSON.parse(decodedData);
   }
   /** 
@@ -182,7 +176,7 @@ class Config<T> {
       console.debug(newObject);
   }
   /** Returns the entire parsed configuration file in form of the JavaScript object. */
-  public get value(): T {
+  public get value(): Readonly<T> {
     const parsedConfig:unknown = this.read();
     const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig);
     if(objectsAreSameType(mergedConfig, this.defaultConfig))
@@ -195,7 +189,7 @@ class Config<T> {
       throw new Error("Cannot use encrypted configuration file when app is not ready yet!");
     // Set required properties of this config file.
     this.#path = path;
-    this.#pathExtension = encrypted && (safeStorage?.isEncryptionAvailable() === true) ?
+    this.#pathExtension = encrypted && safeStorage.isEncryptionAvailable() ?
       fileExt.encrypted :
       fileExt.json;
     this.defaultConfig = Object.freeze(defaultConfig);
@@ -246,75 +240,42 @@ export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigB
   }
 }
 
-// === WINDOW STATE KEEPER CLASS ===
-
-/**
- * Whenever to apply a workaround for "maximize" and "unmaximize" events.
- * 
- * This allows WebCord to work on very old and deprecated Electron releases.
- */
-const workaroundLinuxMinMaxEvents = (() => {
-  if(process.platform !== "linux")
-    return false;
-  const {electron} = process.versions;
-  if(major(electron) <= 12 || major(electron) > 17)
-    return false;
-  switch(major(electron)) {
-    case 14:
-      return gte(electron, "14.2.5");
-    case 15:
-      return gte(electron, "15.3.6");
-    case 16:
-      return gte(electron, "16.0.8");
-    default:
-      return false;
-  }
-})();
-
-interface windowStatus {
+interface WindowStatus {
   width: number;
   height: number;
   isMaximized: boolean;
 }
 
-export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>> {
-  private windowName: string;
+export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, WindowStatus>>> {
+  private windowName: T;
   /**
    * An object containing width and height of the window watched by `WinStateKeeper`
    */
-  public initState: Readonly<windowStatus>;
-  private setState(window: BrowserWindow, eventType?: string) {
-    let event = eventType;
-    // Workaround: fix `*maximize` events being detected as `resize`:
-    if(workaroundLinuxMinMaxEvents)
-      if(eventType === "resize" && window.isMaximized())
-        event = "maximize";
-      else if (eventType === "resize" && (this.value[this.windowName]?.isMaximized??false))
-        event = "unmaximize";
-    switch(event) {
+  public initState: Readonly<WindowStatus>;
+  private setState(window: BrowserWindow, eventType = "resize") {
+    switch(eventType) {
       case "maximize":
       case "unmaximize":
-        this.value = {
-          [this.windowName]: {
+        this.value = Object.freeze({
+          [this.windowName]: Object.freeze({
             width: this.value[this.windowName]?.width ?? window.getNormalBounds().width,
             height: this.value[this.windowName]?.height ?? window.getNormalBounds().height,
             isMaximized: window.isMaximized()
-          }
-        };
+          } satisfies WindowStatus)
+        });
         break;
       default:
-        this.value = {
-          [this.windowName]: {
+        if(window.isMaximized()) return;
+        this.value = Object.freeze({
+          [this.windowName]: Object.freeze({
             width: window.getNormalBounds().width,
             height: window.getNormalBounds().height,
-            isMaximized: window.isMaximized()
-          }
-        };
+            isMaximized: this.value[this.windowName]?.isMaximized ?? false
+          } satisfies WindowStatus)
+        });
     }
+    console.debug("[WIN] Electron event: "+(eventType));
     console.debug("[WIN] State changed to: "+JSON.stringify(this.value[this.windowName]));
-    console.debug("[WIN] Electron event: "+(eventType??"not definied"));
-    if(workaroundLinuxMinMaxEvents && event !== eventType)
-      console.debug("[WIN] Actual event calculated by WebCord: "+(event??"unknown"));
   }
 
   /**
@@ -325,11 +286,10 @@ export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>
 
   public watchState(window: BrowserWindow):void {
     // Timeout is needed to give some time for resize to end on Linux:
-    window.on("resize", () => setTimeout(()=>this.setState(window, "resize"),100));
-    if(!workaroundLinuxMinMaxEvents){
-      window.on("unmaximize", () => this.setState(window, "unmaximize"));
-      window.on("maximize", () => this.setState(window, "maximize"));
-    }
+    window.on("resized",() => console.log("foo"));
+    window.on("resize", () => setTimeout(()=>this.setState(window), 100));
+    window.on("unmaximize", () => this.setState(window, "unmaximize"));
+    window.on("maximize", () => this.setState(window, "maximize"));
   }
 
   /**
@@ -339,31 +299,31 @@ export class WinStateKeeper extends Config<Partial<Record<string, windowStatus>>
    * @param path Path to application's configuration. Defaults to `app.getPath('userData')+/windowState.json`
    * @param spaces Number of spaces that will be used for indentation of the configuration file.
    */
-  constructor(windowName: string, path = resolve(app.getPath("userData"),"windowState"), spaces?: number) {
-    const defaults = {
+  constructor(windowName: T, path = resolve(app.getPath("userData"),"windowState"), spaces?: number) {
+    const defaults = Object.freeze({
       width: appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3),
       height: appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3),
-    };
-    const defaultConfig = {
-      [windowName]: {
+    });
+    // Initialize class
+    super(path, true, Object.freeze({
+      [windowName]: Object.freeze({
         width: defaults.width,
         height: defaults.height,
         isMaximized: false
-      }
-    };
-    // Initialize class
-    super(path,true,defaultConfig,spaces);
+      } satisfies WindowStatus)
+    }) as unknown as Partial<Record<T, WindowStatus>>, spaces);
+
     this.windowName = windowName;
-    this.initState = {
+    this.initState = Object.freeze({
       width: this.value[this.windowName]?.width ?? defaults.width,
       height: this.value[this.windowName]?.height ?? defaults.height,
       isMaximized: this.value[this.windowName]?.isMaximized ?? false
-    };
+    });
   }
 }
 
 void import("electron/main")
-  .then(Electron => Electron.ipcMain)
+  .then(electron => electron.ipcMain)
   .then(ipc => ipc.on("settings-config-modified",
     (event, config:AppConfig["defaultConfig"]) => {
       // Only permit the local pages.

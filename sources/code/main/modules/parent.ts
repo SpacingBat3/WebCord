@@ -1,5 +1,5 @@
 import { app, BrowserWindow, session } from "electron/main";
-import l10n from "../../common/modules/l10n";
+import L10N from "../../common/modules/l10n";
 import { appInfo, getBuildInfo } from "../../common/modules/client";
 import { resolve } from "path";
 import { deepmerge } from "deepmerge-ts";
@@ -16,7 +16,7 @@ const popups = [
  * It will either create a such window or do nothing if it does already exists.
  * 
  */
-export function initWindow(name:string&keyof l10n["client"]["windows"], parent: Electron.BrowserWindow, properties?: Electron.BrowserWindowConstructorOptions) {
+export function initWindow(name:string&keyof L10N["client"]["windows"], parent: Electron.BrowserWindow, properties?: Electron.BrowserWindowConstructorOptions) {
   const isPopup = popups.includes(name);
   if(!app.isReady()) throw new Error("Tried to initialize a new parent window when app is not ready!");
   const wSession = isPopup ? session.defaultSession : session.fromPartition("temp:"+name);
@@ -24,7 +24,7 @@ export function initWindow(name:string&keyof l10n["client"]["windows"], parent: 
     if(window.webContents.session === wSession) return;
   if(!parent.isVisible()) parent.show();
   const win = new BrowserWindow(deepmerge<[Electron.BrowserWindowConstructorOptions,Electron.BrowserWindowConstructorOptions]>({
-    title: app.getName() + " – " + (new l10n()).client.windows[name],
+    title: app.getName() + " – " + (new L10N()).client.windows[name],
     show: false,
     parent: parent,
     backgroundColor: appInfo.backgroundColor,

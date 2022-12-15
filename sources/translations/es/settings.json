@@ -26,7 +26,8 @@
             "name": "Ventana principal de WebCord",
             "description": "Controla el comportamiento y aspecto de la ventana que muestra la interfaz del cliente.",
             "labels": {
-                "transparent": "Activar para un fondo de ventana translúcido."
+                "transparent": "Activar para un fondo de ventana translúcido.",
+                "hideOnClose": "Ocultar la ventana a la barra de herramientas usando el botón de cerrar."
             }
         }
     },

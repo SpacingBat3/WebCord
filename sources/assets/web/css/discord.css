@@ -11,7 +11,7 @@ div[class|=scroller] > div[class|=listItem]:nth-last-child(3) > * {
 
 /* Assign 'rainbow' color to my nickname! */
 img[src*="423864076095979522"] ~ :is(h1,h2,h3,h4,h5,h6) > span > span {
-    animation: rainbow linear 20s infinite;        
+    animation: rainbow linear 20s infinite;
 }
 
 :root {
@@ -66,14 +66,14 @@ div[class|=toolbar] > a {
     display: none;
 }
 
-/* Fix popup position going negative. */
-div[id^=popout_][style] {
+/* Fix popup position going negative. Also sets fixed toolbar popup position. */
+div[id^=popout_]:is([style*="; right: -"],[style*="; top: 44px;"]) {
     right: 16px !important;
 }
 
 /* Limit elements width to not take space above the screen width. */
 div[class|=layerContainer] :not([class*=Tooltip]) {
-    max-width: 100vw !important;
+    max-width: 100vw;
 }
 
 /* Mobile interface tweaks */
@@ -86,9 +86,10 @@ div[class|=layerContainer] :not([class*=Tooltip]) {
     section[class|=title] > div[class|=toolbar] > div[class|=search] {
         display: none;
     }
-    /* Fix popup position being to far from the right. */
+    /* Fix popup position being to far from the right/left. */
     div[id^=popout_][style] {
         right: 0px !important;
+        left: unset !important;
     }
     /* Fix size of some popups take slightly higher width than they should be. */
     div[role=dialog] div[class|=header] {

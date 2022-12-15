@@ -4,7 +4,7 @@
 
 // Let's import some keys from the package.json:
 
-import type { buildInfo } from "../common/global";
+import type { BuildInfo } from "../common/global";
 import { Person, PackageJSON } from "../common/modules/package";
 import { existsSync } from "fs";
 import { readFile, writeFile, rm } from "fs/promises";
@@ -14,8 +14,8 @@ import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
 
 const packageJson = new PackageJSON(["author","version","name"]);
 const projectPath = resolve(__dirname, "../../..");
-const AppUserModelId = process.env["WEBCORD_WIN32_APPID"];
-const FlatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
+const appUserModelId = process.env["WEBCORD_WIN32_APPID"];
+const flatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
   "io.github.spacingbat3.webcord";
 const author = packageJson.data.author !== undefined ? new Person(packageJson.data.author).name : "SpacingBat3";
 
@@ -82,16 +82,17 @@ const config: ForgeConfigFile = {
     ],
     quiet: true,
     ignore: [
-      // Directories:
+      /*********** Directories: **********/
       /app\/(?:.*\/)?build\/?$/,
+      /cache\/?$/,
       /out\/?$/,
       /schemas\/?$/,
-      // Files:
+      /************** Files: *************/
       /\.eslintrc\.json$/,
       /tsconfig\.json$/,
       /sources\/code\/?$/,
       /sources\/assets\/icons\/app\.icns$/,
-      // Hidden (for *nix OSes) files:
+      /********** Hidden files: **********/
       /^\.[a-z]+$/,
       /.*\/\.[a-z]+$/
     ],
@@ -110,10 +111,11 @@ const config: ForgeConfigFile = {
       platforms: ["win32"],
     },
     // Finally, some kind of installer in the configuration for Windows!
+    { name: "@electron-forge/maker-squirrel" },
     {
       name: "@electron-forge/maker-wix",
       config: {
-        appUserModelId: AppUserModelId ?? author+".WebCord",
+        appUserModelId: appUserModelId ?? author+".WebCord",
         ui: { chooseDirectory: true },
         features: {
           autoUpdate: false,
@@ -131,7 +133,7 @@ const config: ForgeConfigFile = {
         programFilesFolderName: "WebCord",
         shortcutFolderName: "WebCord"
       },
-      enabled: process.env["WEBCORD_WIX"]?.toLowerCase() === "true"
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
     },
     {
       name: "@electron-forge/maker-dmg",
@@ -185,7 +187,7 @@ const config: ForgeConfigFile = {
       name: "@electron-forge/maker-flatpak",
       config: {
         options: {
-          id: FlatpakId,
+          id: flatpakId,
           genericName: desktopGeneric,
           categories: desktopCategories,
           runtimeVersion: "21.08",
@@ -215,21 +217,22 @@ const config: ForgeConfigFile = {
           icon: iconFile + ".png"
         }
       },
-      enabled: process.env["WEBCORD_FLATPAK"]?.toLowerCase() === "true"
-    }
-    /* Snaps are disabled until maker will be fixed to work without the
-       multipass.
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
+    },
+    /* Snap maker still seems to fail for me, not sure why through... */
     {
       name: "@electron-forge/maker-snap",
       config: {
         features: {
           audio: true,
-          browserSandbox: true
+          passwords: true,
+          webgl: true
         },
         grade: (getBuildID() === "release" ? "stable" : "devel"),
-      }
-    },
-    */
+        confinement: (getBuildID() === "release" ? "strict" : "devmode")
+      },
+      enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
+    }
   ],
   publishers: [
     {
@@ -245,11 +248,11 @@ const config: ForgeConfigFile = {
     }
   ],
   hooks: {
-    packageAfterCopy: async (_ForgeConfig, path, _electronVersion, platform) => {
+    packageAfterCopy: async (_forgeConfig, path, _electronVersion, platform) => {
       /** Generates `buildInfo.json` file and saves it somewhe. */
       async function writeBuildInfo() {
-        const buildConfig: buildInfo = {
-          ...(platform === "win32" && AppUserModelId !== undefined ? { AppUserModelId } : {}),
+        const buildConfig: BuildInfo = {
+          ...(platform === "win32" && appUserModelId !== undefined ? { AppUserModelId: appUserModelId } : {}),
           type: getBuildID(),
           commit: getBuildID() === "devel" ? (await getCommit())??undefined : undefined,
           features: {
@@ -271,14 +274,40 @@ const config: ForgeConfigFile = {
       ]);
     },
     // Hardened Electron binary via Electron Fuses feature.
-    packageAfterExtract: (_ForgeConfig, path, _electronVersion, platform) =>
+    packageAfterExtract: (_forgeConfig, path, _electronVersion, platform) =>
       flipFuses(resolve(path, getElectronPath(platform)), {
         version: FuseVersion.V1,
         [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,
         [FuseV1Options.RunAsNode]: getBuildID() === "devel",
         [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: getBuildID() === "devel",
         [FuseV1Options.EnableNodeCliInspectArguments]: getBuildID() === "devel"
-      })
+      }),
+    // Fix file names of Windows makers:
+    postMake: (_forgeConfig, makeResults) => Promise.all(makeResults
+      .map(async result => {
+        // Ignore other platforms
+        if(result.platform !== "win32")
+          return result;
+        // Import modules
+        const p = await import("path"), fs = import("fs/promises");
+        // Set list of new artifacts
+        result.artifacts = await Promise.all(result.artifacts
+          // Rename artifacts to include arch suffix.
+          .map(async artifact => {
+            const ext = p.extname(artifact);
+            const basename = p.basename(artifact,ext);
+            // Ignore artifacts that doesn't need to be fixed.
+            if(basename.includes(result.arch))
+              return artifact;
+            const newArtifact = p.resolve(
+              p.dirname(artifact), basename+"-"+result.arch+ext
+            );
+            await (await fs).rename(artifact,newArtifact);
+            return newArtifact;
+          })
+        );
+        return result;
+      }))
   }
 };
 
