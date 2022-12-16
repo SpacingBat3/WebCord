@@ -35,7 +35,7 @@ interface MainWindowFlags {
 }
 
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
-  const l10nStrings = (new L10N()).client;
+  const l10nStrings = new L10N().client;
 
   const internalWindowEvents = new EventEmitter();
 

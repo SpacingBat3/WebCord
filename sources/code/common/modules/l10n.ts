@@ -1,9 +1,8 @@
 /* l10nSupport – app localization implementation */
 import { resolve, dirname } from "path";
 import { readFileSync, existsSync } from "fs";
-import { deepmerge } from "deepmerge-ts";
 import { app } from "electron/main";
-import { objectsAreSameType } from "../global";
+import { typeMerge } from "../global";
 import { EventEmitter } from "events";
 import { getAppPath, getLocale, getName, showMessageBox } from "./electron";
 
@@ -30,6 +29,8 @@ langDialog.once("show-error", (localizedStrings: string) => {
 			"This will lead to " + getName() + " use English strings instead."
   });
 });
+
+const localeCache: Partial<typeof defaultTranslations> = {};
 
 /**
  * The class that can be used to get an object containing translated strings and/or English strings
@@ -76,10 +77,13 @@ class L10N {
   ]);
 
   private loadFile<T extends keyof typeof defaultTranslations>(type: T): typeof defaultTranslations[T] {
+    const cache = localeCache[type];
+    if(cache !== undefined)
+      return cache;
     /**
 		 * Computed strings (mixed localized and fallback object)
 		 */
-    let finalStrings: typeof defaultTranslations[T] | unknown = defaultTranslations[type];
+    let finalStrings: typeof defaultTranslations[T] = defaultTranslations[type];
     const localeFile = this.searchPaths
       .map(dir => resolve(dir, type+".json"))
       .find(file => existsSync(file));
@@ -90,18 +94,11 @@ class L10N {
         "       because the app hasn't still emitted the 'ready' event!",
         "[WARN] In this case, English strings will be used as a fallback."
       ].join("\n"));
-
     if (localeFile !== undefined) {
       console.debug("[L10N] Computing strings for locale list: "+this.locales.join(", "));
-      finalStrings = deepmerge(defaultTranslations[type], JSON.parse(readFileSync(localeFile).toString()));
+      finalStrings = typeMerge(defaultTranslations[type], JSON.parse(readFileSync(localeFile).toString()));
     }
-
-    if (objectsAreSameType(finalStrings, defaultTranslations[type])) {
-      return finalStrings;
-    } else {
-      langDialog.emit("show-error", localeFile);
-      return defaultTranslations[type];
-    }
+    return localeCache[type] = finalStrings;
   }
   public readonly client;
   public readonly web;
