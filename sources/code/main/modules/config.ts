@@ -2,7 +2,7 @@
  * configManager
  */
 
-import * as fs from "fs";
+import { readFileSync, writeFileSync, existsSync, rmSync } from "fs";
 import {
   app,
   BrowserWindow,
@@ -11,8 +11,7 @@ import {
 } from "electron/main";
 import { resolve } from "path";
 import { appInfo } from "../../common/modules/client";
-import { objectsAreSameType, PartialRecursive } from "../../common/global";
-import { deepmerge } from "deepmerge-ts";
+import { typeMerge, PartialRecursive } from "../../common/global";
 
 type reservedKeys = "radio"|"dropdown"|"input"|"type"|"keybind";
 
@@ -141,18 +140,19 @@ const fileExt = Object.freeze({
 class Config<T> {
   readonly #pathExtension: (typeof fileExt)["encrypted"|"json"];
   readonly #path;
+  #cache: T|null = null;
   /** Default configuration values. */
   private readonly defaultConfig;
   protected spaces = 4;
-  private write(object: unknown) {
+  #write(object: unknown) {
     const decodedData = JSON.stringify(object, null, this.spaces);
     let encodedData:string|Buffer = decodedData;
     if(this.#pathExtension === fileExt.encrypted)
       encodedData = safeStorage.encryptString(decodedData);
-    fs.writeFileSync(this.#path+this.#pathExtension,encodedData);
+    writeFileSync(this.#path+this.#pathExtension,encodedData);
   }
-  private read(): unknown {
-    const encodedData = fs.readFileSync(this.#path+this.#pathExtension);
+  #read(): unknown {
+    const encodedData = readFileSync(this.#path+this.#pathExtension);
     let decodedData = encodedData.toString();
     if(this.#pathExtension === fileExt.encrypted)
       decodedData = safeStorage.decryptString(encodedData);
@@ -168,21 +168,17 @@ class Config<T> {
    */
 
   public set value(object: PartialRecursive<T>) {
-    const oldObject = this.value;
-    const newObject:unknown = deepmerge(oldObject, object);
-    if(objectsAreSameType(newObject, oldObject))
-      this.write(newObject);
-    else
-      console.debug(newObject);
+    const value = typeMerge(this.value, {nullType: Boolean}, object);
+    this.#write(value);
+    this.#cache = value;
   }
   /** Returns the entire parsed configuration file in form of the JavaScript object. */
   public get value(): Readonly<T> {
-    const parsedConfig:unknown = this.read();
-    const mergedConfig:unknown = deepmerge(this.defaultConfig, parsedConfig);
-    if(objectsAreSameType(mergedConfig, this.defaultConfig))
-      return Object.freeze(mergedConfig);
-    else
-      return this.defaultConfig;
+    if(this.#cache !== null)
+      return this.#cache;
+    const value = typeMerge(this.defaultConfig, {nullType: Boolean}, this.#read());
+    this.#cache = value;
+    return Object.freeze(value);
   }
   constructor(path:string, encrypted: boolean, defaultConfig: T, spaces?: number) {
     if(encrypted && !isReadyToEncrypt())
@@ -199,24 +195,24 @@ class Config<T> {
     // Restore or remove configuration.
     switch(this.#pathExtension) {
       case fileExt.encrypted:
-        if(!fs.existsSync(this.#path+fileExt.encrypted) && fs.existsSync(this.#path+fileExt.json))
-          this.write(fs.readFileSync(this.#path+fileExt.json));
-        if(fs.existsSync(this.#path+fileExt.json))
-          fs.rmSync(this.#path+fileExt.json);
+        if(!existsSync(this.#path+fileExt.encrypted) && existsSync(this.#path+fileExt.json))
+          this.#write(readFileSync(this.#path+fileExt.json));
+        if(existsSync(this.#path+fileExt.json))
+          rmSync(this.#path+fileExt.json);
         break;
       case fileExt.json:
-        if(fs.existsSync(this.#path+fileExt.encrypted))
-          fs.rmSync(this.#path+fileExt.encrypted);
+        if(existsSync(this.#path+fileExt.encrypted))
+          rmSync(this.#path+fileExt.encrypted);
         break;
     }
     // Fix configuration file.
-    if (!(fs.existsSync(this.#path+this.#pathExtension)))
-      this.write(this.defaultConfig);
+    if (!(existsSync(this.#path+this.#pathExtension)))
+      this.#write(this.defaultConfig);
     else {
       try {
-        this.write({...this.defaultConfig, ...this.value});
+        this.#write({...this.defaultConfig, ...this.value});
       } catch {
-        this.write(this.defaultConfig);
+        this.#write(this.defaultConfig);
       }
     }
   }

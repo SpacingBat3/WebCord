@@ -56,8 +56,8 @@ export function getBuildInfo(): Readonly<BuildInfo> {
   try {
     const data = readFileSync(resolve(getAppPath(), "buildInfo.json"));
     const buildInfo:unknown = JSON.parse(data.toString());
-    if (isPartialBuildInfo(buildInfo))
-      return Object.freeze(deepmerge(defaultBuildInfo, buildInfo) as BuildInfo);
+    if(isPartialBuildInfo(buildInfo))
+      return Object.freeze(typeMerge(defaultBuildInfo, {}, buildInfo) as BuildInfo);
     else
       return defaultBuildInfo;
   } catch {
