@@ -1,8 +1,57 @@
 #!/usr/bin/env -S bash -e
 # shellcheck shell=bash
 
-. "$(dirname -- "$0")/_/husky.sh"
-. "$(dirname -- "$0")/core.sh"
+. "$(dirname -- "$0")/_/husky.sh";
+. "$(dirname -- "$0")/core.sh";
 
-lftest;
+PKGROOT="$(dirname -- "$0")/..";
+
+# Check metadata files.
+
+mapfile -t FILES < <(git diff --staged --name-only);
+lock=false;
+meta=false;
+for file in "${FILES[@]}"; do
+  if [[ "$file" == "package-lock.json" ]]; then
+      lock=true;
+  elif [[ "$file" == "package.json" ]]; then
+      meta=true;
+  fi
+  if [[ $lock == "true" && $meta == "true" ]]; then break; fi
+done
+if [[  "$meta" == "false" && "$lock" == "true" ]]; then
+  echo >&2;
+  echo "pre-commit: unnecesary-lockfile" >&2;
+  printf '    %s\n' \
+    "It seems that you've tried to commit a lock file without any changes"\
+    "done in 'package.json'! This operation will be blocked as lockfile"\
+    "should not be bumped unless a development tree has changed in some way"\
+    "or commit is made that bumps package version and the new tag is going"\
+    "to be released" >&2
+  echo >&2;
+  exit 1;
+elif [[ "$meta" == "true" && "$lock" == "false" ]]; then
+  old="$(git show HEAD:/package.json)";
+  new="$(cat "$PKGROOT/package.json")";
+  versions=(
+    "$(c_svcomp 1 "$(c_json .version "$new")" "$(c_json .version "$old")")"
+    "$(c_svcomp 1 "$(c_json .dependencies.electron"$new")" "$(c_json .dependencies.electron "$ld")")"
+  )
+  if [[ "${versions[0]}" -eq 0 && "${versions[1]}" -eq 1 ]]; then
+    echo >&2;
+    echo "pre-commit: breaking-deps!" >&2;
+    printf '    %s\n' \
+      "It seems that you've tried to commit a 'package.json' file in which"\
+      "there was made a major release bump to Electron. This change is considered"
+      "as 'breaking' because it can announce new bugs into the application due"\
+      "to the API changes, Chromium/Node.js bump and potentially untested"\
+      "features which has been recently announced. For this reason, WebCord"\
+      "should be bumped to the next major version as well." >&2
+    echo >&2;
+    exit 2;
+  fi
+fi
+
+# Run package tests (compiler+linter).
+
 npkg test;

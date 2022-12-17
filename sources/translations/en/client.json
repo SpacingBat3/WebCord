@@ -10,6 +10,8 @@
         "dictionaryAdd": "Add to the local dictionary",
         "copyURL": "Copy link address",
         "copyURLText": "Copy link text",
+        "copyImage": "Copy image",
+        "copyImageURL": "Copy link to image",
         "inspectElement": "Inspect"
     },
     "menubar": {

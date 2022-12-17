@@ -36,7 +36,7 @@ interface MainWindowFlags {
 }
 
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
-  const l10nStrings = (new L10N()).client;
+  const l10nStrings = new L10N().client;
 
   const internalWindowEvents = new EventEmitter();
 
@@ -168,32 +168,23 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       ]
     },
     (details, callback) => {
-
-      const configData = (new AppConfig()).value.settings.privacy.blockApi;
-            
-      const cancel = configData.science ||
-                configData.typingIndicator ||
-                configData.fingerprinting;
-
+      const {
+        science,
+        fingerprinting,
+        typingIndicator
+      } = (new AppConfig()).value.settings.privacy.blockApi;
+      /** Parsed URL of the request. */
       const url = new URL(details.url);
-
-      if (cancel) console.debug("[API] Blocking " + url.pathname);
-
+      if (science || typingIndicator || fingerprinting)
+        console.debug("[API] Blocking " + url.pathname);
       if (url.pathname.endsWith("/science") || url.pathname.endsWith("/track"))
-        callback({ cancel: configData.science });
+        callback({ cancel: science });
       else if (url.pathname.endsWith("/typing"))
-        callback({ cancel: configData.typingIndicator });
-      else if (url.pathname.endsWith("/api.js"))
-        callback({ cancel: configData.fingerprinting });
-      else if (url.pathname.includes("/cdn-cgi/")) {
-        // Looks like many scripts done for tracking might be published there.
-        // At least `invisible.js` script looks kinda suspicious and Discord
-        // works OK without it. Not sure how to categorise it through...
-        callback({ cancel: configData.fingerprinting||configData.science });
-      }
+        callback({ cancel: typingIndicator });
+      else if (url.pathname.endsWith("/api.js") || url.pathname.startsWith("/cdn-cgi/"))
+        callback({ cancel: fingerprinting });
       else
         callback({ cancel: false });
-
     },
   );
   // (Device) permissions check/request handlers:

@@ -21,6 +21,14 @@
             "labels": {
                 "flash": "Erleuchte Taskleisten-Icon bei neuer Nachricht."
             }
+        },
+        "window": {
+            "name": "WebCord's Hauptfenster",
+            "labels": {
+                "transparent": "Transparenten Hintergrund erlauben.",
+                "hideOnClose": "Fenster per Schließen-Knopf in die Symbolleiste minimieren."
+            },
+            "description": "Bestimmt das Aussehen und Verhalten des aktuellen Fensters."
         }
     },
     "privacy": {
@@ -42,23 +50,25 @@
                 "video": "Kamera",
                 "audio": "Mikrofon",
                 "fullscreen": "Vollbild",
-                "notifications": "Benachrichtigungen"
+                "notifications": "Benachrichtigungen",
+                "background-sync": "Hintergrundsynchronisation"
             }
         }
     },
     "advanced": {
         "redirection": {
             "description": "Steuert die Aktionen bei herkunftsübergreifenden Umleitungen. <b>Dies betrifft die Anwendungssicherheit</b>.",
-            "name": "Herkunftsübergreifendes Weiterleitungsverhalten",
+            "name": "Weiterleitungsverhalten bei Seiten aus anderen Quellen",
             "labels": {
                 "warn": "Immer vor herkunftsübergreifenden Umleitungen zu externen Anwendungen warnen."
             }
         },
         "csp": {
-            "name": "Richtlinie zur Inhaltssicherheit",
+            "name": "Inhalts-Sicherheitsrichtlinien",
             "labels": {
-                "enabled": "In-App-Sicherheitsrichtlinie für Inhalte verwenden"
-            }
+                "enabled": "In-App-Sicherheitsrichtlinie für Inhalte verwenden."
+            },
+            "description": "Ändert ob die Anwendung Discord's Content-Sicherheitsrichtlinien ignorieren soll und stattdessen eigene setzt, um die Sicherheit und Privatsphäre zu erhöhen."
         },
         "name": "Fortgeschritten",
         "cspThirdParty": {
@@ -69,12 +79,12 @@
             }
         },
         "currentInstance": {
-            "description": "Wählt die Instanz aus, mit der sich WebCord verbinden soll. <b>Experimentell</b> da die Fosscord-Implementierung noch nicht vollständig abgeschlossen ist.",
+            "description": "Wählt die Instanz aus, mit der sich WebCord verbinden soll. Dies ist ein <b>experimentelles</b> Feature, da die Fosscord-Implementierung noch nicht vollständig abgeschlossen ist.",
             "name": "Discord-Instanz"
         },
         "devel": {
             "labels": {
-                "enabled": "Entwicklermodus einschalten"
+                "enabled": "Entwicklermodus aktivieren."
             },
             "name": "Entwicklermodus",
             "description": "Ermöglicht den Zugriff auf unfertige Optionen, die möglicherweise als fehlerhaft oder gefährlich eingestuft werden. <b>Haftungsausschluss</b>: Die Anwendungsentwickler sind nicht für Fehler oder Probleme verantwortlich, nachdem diese Option aktiviert wurde - bitte melden Sie diese nicht!"
@@ -83,12 +93,21 @@
             "name": "Client-Optimierungen",
             "labels": {
                 "gpu": "Optimieren Sie den Client für die derzeit aktive Grafikkarte."
-            }
+            },
+            "description": "Anhand der vorliegenden Soft- und Hardwarekonfiguration wird versucht, der Chromium-Engine angepasste Flags zu übergeben, sodass die Leistungsfähigkeit von Electron erhöht wird. Dies ist ein <b>experimentelles</b> Feature, da Chromium Gründe hat, diese Einstellungen nicht standardmäßig anzuwenden."
         },
         "webApi": {
             "name": "Zugang zu JavaScript APIs",
             "labels": {
-                "webGl": "WebGL aktivieren"
+                "webGl": "WebGL aktivieren."
+            },
+            "description": "Legt fest, welche API bei nicht-privilegierten Scripts (DOM) gewählt wird."
+        },
+        "unix": {
+            "description": "Aktiviert Features, die von Chromium/Blink als experimentell eingestuft wurden. <b>Verwenden auf eigene Gefahr</b>.",
+            "name": "Experimentelle Features für Unix-oide Betriebssysteme",
+            "labels": {
+                "autoscroll": "Scrollen mit mittlerer Maustaste aktivieren."
             }
         }
     }
