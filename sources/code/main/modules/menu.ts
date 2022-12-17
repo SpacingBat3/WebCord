@@ -44,7 +44,7 @@ sideBar.on("hide", (contents: Electron.WebContents) => {
 // Contex Menu with spell checker
 
 export function context(parent: Electron.BrowserWindow): void {
-  const { context } = (new L10N()).client;
+  const { context } = new L10N().client;
   parent.webContents.on("context-menu", (_event, params) => Menu.buildFromTemplate([
     { type: "separator" },
     // Dictionary suggestions
@@ -111,7 +111,7 @@ export function context(parent: Electron.BrowserWindow): void {
 // Tray menu
 
 export function tray(parent: Electron.BrowserWindow): Electron.Tray {
-  const strings = (new L10N()).client;
+  const strings = new L10N().client;
   const {icons} = appInfo;
   const tray = new Tray(icons.tray.default);
   function toggleVisibility() {
@@ -176,7 +176,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
 // Menu Bar
 
 export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.Menu {
-  const strings = (new L10N()).client;
+  const strings = new L10N().client;
   const webLink = repoLink.substring(repoLink.indexOf("+") + 1);
   const menu = Menu.buildFromTemplate([
     // File

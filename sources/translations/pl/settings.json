@@ -40,7 +40,7 @@
             "labels": {
                 "science": "Blokuj żądania telemetrii (<code>/science</code> i <code>/tracing</code>).",
                 "typingIndicator": "Blokuj wskaźnik pisania (<code>/typing</code>).",
-                "fingerprinting": "Blokuj skrypt <code>api.js</code> zbierający <i>odcisk palca</i> klienta."
+                "fingerprinting": "Blokuj znane metody zbierania odcisku palca (<code>api.js</code> i <code>cdn-cgi</code>)."
             }
         },
         "permissions": {

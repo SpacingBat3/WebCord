@@ -188,13 +188,12 @@ you don't even need to be familiar with programming at all!
 
 [dlbadge]: https://img.shields.io/github/downloads/SpacingBat3/WebCord/total.svg?label=Downloads&color=%236586B3
 [downloads]: https://github.com/SpacingBat3/WebCord/releases "Releases"
-[build-badge]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/Run%20tests?label=Build&logo=github
+[build-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/build.yml?label=Build&logo=github&branch=master
 [build-url]: https://github.com/SpacingBat3/WebCord/actions/workflows/build.yml "Build state"
 [l10nbadge]: https://hosted.weblate.org/widgets/webcord/-/svg-badge.svg
 [l10n]: https://hosted.weblate.org/engage/webcord/ "Help at WebCord's localization"
 [Sentry]: https://sentry.io "Application Monitoring and Error Tracking Software"
 [Discord-Electron]: https://github.com/GyozaGuy/Discord-Electron "An Electron Discord app designed for use on Linux systems."
-[npm-docs]: https://docs.npmjs.com/cli/v7/configuring-npm/package-json#people-fields-author-contributors "People Fields | NPM Documentation"
 [electron]: https://www.electronjs.org/ "Build cross-platform desktop apps with JavaScript, HTML, and CSS."
 [electron-forge]: https://www.electronforge.io/ "A complete tool for creating, publishing, and installing modern Electron applications."
 [license]: ../LICENSE "WebCord license"
@@ -202,7 +201,7 @@ you don't even need to be familiar with programming at all!
 [discordapi]: https://discord.com/developers/docs/reference "Official Discord REST API documentation"
 [chromiumbounty]: https://bughunters.google.com/about/rules/5745167867576320/chrome-vulnerability-reward-program-rules "Chrome Vulnerability Reward Program Rules"
 [Electron#Security]: https://www.electronjs.org/docs/latest/tutorial/security "Security | Electron Documentation"
-[codeql-badge]: https://img.shields.io/github/workflow/status/SpacingBat3/WebCord/CodeQL?label=Analysis&logo=github&logoColor=white
+[codeql-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/codeql-analysis.yml?label=Analysis&logo=github&logoColor=white&branch=master
 [codeql-url]: https://github.com/SpacingBat3/WebCord/actions/workflows/codeql-analysis.yml "CodeQL Analysis status"
 [discord-badge]: https://img.shields.io/discord/972965161721811026?color=%2349a4d3&label=Support&logo=discord&logoColor=white
 [discord-url]: https://discord.gg/aw7WbDMua5 "Official support server on Discord!"

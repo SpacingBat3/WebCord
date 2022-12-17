@@ -203,9 +203,47 @@ export const sanitizeConfig = Object.freeze({
 });
 
 /**
- * Like {@link Partial<T>}, except it also makes all subproperties in T
+ * Like {@link Partial<T>}, except it also makes all subproperties in `T`
  * optional.
  */
 export type PartialRecursive<T> = {
   [P in keyof T]?: PartialRecursive<T[P]>
 };
+
+/**
+ * Merges deeply objects, but preserves the type of the first one at all
+ * costs, i.e. `Array` deep merging is ignored.
+ * 
+ * **Note:** Values of same type are expected to have the same constructors.
+ * 
+ * @param source Object used as a type source.
+ * @param objects Objects to merge. 
+ * @returns Merged object.
+ * 
+ * @todo More acurate types (e.g. literals to primitives)
+ */
+export function typeMerge<T extends object>(source: T, ...objects:unknown[]) {
+  const hasOwn = Object.hasOwn as <T>(o:T,s:string|symbol|number)=>s is keyof T;
+  const typeOf = (o1:unknown,c:unknown) => (o1?.constructor ?? o1) === c;
+  function deepMerge<T,U>(source:T,object:U) {
+    const result = {...source};
+    if(!(source instanceof Object) || !(object instanceof Object))
+      return source;
+    (Object.keys(source)
+      .filter(
+        key => hasOwn(source as T,key) &&
+          hasOwn(source as U,key) &&
+          typeOf(source[key],(object[key] as unknown)?.constructor) &&
+          !Array.isArray(source)
+      ) as (keyof T & keyof U)[])
+      .map(key => {
+        if(typeOf(source[key],Object))
+          result[key] = deepMerge(source[key], object[key]);
+        else
+          result[key] = object[key] as T[typeof key];
+      });
+    return result;
+  }
+  return (objects as T[])
+    .reduce((prev, cur:unknown) => deepMerge(prev, cur), source);
+}
