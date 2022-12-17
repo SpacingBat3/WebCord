@@ -96,7 +96,7 @@ class L10N {
       ].join("\n"));
     if (localeFile !== undefined) {
       console.debug("[L10N] Computing strings for locale list: "+this.locales.join(", "));
-      finalStrings = typeMerge(defaultTranslations[type], JSON.parse(readFileSync(localeFile).toString()));
+      finalStrings = typeMerge(defaultTranslations[type], {}, JSON.parse(readFileSync(localeFile).toString()) as unknown);
     }
     return localeCache[type] = finalStrings;
   }

@@ -45,39 +45,6 @@ export const enum GPUVendors {
 }
 
 /**
- * A generic TypeGuard, used to deeply check if `object` can be merged with another
- * `object` without loosing the existing type structure.
- * 
- * @param object1 An object to check the type of.
- * @param object2 An object used for the type comparasion.
- */
-export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
-  // False when parameters are not objects.
-  if(!(object1 instanceof Object && object2 instanceof Object)) return false;
-	
-  // True when parameters are exactly same objects.
-  if(JSON.stringify(object1) === JSON.stringify(object2)) return true;
-
-  const results = Object.keys({...object1,...object2}).map(key => {
-    if(key in object1 && key in object2) {
-      const key1:unknown = object1[key as keyof unknown], key2:unknown = object2[key as keyof unknown];
-      if(typeof key1 === typeof (key2 === null ? false : key2) || key1 === key2) {
-        if(typeof key1 === "object" && key1 !== null) {
-          if(Array.isArray(key1)&&Array.isArray(key2))
-            return true;
-          else
-            return objectsAreSameType(key1,key2);
-        }
-        return true;
-      }
-      return false;
-    }
-    return true;
-  });
-  return !results.includes(false);
-}
-
-/**
  * Allowed protocol list.
  * 
  * For security reasons, `shell.openExternal()` should not be used for every
@@ -210,19 +177,28 @@ export type PartialRecursive<T> = {
   [P in keyof T]?: PartialRecursive<T[P]>
 };
 
+interface TypeMergeConfig {
+  /** A class which can replace `null` values in source object. */
+  nullType?: object;
+}
+
 /**
- * Merges deeply objects, but preserves the type of the first one at all
- * costs, i.e. `Array` deep merging is ignored.
+ * Merges deeply objects, but tries to preserve the type of the first ones. This
+ * has currently a few assumptions:
+ * 
+ * 1. `Array` aren't merged at all.
+ * 2. Only primitive `Object` can be deeply merged.
+ * 3. Other values are assigned by type.
  * 
  * **Note:** Values of same type are expected to have the same constructors.
  * 
  * @param source Object used as a type source.
- * @param objects Objects to merge. 
+ * @param objects Objects to merge (at least one). 
  * @returns Merged object.
  * 
  * @todo More acurate types (e.g. literals to primitives)
  */
-export function typeMerge<T extends object>(source: T, ...objects:unknown[]) {
+export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, ...objects:unknown[]&[unknown]) {
   const hasOwn = Object.hasOwn as <T>(o:T,s:string|symbol|number)=>s is keyof T;
   const typeOf = (o1:unknown,c:unknown) => (o1?.constructor ?? o1) === c;
   function deepMerge<T,U>(source:T,object:U) {
@@ -231,10 +207,12 @@ export function typeMerge<T extends object>(source: T, ...objects:unknown[]) {
       return source;
     (Object.keys(source)
       .filter(
-        key => hasOwn(source as T,key) &&
-          hasOwn(source as U,key) &&
-          typeOf(source[key],(object[key] as unknown)?.constructor) &&
-          !Array.isArray(source)
+        key => hasOwn(source as T,key) && hasOwn(object as U,key) && (
+          typeOf(source[key],(object[key] as unknown)?.constructor) || (config.nullType !== undefined ?
+            (source[key] as unknown) === null && (object[key] as unknown)?.constructor === config.nullType :
+            false
+          )
+        ) && !Array.isArray(source)
       ) as (keyof T & keyof U)[])
       .map(key => {
         if(typeOf(source[key],Object))
