@@ -24,15 +24,11 @@ export function isJsonSyntaxCorrect(string: string) {
 }
 
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
-export const discordFavicons = Object.freeze({
-  /** Default favicon (without *blue dot* indicator). */
-  default: "a2205eb4eb1cbf4ef7555e579bee3ba260574f3b", // seems always valid
-  unread: Object.freeze([
-    "ee9eef1403e76cb770d1c4a32265e8354e6af1a0", // works on FIFO pipe errors
-    "40f51a9b9ad411d2e0e897661a08305b4a76ec76", // produced by older Electron releases
-    "541317111758ff00613b2ff56f284a2474bd3d81"  // seems to be valid otherwise
-  ])
-});
+export const enum DiscordFavicon {
+  Default = "a2205eb4eb1cbf4ef7555e579bee3ba260574f3b",
+  Unread = "541317111758ff00613b2ff56f284a2474bd3d81",
+  UnreadAlt = "ee9eef1403e76cb770d1c4a32265e8354e6af1a0"
+}
 
 /**
  * List of Vendor IDs of common GPU manufacturers. This is usually represented
@@ -185,7 +181,7 @@ interface TypeMergeConfig {
 /**
  * Merges deeply objects, but tries to preserve the type of the first ones. This
  * has currently a few assumptions:
- * 
+ *
  * 1. `Array` aren't merged at all.
  * 2. Only primitive `Object` can be deeply merged.
  * 3. Other values are assigned by type.
