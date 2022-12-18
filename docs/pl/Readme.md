@@ -150,7 +150,7 @@ niektórych czynności nie musisz być wcale obeznany z programowaniem!
 
 [dlbadge]: https://img.shields.io/github/downloads/SpacingBat3/WebCord/total.svg?label=Pobrań&color=%236586B3
 [downloads]: https://github.com/SpacingBat3/WebCord/releases "Wydania"
-[build-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/build.yml?label=Budowanie&logo=github&branch=master
+[build-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/build.yml?label=Budowanie&logo=github&branch=master&event=push
 [build-url]: https://github.com/SpacingBat3/WebCord/actions/workflows/build.yml "Status budowy"
 [l10nbadge]: https://hosted.weblate.org/widgets/webcord/pl/svg-badge.svg
 [l10n]: https://hosted.weblate.org/engage/webcord/pl/ "Pomóż przy tłumaczeniu WebCorda"
@@ -163,7 +163,7 @@ niektórych czynności nie musisz być wcale obeznany z programowaniem!
 [discordapi]: https://discord.com/developers/docs/reference "Oficialna dokumentacja Discord REST API"
 [chromiumbounty]: https://bughunters.google.com/about/rules/5745167867576320/chrome-vulnerability-reward-program-rules "Zasady programu nagradzania podatności w Chrome"
 [Electron#Security]: https://www.electronjs.org/docs/latest/tutorial/security "Bezpieczeństwo | Dokumentacja Elektrona"
-[codeql-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/codeql-analysis.yml?label=Analiza&logo=github&logoColor=white&branch=master
+[codeql-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/codeql-analysis.yml?label=Analiza&logo=github&logoColor=white&branch=master&event=push
 [codeql-url]: https://github.com/SpacingBat3/WebCord/actions/workflows/codeql-analysis.yml "Status analizy CodeQL"
 [discord-badge]: https://img.shields.io/discord/972965161721811026?color=%2349a4d3&label=Wsparcie&logo=discord&logoColor=white
 [discord-url]: https://discord.gg/aw7WbDMua5 "Oficjalny serwer Discorda!"
