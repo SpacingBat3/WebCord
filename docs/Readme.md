@@ -188,7 +188,7 @@ you don't even need to be familiar with programming at all!
 
 [dlbadge]: https://img.shields.io/github/downloads/SpacingBat3/WebCord/total.svg?label=Downloads&color=%236586B3
 [downloads]: https://github.com/SpacingBat3/WebCord/releases "Releases"
-[build-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/build.yml?label=Build&logo=github&branch=master
+[build-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/build.yml?label=Build&logo=github&branch=master&event=push
 [build-url]: https://github.com/SpacingBat3/WebCord/actions/workflows/build.yml "Build state"
 [l10nbadge]: https://hosted.weblate.org/widgets/webcord/-/svg-badge.svg
 [l10n]: https://hosted.weblate.org/engage/webcord/ "Help at WebCord's localization"
@@ -201,7 +201,7 @@ you don't even need to be familiar with programming at all!
 [discordapi]: https://discord.com/developers/docs/reference "Official Discord REST API documentation"
 [chromiumbounty]: https://bughunters.google.com/about/rules/5745167867576320/chrome-vulnerability-reward-program-rules "Chrome Vulnerability Reward Program Rules"
 [Electron#Security]: https://www.electronjs.org/docs/latest/tutorial/security "Security | Electron Documentation"
-[codeql-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/codeql-analysis.yml?label=Analysis&logo=github&logoColor=white&branch=master
+[codeql-badge]: https://img.shields.io/github/actions/workflow/status/SpacingBat3/WebCord/codeql-analysis.yml?label=Analysis&logo=github&logoColor=white&branch=master&event=push
 [codeql-url]: https://github.com/SpacingBat3/WebCord/actions/workflows/codeql-analysis.yml "CodeQL Analysis status"
 [discord-badge]: https://img.shields.io/discord/972965161721811026?color=%2349a4d3&label=Support&logo=discord&logoColor=white
 [discord-url]: https://discord.gg/aw7WbDMua5 "Official support server on Discord!"
