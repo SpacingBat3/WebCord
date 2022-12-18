@@ -7,7 +7,7 @@
   "main": "app/code/common/main.js",
   "scripts": {
     "prepare": "husky install",
-    "test": "tsc & eslint --cache --cache-location cache/eslint.json --ext .json,.ts . & wait",
+    "test": "tsc && eslint --cache --cache-location cache/eslint.json --ext .json,.ts .",
     "lint": "eslint --cache --cache-location cache/eslint.json --ext .json,.ts .",
     "build": "tsc",
     "compile": "tsc",
