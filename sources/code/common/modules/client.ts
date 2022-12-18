@@ -3,23 +3,29 @@
  */
 import { nativeImage } from "electron/common";
 import { getAppPath, getName } from "./electron";
-import { deepmerge } from "deepmerge-ts";
 import { resolve } from "path";
-import { BuildInfo, isPartialBuildInfo } from "../global";
+import { BuildInfo, typeMerge, isPartialBuildInfo } from "../global";
 import packageJson, { Person } from "./package";
 import { readFileSync } from "fs";
 
+/** Icon names used in WebCord */
+const enum Icon {
+  App = "app",
+  Tray = "tray",
+  TrayUnread = "tray-unread",
+  TrayPing = "tray-ping"
+}
+
 /** Generates `NativeIcon` which size is prefered for a given platform. */
-function generateIcon(set: "application"|"tray", variant?: "unread"|"ping")  {
-  switch(set) {
-    case "application": {
-      const preferExt = process.platform === "win32" ? "ico" : "png";
-      const path = resolve(getAppPath(), "sources/assets/icons/app."+preferExt);
-      return nativeImage.createFromPath(path);
-    }
-    case "tray": {
-      const type = variant === "ping"||variant === "unread" ? "-"+variant as `-${typeof variant}` : "";
-      const image = nativeImage.createFromPath(resolve(getAppPath(), "sources/assets/icons/tray"+type+".png"));
+function generateIcon(icon: Icon)  {
+  const basePath = resolve(getAppPath(), "sources/assets/icons", icon)+".";
+  switch(icon) {
+    case Icon.App:
+      return nativeImage.createFromPath(basePath+(process.platform === "win32" ? "ico" : "png"));
+    case Icon.Tray:
+    case Icon.TrayUnread:
+    case Icon.TrayPing: {
+      const image = nativeImage.createFromPath(basePath+"png");
       if(process.platform !== "win32" && process.platform !== "darwin")
         return image;
       const newImage = nativeImage.createEmpty();
@@ -35,7 +41,7 @@ function generateIcon(set: "application"|"tray", variant?: "unread"|"ping")  {
       return newImage;
     }
     default:
-      throw new TypeError("Invalid set: "+String(set));
+      throw new TypeError(`Invalid icon file name '${String(icon)}'.`);
   }
 }
 
@@ -75,11 +81,11 @@ export const appInfo = Object.freeze({
     provider: "github.com"
   },
   icons: {
-    app: generateIcon("application"),
+    app: generateIcon(Icon.App),
     tray: {
-      default: generateIcon("tray"),
-      unread: generateIcon("tray", "unread"),
-      warn: generateIcon("tray", "ping")
+      default: generateIcon(Icon.Tray),
+      unread: generateIcon(Icon.TrayUnread),
+      warn: generateIcon(Icon.TrayPing)
     }
   },
   minWinHeight: 412,

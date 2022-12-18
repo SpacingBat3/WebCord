@@ -17,7 +17,7 @@ import {
   systemPreferences
 } from "electron/main";
 import * as getMenu from "../modules/menu";
-import { discordFavicons, knownInstancesList } from "../../common/global";
+import { DiscordFavicon, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
 import L10N from "../../common/modules/l10n";
@@ -400,14 +400,18 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     }
 
     // Compare hashes.
-    if(faviconHash === discordFavicons.default) {
-      icon = appInfo.icons.tray.default;
-    } else if(discordFavicons.unread.includes(faviconHash)) {
-      icon = appInfo.icons.tray.unread;
-    } else {
-      console.debug("[Mention] Hash: "+faviconHash);
-      icon = appInfo.icons.tray.warn;
-      flash = true;
+    switch(faviconHash) {
+      case DiscordFavicon.Default:
+        icon = appInfo.icons.tray.default;
+        break;
+      case DiscordFavicon.Unread:
+      case DiscordFavicon.UnreadAlt:
+        icon = appInfo.icons.tray.unread;
+        break;
+      default:
+        console.debug("[Mention] Hash: "+faviconHash);
+        icon = appInfo.icons.tray.warn;
+        flash = true;
     }
     // Set tray icon and taskbar flash
     if(tray) {
