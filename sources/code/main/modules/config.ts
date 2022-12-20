@@ -2,7 +2,8 @@
  * configManager
  */
 
-import { readFileSync, writeFileSync, existsSync, rmSync } from "fs";
+import { readFileSync, existsSync, rmSync } from "fs";
+import { writeFile } from "fs/promises";
 import {
   app,
   BrowserWindow,
@@ -135,29 +136,32 @@ const defaultAppConfig = Object.freeze({
   }
 });
 
-const fileExt = Object.freeze({
-  json: ".json",
-  encrypted: ""
-});
+export type AppConfig = typeof defaultAppConfig;
+
+const enum FileExt {
+  JSON = ".json",
+  Encrypted = ""
+}
 
 class Config<T> {
-  readonly #pathExtension: (typeof fileExt)["encrypted"|"json"];
+  readonly #pathExtension: FileExt;
   readonly #path;
   #cache: T|null = null;
+  #in:Promise<unknown> = Promise.resolve();
   /** Default configuration values. */
   private readonly defaultConfig;
   protected spaces = 4;
   #write(object: unknown) {
     const decodedData = JSON.stringify(object, null, this.spaces);
     let encodedData:string|Buffer = decodedData;
-    if(this.#pathExtension === fileExt.encrypted)
+    if(this.#pathExtension === FileExt.Encrypted)
       encodedData = safeStorage.encryptString(decodedData);
-    writeFileSync(this.#path+this.#pathExtension,encodedData);
+    this.#in = this.#in.then(() => writeFile(this.#path+this.#pathExtension,encodedData));
   }
   #read(): unknown {
     const encodedData = readFileSync(this.#path+this.#pathExtension);
     let decodedData = encodedData.toString();
-    if(this.#pathExtension === fileExt.encrypted)
+    if(this.#pathExtension === FileExt.Encrypted)
       decodedData = safeStorage.decryptString(encodedData);
     return JSON.parse(decodedData);
   }
@@ -189,23 +193,23 @@ class Config<T> {
     // Set required properties of this config file.
     this.#path = path;
     this.#pathExtension = encrypted && safeStorage.isEncryptionAvailable() ?
-      fileExt.encrypted :
-      fileExt.json;
+      FileExt.Encrypted :
+      FileExt.JSON;
     this.defaultConfig = Object.freeze(defaultConfig);
     // Replace "spaces" if it is definied in the constructor.
     if (spaces !== undefined && spaces > 0)
       this.spaces = spaces;
     // Restore or remove configuration.
     switch(this.#pathExtension) {
-      case fileExt.encrypted:
-        if(!existsSync(this.#path+fileExt.encrypted) && existsSync(this.#path+fileExt.json))
-          this.#write(readFileSync(this.#path+fileExt.json));
-        if(existsSync(this.#path+fileExt.json))
-          rmSync(this.#path+fileExt.json);
+      case FileExt.Encrypted:
+        if(!existsSync(this.#path+FileExt.Encrypted) && existsSync(this.#path+FileExt.JSON))
+          this.#write(readFileSync(this.#path+FileExt.JSON));
+        if(existsSync(this.#path+FileExt.JSON))
+          rmSync(this.#path+FileExt.JSON);
         break;
-      case fileExt.json:
-        if(existsSync(this.#path+fileExt.encrypted))
-          rmSync(this.#path+fileExt.encrypted);
+      case FileExt.JSON:
+        if(existsSync(this.#path+FileExt.Encrypted))
+          rmSync(this.#path+FileExt.Encrypted);
         break;
     }
     // Fix configuration file.
@@ -221,23 +225,11 @@ class Config<T> {
   }
 }
 
-// === MAIN APP CONFIGURATION CLASS ===
-
-/**
- * Class that initializes and modifies of the main application configuration.
- */
-export class AppConfig extends Config<typeof defaultAppConfig extends AppConfigBase ? typeof defaultAppConfig : never> {
-  /**
-   * Initializes the main application configuration and provides the way of controling it,
-   * using `get`, `set` and `getProperty` public methods.
-   * 
-   * @param path A path to application's configuration. Defaults to `App.getPath('userdata')+"/config.*"`
-   * @param spaces A number of spaces that will be used for indentation of the configuration file.
-   */
-  constructor(path = resolve(app.getPath("userData"), "config"), spaces?: number) {
-    super(path,canImmediatellyEncrypt,defaultAppConfig,spaces);
-  }
-}
+export const appConfig = new Config(
+  resolve(app.getPath("userData"), "config"),
+  canImmediatellyEncrypt,
+  defaultAppConfig satisfies AppConfigBase
+);
 
 interface WindowStatus {
   width: number;
@@ -324,9 +316,9 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
 void import("electron/main")
   .then(electron => electron.ipcMain)
   .then(ipc => ipc.on("settings-config-modified",
-    (event, config:AppConfig["defaultConfig"]) => {
+    (event, config:AppConfig) => {
       // Only permit the local pages.
       if(new URL(event.senderFrame.url).protocol === "file:")
-        new AppConfig().value = config;
+        appConfig.value = config;
     })
   );

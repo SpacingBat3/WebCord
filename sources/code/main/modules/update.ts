@@ -10,7 +10,7 @@ import L10N from "../../common/modules/l10n";
 import * as semver from "semver";
 import kolor from "@spacingbat3/kolor";
 import { commonCatches } from "./error";
-import { AppConfig } from "./config";
+import { appConfig } from "./config";
 
 const fetch = (global.fetch as typeof global.fetch|undefined) ?
   global.fetch :
@@ -22,7 +22,6 @@ const fetch = (global.fetch as typeof global.fetch|undefined) ?
  * @param updateInterval Object that indentifies currently running interval.
  */
 export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): Promise<void> {
-  const config = new AppConfig();
   // Do not execute when offline.
   if (!net.isOnline()) return;
   // When app is not ready, wait until it is ready.
@@ -66,8 +65,8 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate()+7);
   const ignored = (
-    config.value.update.notification.version === githubApi["tag_name"] &&
-        new Date(config.value.update.notification.till) < nextWeek
+    appConfig.value.update.notification.version === githubApi["tag_name"] &&
+        new Date(appConfig.value.update.notification.till) < nextWeek
   );
   if (showGui && (getBuildInfo().features.updateNotifications) && !ignored) {
     const notification = new Notification(updatePopup);
@@ -77,7 +76,7 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
     });
     notification.on("close", () => {
       if(githubApi["tag_name"] !== undefined)
-        config.value = {
+        appConfig.value = {
           update: {
             notification: {
               version: githubApi["tag_name"],

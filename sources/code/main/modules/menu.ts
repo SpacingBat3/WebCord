@@ -9,10 +9,7 @@ import {
   appInfo
 } from "../../common/modules/client";
 
-import { AppConfig } from "./config";
-
-const appConfig = new AppConfig();
-
+import { appConfig } from "./config";
 import { EventEmitter } from "events";
 import { createGithubIssue } from "./bug";
 import L10N from "../../common/modules/l10n";
@@ -164,7 +161,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
     let willQuit = false;
     app.once("before-quit", () => willQuit = true);
     parent.on("close", (event) => {
-      if (!willQuit && new AppConfig().value.settings.general.window.hideOnClose) {
+      if (!willQuit && appConfig.value.settings.general.window.hideOnClose) {
         event.preventDefault();
         parent.hide();
       }
