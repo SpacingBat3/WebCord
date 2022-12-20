@@ -636,13 +636,15 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                 }
 
                 if (screenShareNode) {
-                  const screenSharePort = screenShareNode.ports.find((port: PipewirePort) => port.direction === "Input");
-                  const links = pw.getLinks();
-                  const micLink = links.find((link: PipewireLink) =>  screenSharePort?.id === link.input_port_id);
-
+                  const screenSharePorts = screenShareNode.ports.filter((port: PipewirePort) => port.direction === "Input");
+                  
                   // unlink mic from the screen-share (if it was linked, in my case it was)
-                  if (micLink && typeof screenSharePort?.id === "number") {
-                    pw.unlinkPorts(screenSharePort.id, micLink.output_port_id );
+                  if (screenSharePorts.length > 0) {
+                    const links = pw.getLinks();
+                    screenSharePorts.forEach((port: PipewirePort) => {
+                      const micLink = links.find((link: PipewireLink) =>  port.id === link.input_port_id);
+                      if (micLink) pw.unlinkPorts(port.id, micLink.output_port_id);
+                    });
                   }
 
                   // send to PW the name of selected audio nodes with the id of the new chromium input nodes
