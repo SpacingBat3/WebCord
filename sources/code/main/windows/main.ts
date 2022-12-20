@@ -26,17 +26,22 @@ import { commonCatches } from "../modules/error";
 
 import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
-// @ts-expect-error - This will ignore the error if pipewire isn't installed
-import type { PipewireNode, default as Module } from "node-pipewire/build/types";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - This will ignore the error if pipewire isn't installed
+import type { PipewireNode } from "node-pipewire/build/types";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - will also ignore
+import type PipewireModule from "node-pipewire";
 
 const configData = new AppConfig();
-let pw: Module | null = null;
-try {
-  // eslint-disable-next-line
-  pw = require("node-pipewire");
+
+const pw: typeof PipewireModule | null = (() => { try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require("node-pipewire") as typeof PipewireModule;
 } catch(e) {
   console.log(e);
-}
+  return null;
+}})();
 
 interface MainWindowFlags {
   startHidden: boolean;
@@ -49,6 +54,7 @@ interface AudioInformation {
 
 const blacklistInputNodes: number[] = [];
 
+// eslint-disable-next-line import/no-unused-modules
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   
   let pipewireAudio = false;
@@ -632,7 +638,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                 if (screenShareNode) {
                   const screenSharePort = screenShareNode.ports.find((port: { direction: string; }) => port.direction === "Input");
                   const links = pw.getLinks();
-                  const micLink = links.find((link: { input_port_id: string; }) =>  screenSharePort?.id === link.input_port_id);
+                  const micLink = links.find((link: { input_port_id: number }) =>  screenSharePort?.id === link.input_port_id);
 
                   // unlink mic from the screen-share (if it was linked, in my case it was)
                   if (micLink && typeof screenSharePort?.id === "number") {
@@ -642,7 +648,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                   // send to PW the name of selected audio nodes with the id of the new chromium input nodes
                   const interval = setInterval(() => {
                     // check if the port of the screenShareNode exits
-                    const targetNode = pw.getInputNodes().find((node: { id: string; }) => screenShareNode?.id === node.id);
+                    const targetNode = pw.getInputNodes().find((node: { id: number | undefined }) => screenShareNode?.id === node.id);
                     if (targetNode) {
                       try {
                         selectedAudioNodes.forEach((nodeName) => {
