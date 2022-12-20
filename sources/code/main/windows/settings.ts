@@ -1,30 +1,30 @@
 import { ipcMain } from "electron/main";
-import { AppConfig } from "../modules/config";
 import { appInfo } from "../../common/modules/client";
 import L10N from "../../common/modules/l10n";
 import { initWindow } from "../modules/parent";
 import { deepmerge } from "deepmerge-ts";
-import type { cspTP } from "../modules/config";
+import type { cspTP, AppConfig } from "../modules/config";
 import type { PartialRecursive } from "../../common/global";
+import { appConfig } from "../modules/config";
 
-type generatedConfig = AppConfig["defaultConfig"]["settings"] & L10N["settings"] & {
+type generatedConfig = AppConfig["settings"] & L10N["settings"] & {
   advanced: {
     cspThirdParty: {
-      labels: Record<keyof Omit<AppConfig["defaultConfig"]["settings"]["advanced"]["cspThirdParty"], "labels">, string>;
+      labels: Record<keyof Omit<AppConfig["settings"]["advanced"]["cspThirdParty"], "labels">, string>;
     };
   };
 };
 
-function generateConfig (config:AppConfig) {
-  const appConfig = deepmerge(config.value.settings, (new L10N()).settings);
-  const finalConfig: PartialRecursive<generatedConfig> = appConfig as object;
+function generateConfig () {
+  const config = deepmerge(appConfig.value.settings, new L10N().settings);
+  const finalConfig: PartialRecursive<generatedConfig> = config as object;
   const websitesThirdParty = Object.freeze(({
     algolia: "Algolia",
     spotify: "Spotify",
     hcaptcha: "hCaptcha",
     paypal: "PayPal",
     audius: "Audius",
-    gif: appConfig.advanced.cspThirdParty.labels.gif,
+    gif: config.advanced.cspThirdParty.labels.gif,
     reddit: "Reddit",
     soundcloud: "SoundCloud",
     streamable: "Streamable",
@@ -41,7 +41,7 @@ function generateConfig (config:AppConfig) {
   });
   // Append name from CSP.
   if(finalConfig.advanced?.cspThirdParty?.name !== undefined)
-    finalConfig.advanced.cspThirdParty.name = appConfig.advanced.csp.name + " – " + appConfig.advanced.cspThirdParty.name;
+    finalConfig.advanced.cspThirdParty.name = config.advanced.csp.name + " – " + config.advanced.cspThirdParty.name;
   return finalConfig as generatedConfig;
 }
 
@@ -52,7 +52,7 @@ export type htmlConfig = readonly (
 )[];
 
 export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electron.BrowserWindow|undefined {
-  const config = generateConfig(new AppConfig());
+  const config = generateConfig();
   const htmlConfig = Object.freeze([
     Object.freeze(["general", config.general] as const),
     Object.freeze(["privacy", config.privacy] as const),

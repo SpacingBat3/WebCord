@@ -1,4 +1,4 @@
-import { AppConfig, cspTP } from "./config";
+import type { cspTP } from "./config";
 
 const cspKeys = [
   "default-src",
@@ -207,32 +207,26 @@ const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
   })
 };
 
-let cache: Readonly<{configValues: string; result:string}> | undefined;
+let cache:[key:symbol,content:string]|null = null;
 
-export function getWebCordCSP(additionalPolicies: CSPBuilder[]|[] = []) {
-  const config = new AppConfig().value.settings.advanced.cspThirdParty;
-    type parties = keyof typeof config;
-    type cspFilter = (value:CSPBuilder|undefined) => value is CSPBuilder;
-    if(cache && cache.configValues === Object.values(config).join())
-      return cache.result;
-    else if(cache)
-      console.debug("[CSP] Policy changed! Recalculating cache...");
-    else
-      console.debug("[CSP] Initializing cache for quicker responses...");
-    cache = Object.freeze({
-      configValues: Object.values(config).join(),
-      result: CSPBuilder.merge(
-        builders.base,
-        ...Object.keys(config)
-          .map((key) => {
-            if(config[key as parties])
-              return builders[key as parties];
-            else
-              return undefined;
-          })
-          .filter(((value) => value instanceof CSPBuilder) as cspFilter),
-        ...additionalPolicies
-      ).build()
-    });
-    return cache.result;
+export function getWebCordCSP(configValues: cspTP<boolean>,...additionalPolicies: CSPBuilder[]) {
+  type parties = keyof typeof configValues;
+  type cspFilter = (value:CSPBuilder|undefined) => value is CSPBuilder;
+  const key = Symbol.for(Object.values(configValues).join("")+additionalPolicies.map(policy => policy.build()).join(""));
+  if(cache?.[0] === key)
+    return cache[1];
+  console.debug("[CSP] Caching function arguments...");
+  cache = [key, CSPBuilder.merge(
+    builders.base,
+    ...Object.keys(configValues)
+      .map((key) => {
+        if(configValues[key as parties])
+          return builders[key as parties];
+        else
+          return undefined;
+      })
+      .filter(((value) => value instanceof CSPBuilder) as cspFilter),
+    ...additionalPolicies
+  ).build()];
+  return cache[1];
 }
