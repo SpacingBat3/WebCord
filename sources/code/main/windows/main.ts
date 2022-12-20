@@ -33,8 +33,9 @@ import type { PipewireLink, PipewireNode, PipewirePort } from "node-pipewire/bui
 // @ts-ignore - will also ignore
 import type PipewireModule from "node-pipewire";
 
+// eslint-disable-next-line
 const pw: typeof PipewireModule | null = (() => { try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line
   return require("node-pipewire") as typeof PipewireModule;
 } catch(e) {
   console.log(e);
