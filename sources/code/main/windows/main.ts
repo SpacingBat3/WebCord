@@ -26,9 +26,22 @@ import { commonCatches } from "../modules/error";
 
 import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
-import type { PipewireNode } from "node-pipewire/build/types";
+// eslint-disable-next-line
+// @ts-ignore - This will ignore the error if pipewire isn't installed
+import type { PipewireLink, PipewireNode, PipewirePort } from "node-pipewire/build/types";
+// eslint-disable-next-line
+// @ts-ignore - will also ignore
+import type PipewireModule from "node-pipewire";
 
 const configData = new AppConfig();
+
+const pw: typeof PipewireModule | null = (() => { try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require("node-pipewire") as typeof PipewireModule;
+} catch(e) {
+  console.log(e);
+  return null;
+}})();
 
 interface MainWindowFlags {
   startHidden: boolean;
@@ -41,38 +54,37 @@ interface AudioInformation {
 
 const blacklistInputNodes: number[] = [];
 
+// eslint-disable-next-line import/no-unused-modules
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   
   let pipewireAudio = false;
   let testAudioAttempts = 0;
   
-  import("node-pipewire").then((pw) => {
-    const testAudioInterval: NodeJS.Timeout = setInterval(() => {
-      // get the actual input nodes from pipewire. 
-      const inputNodes = pw.getInputNodes();
-      
-      if (inputNodes.length > 0) {
-        //If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
-        const chromiumInputNodes = inputNodes.filter(node => node.name === "Chromium");
-      
-        if (chromiumInputNodes.length > 0) {
-          chromiumInputNodes.forEach(node => {
-            blacklistInputNodes.push(node.id);
-          });
-        }
-        flags.screenShareAudio = true;
-        pipewireAudio = true;
-        clearInterval(testAudioInterval);
-      } else{
-        testAudioAttempts++;
-        if (testAudioAttempts === 5) {
-          clearInterval(testAudioInterval);
-        }
+  const testAudioInterval: NodeJS.Timeout | null = pw === null ? null : setInterval(() => {
+    /* eslint-disable */
+    // get the actual input nodes from pipewire. 
+    const inputNodes = pw.getInputNodes();
+    
+    if (inputNodes.length > 0) {
+      //If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
+      const chromiumInputNodes = inputNodes.filter((node: { name: string; }) => node.name === "Chromium");
+    
+      if (chromiumInputNodes.length > 0) {
+        chromiumInputNodes.forEach((node: { id: number; }) => {
+          blacklistInputNodes.push(node.id);
+        });
       }
-    }, 1000);
-  }).catch((err) => {
-    console.log(err);
-  });
+      flags.screenShareAudio = true;
+      pipewireAudio = true;
+      clearInterval(testAudioInterval!!);
+    } else{
+      testAudioAttempts++;
+      if (testAudioAttempts === 5) {
+        clearInterval(testAudioInterval!!);
+      }
+    }
+    /* eslint-enable */
+  }, 1000);
     
   const l10nStrings = new L10N().client;
 
@@ -573,14 +585,15 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               return null;
           });
         } else {
-          import("node-pipewire").then((pw) => {
+          if(pw !== null) {
+            /* eslint-disable */
             ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
               const outputNodesName = pw.getOutputNodesName();
-              const chromiumInputNodes = pw.getInputNodes().filter((node) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
-              blacklistInputNodes.push(...chromiumInputNodes.map((node) => node.id));
+              const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number; }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+              blacklistInputNodes.push(...chromiumInputNodes.map((node: { id: any; }) => node.id));
 
               // Filter outputNodesName to remove the repeated names
-              const outputNodesNameFiltered = outputNodesName.filter((node, index) => {
+              const outputNodesNameFiltered = outputNodesName.filter((node: any, index: any) => {
                 return outputNodesName.indexOf(node) === index;
               });
 
@@ -589,9 +602,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               else
                 return null;
             });
-          }).catch((error) => {
-            console.error(error);
-          });
+            /* eslint-enable */
+          }
 
         }
         const autoResize = () => setImmediate(() => view.setBounds({
@@ -602,7 +614,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         ipcMain.handleOnce("capturer-get-settings", () => {
           return new AppConfig().value.screenShareStore;
         });
-        ipcMain.once("closeCapturerView", (_event, data:unknown, audioInfo?: AudioInformation) => {
+        ipcMain.once("closeCapturerView", (_event, data: unknown, audioInfo?: AudioInformation) => {
           win.removeBrowserView(view);
           view.webContents.delete();
           win.removeListener("resize", autoResize);
@@ -613,7 +625,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
             const selectedAudioNodes = audioInfo.selectedAudioNodes;
 
             if (selectedAudioNodes.length > 0) {
-              import("node-pipewire").then(async (pw) => {
+              /* eslint-disable */
+              if(pw !== null) (async () => {
                 let screenShareNode: PipewireNode | undefined = undefined;
                 try {
                   screenShareNode = await pw.waitForNewNode("Chromium", "Input");
@@ -623,11 +636,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                 }
 
                 if (screenShareNode) {
-                  const screenSharePort = screenShareNode.ports.find((port) => port.direction === "Input");
+                  const screenSharePort = screenShareNode.ports.find((port: PipewirePort) => port.direction === "Input");
                   const links = pw.getLinks();
-                  const micLink = links.find((link) => {
-                    return screenSharePort?.id === link.input_port_id;
-                  });
+                  const micLink = links.find((link: PipewireLink) =>  screenSharePort?.id === link.input_port_id);
 
                   // unlink mic from the screen-share (if it was linked, in my case it was)
                   if (micLink && typeof screenSharePort?.id === "number") {
@@ -637,9 +648,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                   // send to PW the name of selected audio nodes with the id of the new chromium input nodes
                   const interval = setInterval(() => {
                     // check if the port of the screenShareNode exits
-                    const targetNode = pw.getInputNodes().find((node) => {
-                      return screenShareNode?.id === node.id;
-                    });
+                    const targetNode = pw.getInputNodes().find((node: PipewireNode) => screenShareNode?.id === node.id);
                     if (targetNode) {
                       try {
                         selectedAudioNodes.forEach((nodeName) => {
@@ -655,9 +664,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                     }
                   }, 1000);
                 }
-              }).catch((error) => {
-                console.error(error);
-              });
+              })();
+              /* eslint-enable */
             }
           }
         
