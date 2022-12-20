@@ -33,7 +33,7 @@ import { protocols, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
 import L10N from "./modules/l10n";
 import createMainWindow from "../main/windows/main";
-import { AppConfig } from "../main/modules/config";
+import { appConfig } from "../main/modules/config";
 import kolor from "@spacingbat3/kolor";
 import { resolve as resolvePath, relative } from "path";
 import { getUserAgent } from "./modules/agent";
@@ -326,7 +326,7 @@ let overwriteMain: (() => unknown) | undefined;
     console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value !== undefined ? "="+value : ""));
   };
   // Apply recommended GPU flags if user had opt in for them.
-  if(new AppConfig().value.settings.advanced.optimize.gpu)
+  if(appConfig.value.settings.advanced.optimize.gpu)
     getRecommendedGPUFlags().then(flags => {
       for(const flag of flags) if(!app.isReady()) {
         applyFlags(flag[0], flag[1]);
@@ -338,7 +338,7 @@ let overwriteMain: (() => unknown) | undefined;
   
   // Enable MiddleClickAutoscroll for all windows.
   if(process.platform !== "win32" &&
-      new AppConfig().value.settings.advanced.unix.autoscroll)
+      appConfig.value.settings.advanced.unix.autoscroll)
     applyFlags("enable-blink-features","MiddleClickAutoscroll");
 
   for(const flag of getRedommendedOSFlags())
@@ -420,7 +420,7 @@ app.on("web-contents-created", (_event, webContents) => {
 
   // Securely open some urls in external software.
   webContents.setWindowOpenHandler((details) => {
-    const config = new AppConfig().value.settings;
+    const config = appConfig.value.settings;
     if (!app.isReady()) return { action: "deny" };
     const openUrl = new URL(details.url);
     const sameOrigin = new URL(webContents.getURL()).origin === openUrl.origin;

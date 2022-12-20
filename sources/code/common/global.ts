@@ -24,15 +24,10 @@ export function isJsonSyntaxCorrect(string: string) {
 }
 
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
-export const discordFavicons = Object.freeze({
-  /** Default favicon (without *blue dot* indicator). */
-  default: "a2205eb4eb1cbf4ef7555e579bee3ba260574f3b", // seems always valid
-  unread: Object.freeze([
-    "ee9eef1403e76cb770d1c4a32265e8354e6af1a0", // works on FIFO pipe errors
-    "40f51a9b9ad411d2e0e897661a08305b4a76ec76", // produced by older Electron releases
-    "541317111758ff00613b2ff56f284a2474bd3d81"  // seems to be valid otherwise
-  ])
-});
+export const enum DiscordFavicon {
+  Default = "528c5d45bc69bbbcd0abebc5ac867cd164a35ad2",
+  Unread = "ea6dd5012654b5260934bc7f481dc94a63ea4ae3"
+}
 
 /**
  * List of Vendor IDs of common GPU manufacturers. This is usually represented
@@ -42,39 +37,6 @@ export const enum GPUVendors {
   AMD = 0x1002,
   NVIDIA = 0x10DE,
   Intel = 0x8086
-}
-
-/**
- * A generic TypeGuard, used to deeply check if `object` can be merged with another
- * `object` without loosing the existing type structure.
- * 
- * @param object1 An object to check the type of.
- * @param object2 An object used for the type comparasion.
- */
-export function objectsAreSameType<X,Y>(object1:X, object2:Y):object1 is X&Y {
-  // False when parameters are not objects.
-  if(!(object1 instanceof Object && object2 instanceof Object)) return false;
-	
-  // True when parameters are exactly same objects.
-  if(JSON.stringify(object1) === JSON.stringify(object2)) return true;
-
-  const results = Object.keys({...object1,...object2}).map(key => {
-    if(key in object1 && key in object2) {
-      const key1:unknown = object1[key as keyof unknown], key2:unknown = object2[key as keyof unknown];
-      if(typeof key1 === typeof (key2 === null ? false : key2) || key1 === key2) {
-        if(typeof key1 === "object" && key1 !== null) {
-          if(Array.isArray(key1)&&Array.isArray(key2))
-            return true;
-          else
-            return objectsAreSameType(key1,key2);
-        }
-        return true;
-      }
-      return false;
-    }
-    return true;
-  });
-  return !results.includes(false);
 }
 
 /**
@@ -210,19 +172,28 @@ export type PartialRecursive<T> = {
   [P in keyof T]?: PartialRecursive<T[P]>
 };
 
+interface TypeMergeConfig {
+  /** A class which can replace `null` values in source object. */
+  nullType?: object;
+}
+
 /**
- * Merges deeply objects, but preserves the type of the first one at all
- * costs, i.e. `Array` deep merging is ignored.
+ * Merges deeply objects, but tries to preserve the type of the first ones. This
+ * has currently a few assumptions:
+ *
+ * 1. `Array` aren't merged at all.
+ * 2. Only primitive `Object` can be deeply merged.
+ * 3. Other values are assigned by type.
  * 
  * **Note:** Values of same type are expected to have the same constructors.
  * 
  * @param source Object used as a type source.
- * @param objects Objects to merge. 
+ * @param objects Objects to merge (at least one). 
  * @returns Merged object.
  * 
  * @todo More acurate types (e.g. literals to primitives)
  */
-export function typeMerge<T extends object>(source: T, ...objects:unknown[]) {
+export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, ...objects:unknown[]&[unknown]) {
   const hasOwn = Object.hasOwn as <T>(o:T,s:string|symbol|number)=>s is keyof T;
   const typeOf = (o1:unknown,c:unknown) => (o1?.constructor ?? o1) === c;
   function deepMerge<T,U>(source:T,object:U) {
@@ -231,10 +202,12 @@ export function typeMerge<T extends object>(source: T, ...objects:unknown[]) {
       return source;
     (Object.keys(source)
       .filter(
-        key => hasOwn(source as T,key) &&
-          hasOwn(source as U,key) &&
-          typeOf(source[key],(object[key] as unknown)?.constructor) &&
-          !Array.isArray(source)
+        key => hasOwn(source as T,key) && hasOwn(object as U,key) && (
+          typeOf(source[key],(object[key] as unknown)?.constructor) || (config.nullType !== undefined ?
+            (source[key] as unknown) === null && (object[key] as unknown)?.constructor === config.nullType :
+            false
+          )
+        ) && !Array.isArray(source)
       ) as (keyof T & keyof U)[])
       .map(key => {
         if(typeOf(source[key],Object))

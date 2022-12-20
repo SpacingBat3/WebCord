@@ -1,6 +1,6 @@
-import {ipcRenderer as ipc} from "electron/renderer";
+import { ipcRenderer as ipc } from "electron/renderer";
 import L10N from "../../common/modules/l10n";
-import type {AppConfig} from "../../main/modules/config";
+import type { AppConfig } from "../../main/modules/config";
 
 function translate(string:string):string {
   const l10n = new L10N().client.dialog.screenShare.source;
@@ -76,7 +76,7 @@ window.addEventListener("DOMContentLoaded", () => {
             audioButton.disabled = false;
             audioButton.title = l10n.sound.system;
             void ipc.invoke("capturer-get-settings")
-              .then((settings:AppConfig["defaultConfig"]["screenShareStore"]) => {
+              .then((settings:AppConfig["screenShareStore"]) => {
                 audioButton.checked = settings.audio;
               });
             audioButton.addEventListener("click", () => ipc.send("settings-config-modified", {

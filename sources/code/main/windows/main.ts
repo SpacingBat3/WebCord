@@ -5,7 +5,7 @@ import { resolve } from "path";
 import kolor from "@spacingbat3/kolor";
 
 import { appInfo, getBuildInfo } from "../../common/modules/client";
-import { AppConfig, WinStateKeeper } from "../modules/config";
+import { AppConfig, appConfig, WinStateKeeper } from "../modules/config";
 import {
   app,
   dialog,
@@ -17,7 +17,7 @@ import {
   systemPreferences
 } from "electron/main";
 import * as getMenu from "../modules/menu";
-import { discordFavicons, knownInstancesList } from "../../common/global";
+import { DiscordFavicon, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
 import L10N from "../../common/modules/l10n";
@@ -103,7 +103,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     height: mainWindowState.initState.height,
     width: mainWindowState.initState.width,
     backgroundColor: appInfo.backgroundColor,
-    transparent: configData.value.settings.general.window.transparent,
+    transparent: appConfig.value.settings.general.window.transparent,
     show: false,
     webPreferences: {
       preload: resolve(app.getAppPath(), "app/code/renderer/preload/main.js"),
@@ -115,7 +115,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         standard: "Arial" // `sans-serif` as default font.
       },
       enableWebSQL: false,
-      webgl: configData.value.settings.advanced.webApi.webGl,
+      webgl: appConfig.value.settings.advanced.webApi.webGl,
       safeDialogs: true, // prevents dialog spam by the website
       autoplayPolicy: "no-user-gesture-required"
     },
@@ -134,14 +134,14 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     const retry = setInterval(() => {
       if (net.isOnline()) {
         clearInterval(retry);
-        void win.loadURL(knownInstancesList[new AppConfig().value.settings.advanced.currentInstance.radio][1].href);
+        void win.loadURL(knownInstancesList[appConfig.value.settings.advanced.currentInstance.radio][1].href);
       }
     }, 1000);
   });
   win.webContents.once("did-finish-load", () => {
     console.debug("[PAGE] Starting to load the Discord page...");
     if (!flags.startHidden) win.show();
-    setTimeout(() => {void win.loadURL(knownInstancesList[new AppConfig().value.settings.advanced.currentInstance.radio][1].href);}, 1500);
+    setTimeout(() => {void win.loadURL(knownInstancesList[appConfig.value.settings.advanced.currentInstance.radio][1].href);}, 1500);
   });
   if (mainWindowState.initState.isMaximized)
     if(!flags.startHidden || win.isVisible())
@@ -152,15 +152,11 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // CSP
 
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    const headersOverwrite:{"Content-Security-Policy"?:[string]} = {};
-    if (configData.value.settings.advanced.csp.enabled)
-      headersOverwrite["Content-Security-Policy"] = [getWebCordCSP()];
-    callback({
-      responseHeaders: {
-        ...details.responseHeaders,
-        ...headersOverwrite
-      }
-    });
+    const {csp,cspThirdParty} = appConfig.value.settings.advanced;
+    const responseHeaders = details.responseHeaders??{};
+    if(csp.enabled)
+      responseHeaders["Content-Security-Policy"] = [getWebCordCSP(cspThirdParty)];
+    callback({ responseHeaders });
   });
 
   win.webContents.session.webRequest.onBeforeRequest(
@@ -177,7 +173,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         science,
         fingerprinting,
         typingIndicator
-      } = (new AppConfig()).value.settings.privacy.blockApi;
+      } = appConfig.value.settings.privacy.blockApi;
       /** Parsed URL of the request. */
       const url = new URL(details.url);
       if (science || typingIndicator || fingerprinting)
@@ -196,7 +192,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   {
     /** List of domains, urls or protocols accepted by permission handlers. */
     const trustedURLs = [
-      knownInstancesList[new AppConfig().value.settings.advanced.currentInstance.radio][1].origin,
+      knownInstancesList[appConfig.value.settings.advanced.currentInstance.radio][1].origin,
       "devtools://"
     ];
     const getMediaTypesPermission = (mediaTypes: unknown[] = []) => {
@@ -207,7 +203,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
             systemPreferences.getMediaAccessStatus("screen") === "granted" :
             true
         ) && (
-          new AppConfig().value.settings.privacy.permissions["display-capture"]
+          appConfig.value.settings.privacy.permissions["display-capture"]
         );
       return [...new Set(mediaTypes)]
         .map(media => {
@@ -242,11 +238,11 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               if(!callbackValue)
                 break;
               else
-                callbackValue = configData.value.settings.privacy.permissions[type]??false;
+                callbackValue = appConfig.value.settings.privacy.permissions[type]??false;
           }
           else if("mediaType" in details && details.mediaType !== "unknown")
             callbackValue = getMediaTypesPermission([details.mediaType]) && (
-              configData.value.settings.privacy.permissions[details.mediaType]??false
+              appConfig.value.settings.privacy.permissions[details.mediaType]??false
             );
           else if(parseInt(process.versions.electron.split(".",1)[0]??"0") > 20)
             callbackValue = type === "request";
@@ -259,7 +255,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         case "notifications":
         case "fullscreen":
         case "background-sync":
-          return configData.value.settings.privacy.permissions[permission]??false;
+          return appConfig.value.settings.privacy.permissions[permission]??false;
         default:
           return null;
       }
@@ -294,9 +290,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         });
         dialogLock.delete(permission);
         const value = response === 1;
-        const config = configData.value;
+        const config = appConfig.value;
         config.settings.privacy.permissions[permission] = value;
-        configData.value = config;
+        appConfig.value = config;
         return value;
       }
       const returnValue = permissionHandler("request",webContents.getURL(), permission, details);
@@ -322,10 +318,10 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               if(process.platform === "darwin" && systemPreferences.getMediaAccessStatus(media) === "not-determined")
                 promises.push(systemPreferences.askForMediaAccess(media));
               // any: Ask user for permission if it is set to "null"
-              if(configData.value.settings.privacy.permissions[permission] === null)
+              if(appConfig.value.settings.privacy.permissions[permission] === null)
                 promises.push(permissionDialog(permission));
               else
-                promises.push(Promise.resolve(configData.value.settings.privacy.permissions[permission] === true));
+                promises.push(Promise.resolve(appConfig.value.settings.privacy.permissions[permission] === true));
             });
             if(promises.length === 0)
               Promise.all(promises)
@@ -339,7 +335,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               // Deny if no changes were done.
               callback(false);
             break;
-          } else if(permission === "notifications" && configData.value.settings.privacy.permissions.notifications === null)
+          } else if(permission === "notifications" && appConfig.value.settings.privacy.permissions.notifications === null)
             permissionDialog(permission)
               .then(value => callback(value))
               .catch(() => callback(false));
@@ -350,8 +346,8 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     });
   }
   void win.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/load.html"));
-  win.setAutoHideMenuBar(configData.value.settings.general.menuBar.hide);
-  win.setMenuBarVisibility(!configData.value.settings.general.menuBar.hide);
+  win.setAutoHideMenuBar(appConfig.value.settings.general.menuBar.hide);
+  win.setMenuBarVisibility(!appConfig.value.settings.general.menuBar.hide);
   // Add English to the spellchecker
   if(process.platform !== "darwin") {
     let valid = true;
@@ -372,7 +368,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   // Load all menus:
   getMenu.context(win);
-  const tray = !configData.value.settings.general.tray.disable ? getMenu.tray(win) : null;
+  const tray = !appConfig.value.settings.general.tray.disable ? getMenu.tray(win) : null;
   if(typeof packageJson.data.repository === "object")
     getMenu.bar(packageJson.data.repository.url, win);
   else
@@ -383,14 +379,10 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   win.webContents.on("page-favicon-updated", (_event, favicons) => {
     if(favicons[0] === undefined) return;
     let icon: Electron.NativeImage, flash = false;
-    /** `NativeImage` */
-    const faviconNative = nativeImage.createFromDataURL(favicons[0]);
-    /** JPEG of this image re-converted from bitmap. */
-    const faviconBuffer = nativeImage.createFromBitmap(faviconNative.toBitmap(), {
-      ...(faviconNative.getSize())
-    }).toJPEG(90);
     // Hash discord favicon.
-    const faviconHash = createHash("sha1").update(faviconBuffer).digest("hex");
+    const faviconHash = createHash("sha1")
+      .update(nativeImage.createFromDataURL(favicons[0]).toJPEG(0))
+      .digest("hex");
     // Stop execution when icon is same as the one set.
     if (faviconHash === setFavicon) return;
     // Stop code execution on Fosscord instances.
@@ -405,14 +397,17 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     }
 
     // Compare hashes.
-    if(faviconHash === discordFavicons.default) {
-      icon = appInfo.icons.tray.default;
-    } else if(discordFavicons.unread.includes(faviconHash)) {
-      icon = appInfo.icons.tray.unread;
-    } else {
-      console.debug("[Mention] Hash: "+faviconHash);
-      icon = appInfo.icons.tray.warn;
-      flash = true;
+    switch(faviconHash) {
+      case DiscordFavicon.Default:
+        icon = appInfo.icons.tray.default;
+        break;
+      case DiscordFavicon.Unread:
+        icon = appInfo.icons.tray.unread;
+        break;
+      default:
+        console.debug("[Mention] Hash: "+faviconHash);
+        icon = appInfo.icons.tray.warn;
+        flash = true;
     }
     // Set tray icon and taskbar flash
     if(tray) {
@@ -421,7 +416,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         icon = icon.resize({height:22});
       tray.setImage(icon);
     }
-    win.flashFrame(flash&&configData.value.settings.general.taskbar.flash);
+    win.flashFrame(flash&&appConfig.value.settings.general.taskbar.flash);
     setFavicon = faviconHash;
   });
 
@@ -464,7 +459,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         .then(data => win.webContents.insertCSS(data))
         .catch(commonCatches.print);
       // Additionally, make window transparent if user has opted for it.
-      if(configData.value.settings.general.window.transparent)
+      if(appConfig.value.settings.general.window.transparent)
         win.webContents.once("did-stop-loading", () => win.setBackgroundColor("#0000"));
     }
   });
@@ -500,20 +495,19 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   });
 
   // Apply settings that doesn't need app restart on change
-  ipcMain.on("settings-config-modified", (event, object:null|PartialRecursive<AppConfig["defaultConfig"]>) => {
+  ipcMain.on("settings-config-modified", (event, object:null|PartialRecursive<AppConfig>) => {
     if(new URL(event.senderFrame.url).protocol !== "file:")
       return;
-    const config = new AppConfig();
     try {
       // Menu bar
       if (object?.settings?.general?.menuBar?.hide !== undefined) {
         console.debug("[Settings] Updating menu bar state...");
-        win.setAutoHideMenuBar(config.value.settings.general.menuBar.hide);
-        win.setMenuBarVisibility(!config.value.settings.general.menuBar.hide);
+        win.setAutoHideMenuBar(appConfig.value.settings.general.menuBar.hide);
+        win.setMenuBarVisibility(!appConfig.value.settings.general.menuBar.hide);
       }
       // Custom Discord instance switch
       if(object?.settings?.advanced?.currentInstance?.radio !== undefined) {
-        void win.loadURL(knownInstancesList[config.value.settings.advanced.currentInstance.radio][1].href);
+        void win.loadURL(knownInstancesList[appConfig.value.settings.advanced.currentInstance.radio][1].href);
       }
       // CSP
       if(
@@ -545,7 +539,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         if(lock || win.getBrowserViews().length !== 0)
           return new Error("Main process is busy by another request.");
         // Fail when client has denied the permission to the capturer.
-        if(!configData.value.settings.privacy.permissions["display-capture"]) {
+        if(!appConfig.value.settings.privacy.permissions["display-capture"]) {
           resolvePromise("Permission denied");
           return;
         }
@@ -612,7 +606,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           y:0,
         }));
         ipcMain.handleOnce("capturer-get-settings", () => {
-          return new AppConfig().value.screenShareStore;
+          return appConfig.value.screenShareStore;
         });
         ipcMain.once("closeCapturerView", (_event, data: unknown, audioInfo?: AudioInformation) => {
           win.removeBrowserView(view);
