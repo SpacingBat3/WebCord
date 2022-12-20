@@ -124,12 +124,15 @@ let startHidden = false;
  */
 let screenShareAudio = false;
 
-import("node-pipewire").then(lib => {
+/* eslint-disable */
+try {
+  const lib = require("node-pipewire");
   lib.createPwThread(argv.values.verbose === true);
   screenShareAudio = true;
-}).catch(e => {
+} catch(e) {
   console.warn(e);
-});
+}
+/* eslint-enable */
 
 const userAgent: Partial<{
   replace: Parameters<typeof getUserAgent>[2];

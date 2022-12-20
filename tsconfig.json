@@ -26,7 +26,8 @@
         /* Use *nix end-of-line character for emitted files */
         "newLine": "lf",
         /* Do not emit anything when there's an error in source files */
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "skipLibCheck": true
     },
     "include": [
         "sources/code/**/*.ts"
