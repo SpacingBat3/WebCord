@@ -105,7 +105,7 @@ window.addEventListener("DOMContentLoaded", () => {
             audioButton.disabled = false;
             audioButton.title = l10n.sound.system;
             void ipc.invoke("capturer-get-settings")
-              .then((settings:AppConfig["defaultConfig"]["screenShareStore"]) => {
+              .then((settings:AppConfig["screenShareStore"]) => {
                 audioButton.checked = settings.audio;
               });
             audioButton.addEventListener("click", () => {
