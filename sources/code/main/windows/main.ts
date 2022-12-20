@@ -26,10 +26,10 @@ import { commonCatches } from "../modules/error";
 
 import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// eslint-disable-next-line
 // @ts-ignore - This will ignore the error if pipewire isn't installed
 import type { PipewireNode } from "node-pipewire/build/types";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// eslint-disable-next-line
 // @ts-ignore - will also ignore
 import type PipewireModule from "node-pipewire";
 
