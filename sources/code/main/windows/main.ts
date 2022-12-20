@@ -28,7 +28,7 @@ import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
 // eslint-disable-next-line
 // @ts-ignore - This will ignore the error if pipewire isn't installed
-import type { PipewireNode } from "node-pipewire/build/types";
+import type { PipewireLink, PipewireNode, PipewirePort } from "node-pipewire/build/types";
 // eslint-disable-next-line
 // @ts-ignore - will also ignore
 import type PipewireModule from "node-pipewire";
@@ -636,9 +636,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                 }
 
                 if (screenShareNode) {
-                  const screenSharePort = screenShareNode.ports.find((port: { direction: string; }) => port.direction === "Input");
+                  const screenSharePort = screenShareNode.ports.find((port: PipewirePort) => port.direction === "Input");
                   const links = pw.getLinks();
-                  const micLink = links.find((link: { input_port_id: number }) =>  screenSharePort?.id === link.input_port_id);
+                  const micLink = links.find((link: PipewireLink) =>  screenSharePort?.id === link.input_port_id);
 
                   // unlink mic from the screen-share (if it was linked, in my case it was)
                   if (micLink && typeof screenSharePort?.id === "number") {
@@ -648,7 +648,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
                   // send to PW the name of selected audio nodes with the id of the new chromium input nodes
                   const interval = setInterval(() => {
                     // check if the port of the screenShareNode exits
-                    const targetNode = pw.getInputNodes().find((node: { id: number | undefined }) => screenShareNode?.id === node.id);
+                    const targetNode = pw.getInputNodes().find((node: PipewireNode) => screenShareNode?.id === node.id);
                     if (targetNode) {
                       try {
                         selectedAudioNodes.forEach((nodeName) => {
