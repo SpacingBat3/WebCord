@@ -44,7 +44,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   // Browser window
 
-  const useCustomBar = configData.get().settings.general.custombar.use;
+  const useCustomBar = appConfig.value.settings.general.custombar.use;
 
   const win = new BrowserWindow({
     title: app.getName(),
@@ -98,10 +98,13 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           break;
         case "window-maximize":
           console.debug("[Custom Bar] Maximize window...");
-          win.isMaximized() ? win.unmaximize() : win.maximize();
+          if(win.isMaximized())
+            win.unmaximize();
+          else
+            win.maximize();
           break;
         case "window-close":
-          console.debug("[Custom Bar] Maximize window...");
+          console.debug("[Custom Bar] Close window...");
           win.close();
           break;
         case "opensettings":
