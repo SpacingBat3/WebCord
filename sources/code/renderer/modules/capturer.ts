@@ -1,4 +1,4 @@
-import { ipcRenderer as ipc } from "electron/renderer";
+/*import { ipcRenderer as ipc } from "electron/renderer";
 
 interface EMediaStreamConstraints extends MediaStreamConstraints {
   audio?: boolean | EMediaTrackConstraints;
@@ -49,4 +49,4 @@ export default function desktopCapturerPicker(api:string): Promise<EMediaStreamC
       }
     }).catch((reason:unknown) => reject(reason));
   });
-}
+}*/

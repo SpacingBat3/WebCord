@@ -100,18 +100,9 @@ window.addEventListener("DOMContentLoaded", () => {
                 throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
               }
               ipc.send("closeCapturerView", {
-                audio: audioSupport && (audioButton?.checked ?? false) ? {
-                  mandatory: {
-                    chromeMediaSource: "desktop"
-                  }
-                } : false,
-                video: {
-                  mandatory: {
-                    chromeMediaSource: "desktop",
-                    chromeMediaSourceId: source.id
-                  }
-                }
-              });
+                ...(audioSupport && (audioButton?.checked ?? false) ? {audio: "loopbackWithMute"} : {}),
+                video: { id: source.id, name: source.name }
+              } satisfies Electron.Streams);
             })
           );
           document.getElementById("capturer-close")

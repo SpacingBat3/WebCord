@@ -39,6 +39,11 @@ export const enum GPUVendors {
   Intel = 0x8086
 }
 
+export const enum ElectronAudioStream {
+  All = "loopback",
+  Filtered = "loopbackWithMute"
+}
+
 /**
  * Allowed protocol list.
  * 
@@ -220,3 +225,22 @@ export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, 
   return (objects as T[])
     .reduce((prev, cur:unknown) => deepMerge(prev, cur), source);
 }
+
+interface ElectronDisplayMediaRequest extends Electron.DisplayMediaRequestHandlerHandlerRequest {
+  frame: Electron.WebFrameMain;
+  securityOrigin: string;
+  videoRequested: boolean;
+  audioRequested: boolean;
+  userGesture: boolean;
+}
+
+type ElectronVideoStream = { name: string; id: string } & Partial<Electron.DesktopCapturerSource>;
+
+interface ElectronStreams {
+  audio: ElectronAudioStream | Electron.WebFrameMain;
+  video: ElectronVideoStream | Electron.WebFrameMain;
+}
+
+export type SessionOverride = Electron.Session & {
+  setDisplayMediaRequestHandler?:(handler:((request:ElectronDisplayMediaRequest, callback: (ElectronStreams|null)) => void)|null) => void;
+};

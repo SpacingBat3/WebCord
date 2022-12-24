@@ -3,7 +3,7 @@ import { clipboard } from "electron/common";
 import { generateSafeKey, navigate } from "../modules/api";
 import { wLog } from "../../common/global";
 import { appInfo } from "../../common/modules/client";
-import desktopCapturerPicker from "../modules/capturer";
+//import desktopCapturerPicker from "../modules/capturer"; //TODO: Refactor for coexistence with new API
 import L10N from "../../common/modules/l10n";
 
 if (window.location.protocol === "file:") {
@@ -24,25 +24,20 @@ if (window.location.protocol === "file:") {
    * by the Context Bridge.
    */
   const contextBridgeApiKey = generateSafeKey();
-  contextBridge.exposeInMainWorld(contextBridgeApiKey,() => desktopCapturerPicker(contextBridgeApiKey));
-
-  /*
-   * Expose API key back to the main process.
-   */
+  /* On Electron 22+ there's an API to replace `getDisplayMedia`.
+  if(Number(process.versions.electron.split(".")[0]) < 22) {
+    contextBridge.exposeInMainWorld(contextBridgeApiKey,() => desktopCapturerPicker(contextBridgeApiKey));
+  }//*/
+  // Expose API key back to the main process.
   ipc.send("api-exposed", contextBridgeApiKey);
-
-  /*
-   * Hide orange popup about downloading the application.
-   */
+  // Hide orange popup about downloading the application.
   window.addEventListener("load", () => window.localStorage.setItem("hideNag", "true"));
 
-  /*
-  * Workaround for clipboard content.
-  */
+  // Workaround for clipboard content.
   {
     let lock = true;
     document.addEventListener("paste", (event) => {
-      const contentTypes = clipboard.availableFormats() as []|[string, string];
+      const contentTypes = clipboard.availableFormats() as []|[string]|[string, string];
       if(contentTypes.length === 2 && contentTypes[0].startsWith("image/") &&
           contentTypes[1] === "text/html" && lock) {
         console.debug("[WebCord] Applying clipboard workaround to the image…");
@@ -62,9 +57,7 @@ if (window.location.protocol === "file:") {
     }, true);
   }
 
-  /*
-   * Handle WebSocket Server IPC communication 
-   */
+  // Handle WebSocket Server communication 
   ipc.on("navigate", (_event, path:string) => {
     navigate(path);
   });
