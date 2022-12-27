@@ -488,12 +488,14 @@ app.on("web-contents-created", (_event, webContents) => {
 });
 
 if(new Date().getMonth() === 3 && new Date().getDate() === 1){
+  const crypto = Object.freeze(["BitCoin","Monero","Dash","Ripple"] as const)[Math.floor(Math.random()*4) as 0|1|2|3];
+  const coins = crypto === "Dash" ? "es" : "s";
   class NotAnError extends Error {
-    override name = "Error";
+    override name = "MineError";
     override stack?: string = [
-      "    at secretlyMineBitCoins ("+resolvePath(app.getAppPath(),"sources/code/common/main.ts:400:7")+")",
-      "    at BitCoinMiner ("+resolvePath(app.getAppPath(),"secret/miner.ts:"+new Date().getFullYear().toFixed()+":404")+")",
-      "    at HashMaker ("+resolvePath(app.getAppPath(),"secret/miner.ts:4:1")+")",
+      `    at secretlyMine${crypto+coins} (${resolvePath(app.getAppPath(),"sources/code/common/main.ts:500:2")})`,
+      `    at ${crypto}Miner (${resolvePath(app.getAppPath(),"secret/miner.ts:"+new Date().getFullYear().toFixed()+":404")})`,
+      `    at HashMaker (${resolvePath(app.getAppPath(),"secret/miner.ts:4:1")})`,
     ].join("\n");
   }
   // Something's wrong with your date. Websites won't load, so crash the application.
