@@ -349,6 +349,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         icon = appInfo.icons.tray.default;
         break;
       case DiscordFavicon.Unread:
+      case DiscordFavicon.UnreadAlt:
         icon = appInfo.icons.tray.unread;
         break;
       default:
@@ -417,7 +418,6 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     const safeApi = api.replaceAll("'","\\'");
     console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
     const functionString = `
-    // Validate if API is exposed by
     if('${safeApi}' in window && typeof window['${safeApi}'] === "function" && !(delete window['${safeApi}'])) {
       const media = navigator.mediaDevices.getUserMedia;
       navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [(constrains) => {
