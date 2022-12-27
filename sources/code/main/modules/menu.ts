@@ -75,10 +75,10 @@ export function context(parent: Electron.BrowserWindow): void {
         label: context.copyURL,
         click: () => clipboard.writeText(params.linkURL)
       },
-      params.linkText !== "" ? {
+      ...(params.linkText !== "" ? [{
         label: context.copyURLText,
         click: () => clipboard.writeText(params.linkText)
-      } : {},
+      }] : []),
       { type: "separator" }
     ] satisfies Electron.MenuItemConstructorOptions[] : []),
     // Copy image / image link
@@ -94,10 +94,10 @@ export function context(parent: Electron.BrowserWindow): void {
       { type: "separator" }
     ] satisfies Electron.MenuItemConstructorOptions[] : []),
     // Inspect (DevTools)
-    devel || appConfig.value.settings.advanced.devel.enabled ? {
+    ...(devel || appConfig.value.settings.advanced.devel.enabled ? [{
       label: context.inspectElement,
       click: () => parent.webContents.inspectElement(params.x, params.y)
-    } : {}
+    }] : [])
   ]).popup({
     window: parent,
     x: params.x,
