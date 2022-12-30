@@ -294,15 +294,12 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
     const defaults = Object.freeze({
       width: appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3),
       height: appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3),
-    });
+      isMaximized: false
+    } satisfies WindowStatus);
     // Initialize class
     super(path, true, Object.freeze({
-      [windowName]: Object.freeze({
-        width: defaults.width,
-        height: defaults.height,
-        isMaximized: false
-      } satisfies WindowStatus)
-    }) as unknown as Partial<Record<T, WindowStatus>>, spaces);
+      [windowName]: defaults
+    }) as Partial<Record<T, WindowStatus>>, spaces);
 
     this.#windowName = windowName;
     this.initState = Object.freeze({
