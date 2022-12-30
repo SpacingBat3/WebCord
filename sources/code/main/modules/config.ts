@@ -210,14 +210,17 @@ class Config<T> {
         break;
     }
     // Fix configuration file.
+    let config;
     if (!(existsSync(this.#path+this.#pathExtension)))
+      config = this.defaultConfig;
+    else
+      config = {...this.defaultConfig, ...this.value};
+    try {
+      this.#write(config);
+      this.#cache = config;
+    } catch {
       this.#write(this.defaultConfig);
-    else {
-      try {
-        this.#write({...this.defaultConfig, ...this.value});
-      } catch {
-        this.#write(this.defaultConfig);
-      }
+      this.#cache = this.defaultConfig;
     }
   }
 }
