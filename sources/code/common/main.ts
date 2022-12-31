@@ -27,7 +27,7 @@ import crash, {commonCatches} from "../main/modules/error";
 crash();
 
 import { app, BrowserWindow, dialog, session } from "electron/main";
-import { shell } from "electron/common";
+import { clipboard, shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
 import { protocols, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
@@ -435,12 +435,12 @@ app.on("web-contents-created", (_event, webContents) => {
       (config.advanced.redirection.warn || protocolMeta.allow || !isMainWindow)
     ) {
       const window = BrowserWindow.fromWebContents(webContents);
-      const strings = (new L10N).client.dialog;
+      const {dialog: strings, context: actions} = new L10N().client;
       const options: Electron.MessageBoxSyncOptions = {
         type: "warning",
         title: strings.common.warning + ": " + strings.externalApp.title,
         message: strings.externalApp.message,
-        buttons: [strings.common.no, strings.common.yes],
+        buttons: [strings.common.no, actions.copyURL, strings.common.yes],
         defaultId: 0,
         cancelId: 0,
         detail: strings.common.source + ":\n" + details.url,
@@ -453,8 +453,10 @@ app.on("web-contents-created", (_event, webContents) => {
         result = dialog.showMessageBoxSync(window, options);
       else
         result = dialog.showMessageBoxSync(options);
-
-      if (result === 0) return { action: "deny" };
+      if (result === 1)
+        clipboard.writeText(details.url);
+      if (result < (options.buttons?.length??0)-1)
+        return { action: "deny" };
     }
     if (protocolMeta.trust || protocolMeta.allow) {
       const url = new URL(details.url);
