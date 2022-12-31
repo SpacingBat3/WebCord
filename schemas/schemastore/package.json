@@ -628,8 +628,14 @@
     },
     "engines": {
       "type": "object",
+      "description": "Specify a preffered version of Node engine and package manager for this package.",
       "properties": {
         "node": {
+          "description": "A set of supported Node APIs on which can be run a build toolkit.",
+          "type": "string"
+        },
+        "npm": {
+          "description": "A set of supported NPM versions which can handle the package lockfile, scripts and dependencies.",
           "type": "string"
         }
       },
