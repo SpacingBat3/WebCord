@@ -323,22 +323,23 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     throw new TypeError("'repository' in package.json is not of type 'object'.");
 
   // "Red dot" icon feature
-  let setFavicon: string | undefined;
+  const hashMap = new Map<string,string>();
+  let lastFavicon = "";
   win.webContents.on("page-favicon-updated", (_event, favicons) => {
-    if(favicons[0] === undefined) return;
+    if(favicons[0] === undefined || lastFavicon === favicons[0]) return;
     let icon: Electron.NativeImage, flash = false;
     // Hash discord favicon.
-    const faviconHash = createHash("sha1")
-      .update(nativeImage.createFromDataURL(favicons[0]).toJPEG(0))
-      .digest("hex");
-    // Stop execution when icon is same as the one set.
-    if (faviconHash === setFavicon) return;
+    const faviconHash = hashMap.has(favicons[0]) ?
+      (hashMap.get(favicons[0])??"") : createHash("sha1")
+        .update(nativeImage.createFromDataURL(favicons[0]).toJPEG(0))
+        .digest("hex");
+    hashMap.set(favicons[0],faviconHash);
     // Stop code execution on Fosscord instances.
     const currentInstance = knownInstancesList
       .find((value) => value[1].origin === new URL(win.webContents.getURL()).origin);
     if (!(currentInstance?.[1].hostname.endsWith(".discord.com")??false) &&
         currentInstance?.[1].hostname !== "discord.com") {
-      setFavicon = faviconHash;
+      lastFavicon = favicons[0];
       icon = appInfo.icons.tray.default;
       win.flashFrame(false);
       return;
@@ -366,7 +367,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       tray.setImage(icon);
     }
     win.flashFrame(flash&&appConfig.value.settings.general.taskbar.flash);
-    setFavicon = faviconHash;
+    lastFavicon = favicons[0];
   });
 
   // Window Title
