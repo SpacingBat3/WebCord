@@ -6,12 +6,14 @@
         "copyURL": "انسخ عنوان الرابط",
         "copyURLText": "انسخ نص الرابط",
         "inspectElement": "افحص",
-        "paste": "الصق"
+        "paste": "الصق",
+        "copyImage": "انسخ الصورة",
+        "copyImageURL": "انسخ رابط الصورة"
     },
     "menubar": {
         "view": {
             "reload": "أعد التحميل",
-            "groupName": "اعرض",
+            "groupName": "العرض",
             "forceReload": "افرض إعادة التحميل",
             "zoomOut": "صغّر العرض",
             "zoomIn": "كبّر العرض",
@@ -31,7 +33,7 @@
             }
         },
         "edit": {
-            "groupName": "حرّر",
+            "groupName": "تحرير",
             "undo": "تراجع",
             "redo": "أعِد"
         },
@@ -80,7 +82,7 @@
         },
         "mod": {
             "crx": "إضافة كروم/كروميوم",
-            "nodeExt": "إضافة Node.js لويبكورد"
+            "nodeExt": "إضافة Node.js لوِبكورد"
         },
         "externalApp": {
             "title": "فتح الرابط في تطبيق خارجي",
