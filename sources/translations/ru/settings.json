@@ -39,7 +39,7 @@
             "labels": {
                 "science": "Блокировать известные запросы телеметрии (<code>/science</code> и <code>/tracing</code>).",
                 "typingIndicator": "Блокировать индикатор ввода текста (<code>/typing</code>).",
-                "fingerprinting": "Блокировать скрипт <code>api.js</code>, собирающий <i>отпечаток пальца</i> клиента."
+                "fingerprinting": "Блокировать скрипт <code>api.js</code> и <code>cdn-cgi</code>, собирающий отпечаток пальца клиента."
             }
         },
         "permissions": {

@@ -21,6 +21,14 @@
             "labels": {
                 "flash": "Faire clignoter l'icône dans la barre des tâches après avoir reçu un message."
             }
+        },
+        "window": {
+            "labels": {
+                "hideOnClose": "Masquer la fenêtre dans la boîte à miniatures (system tray) en utilisant le bouton Fermer.",
+                "transparent": "Autoriser les fenêtres à fond transparent."
+            },
+            "name": "Fenêtre principale de WebCord",
+            "description": "Contrôle l'aspect et le comportement de la fenêtre qui affiche l'interface client."
         }
     },
     "privacy": {
@@ -75,8 +83,8 @@
             "description": "Permet l'accès aux outils et aux options inachevées qui sont potentiellement considérés comme cassés ou dangereux. <b>Avis de non-responsabilité</b> : Les mainteneurs de l'application ne sont pas responsables des bugs ou des problèmes survenant après l'activation de cette option - veuillez ne pas les signaler !"
         },
         "redirection": {
-            "name": "Comportement de redirection inter-origine",
-            "description": "Contrôle les actions sur les redirections inter-origine. <b>Cela affecte la sécurité des applications</b>.",
+            "name": "Comportement de la redirection inter-domaine",
+            "description": "Contrôle les actions sur les redirections inter-domaine. <b>Cela affecte la sécurité des applications</b>.",
             "labels": {
                 "warn": "Toujours avertir l'utilisateur des redirections vers des applications externes."
             }

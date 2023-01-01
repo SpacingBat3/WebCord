@@ -73,6 +73,13 @@
             },
             "request": {
                 "denied": "%s : demande de permission à %s refusée."
+            },
+            "question": {
+                "message": "Voulez-vous accorder à Discord un accès %s ?",
+                "video": "à la caméra",
+                "audio": "au micro",
+                "notifications": "aux notifications",
+                "title": "Traitement des demandes de permission"
             }
         },
         "mod": {
