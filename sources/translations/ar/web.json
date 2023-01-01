@@ -29,7 +29,7 @@
             "appLicenseBody": "%s تطبيق حر، تستطيع استخدامه وتعديله وإعادة نشره حسب شروط ترخيص MIT الذي يجب أن يُنشر مع هذا البرنامج.",
             "showLicense": "أظهر الترخيص",
             "thirdPartyLicensesTitle": "تراخيص الجهات الخارجية",
-            "thirdPartyLicensesBody": "يعتمد s% على برامج الجهات الخارجية التالية:",
+            "thirdPartyLicensesBody": "يعتمد %s على برامج الجهات الخارجية التالية:",
             "licensedUnder": "بموجب ترخيص %s",
             "packageAuthors": "مطوروا %s"
         }
