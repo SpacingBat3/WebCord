@@ -38,7 +38,7 @@
             "labels": {
                 "science": "Bloquear puntos finales de telemetría conocidos (<code>/science</code> y <code>/tracing</code>).",
                 "typingIndicator": "Bloquear indicador de \"escribiendo...\" (<code>/typing</code>).",
-                "fingerprinting": "Bloquear el script de toma de huellas dactilares <code>api.js</code>."
+                "fingerprinting": "Bloquee los métodos de huellas dactilares conocidos (<code>api.js</code> y <code>cdn-cgi</code>)."
             }
         },
         "name": "Privacidad",

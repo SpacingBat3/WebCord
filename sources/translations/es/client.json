@@ -10,7 +10,9 @@
         "dictionaryAdd": "Agregar al diccionario local",
         "copyURL": "Copiar la dirección del enlace",
         "copyURLText": "Copiar texto del enlace",
-        "inspectElement": "Inspeccionar"
+        "inspectElement": "Inspeccionar",
+        "copyImage": "Copiar la imagen",
+        "copyImageURL": "Copiar el enlace a la imagen"
     },
     "menubar": {
         "enabled": "Habilitado",
