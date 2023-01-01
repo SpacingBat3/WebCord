@@ -10,7 +10,9 @@
         "dictionaryAdd": "Добавить в локальный словарь",
         "copyURL": "Копировать адрес ссылки",
         "copyURLText": "Копировать текст ссылки",
-        "inspectElement": "Исследовать"
+        "inspectElement": "Исследовать",
+        "copyImage": "Копировать изображение",
+        "copyImageURL": "Скопировать ссылку на изображение"
     },
     "menubar": {
         "enabled": "Включено",
