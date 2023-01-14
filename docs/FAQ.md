@@ -54,12 +54,14 @@ including all URLs that are allowed to load. You can disable it in WebCord
 settings as a workaround.
 
 ## 3. How to get a microphone permission for WebCord?
-If you granted it via the application settings, this warning may indicate a
-wrong configuration in your system audio settings – for some reason, Electron
-doesn't seems to get access to microphone when there's no default / fallback
-device set. To fix it, set your microphone as default/fallback in your system's
-audio settings and restart the application – make sure it's properly closed and
-there's no icon in tray nor Electron/WebCord process running in the background!
+First, make sure permission is granted in the application settings (`File` -> 
+`Settings` -> `Privacy` -> `Permissions`). If you have already granted it via 
+the application settings, this warning may indicate a wrong configuration in 
+your system audio settings – for some reason, Electron doesn't seems to get 
+access to microphone when there's no default / fallback device set. To fix it, 
+set your microphone as default/fallback in your system's audio settings and 
+restart the application – make sure it's properly closed and there's no icon 
+in tray nor Electron/WebCord process running in the background!
 
 Currently, this bug could be encountered on Linux, it's state is unknown for the
 other platforms.
