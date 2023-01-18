@@ -1,3 +1,14 @@
+<table class="alert-info" align=center>
+<tr>
+    <td> 🆕️ </td>
+    <td>
+        The current release in <code>master</code> is currently deprecated, I'm working on
+	WebCord rewrite in <a href="https://github.com/SpacingBat3/WebCord/tree/next"><code>next</code></a>.
+        Until then, most likely there won't any changes done to `master`, PRs might not be merged at all and
+        there might not be any releases made.
+    </td>
+</tr>
+</table>
 <table class="alert-warn" align=center>
 <tr>
     <td> ⚠️ </td>
