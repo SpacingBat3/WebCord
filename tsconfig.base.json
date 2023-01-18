@@ -1,0 +1,44 @@
+{
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    //"composite": true,
+    "target": "ES2022",
+    /* Whenever incremental compilation is enabled */
+    "incremental": true,
+    /* Whenever sourcemaps should be made for emitted JavaScript files */
+    "sourceMap": true,
+    /* Whenever comments are emitted to files */
+    "removeComments": true,
+    /* Limit module resolution to project's path only (only in compiler). */
+    "typeRoots": ["./node_modules/@types"],
+    /* Use `tslib` for import helpers. */
+    "importHelpers": true,
+    /* Allow for JSON imports */
+    "resolveJsonModule": true,
+    /* Enforce consistent casing for imported module names */
+    "forceConsistentCasingInFileNames": true,
+    /* Use *nix end-of-line character for emitted files */
+    "newLine": "lf",
+    /* Do not emit anything when there's an error in source files */
+    "noEmitOnError": true,
+    /* Emit ECMAScript-compilant classes for targets older than ES2022 */
+    "useDefineForClassFields": true,
+    "baseUrl": "./",
+    "paths": {
+      /* Type aliases of WebCord, defined in `package.json`. */
+      "#cjs:/*": ["./code/*.cts"],
+      "#esm:/*": ["./code/*.ts"],
+      "#json:/l10n/*": ["./assets/localization/en/*.json"],
+      /* Typescipt-exclusive modules for D.TS file imports. */
+      "#dts:forge": ["./code/build/forge.d.ts", "./code/build/forge.d.cts"],
+      /* Internal type exports of Electron. */
+      "electron/main": ["./node_modules/electron/electron.d.ts"],
+      "electron/renderer": ["./node_modules/electron/electron.d.ts"],
+      "electron/common": ["./node_modules/electron/electron.d.ts"]
+    },
+    "plugins": [{
+      "name": "typescript-eslint-language-service",
+      "watchDirs": ["./"]
+    }]
+  }
+}

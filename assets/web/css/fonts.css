@@ -1,0 +1,25 @@
+/** Inter: regular, bold, italic, bold+italic **/
+@import url('../../../../node_modules/@fontsource/inter/700.css');
+@import url('../../../../node_modules/@fontsource/inter/700-italic.css');
+@import url('../../../../node_modules/@fontsource/inter/400.css');
+@import url('../../../../node_modules/@fontsource/inter/400-italic.css');
+
+/** Ubuntu: regular, bold, italic, bold+italic **/
+@import url('../../../../node_modules/@fontsource/ubuntu/700.css');
+@import url('../../../../node_modules/@fontsource/ubuntu/700-italic.css');
+@import url('../../../../node_modules/@fontsource/ubuntu/400.css');
+@import url('../../../../node_modules/@fontsource/ubuntu/400-italic.css');
+
+/** Fira Code: regular, bold, italic, bold+italic **/
+@import url('../../../../node_modules/@fontsource/fira-code/700.css');
+@import url('../../../../node_modules/@fontsource/fira-code/400.css');
+
+/** Twemoji **/
+@import url('../../../../node_modules/twemoji-colr-font/twemoji.css');
+
+:root {
+    --font-primary: 'Inter', 'Roboto', Twemoji, 'Noto Sans', 'DejaVu Sans', Arial, sans-serif;
+    --font-display: 'Ubuntu', Twemoji, 'Noto Sans', 'DejaVu Sans', Arial, sans-serif;
+    --font-code: 'Fira Code', Twemoji, Courier, monospace;
+    --font-headline: var(--font-display);
+}

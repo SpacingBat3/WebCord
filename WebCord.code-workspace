@@ -1,0 +1,32 @@
+{
+	"folders": [
+		{
+			"name": "Source code v5",
+			"path": "code"
+		},
+		{
+			"name": "Source code v4",
+			"path": "sources.old/code"
+		},
+		{
+			"name": "English locales",
+			"path": "assets/localization/en"
+		},
+		{
+			"name": "Polish locales",
+			"path": "assets/localization/pl"
+		},
+		{
+			"name": "Entire project",
+			"path": "."
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"files.exclude": {
+			"*.code-workspace": true,
+			"**/*lock*": true,
+			"assets": true
+		}
+	}
+}

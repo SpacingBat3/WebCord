@@ -1,34 +1,17 @@
 {
-    "extends": "@tsconfig/node16-strictest/tsconfig.json",
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "moduleResolution": "Node",
+        "module": "NodeNext",
         "target": "ES2022",
-        /* Whenever incremental compilation is enabled */
-        "incremental": true,
+        /* ES/CommonJS module interoperability */
+        "esModuleInterop": true,
         /* File containing saved information about incremental compilation */
         "tsBuildInfoFile": "cache/tsc.json",
-        /* Whenever sourcemaps should be made for emitted JavaScript files */
-        "sourceMap": true,
+        /* Replace a set of core libraries. */
+        "lib": ["ES2022", "DOM"],
+        "rootDir": ".",
         /* Directrory in which are placed all emitted files */
         "outDir": "app",
-        /* Whenever comments are emitted to files */
-        "removeComments": true,
-        /* Replace a set of core libraries. */
-        "lib": ["ES2022", "DOM.Iterable"],
-        /* Limit module resolution to project's path only */
-        "typeRoots": ["./node_modules/@types"],
-        /* Use `tslib` for import helpers. */
-        "importHelpers": true,
-        /* Allow for JSON imports */
-        "resolveJsonModule": true,
-        /* Enforce consistent casing for imported module names */
-        "forceConsistentCasingInFileNames": true,
-        /* Use *nix end-of-line character for emitted files */
-        "newLine": "lf",
-        /* Do not emit anything when there's an error in source files */
-        "noEmitOnError": true
     },
-    "include": [
-        "sources/code/**/*.ts"
-    ]
+    "include": ["code/**/*.ts", "code/**/*.cts", "assets/localization/en/*.json"]
 }

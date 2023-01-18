@@ -10,6 +10,9 @@ node_modules/
 # Ignore hidden dirs with some exceptions
 # (these are likely used by text editors)
 .*/
+# Ignore file backups / old files (if present for any reason)
+*.old
+*.bak
 # GitHub – workflows, templates, configs etc.
 !.github/
 # Husky – Git hooks implementation 
