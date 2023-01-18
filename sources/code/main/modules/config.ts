@@ -160,7 +160,13 @@ class Config<T> {
     let decodedData = encodedData.toString();
     if(this.#pathExtension === FileExt.Encrypted)
       decodedData = safeStorage.decryptString(encodedData);
-    return JSON.parse(decodedData);
+    
+    try {
+      return JSON.parse(decodedData);
+    } catch(error) {
+      console.error(error);
+      return;
+    }
   }
   /** 
    * Merges the configuration object with the another `object`.
