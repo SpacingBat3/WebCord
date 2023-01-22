@@ -42,6 +42,7 @@ import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/o
 import { styles } from "../main/modules/extensions";
 import { parseArgs, ParseArgsConfig, stripVTControlCharacters, debug } from "util";
 import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
+import { registerShortcuts } from "../main/modules/shortcuts";
 
 const argvConfig = Object.freeze(({
   options: Object.freeze({
@@ -368,7 +369,7 @@ function main(): void {
     }, 30/*min*/*60000);
     checkVersion(updateInterval).catch(commonCatches.print);
     const mainWindow = createMainWindow({startHidden, screenShareAudio});
-    
+    registerShortcuts(mainWindow);
     // WebSocket server
     import("../main/modules/socket")
       .then(socket => socket.default())
