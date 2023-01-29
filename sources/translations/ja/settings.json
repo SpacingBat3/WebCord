@@ -1,1 +1,114 @@
-{}
+{
+    "general": {
+        "name": "一般",
+        "menuBar": {
+            "name": "メニューバー",
+            "description": "メニューバーの表示を設定します。",
+            "labels": {
+                "hide": "メニューバーを自動的に非表示にする (<kbd>ALT</kbd>で表示を切り替えられます)。"
+            }
+        },
+        "window": {
+            "description": "クライアントのウインドウの見た目や機能の設定。",
+            "name": "WebCordのメインウインドウ",
+            "labels": {
+                "transparent": "透過バックグラウンドを許可。",
+                "hideOnClose": "閉じるボタンでウインドウをトレイに隠す。"
+            }
+        },
+        "tray": {
+            "name": "トレイ",
+            "description": "システムトレイのアイコンの表示について設定します。",
+            "labels": {
+                "disable": "ウインドウをシステムトレイに隠す機能を無効化。"
+            }
+        },
+        "taskbar": {
+            "name": "タスクバー",
+            "description": "WebCordのタスクバーエントリの機能について設定。",
+            "labels": {
+                "flash": "新しいメッセージが来た際にタスクバーボタンの点滅。"
+            }
+        }
+    },
+    "privacy": {
+        "name": "プライバシー",
+        "blockApi": {
+            "name": "Discord APIブロック",
+            "description": "DiscordのAPIをブロックすることで更にプライバシーを強化できます。",
+            "labels": {
+                "typingIndicator": "入力中インジケータをブロック (<code>/typing</code>)。",
+                "fingerprinting": "不明な機種特定機能のブロック (<code>api.js</code> and <code>cdn-cgi</code>)。",
+                "science": "不明なテレメトリーのエンドポイントをブロック (<code>/science</code>や<code>/tracing</code>)。"
+            }
+        },
+        "permissions": {
+            "name": "権限",
+            "description": "Discordのウェブサイトから要求される権限を許可、または拒否します。こちらに表示されていない権限は自動的にブロックされています。",
+            "labels": {
+                "video": "カメラ",
+                "audio": "マイク",
+                "fullscreen": "全画面表示",
+                "display-capture": "画面キャプチャ",
+                "notifications": "通知",
+                "background-sync": "バックグラウンド同期"
+            }
+        }
+    },
+    "advanced": {
+        "csp": {
+            "name": "コンテンツセキュリティポリシー",
+            "description": "プライバシーやセキュリティの観点からDiscordから設定されたContent Securityヘッダーを無視しクライアントで独自のヘッダーを設定する。",
+            "labels": {
+                "enabled": "ビルトインのContent Securityポリシーを使用する。"
+            }
+        },
+        "unix": {
+            "description": "Chromium/Blinkエンジンの実験的フラグがついている機能の有効化。<b>自己責任でお使いください</b>。",
+            "name": "Unix/UnixのようなOS向けの実験的機能",
+            "labels": {
+                "autoscroll": "中クリックスクロールの有効化 (aka. <i>自動スクロール</i>)。"
+            }
+        },
+        "currentInstance": {
+            "name": "Discordのインスタンス",
+            "description": "WebCordの接続するインスタンスを選択します。 <b>実験的</b> FossCordの実装は完了していません."
+        },
+        "devel": {
+            "name": "開発者モード",
+            "description": "開発中や壊れた、もしくは非推奨な機能へのアクセスを許可する。 <b>注意</b>: アプリケーションのメンテーナーはこのオプションが有効化されたあとで起きたバグや問題について一切の責任を負いません。問題を報告しないでください！",
+            "labels": {
+                "enabled": "開発者モードの有効化。"
+            }
+        },
+        "optimize": {
+            "name": "クライアント最適化",
+            "labels": {
+                "gpu": "現在アクティブなグラフィックカードに対してクライアントを最適化。"
+            },
+            "description": "<b></b> Electronのパフォーマンスや機能性を向上させる可能性のあるカスタムフラグをChromiumエンジンに適用するために、ユーザーソフトウェアやハードウェアを検出しようとします。<b>実験的</b> Chromium がデフォルトでこれらのフラグを適用しない理由があるためです。"
+        },
+        "webApi": {
+            "name": "JavaScript APIへのアクセス",
+            "labels": {
+                "webGl": "WebGLサポートの有効化。"
+            },
+            "description": "非特権（DOM）スクリプトで許可されるAPIを制御します。"
+        },
+        "cspThirdParty": {
+            "name": "サードパーティーのウェブサイト",
+            "description": "接続またはコンテンツを表示しても良いサードパーティーのウェブサイトのリストを設定。",
+            "labels": {
+                "gif": "GIFプロバイダ"
+            }
+        },
+        "redirection": {
+            "name": "クロスオリジンのリダイレクトの挙動",
+            "description": "クロスオリジンのリダイレクトの挙動について設定します。<b>これはアプリケーションのセキュリティに影響します</b>。",
+            "labels": {
+                "warn": "外部のウェブサイトへのクロスオリジンのリダイレクトについて常にユーザーを警告する。"
+            }
+        },
+        "name": "高度な設定"
+    }
+}
