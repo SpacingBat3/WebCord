@@ -1,1 +1,114 @@
-{}
+{
+    "general": {
+        "name": "Generale",
+        "menuBar": {
+            "name": "Barra menu",
+            "description": "Cambia la visibilità della barra del menu nativa.",
+            "labels": {
+                "hide": "Nascondi automaticamente la barra dei menu (Il tasto <kbd>ALT</kbd> cambia la visibilità)."
+            }
+        },
+        "tray": {
+            "name": "Tray",
+            "description": "Cambia la visibilità dell'icona nella tray di sistema.",
+            "labels": {
+                "disable": "Disabilita la funzionalità di nascondere la finestra nella tray di sistema."
+            }
+        },
+        "taskbar": {
+            "name": "Taskbar",
+            "labels": {
+                "flash": "Lampeggia l'icona nella taskbar all'arrivo di nuovi messaggi."
+            },
+            "description": "Cambia il comportamento di WebCord riguardo l'icona nella taskbar."
+        },
+        "window": {
+            "name": "Finestra principale di WebCord",
+            "description": "Controlla l'aspetto e il comportamento della finestra di WebCord.",
+            "labels": {
+                "transparent": "Permetti la translucenza della finestra in background.",
+                "hideOnClose": "Minimizza la finestra nella tray quando viene chiusa."
+            }
+        }
+    },
+    "privacy": {
+        "blockApi": {
+            "labels": {
+                "science": "Blocca endpoint di telemetria noti (<code>/science</code> e <code>/tracing</code>).",
+                "typingIndicator": "Blocca indicatore di scrittura (<code>/typing</code>).",
+                "fingerprinting": "Blocca metodi di fingerprinting noti (<code>api.js</code> e <code> cdn-cgi</code>)."
+            },
+            "description": "Blocca specifiche API di Discord per migliorare la tua privacy.",
+            "name": "Disabilita API di Discord"
+        },
+        "name": "Privacy",
+        "permissions": {
+            "name": "Permessi",
+            "labels": {
+                "background-sync": "Sincronizzazione in background",
+                "video": "Fotocamera",
+                "audio": "Microfono",
+                "fullscreen": "Schermo intero",
+                "notifications": "Notifiche",
+                "display-capture": "Acquisizione del desktop"
+            },
+            "description": "Permetti o nega permessi e richieste specifici dal sito di Discord. Ricorda che i permessi non elencati qua sono bloccati automaticamente da WebCord."
+        }
+    },
+    "advanced": {
+        "redirection": {
+            "description": "Controlla il comportamento su redirezioni cross-origin. <b>Questo modifica la sicurezza dell'applicazione</b>.",
+            "name": "Comportamento redirezione cross-origin",
+            "labels": {
+                "warn": "Avverti sempre l'utente riguardo redirezioni cross-origin su applicazioni esterne."
+            }
+        },
+        "cspThirdParty": {
+            "name": "Siti di terze parti",
+            "description": "Imposta una lista di siti di terze parti che possono collegarsi o mostrare contenuti.",
+            "labels": {
+                "gif": "Fornitori di GIFS"
+            }
+        },
+        "name": "Avanzato",
+        "devel": {
+            "labels": {
+                "enabled": "Abilita modalità sviluppatore."
+            },
+            "name": "Modalità sviluppatore",
+            "description": "Abilità l'accesso a strumenti e opzioni che sono considerate non funzionanti o pericolose. <b>Disclaimer</b>: i mantainer dell'applicazione non sono responsabili per nessun problema o bug dopo che questa opzione è stata attivata - per favore, non segnalarle!"
+        },
+        "optimize": {
+            "labels": {
+                "gpu": "Ottimizza il client per la scheda video attiva."
+            },
+            "name": "Ottimizzazioni client",
+            "description": "Prova a rilevare il software e l'hardware dell'utente per applicare flag personalizzati al motore di Chromium che <b>potrebbe</b> migliorare le performance o le funzionalità di Electron.<b>Sperimentale</b>, visto che ci dev'essere un motivo della disabilitazione di questi flag da parte degli sviluppatori di Chromium."
+        },
+        "webApi": {
+            "labels": {
+                "webGl": "Abilita il supporto WebGL."
+            },
+            "name": "Accesso alle API JavaScript",
+            "description": "Controlla quali API sono permesse a script (DOM) non privilegiati."
+        },
+        "unix": {
+            "name": "Features sperimentali per OS Unix/Unix-like",
+            "description": "Abilita features che sono state flaggate come sperimentali da Chromium/Blink. <b>Usale a tuo rischio e pericolo</b>.",
+            "labels": {
+                "autoscroll": "Abilita scroll con click centrale del mouse (conosciuto come <i>scorrimento automatico</i>)."
+            }
+        },
+        "csp": {
+            "name": "Content Security Policy",
+            "description": "Cambia il comportamento riguardo l'ignorare gli headers della Content Security Policy di Discord e lascia il client impostare i propri CSP per migliorare la privacy e la security dell'utente.",
+            "labels": {
+                "enabled": "Usa la Content Security Policy fornita."
+            }
+        },
+        "currentInstance": {
+            "name": "Istanza di Discord",
+            "description": "Seleziona l'istanza alla quale WebCord dovrebbe collegarsi. <b>Sperimentale</b> visto che l'implementazione di Fosscord non è ancora completa."
+        }
+    }
+}
