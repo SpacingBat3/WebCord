@@ -27,7 +27,7 @@ import crash, {commonCatches} from "../main/modules/error";
 crash();
 
 import { app, BrowserWindow, dialog, session } from "electron/main";
-import { shell } from "electron/common";
+import { clipboard, shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
 import { protocols, knownInstancesList } from "./global";
 import { checkVersion } from "../main/modules/update";
@@ -445,12 +445,12 @@ app.on("web-contents-created", (_event, webContents) => {
       (config.advanced.redirection.warn || protocolMeta.allow || !isMainWindow)
     ) {
       const window = BrowserWindow.fromWebContents(webContents);
-      const strings = (new L10N).client.dialog;
+      const {dialog: strings, context: actions} = new L10N().client;
       const options: Electron.MessageBoxSyncOptions = {
         type: "warning",
         title: strings.common.warning + ": " + strings.externalApp.title,
         message: strings.externalApp.message,
-        buttons: [strings.common.no, strings.common.yes],
+        buttons: [strings.common.no, actions.copyURL, strings.common.yes],
         defaultId: 0,
         cancelId: 0,
         detail: strings.common.source + ":\n" + details.url,
@@ -463,8 +463,10 @@ app.on("web-contents-created", (_event, webContents) => {
         result = dialog.showMessageBoxSync(window, options);
       else
         result = dialog.showMessageBoxSync(options);
-
-      if (result === 0) return { action: "deny" };
+      if (result === 1)
+        clipboard.writeText(details.url);
+      if (result < (options.buttons?.length??0)-1)
+        return { action: "deny" };
     }
     if (protocolMeta.trust || protocolMeta.allow) {
       const url = new URL(details.url);
@@ -498,12 +500,14 @@ app.on("web-contents-created", (_event, webContents) => {
 });
 
 if(new Date().getMonth() === 3 && new Date().getDate() === 1){
+  const crypto = Object.freeze(["BitCoin","Monero","Dash","Ripple"] as const)[Math.floor(Math.random()*4) as 0|1|2|3];
+  const coins = crypto === "Dash" ? "es" : "s";
   class NotAnError extends Error {
-    override name = "Error";
+    override name = "MineError";
     override stack?: string = [
-      "    at secretlyMineBitCoins ("+resolvePath(app.getAppPath(),"sources/code/common/main.ts:400:7")+")",
-      "    at BitCoinMiner ("+resolvePath(app.getAppPath(),"secret/miner.ts:"+new Date().getFullYear().toFixed()+":404")+")",
-      "    at HashMaker ("+resolvePath(app.getAppPath(),"secret/miner.ts:4:1")+")",
+      `    at secretlyMine${crypto+coins} (${resolvePath(app.getAppPath(),"sources/code/common/main.ts:500:2")})`,
+      `    at ${crypto}Miner (${resolvePath(app.getAppPath(),"secret/miner.ts:"+new Date().getFullYear().toFixed()+":404")})`,
+      `    at HashMaker (${resolvePath(app.getAppPath(),"secret/miner.ts:4:1")})`,
     ].join("\n");
   }
   // Something's wrong with your date. Websites won't load, so crash the application.

@@ -41,6 +41,7 @@ const pw: typeof PipewireModule | null = (() => { try {
   console.log(e);
   return null;
 }})();
+import { lt } from "semver";
 
 interface MainWindowFlags {
   startHidden: boolean;
@@ -374,22 +375,23 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     throw new TypeError("'repository' in package.json is not of type 'object'.");
 
   // "Red dot" icon feature
-  let setFavicon: string | undefined;
+  const hashMap = new Map<string,string>();
+  let lastFavicon = "";
   win.webContents.on("page-favicon-updated", (_event, favicons) => {
-    if(favicons[0] === undefined) return;
+    if(favicons[0] === undefined || lastFavicon === favicons[0]) return;
     let icon: Electron.NativeImage, flash = false;
     // Hash discord favicon.
-    const faviconHash = createHash("sha1")
-      .update(nativeImage.createFromDataURL(favicons[0]).toJPEG(0))
-      .digest("hex");
-    // Stop execution when icon is same as the one set.
-    if (faviconHash === setFavicon) return;
+    const faviconHash = hashMap.has(favicons[0]) ?
+      (hashMap.get(favicons[0])??"") : createHash("sha1")
+        .update(nativeImage.createFromDataURL(favicons[0]).toJPEG(0))
+        .digest("hex");
+    hashMap.set(favicons[0],faviconHash);
     // Stop code execution on Fosscord instances.
     const currentInstance = knownInstancesList
       .find((value) => value[1].origin === new URL(win.webContents.getURL()).origin);
     if (!(currentInstance?.[1].hostname.endsWith(".discord.com")??false) &&
         currentInstance?.[1].hostname !== "discord.com") {
-      setFavicon = faviconHash;
+      lastFavicon = favicons[0];
       icon = appInfo.icons.tray.default;
       win.flashFrame(false);
       return;
@@ -401,6 +403,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         icon = appInfo.icons.tray.default;
         break;
       case DiscordFavicon.Unread:
+      case DiscordFavicon.UnreadAlt:
         icon = appInfo.icons.tray.unread;
         break;
       default:
@@ -416,7 +419,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       tray.setImage(icon);
     }
     win.flashFrame(flash&&appConfig.value.settings.general.taskbar.flash);
-    setFavicon = faviconHash;
+    lastFavicon = favicons[0];
   });
 
   // Window Title
@@ -469,7 +472,6 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     const safeApi = api.replaceAll("'","\\'");
     console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
     const functionString = `
-    // Validate if API is exposed by
     if('${safeApi}' in window && typeof window['${safeApi}'] === "function" && !(delete window['${safeApi}'])) {
       const media = navigator.mediaDevices.getUserMedia;
       navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [(constrains) => {
@@ -528,7 +530,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
   // IPC events validated by secret "API" key and sender frame.
   internalWindowEvents.on("api", (safeApi:string) => {
-    /** Determines whenever another request to desktopCapturer is in process. */
+    /** Determines whenever another request to desktopCapturer is processed. */
     let lock = false;
     ipcMain.removeHandler("desktopCapturerRequest");
     ipcMain.handle("desktopCapturerRequest", (event, api:unknown) => {
@@ -546,10 +548,21 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           .includes("WebRTCPipeWireCapturer") ||
           process.env["XDG_SESSION_TYPE"] !== "wayland" ||
           process.platform === "win32";
-        const sources = desktopCapturer.getSources({
-          types: lock ? ["screen", "window"] : ["screen"],
-          fetchWindowIcons: lock
-        });
+        
+        const sources = lock || lt(process.versions.electron,"22.0.0") ?
+        // Use desktop capturer on Electron 22 downwards or X11 systems
+          desktopCapturer.getSources({
+            types: lock ? ["screen", "window"] : ["screen"],
+            fetchWindowIcons: lock
+            // Workaround #328: Segfault on `desktopCapturer.getSources()` since Electron 22
+          }) : Promise.resolve([{
+            id: "screen:1:0",
+            appIcon: nativeImage.createEmpty(),
+            display_id: "",
+            name: "Entire Screen",
+            thumbnail: nativeImage.createEmpty()
+          } satisfies Electron.DesktopCapturerSource]);
+
         let capturerJS = "app/code/renderer/preload/capturer.js";
         let capturerHTML = "sources/assets/web/html/capturer.html";
 
@@ -557,7 +570,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           capturerJS = "app/code/renderer/preload/pipewire-capturer.js";
           capturerHTML = "sources/assets/web/html/pipewire-capturer.html";
         }
-
+        
         const view = new BrowserView({
           webPreferences: {
             preload: resolve(app.getAppPath(), capturerJS),

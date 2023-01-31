@@ -210,14 +210,17 @@ class Config<T> {
         break;
     }
     // Fix configuration file.
+    let config;
     if (!(existsSync(this.#path+this.#pathExtension)))
+      config = this.defaultConfig;
+    else
+      config = {...this.defaultConfig, ...this.value};
+    try {
+      this.#write(config);
+      this.#cache = config;
+    } catch {
       this.#write(this.defaultConfig);
-    else {
-      try {
-        this.#write({...this.defaultConfig, ...this.value});
-      } catch {
-        this.#write(this.defaultConfig);
-      }
+      this.#cache = this.defaultConfig;
     }
   }
 }
@@ -235,35 +238,36 @@ interface WindowStatus {
 }
 
 export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, WindowStatus>>> {
-  private windowName: T;
+  #windowName: T;
+  #tempstate: PartialRecursive<typeof this.value>;
   /**
    * An object containing width and height of the window watched by `WinStateKeeper`
    */
   public initState: Readonly<WindowStatus>;
-  private setState(window: BrowserWindow, eventType = "resize") {
+  #setState(window: BrowserWindow, eventType = "resize") {
     switch(eventType) {
       case "maximize":
       case "unmaximize":
-        this.value = Object.freeze({
-          [this.windowName]: Object.freeze({
-            width: this.value[this.windowName]?.width ?? window.getNormalBounds().width,
-            height: this.value[this.windowName]?.height ?? window.getNormalBounds().height,
+        this.#tempstate = Object.freeze({
+          [this.#windowName]: Object.freeze({
+            width: this.value[this.#windowName]?.width ?? window.getNormalBounds().width,
+            height: this.value[this.#windowName]?.height ?? window.getNormalBounds().height,
             isMaximized: window.isMaximized()
           } satisfies WindowStatus)
         });
         break;
       default:
         if(window.isMaximized()) return;
-        this.value = Object.freeze({
-          [this.windowName]: Object.freeze({
+        this.#tempstate = Object.freeze({
+          [this.#windowName]: Object.freeze({
             width: window.getNormalBounds().width,
             height: window.getNormalBounds().height,
-            isMaximized: this.value[this.windowName]?.isMaximized ?? false
+            isMaximized: this.value[this.#windowName]?.isMaximized ?? false
           } satisfies WindowStatus)
         });
     }
     console.debug("[WIN] Electron event: "+(eventType));
-    console.debug("[WIN] State changed to: "+JSON.stringify(this.value[this.windowName]));
+    console.debug("[WIN] State changed to: "+JSON.stringify(this.value[this.#windowName]));
   }
 
   /**
@@ -273,11 +277,10 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
    */
 
   public watchState(window: BrowserWindow):void {
-    // Timeout is needed to give some time for resize to end on Linux:
-    window.on("resized",() => console.log("foo"));
-    window.on("resize", () => setTimeout(()=>this.setState(window), 100));
-    window.on("unmaximize", () => this.setState(window, "unmaximize"));
-    window.on("maximize", () => this.setState(window, "maximize"));
+    window.on("resize", () => setTimeout(()=>this.#setState(window),10));
+    window.on("unmaximize", () => this.#setState(window, "unmaximize"));
+    window.on("maximize", () => this.#setState(window, "maximize"));
+    window.once("closed", () => this.value = this.#tempstate);
   }
 
   /**
@@ -291,22 +294,20 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
     const defaults = Object.freeze({
       width: appInfo.minWinWidth + (screen.getPrimaryDisplay().workAreaSize.width / 3),
       height: appInfo.minWinHeight + (screen.getPrimaryDisplay().workAreaSize.height / 3),
-    });
+      isMaximized: false
+    } satisfies WindowStatus);
     // Initialize class
     super(path, true, Object.freeze({
-      [windowName]: Object.freeze({
-        width: defaults.width,
-        height: defaults.height,
-        isMaximized: false
-      } satisfies WindowStatus)
-    }) as unknown as Partial<Record<T, WindowStatus>>, spaces);
+      [windowName]: defaults
+    }) as Partial<Record<T, WindowStatus>>, spaces);
 
-    this.windowName = windowName;
+    this.#windowName = windowName;
     this.initState = Object.freeze({
-      width: this.value[this.windowName]?.width ?? defaults.width,
-      height: this.value[this.windowName]?.height ?? defaults.height,
-      isMaximized: this.value[this.windowName]?.isMaximized ?? false
+      width: this.value[this.#windowName]?.width ?? defaults.width,
+      height: this.value[this.#windowName]?.height ?? defaults.height,
+      isMaximized: this.value[this.#windowName]?.isMaximized ?? false
     });
+    this.#tempstate = this.value;
   }
 }
 
