@@ -27,7 +27,8 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     labelContainer.className = "capturer-label-container";
 
     // Icon
-    if (source.appIcon as typeof source["appIcon"]|null) {
+    const iconSrc = (source.appIcon as typeof source["appIcon"] | null)?.toDataURL() ?? ""; // Do not display placeholder icon on wayland
+    if ((iconSrc.split(",")[1]?.length??0) > 0) {
       const icon = document.createElement("img");
       icon.className = "capturer-label-icon";
       icon.src = source.appIcon.toDataURL();

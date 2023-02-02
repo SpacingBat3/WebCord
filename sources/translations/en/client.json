@@ -99,7 +99,7 @@
                 "system": "Share with device audio."
             },
             "source": {
-                "entire": "Computer's screen",
+                "entire": "Open video source picker...",
                 "screen": "Screen"
             }
         }
