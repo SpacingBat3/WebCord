@@ -63,12 +63,12 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     if (inputNodes.length > 0) {
       //If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const chromiumInputNodes = inputNodes.filter((node: { name: string; }) => node.name === "Chromium");
+      const chromiumInputNodes = inputNodes.filter((node: { name: string }) => node.name === "Chromium");
     
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (chromiumInputNodes.length > 0) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        chromiumInputNodes.forEach((node: { id: number; }) => {
+        chromiumInputNodes.forEach((node: { id: number }) => {
           blacklistInputNodes.push(node.id);
         });
       }
@@ -548,18 +548,26 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       } satisfies Electron.DesktopCapturerSource]);
 
     if(pipewireAudio && pw !== null) {
-      /* eslint-disable */
+      // @ts-expect-error - node-pipewire may not be installed
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       const outputNodesName = pw.getOutputNodesName();
-      const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number; }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
-      blacklistInputNodes.push(...chromiumInputNodes.map((node: { id: any; }) => node.id));
+
+      // @ts-expect-error - node-pipewire may not be installed
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+      blacklistInputNodes.push(...chromiumInputNodes.map((node: { id: any }) => node.id));
 
       // Filter outputNodesName to remove the repeated names
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       const outputNodesNameFiltered = outputNodesName.filter((node: any, index: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         return outputNodesName.indexOf(node) === index;
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return [await sources, flags.screenShareAudio, outputNodesNameFiltered];
-      /* eslint-enable */
     }
 
     return [await sources, flags.screenShareAudio];
@@ -636,10 +644,10 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
 
               // @ts-expect-error - node-pipewire may not be installed
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-              const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number; }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+              const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
 
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
-              blacklistInputNodes.push(...chromiumInputNodes.map((node: { id: any; }) => node.id));
+              blacklistInputNodes.push(...chromiumInputNodes.map((node: { id: any }) => node.id));
 
               // Filter outputNodesName to remove the repeated names
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
