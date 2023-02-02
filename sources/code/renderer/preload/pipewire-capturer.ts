@@ -22,12 +22,6 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     button.setAttribute("data-id", source.id);
     button.setAttribute("title", translate(source.name));
 
-    // Thumbnail
-    const thumbnail = document.createElement("img");
-    thumbnail.className = "capturer-thumbnail";
-    thumbnail.src = source.thumbnail.toDataURL();
-    button.appendChild(thumbnail);
-
     // A container for icon and label
     const labelContainer = document.createElement("div");
     labelContainer.className = "capturer-label-container";

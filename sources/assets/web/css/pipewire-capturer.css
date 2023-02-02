@@ -39,25 +39,15 @@ body {
 	margin: 0 5vh;
 }
 
-#capturer-list {
-	max-width: calc(100% - 10vw);
-	display: flex;
-	flex-wrap: wrap;
-	overflow: hidden;
-	justify-content: center;
-}
-
-#capturer-audio-list {
-	max-width: calc(100% - 10vw);
-	display: flex;
-	flex-wrap: wrap;
-	overflow: hidden;
-	justify-content: center;
+#capturer-list, #capturer-audio-list {
+	max-width: 20vw;
+	max-height: 20vh;
+	overflow-y: auto;
 }
 
 .capturer-item {
 	display: flex;
-	margin: 0.5rem;
+	margin: 1rem;
 }
 
 .capturer-button {
@@ -65,8 +55,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	width: 10vw;
-	margin: 2vh 2vh 0 0;
+	width: 15vw;
 	border: 0;
 	border-radius: 3px;
 	padding: 0.5rem;
@@ -79,20 +68,15 @@ body {
 	background: var(--color-bg-secondary);
 }
 
-.capturer-thumbnail {
-	height: 10vh;
-}
-
 .capturer-label-container {
-	margin: 0.5rem 0 0 0;
 	display: flex;
 	font-size: 1vw;
 	justify-content: center;
 }
 
 .capturer-label-icon {
-	width: 2rem;
-	padding: 0 0.5rem 0 0.5rem;
+	width: 1.2vw;
+	padding: 0 0.5rem 0 0;
 }
 
 .capturer-label {
@@ -100,7 +84,6 @@ body {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	margin-top: 0.2rem;
 }
 
 .capturer-audio-item {
