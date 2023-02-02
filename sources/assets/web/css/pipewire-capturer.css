@@ -80,14 +80,14 @@ body {
 	border-radius: 3px;
 	padding: 4px;
 	color: #FFFFFF;
-	background: var(--color-input-bg);
+	background: var(--color-bg-primary);
 	text-align: left;
 	transition: background-color .15s, box-shadow .15s;
 }
 
 .capturer-button:hover,
 .capturer-button:focus {
-	background: var(--color-accent);
+	background: var(--color-bg-secondary);
 }
 
 .capturer-thumbnail {
@@ -132,21 +132,14 @@ body {
 	border-radius: 3px;
 	padding: 4px;
 	color: #FFFFFF;
-	background: var(--color-input-bg);
+	background: var(--color-bg-primary);
 	text-align: left;
 	transition: background-color .15s, box-shadow .15s;
 	font-size: 1.4vw;
 }
 
 .capturer-audio-button:hover {
-	background: var(--color-accent);
-}
-
-.capturer-audio-button-disabled,
-.capturer-audio-button-disabled:hover,
-.capturer-audio-button-disabled:focus {
-	background-color: var(--color-bg-secondary);
-	cursor: not-allowed;
+	background: var(--color-bg-secondary);
 }
 
 .capturer-audio-label {
@@ -158,7 +151,11 @@ body {
 }
 
 .capturer-audio-button-selected {
-	background: var(--color-accent);
+	background: #3BA55D;
+}
+
+.capturer-audio-button-selected:hover {
+	background: #46C46E;
 }
 
 
@@ -172,13 +169,13 @@ body {
 	cursor: pointer;
 	justify-content: center;
 	align-items: center;
-	background-color: var(--color-input-bg);
+	background-color: var(--color-bg-secondary);
 	color: #dcddde;
 	width: 32px;
 	height: 32px;
 	transition: background-color .15s;
 	border: transparent;
-	border-radius: 3px;
+	border-radius: 30px;
 	box-shadow: none;
 	margin: 0px 6px 0 6px;
 }
@@ -190,16 +187,7 @@ body {
 }
 
 #capturer-buttons>*:hover {
-	background-color: #678;
-}
-
-#capturer-buttons button#capturer-close:active {
-	background-color: #c24242;
-}
-
-#capturer-buttons>*:disabled {
-	background-color: var(--color-bg-secondary);
-	cursor: not-allowed;
+	background-color: var(--color-bg-primary);
 }
 
 #capturer-audio-section {
@@ -208,7 +196,7 @@ body {
 	align-items: center;
 	justify-content: center;
 	margin: 0 0 5vh;
-	background-color: var(--color-bg-border);
+	background-color: #292B2F;
 	padding: 2vh 3vw;
 	border-radius: 10px;
 }
@@ -218,7 +206,7 @@ body {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background-color: var(--color-bg-border);
+	background-color: #292B2F;
 	padding: 2vh 3vw;
 	border-radius: 10px;
 }
