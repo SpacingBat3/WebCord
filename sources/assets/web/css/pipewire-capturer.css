@@ -3,6 +3,13 @@
 html,
 body {
 	background-color: transparent;
+	font-family: "gg sans",
+		"Noto Sans",
+		"Helvetica Neue",
+		Helvetica,
+		Arial,
+		sans-serif;
+	font-weight: bold;
 }
 
 #capturer-selection {
@@ -24,7 +31,7 @@ body {
 	overflow-y: auto;
 	background: var(--color-bg-secondary);
 	border-radius: 10px;
-	font-size: 2vw;
+	font-size: 1.5vw;
 }
 
 #controls-section {
@@ -35,14 +42,13 @@ body {
 
 #audio-video-section {
 	display: flex;
-	flex-direction: column;
-	margin: 0 5vh;
 }
 
 #capturer-list, #capturer-audio-list {
 	max-width: 20vw;
 	max-height: 20vh;
 	overflow-y: auto;
+	margin-bottom: 1vw;
 }
 
 .capturer-item {
@@ -61,6 +67,8 @@ body {
 	padding: 0.5rem;
 	background: var(--color-bg-primary);
 	transition: background-color .15s, box-shadow .15s;
+	font-weight: bold;
+	font-size: 55%;
 }
 
 .capturer-button:hover,
@@ -70,7 +78,6 @@ body {
 
 .capturer-label-container {
 	display: flex;
-	font-size: 1vw;
 	justify-content: center;
 }
 
@@ -102,7 +109,8 @@ body {
 	padding: 0.5rem;
 	background: var(--color-bg-primary);
 	transition: background-color .15s, box-shadow .15s;
-	font-size: 1vw;
+	font-size: 55%;
+	font-weight: bold;
 }
 
 .capturer-audio-button:hover {
@@ -156,7 +164,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin: 0 0 3vh;
+	margin: 1vh 1vw 2vh 1vw;
 	background-color: #292B2F;
 	padding: 2vh 3vw;
 	border-radius: 10px;
@@ -168,6 +176,13 @@ body {
 	align-items: center;
 	background-color: #292B2F;
 	padding: 2vh 3vw;
-	margin-bottom: 2.5rem;
+	margin: 1vh 1vw 2vh 1vw;
 	border-radius: 10px;
+}
+
+#capturer-hint {
+	font-size: 45%;
+	font-weight: 400;
+	color: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
+	margin-top: auto;
 }
