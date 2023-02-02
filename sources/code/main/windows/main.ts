@@ -564,7 +564,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       const outputNodesNameFiltered = outputNodesName.filter((node: any, index: any) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         return outputNodesName.indexOf(node) === index;
-      });
+      }).sort();
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return [await sources, flags.screenShareAudio, outputNodesNameFiltered];
@@ -654,7 +654,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               const outputNodesNameFiltered = outputNodesName.filter((node: any, index: any) => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                 return outputNodesName.indexOf(node) === index;
-              });
+              }).sort();
 
               if(event.sender === view.webContents)
               // eslint-disable-next-line @typescript-eslint/no-unsafe-return
