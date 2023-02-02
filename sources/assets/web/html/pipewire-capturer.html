@@ -1,30 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screen Share</title>
-    <link href="../css/pipewire-capturer.css" type="text/css" rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Screen Share</title>
+	<link href="../css/pipewire-capturer.css" type="text/css" rel="stylesheet">
 </head>
+
 <body>
-    <div id="capturer-selection">
-        <div id="capturer-scroller">
-            <div id="capturer-audio-section">
-                <span> Select the audio sources you want to share </span>
-                <div id="capturer-audio-list"></div>
-            </div>
-            <div id="capturer-video-section">
-                <span> Select the video sources you want to share </span>
-                <div id="capturer-list"></div>
-            </div>
-            <div id="capturer-buttons">
-                <input type="checkbox" id="capturer-sound" title="Share with system sound" />
-                <button id="capturer-close">
-                    <img src="../../icons/symbols/close.svg">
-                </button>
-            </div>
-        </div>
-    </div>
+	<div id="capturer-selection">
+		<div id="capturer-scroller">
+			<div id="controls-section">
+				<div id="capturer-buttons">
+					<button id="capturer-close">
+						<img src="../../icons/symbols/close.svg">
+					</button>
+				</div>
+			</div>
+			<div id="audio-video-section">
+				<div id="capturer-audio-section">
+					<span> Select the audio sources you want to share </span>
+					<div id="capturer-audio-list"></div>
+				</div>
+				<div id="capturer-video-section">
+					<span> Select the video sources you want to share </span>
+					<div id="capturer-list"></div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
+
 </html>

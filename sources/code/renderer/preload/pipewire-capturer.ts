@@ -1,6 +1,5 @@
 import {ipcRenderer as ipc} from "electron/renderer";
 import L10N from "../../common/modules/l10n";
-import type {AppConfig} from "../../main/modules/config";
 
 function translate(string:string):string {
   const l10n = new L10N().client.dialog.screenShare.source;
@@ -89,7 +88,6 @@ type ExpectedIncomingResult = [
 
 window.addEventListener("DOMContentLoaded", () => {
   let audioSupport = false;
-  const audioButton = document.getElementById("capturer-sound") as HTMLInputElement|null;
   ipc.invoke("getDesktopCapturerSources")
     .then((result:null|ExpectedIncomingResult) => {
       if(result === null) {
@@ -100,39 +98,8 @@ window.addEventListener("DOMContentLoaded", () => {
           const l10n = new L10N().client.dialog.screenShare;
           const closeButton = document.getElementById("capturer-close") as HTMLButtonElement|null;
 
-          if((process.platform === "win32" || result[1]) && audioButton) {
+          if((process.platform === "win32" || result[1])) {
             audioSupport = true;
-            audioButton.disabled = false;
-            audioButton.title = l10n.sound.system;
-            void ipc.invoke("capturer-get-settings")
-              .then((settings:AppConfig["screenShareStore"]) => {
-                audioButton.checked = settings.audio;
-              });
-            audioButton.addEventListener("click", () => {
-              ipc.send("settings-config-modified", {
-                screenShareStore: {
-                  audio: audioButton.checked
-                }
-              });
-
-              [...document.querySelectorAll(".capturer-audio-button")].map((button) => {
-                // add or remove the class ".capturer-audio-button-disabled" to the button
-                button.classList.toggle("capturer-audio-button-disabled", !audioButton.checked);
-
-                // add or remove the attribute "disabled" to the button
-                if (audioButton.checked) {
-                  button.removeAttribute("disabled");
-                } else {
-                  button.setAttribute("disabled", "");
-                  // clear the selected audio nodes
-                  selectedAudioNodes.length = 0;
-                  button.classList.remove("capturer-audio-button-selected");
-                }
-              });
-            });
-          } else if(audioButton) {
-            audioButton.title = l10n.sound.unavailable;
-            audioButton.disabled = true;
           }
           if(closeButton) closeButton.title = l10n.close;
         }
@@ -146,7 +113,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
               }
               ipc.send("closeCapturerView", {
-                audio: audioSupport && ((audioButton?.checked ?? false) && selectedAudioNodes.length > 0) ? {
+                audio: audioSupport && (selectedAudioNodes.length > 0) ? {
                   mandatory: {
                     chromeMediaSource: "desktop"
                   }
@@ -173,18 +140,6 @@ window.addEventListener("DOMContentLoaded", () => {
           try {
             renderCapturerAudioContainer(result[2]);
             [...document.querySelectorAll(".capturer-audio-button")].map(button => {
-              const checkDisabled = setInterval(() => {
-                if (audioButton) {
-                  button.classList.toggle("capturer-audio-button-disabled", !audioButton.checked);
-                  if (audioButton.checked) {
-                    button.removeAttribute("disabled");
-                  } else {
-                    button.setAttribute("disabled", "");
-                  }
-                  clearInterval(checkDisabled);
-                }
-              }, 200);
-
               button.addEventListener("click", () => {
                 const id = button.getAttribute("id");
                 if (id !== null) {

@@ -1,211 +1,224 @@
 @import "./global.css";
 
-html, body {
-    background-color: transparent;
+html,
+body {
+	background-color: transparent;
 }
 
 #capturer-selection {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: #000a;
-    color: var(--color-font-normal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	background: #000a;
+	color: var(--color-font-normal);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #capturer-scroller {
-    width: 100%;
-    max-height: 100vh;
-    overflow-y: auto;
+	max-height: 100vh;
+	overflow-y: auto;
+	background: var(--color-bg-secondary);
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	font-size: 2vw;
+}
+
+#controls-section {
+	display: flex;
+	justify-content: end;
+	width: 100%;
+}
+
+#audio-video-section {
+	display: flex;
+	flex-direction: column;
+	margin-top: 3vh;
+	margin: 8vh 5vh;
 }
 
 #capturer-list {
-    max-width: calc(100% - 100px);
-    margin: 0, 0, 50px, 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-    overflow: hidden;
-    justify-content: center;
+	max-width: calc(100% - 100px);
+	margin: 1vh, 0, 5vh, 0;
+	padding: 15px 0 0 0;
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+	overflow: hidden;
+	justify-content: center;
 }
 
 #capturer-audio-list {
-    max-width: calc(100% - 100px);
-    margin: 0, 0, 50px, 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-    overflow: hidden;
-    justify-content: center;
+	max-width: calc(100% - 100px);
+	margin: 0, 0, 50px, 0;
+	padding: 15px 0 0 0;
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+	overflow: hidden;
+	justify-content: center;
 }
 
 .capturer-item {
-    display: flex;
-    margin: 4px;
+	display: flex;
+	margin: 4px;
 }
 
 .capturer-button {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 145px;
-    margin: 0;
-    border: 0;
-    border-radius: 3px;
-    padding: 4px;
-    color: #FFFFFF;
-    background: var(--color-input-bg);
-    text-align: left;
-    transition: background-color .15s, box-shadow .15s;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	width: 15vw;
+	margin: 6px 0 6px;
+	border: 0;
+	border-radius: 3px;
+	padding: 4px;
+	color: #FFFFFF;
+	background: var(--color-input-bg);
+	text-align: left;
+	transition: background-color .15s, box-shadow .15s;
 }
 
 .capturer-button:hover,
 .capturer-button:focus {
-    background: var(--color-accent);
+	background: var(--color-accent);
 }
+
 .capturer-thumbnail {
-    width: 100%;
-    height: 81px;
-    object-fit: cover;
+	width: 100%;
+	height: 81px;
+	object-fit: cover;
 }
+
 .capturer-label-container {
-    margin: 6px 0 6px;
-    display: flex;
-    flex-shrink: 0;
-    flex-grow: 0;
+	margin: 6px 0 6px;
+	display: flex;
+	flex-shrink: 0;
+	flex-grow: 0;
+	font-size: 1.4vw;
 }
 
 .capturer-label-icon {
-    width: 16px;
-    padding-right: 4px;
+	width: 16px;
+	padding-right: 4px;
 }
 
 .capturer-label {
-    color: #dcddde;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+	color: #dcddde;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .capturer-audio-item {
-    display: flex;
-    margin: 4px;
+	display: flex;
+	margin: 4px;
 }
+
 .capturer-audio-button {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    min-width: 100px;
-    margin: 0;
-    border: 0;
-    border-radius: 3px;
-    padding: 4px;
-    color: #FFFFFF;
-    background: var(--color-input-bg);
-    text-align: left;
-    transition: background-color .15s, box-shadow .15s;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	width: 15vw;
+	margin: 0;
+	border: 0;
+	border-radius: 3px;
+	padding: 4px;
+	color: #FFFFFF;
+	background: var(--color-input-bg);
+	text-align: left;
+	transition: background-color .15s, box-shadow .15s;
+	font-size: 1.4vw;
 }
 
 .capturer-audio-button:hover {
-    background: var(--color-accent);
+	background: var(--color-accent);
 }
 
 .capturer-audio-button-disabled,
 .capturer-audio-button-disabled:hover,
 .capturer-audio-button-disabled:focus {
-    background-color: var(--color-bg-secondary);
-    cursor: not-allowed;
+	background-color: var(--color-bg-secondary);
+	cursor: not-allowed;
 }
 
 .capturer-audio-label {
-    color: #dcddde;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    text-align: center;
+	color: #dcddde;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	text-align: center;
 }
 
 .capturer-audio-button-selected {
-    background: var(--color-accent);
+	background: var(--color-accent);
 }
+
 
 #capturer-buttons {
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+	display: flex;
+	margin: 2vh 1vh 0 0;
 }
 
-#capturer-buttons > * {
-    display: flex;
-    cursor: pointer;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--color-input-bg);
-    color: #dcddde;
-    width: 32px;
-    height: 32px;
-    transition: background-color .15s;
-    border: transparent;
-    border-radius: 3px;
-    box-shadow: none;
-    margin: 2px 0;
+#capturer-buttons>* {
+	display: flex;
+	cursor: pointer;
+	justify-content: center;
+	align-items: center;
+	background-color: var(--color-input-bg);
+	color: #dcddde;
+	width: 32px;
+	height: 32px;
+	transition: background-color .15s;
+	border: transparent;
+	border-radius: 3px;
+	box-shadow: none;
+	margin: 0px 6px 0 6px;
 }
 
-#capturer-buttons > * > img {
-    margin: 0;
-    padding: 0;
-    width: 14px;
+#capturer-buttons>*>img {
+	margin: 0;
+	padding: 0;
+	width: 14px;
 }
 
-#capturer-buttons > *:hover {
-    background-color: #678;
+#capturer-buttons>*:hover {
+	background-color: #678;
 }
 
 #capturer-buttons button#capturer-close:active {
-    background-color: #c24242;
+	background-color: #c24242;
 }
 
-input[type="checkbox"]#capturer-sound {
-    appearance: none;
-    flex-shrink: 0;
-    background-image: url("../../icons/symbols/speaker.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 16px;
-}
-
-#capturer-sound:checked {
-    background-color: var(--color-accent);
-}
-
-#capturer-buttons > *:disabled {
-    background-color: var(--color-bg-secondary);
-    cursor: not-allowed;
+#capturer-buttons>*:disabled {
+	background-color: var(--color-bg-secondary);
+	cursor: not-allowed;
 }
 
 #capturer-audio-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 0 50px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin: 0 0 5vh;
+	background-color: var(--color-bg-border);
+	padding: 2vh 3vw;
+	border-radius: 10px;
 }
 
 #capturer-video-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0 0 50px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--color-bg-border);
+	padding: 2vh 3vw;
+	border-radius: 10px;
 }
