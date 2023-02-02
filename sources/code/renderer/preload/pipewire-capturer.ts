@@ -8,9 +8,13 @@ function translate(string:string):string {
     .replace("Screen", l10n.screen);
 }
 
-function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
+function renderCapturerContainer(sources:Electron.DesktopCapturerSource[], selectedAudioNodes: string[]) {
   const list = document.getElementById("capturer-list");
   if(list === null) throw new Error("Element of ID: 'capturer-list' does not exists!");
+  // Clear list
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  }
   for (const source of sources) {
     // Item
     const item = document.createElement("li");
@@ -54,11 +58,41 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     item.appendChild(button);
     list.appendChild(item);
   }
+
+  [...document.querySelectorAll(".capturer-button")].map(button =>
+    button.addEventListener("click", () => {
+      const id = button.getAttribute("data-id");
+      const source = sources.find(source => source.id === id);
+      if (!source) {
+        throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
+      }
+      ipc.send("closeCapturerView", {
+        audio: (selectedAudioNodes.length > 0) ? {
+          mandatory: {
+            chromeMediaSource: "desktop"
+          }
+        } : false,
+        video: {
+          mandatory: {
+            chromeMediaSource: "desktop",
+            chromeMediaSourceId: source.id
+          }
+        },
+      },
+      {
+        selectedAudioNodes: selectedAudioNodes,
+      });
+    })
+  );
 }
 
-function renderCapturerAudioContainer(sources: string[], ) {
+function renderCapturerAudioContainer(sources: string[], selectedAudioNodes: string[]) {
   const list = document.getElementById("capturer-audio-list");
   if(list === null) throw new Error("Element of ID: 'capturer-list' does not exists!");
+  // Clear list
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  }
   for (const source of sources) {
     // Item
     const item = document.createElement("li");
@@ -70,6 +104,10 @@ function renderCapturerAudioContainer(sources: string[], ) {
     button.setAttribute("id", source);
     button.setAttribute("text", source);
 
+    if (selectedAudioNodes.includes(source)) {
+      button.classList.add("capturer-audio-button-selected");
+    }
+
     // Label
     const label = document.createElement("span");
     label.className = "capturer-audio-label";
@@ -79,6 +117,21 @@ function renderCapturerAudioContainer(sources: string[], ) {
     item.appendChild(button);
     list.appendChild(item);
   }
+
+  [...document.querySelectorAll(".capturer-audio-button")].map(button => {
+    button.addEventListener("click", () => {
+      const id = button.getAttribute("id");
+      if (id !== null) {
+        if (selectedAudioNodes.includes(id)) {
+          selectedAudioNodes.splice(selectedAudioNodes.indexOf(id), 1);
+          button.classList.remove("capturer-audio-button-selected");
+        }else {
+          selectedAudioNodes.push(id);
+          button.classList.add("capturer-audio-button-selected");
+        }
+      }
+    });
+  });
 }
 
 type ExpectedIncomingResult = [
@@ -91,74 +144,48 @@ type ExpectedIncomingResult = [
 ];
 
 window.addEventListener("DOMContentLoaded", () => {
-  let audioSupport = false;
+  let selectedAudioNodes: string[] = [];
+  let newActualSources: ExpectedIncomingResult = [[], false];
+
+  const getActualSourcesInterval = setInterval(() => {
+    ipc.invoke("getActualSources")
+      .then((result: null|ExpectedIncomingResult) => {
+        if (result) {
+          newActualSources = result;
+          // Check if the selected audio sources are still available, if not, remove them
+          selectedAudioNodes = selectedAudioNodes.filter((node) => newActualSources[2]?.includes(node) ?? false);
+          renderCapturerContainer(newActualSources[0], selectedAudioNodes);
+          renderCapturerAudioContainer(newActualSources[2] ?? [], selectedAudioNodes);
+        }
+      }).catch((err) => {
+        console.error(err);
+        clearInterval(getActualSourcesInterval);
+      });
+  }, 1000);
+
   ipc.invoke("getDesktopCapturerSources")
     .then((result:null|ExpectedIncomingResult) => {
       if(result === null) {
         ipc.send("closeCapturerView", new Error("Unknown sources list."));
-      } else {
-        const selectedAudioNodes: string[] = [];
-        {
-          if((process.platform === "win32" || result[1])) {
-            audioSupport = true;
-          }
-        }
-        try {
-          renderCapturerContainer(result[0]);
-          [...document.querySelectorAll(".capturer-button")].map(button =>
-            button.addEventListener("click", () => {
-              const id = button.getAttribute("data-id");
-              const source = result[0].find(source => source.id === id);
-              if (!source) {
-                throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
-              }
-              ipc.send("closeCapturerView", {
-                audio: audioSupport && (selectedAudioNodes.length > 0) ? {
-                  mandatory: {
-                    chromeMediaSource: "desktop"
-                  }
-                } : false,
-                video: {
-                  mandatory: {
-                    chromeMediaSource: "desktop",
-                    chromeMediaSourceId: source.id
-                  }
-                },
-              },
-              {
-                selectedAudioNodes: result[2] ? selectedAudioNodes : null,
-              });
-            })
-          );
-          document.getElementById("capturer-close")
-            ?.addEventListener("click", () => ipc.send("closeCapturerView", "Permission denied"));
-        } catch(reason) {
-          ipc.send("closeCapturerView", reason);
-        }
-
-        if (result[2] && result[2].length > 0) {
-          try {
-            renderCapturerAudioContainer(result[2]);
-            [...document.querySelectorAll(".capturer-audio-button")].map(button => {
-              button.addEventListener("click", () => {
-                const id = button.getAttribute("id");
-                if (id !== null) {
-                  if (selectedAudioNodes.includes(id)) {
-                    selectedAudioNodes.splice(selectedAudioNodes.indexOf(id), 1);
-                    button.classList.remove("capturer-audio-button-selected");
-                  }else {
-                    selectedAudioNodes.push(id);
-                    button.classList.add("capturer-audio-button-selected");
-                  }
-                }
-              });
-            });
-          }
-          catch(reason) {
-            ipc.send("closeCapturerView", reason);
-          }
-        }
+        return;
       }
+
+      try {
+        renderCapturerContainer(result[0], selectedAudioNodes);
+        renderCapturerAudioContainer(result[2] ?? [], selectedAudioNodes);
+        document.getElementById("capturer-close")
+          ?.addEventListener("click", () => {
+            clearInterval(getActualSourcesInterval);
+            ipc.send("closeCapturerView", "Permission denied");
+          });
+      } catch(reason) {
+        clearInterval(getActualSourcesInterval);
+        ipc.send("closeCapturerView", reason);
+      }
+      
     })
-    .catch(reason => ipc.send("closeCapturerView", reason));
+    .catch(reason => {
+      clearInterval(getActualSourcesInterval);
+      ipc.send("closeCapturerView", reason);
+    });
 });

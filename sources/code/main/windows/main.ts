@@ -528,6 +528,44 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   if(getBuildInfo().type === "devel")
     void loadChromiumExtensions(win.webContents.session);
 
+  ipcMain.handle("getActualSources", async () => {
+    const lock = !app.commandLine.getSwitchValue("enable-features")
+      .includes("WebRTCPipeWireCapturer") ||
+      process.env["XDG_SESSION_TYPE"] !== "wayland" ||
+      process.platform === "win32";
+  
+    const sources = lock || lt(process.versions.electron,"22.0.0") ?
+    // Use desktop capturer on Electron 22 downwards or X11 systems
+      desktopCapturer.getSources({
+        types: lock ? ["screen", "window"] : ["screen"],
+        fetchWindowIcons: lock
+        // Workaround #328: Segfault on `desktopCapturer.getSources()` since Electron 22
+      }) : Promise.resolve([{
+        id: "screen:1:0",
+        appIcon: nativeImage.createEmpty(),
+        display_id: "",
+        name: "Entire Screen",
+        thumbnail: nativeImage.createEmpty()
+      } satisfies Electron.DesktopCapturerSource]);
+
+    if(pipewireAudio && pw !== null) {
+      /* eslint-disable */
+      const outputNodesName = pw.getOutputNodesName();
+      const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number; }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+      blacklistInputNodes.push(...chromiumInputNodes.map((node: { id: any; }) => node.id));
+
+      // Filter outputNodesName to remove the repeated names
+      const outputNodesNameFiltered = outputNodesName.filter((node: any, index: any) => {
+        return outputNodesName.indexOf(node) === index;
+      });
+
+      return [await sources, flags.screenShareAudio, outputNodesNameFiltered];
+      /* eslint-enable */
+    }
+
+    return [await sources, flags.screenShareAudio];
+  });
+
   // IPC events validated by secret "API" key and sender frame.
   internalWindowEvents.on("api", (safeApi:string) => {
     /** Determines whenever another request to desktopCapturer is processed. */
