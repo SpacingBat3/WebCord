@@ -2,194 +2,194 @@
 
 html,
 body {
-	background-color: transparent;
-	font-family: "gg sans",
-		"Noto Sans",
-		"Helvetica Neue",
-		Helvetica,
-		Arial,
-		sans-serif;
-	font-weight: bold;
+  background-color: transparent;
+  font-family: "gg sans",
+    "Noto Sans",
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-weight: bold;
 }
 
 #capturer-selection {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: #000a;
-	color: var(--color-font-normal);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000a;
+  color: var(--color-font-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #capturer-scroller {
-	max-height: 80vh;
-	max-width: 80vw;
-	overflow-y: auto;
-	background: var(--color-bg-secondary);
-	border-radius: 10px;
-	font-size: 1.5vw;
+  max-height: 80vh;
+  max-width: 80vw;
+  overflow-y: auto;
+  background: var(--color-bg-secondary);
+  border-radius: 10px;
+  font-size: 1.5vw;
 }
 
 #controls-section {
-	display: flex;
-	justify-content: end;
-	width: 100%;
+  display: flex;
+  justify-content: end;
+  width: 100%;
 }
 
 #audio-video-section {
-	display: flex;
+  display: flex;
 }
 
 #capturer-list, #capturer-audio-list {
-	max-width: 20vw;
-	max-height: 40vh;
-	overflow-y: auto;
-	margin-bottom: 1vw;
+  max-width: 20vw;
+  max-height: 40vh;
+  overflow-y: auto;
+  margin-bottom: 1vw;
 }
 
 .capturer-item {
-	display: flex;
-	margin: 1rem;
+  display: flex;
+  margin: 1rem;
 }
 
 .capturer-button {
-	cursor: pointer;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	width: 15vw;
-	border: 0;
-	border-radius: 3px;
-	padding: 0.5rem;
-	background: var(--color-bg-primary);
-	transition: background-color .15s, box-shadow .15s;
-	font-weight: bold;
-	font-size: 55%;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 15vw;
+  border: 0;
+  border-radius: 3px;
+  padding: 0.5rem;
+  background: var(--color-bg-primary);
+  transition: background-color .15s, box-shadow .15s;
+  font-weight: bold;
+  font-size: 55%;
 }
 
 .capturer-button:hover,
 .capturer-button:focus {
-	background: var(--color-bg-secondary);
+  background: var(--color-bg-secondary);
 }
 
 .capturer-label-container {
-	display: flex;
-	justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .capturer-label-icon {
-	width: 1.2vw;
-	padding: 0 0.5rem 0 0;
+  width: 1.2vw;
+  padding: 0 0.5rem 0 0;
 }
 
 .capturer-label {
-	color: #dcddde;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	padding-top: 1.5px; /* Align text with icon */
+  color: #dcddde;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-top: 1.5px; /* Align text with icon */
 }
 
 .capturer-audio-item {
-	display: flex;
-	margin: 1rem;
+  display: flex;
+  margin: 1rem;
 }
 
 .capturer-audio-button {
-	cursor: pointer;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	width: 15vw; /* 10vw later */
-	border: 0;
-	border-radius: 3px;
-	padding: 0.5rem;
-	background: var(--color-bg-primary);
-	transition: background-color .15s, box-shadow .15s;
-	font-size: 55%;
-	font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 15vw; /* 10vw later */
+  border: 0;
+  border-radius: 3px;
+  padding: 0.5rem;
+  background: var(--color-bg-primary);
+  transition: background-color .15s, box-shadow .15s;
+  font-size: 55%;
+  font-weight: bold;
 }
 
 .capturer-audio-button:hover {
-	background: var(--color-bg-secondary);
+  background: var(--color-bg-secondary);
 }
 
 .capturer-audio-label {
-	color: #dcddde;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	text-align: center;
+  color: #dcddde;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
 }
 
 .capturer-audio-button-selected {
-	background: #3BA55D;
+  background: #3BA55D;
 }
 
 .capturer-audio-button-selected:hover {
-	background: #46C46E;
+  background: #46C46E;
 }
 
 
 #capturer-buttons {
-	display: flex;
-	margin: 1vh 1vh 0 0;
+  display: flex;
+  margin: 1vh 1vh 0 0;
 }
 
 #capturer-buttons>* {
-	display: flex;
-	cursor: pointer;
-	justify-content: center;
-	align-items: center;
-	background-color: var(--color-bg-secondary);
-	width: 2rem;
-	height: 2rem;
-	transition: background-color .15s;
-	border: transparent;
-	border-radius: 30px;
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-bg-secondary);
+  width: 2rem;
+  height: 2rem;
+  transition: background-color .15s;
+  border: transparent;
+  border-radius: 30px;
 }
 
 #capturer-buttons>*>img {
-	width: 1rem;
+  width: 1rem;
 }
 
 #capturer-buttons>*:hover {
-	background-color: var(--color-bg-primary);
+  background-color: var(--color-bg-primary);
 }
 
 #capturer-audio-section {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin: 1vh 1vw 2vh 1vw;
-	background-color: #292B2F;
-	padding: 2vh 3vw;
-	border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1vh 1vw 2vh 1vw;
+  background-color: #292B2F;
+  padding: 2vh 3vw;
+  border-radius: 10px;
 }
 
 #capturer-video-section {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	background-color: #292B2F;
-	padding: 2vh 3vw;
-	margin: 1vh 1vw 2vh 1vw;
-	border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #292B2F;
+  padding: 2vh 3vw;
+  margin: 1vh 1vw 2vh 1vw;
+  border-radius: 10px;
 }
 
 #capturer-hint {
-	font-size: 45%;
-	font-weight: 400;
-	color: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
-	margin-top: auto;
+  font-size: 45%;
+  font-weight: 400;
+  color: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
+  margin-top: auto;
 }
 
 .capturer-thumbnail {
-	object-fit: contain;
-	max-height: 15vh;
-	margin-bottom: 1vh;
+  object-fit: contain;
+  max-height: 15vh;
+  margin-bottom: 1vh;
 }
