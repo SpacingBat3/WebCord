@@ -20,7 +20,7 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     const button = document.createElement("button");
     button.className = "capturer-button";
     button.setAttribute("data-id", source.id);
-    button.setAttribute("title", translate(source.name));
+    button.setAttribute("text", translate(source.name));
 
     // A container for icon and label
     const labelContainer = document.createElement("div");
@@ -58,7 +58,7 @@ function renderCapturerAudioContainer(sources: string[], ) {
     const button = document.createElement("button");
     button.className = "capturer-audio-button";
     button.setAttribute("id", source);
-    button.setAttribute("title", source);
+    button.setAttribute("text", source);
 
     // Label
     const label = document.createElement("span");
@@ -89,13 +89,9 @@ window.addEventListener("DOMContentLoaded", () => {
       } else {
         const selectedAudioNodes: string[] = [];
         {
-          const l10n = new L10N().client.dialog.screenShare;
-          const closeButton = document.getElementById("capturer-close") as HTMLButtonElement|null;
-
           if((process.platform === "win32" || result[1])) {
             audioSupport = true;
           }
-          if(closeButton) closeButton.title = l10n.close;
         }
         try {
           renderCapturerContainer(result[0]);
