@@ -161,7 +161,7 @@ body {
 
 #capturer-buttons {
 	display: flex;
-	margin: 2vh 1vh 0 0;
+	margin: 1vh 1vh 0 0;
 }
 
 #capturer-buttons>* {
@@ -170,20 +170,15 @@ body {
 	justify-content: center;
 	align-items: center;
 	background-color: var(--color-bg-secondary);
-	color: #dcddde;
-	width: 32px;
-	height: 32px;
+	width: 2rem;
+	height: 2rem;
 	transition: background-color .15s;
 	border: transparent;
 	border-radius: 30px;
-	box-shadow: none;
-	margin: 0px 6px 0 6px;
 }
 
 #capturer-buttons>*>img {
-	margin: 0;
-	padding: 0;
-	width: 14px;
+	width: 1rem;
 }
 
 #capturer-buttons>*:hover {
