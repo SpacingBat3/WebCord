@@ -10,7 +10,7 @@ body {
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100vh;
+	height: 100%;
 	background: #000a;
 	color: var(--color-font-normal);
 	display: flex;
@@ -19,13 +19,11 @@ body {
 }
 
 #capturer-scroller {
-	max-height: 100vh;
+	max-height: 80vh;
+	max-width: 80vw;
 	overflow-y: auto;
 	background: var(--color-bg-secondary);
 	border-radius: 10px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
 	font-size: 2vw;
 }
 
@@ -38,35 +36,28 @@ body {
 #audio-video-section {
 	display: flex;
 	flex-direction: column;
-	margin-top: 3vh;
-	margin: 8vh 5vh;
+	margin: 0 5vh;
 }
 
 #capturer-list {
-	max-width: calc(100% - 100px);
-	margin: 1vh, 0, 5vh, 0;
-	padding: 15px 0 0 0;
+	max-width: calc(100% - 10vw);
 	display: flex;
 	flex-wrap: wrap;
-	list-style: none;
 	overflow: hidden;
 	justify-content: center;
 }
 
 #capturer-audio-list {
-	max-width: calc(100% - 100px);
-	margin: 0, 0, 50px, 0;
-	padding: 15px 0 0 0;
+	max-width: calc(100% - 10vw);
 	display: flex;
 	flex-wrap: wrap;
-	list-style: none;
 	overflow: hidden;
 	justify-content: center;
 }
 
 .capturer-item {
 	display: flex;
-	margin: 4px;
+	margin: 0.5rem;
 }
 
 .capturer-button {
@@ -74,14 +65,12 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	width: 15vw;
-	margin: 6px 0 6px;
+	width: 10vw;
+	margin: 2vh 2vh 0 0;
 	border: 0;
 	border-radius: 3px;
-	padding: 4px;
-	color: #FFFFFF;
+	padding: 0.5rem;
 	background: var(--color-bg-primary);
-	text-align: left;
 	transition: background-color .15s, box-shadow .15s;
 }
 
@@ -91,22 +80,19 @@ body {
 }
 
 .capturer-thumbnail {
-	width: 100%;
-	height: 81px;
-	object-fit: cover;
+	height: 10vh;
 }
 
 .capturer-label-container {
-	margin: 6px 0 6px;
+	margin: 0.5rem 0 0 0;
 	display: flex;
-	flex-shrink: 0;
-	flex-grow: 0;
-	font-size: 1.4vw;
+	font-size: 1vw;
+	justify-content: center;
 }
 
 .capturer-label-icon {
-	width: 16px;
-	padding-right: 4px;
+	width: 2rem;
+	padding: 0 0.5rem 0 0.5rem;
 }
 
 .capturer-label {
@@ -114,28 +100,25 @@ body {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
+	margin-top: 0.2rem;
 }
 
 .capturer-audio-item {
 	display: flex;
-	margin: 4px;
+	margin: 1rem;
 }
 
 .capturer-audio-button {
 	cursor: pointer;
-	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	width: 15vw;
-	margin: 0;
+	width: 15vw; /* 10vw later */
 	border: 0;
 	border-radius: 3px;
-	padding: 4px;
-	color: #FFFFFF;
+	padding: 0.5rem;
 	background: var(--color-bg-primary);
-	text-align: left;
 	transition: background-color .15s, box-shadow .15s;
-	font-size: 1.4vw;
+	font-size: 1vw;
 }
 
 .capturer-audio-button:hover {
@@ -189,8 +172,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	margin: 0 0 5vh;
+	margin: 0 0 3vh;
 	background-color: #292B2F;
 	padding: 2vh 3vw;
 	border-radius: 10px;
@@ -200,8 +182,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
 	background-color: #292B2F;
 	padding: 2vh 3vw;
+	margin-bottom: 2.5rem;
 	border-radius: 10px;
 }
