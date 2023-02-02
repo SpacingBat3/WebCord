@@ -22,12 +22,21 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
     button.setAttribute("data-id", source.id);
     button.setAttribute("text", translate(source.name));
 
+    const iconSrc = (source.appIcon as typeof source["appIcon"] | null)?.toDataURL() ?? ""; // Do not display placeholder icons on wayland
+
+    // Thumbnail
+    if ((iconSrc.split(",")[1]?.length ?? 0) > 0) {
+      const thumbnail = document.createElement("img");
+      thumbnail.className = "capturer-thumbnail";
+      thumbnail.src = source.thumbnail.toDataURL();
+      button.appendChild(thumbnail);
+    }
+
     // A container for icon and label
     const labelContainer = document.createElement("div");
     labelContainer.className = "capturer-label-container";
 
     // Icon
-    const iconSrc = (source.appIcon as typeof source["appIcon"] | null)?.toDataURL() ?? ""; // Do not display placeholder icon on wayland
     if ((iconSrc.split(",")[1]?.length??0) > 0) {
       const icon = document.createElement("img");
       icon.className = "capturer-label-icon";
