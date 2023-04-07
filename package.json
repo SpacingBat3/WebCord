@@ -61,7 +61,6 @@
     "eslint": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-import": "latest",
-    "eslint-plugin-json-schema-validator": "^4.0.0",
     "husky": "^8.0.1",
     "typescript": "^4.8.4"
   },
