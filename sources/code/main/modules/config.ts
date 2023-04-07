@@ -2,8 +2,7 @@
  * configManager
  */
 
-import { readFileSync, existsSync, rmSync } from "fs";
-import { writeFile } from "fs/promises";
+import { readFileSync, existsSync, rmSync, writeFileSync } from "fs";
 import {
   app,
   BrowserWindow,
@@ -144,7 +143,6 @@ class Config<T> {
   readonly #pathExtension: FileExt;
   readonly #path;
   #cache: T|null = null;
-  #in:Promise<unknown> = Promise.resolve();
   /** Default configuration values. */
   private readonly defaultConfig;
   protected spaces = 4;
@@ -153,7 +151,7 @@ class Config<T> {
     let encodedData:string|Buffer = decodedData;
     if(this.#pathExtension === FileExt.Encrypted)
       encodedData = safeStorage.encryptString(decodedData);
-    this.#in = this.#in.then(() => writeFile(this.#path+this.#pathExtension,encodedData));
+    writeFileSync(this.#path+this.#pathExtension,encodedData);
   }
   #read(): unknown {
     const encodedData = readFileSync(this.#path+this.#pathExtension);
