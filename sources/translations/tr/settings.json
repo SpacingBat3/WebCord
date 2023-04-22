@@ -1,0 +1,115 @@
+{
+    "$schema": "../../../schemas/localization/settings.json",
+    "general": {
+        "name": "Genel",
+        "menuBar": {
+            "name": "Menü çubuğu",
+            "description": "Menü çubuğunun görünüm ayarlarını değiştirir.",
+            "labels": {
+                "hide": "Menü çubuğunu otomatik olarak gizle (<kbd>ALT</kbd> key switches the visibility)."
+            }
+        },
+        "tray": {
+            "name": "Tray",
+            "description": "Changes the visibility of the icon in the system tray.",
+            "labels": {
+                "disable": "Disable hiding window to the system tray functionality."
+            }
+        },
+        "taskbar": {
+            "name": "Taskbar",
+            "description": "Controls the behavior of taskbar entry of WebCord.",
+            "labels": {
+                "flash": "Flash taskbar button on new messages."
+            }
+        },
+        "window": {
+            "name": "WebCord's main window",
+            "description": "Controls the look and behavior of the window displaying client interface.",
+            "labels": {
+                "transparent": "Allow for translucent window background.",
+                "hideOnClose": "Hide window to tray with the close button."
+            }
+        }
+    },
+    "privacy": {
+        "name": "Privacy",
+        "blockApi": {
+            "name": "Discord API blocking",
+            "description": "Blocks Discord API requests for hardening the privacy.",
+            "labels": {
+                "science": "Block known telemetry endpoints (<code>/science</code> and <code>/tracing</code>).",
+                "typingIndicator": "Block typing indicator (<code>/typing</code>).",
+                "fingerprinting": "Block known fingerprinting methods (<code>api.js</code> and <code>cdn-cgi</code>)."
+            }
+        },
+        "permissions": {
+            "name": "Permissions",
+            "description": "Allows or denies the permission checks and request from the Discord website. Please note that other permissions not listed here are blocked automatically by WebCord.",
+            "labels": {
+                "video": "Camera",
+                "audio": "Microphone",
+                "fullscreen": "Fullscreen",
+                "notifications": "Notifications",
+                "display-capture": "Desktop capture",
+                "background-sync": "Background synchronisation"
+            }
+        }
+    },
+    "advanced": {
+        "name": "Advanced",
+        "csp": {
+            "name": "Content Security Policy",
+            "description": "Switches whenever application should ignore Discord's Content Security Policy headers and let client set its own CSP for privacy and security concerns.",
+            "labels": {
+                "enabled": "Use built-in Content Security Policy."
+            }
+        },
+        "cspThirdParty": {
+            "name": "Third party websites",
+            "description": "Sets a list of the third-party websites allowed to connect or display content.",
+            "labels": {
+                "gif": "GIF Providers"
+            }
+        },
+        "currentInstance": {
+            "name": "Discord instance",
+            "description": "Selects the instance WebCord should connect to. <b>Experimental</b> as the Fosscord implementation is not fully finished yet."
+        },
+        "devel": {
+            "name": "Developer mode",
+            "description": "Enables the access to tools and unfinished options that are potentially considered as broken or dangerous. <b>Disclaimer</b>: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
+            "labels": {
+                "enabled": "Enable developer mode."
+            }
+        },
+        "redirection": {
+            "name": "Cross-origin redirection behavior",
+            "description": "Controls the actions on cross-origin redirections. <b>This affects application security</b>.",
+            "labels": {
+                "warn": "Always warn user about cross-origin redirections to external applications."
+            }
+        },
+        "optimize": {
+            "name": "Client optimizations",
+            "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by default.",
+            "labels": {
+                "gpu": "Optimize the client for the currently active graphics card."
+            }
+        },
+        "webApi": {
+            "name": "Access to JavaScript APIs",
+            "description": "Controls which API should be permitted in unpriviledged (DOM) scripts.",
+            "labels": {
+                "webGl": "Enable WebGL support."
+            }
+        },
+        "unix": {
+            "name": "Experimental features for Unix/Unix-like OS",
+            "description": "Enables features that were flagged by Chromium/Blink engine as experimental. <b>Use them at your own responsibility</b>.",
+            "labels": {
+                "autoscroll": "Enable middle-click scrolling (aka. <i>autoscroll</i>)."
+            }
+        }
+    }
+}
