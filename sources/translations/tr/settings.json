@@ -6,109 +6,109 @@
             "name": "Menü çubuğu",
             "description": "Menü çubuğunun görünüm ayarlarını değiştirir.",
             "labels": {
-                "hide": "Menü çubuğunu otomatik olarak gizle (<kbd>ALT</kbd> key switches the visibility)."
+                "hide": "Menü çubuğunu otomatik olarak gizle. (<kbd>ALT</kbd> gösterir/gizler)"
             }
         },
         "tray": {
-            "name": "Tray",
-            "description": "Changes the visibility of the icon in the system tray.",
+            "name": "Sistem Tepsisi",
+            "description": "Sistem tepsisindeki ikonun görünürlüğünü değiştirir.",
             "labels": {
-                "disable": "Disable hiding window to the system tray functionality."
+                "disable": "Pencereyi sistem tepsisine gizlemeyi devre dışı bırak."
             }
         },
         "taskbar": {
-            "name": "Taskbar",
-            "description": "Controls the behavior of taskbar entry of WebCord.",
+            "name": "Görev Çubuğu",
+            "description": "WebCord'un görev çubuğundaki davranışını kontrol eder.",
             "labels": {
-                "flash": "Flash taskbar button on new messages."
+                "flash": "Mesaj geldiğinde görev çubuğu ikonunu parlat."
             }
         },
         "window": {
-            "name": "WebCord's main window",
-            "description": "Controls the look and behavior of the window displaying client interface.",
+            "name": "WebCord'un Ana Penceresi",
+            "description": "İstemci arayüzünü kontrol eden pencerenin görünümünü ve davranışını kontrol eder.",
             "labels": {
-                "transparent": "Allow for translucent window background.",
-                "hideOnClose": "Hide window to tray with the close button."
+                "transparent": "Şeffaf pencere arkaplanına izin ver.",
+                "hideOnClose": "Kapat tuşuna basıldığında pencereyi sistem tepsisine gizle."
             }
         }
     },
     "privacy": {
-        "name": "Privacy",
+        "name": "Gizlilik",
         "blockApi": {
-            "name": "Discord API blocking",
-            "description": "Blocks Discord API requests for hardening the privacy.",
+            "name": "Discord API engelleme",
+            "description": "Gizliliği artırmak için Discord API isteklerini engeller.",
             "labels": {
-                "science": "Block known telemetry endpoints (<code>/science</code> and <code>/tracing</code>).",
-                "typingIndicator": "Block typing indicator (<code>/typing</code>).",
-                "fingerprinting": "Block known fingerprinting methods (<code>api.js</code> and <code>cdn-cgi</code>)."
+                "science": "Bilinen telemetri yollarını engelle. (<code>/science</code> ve <code>/tracing</code>).",
+                "typingIndicator": "Yazıyor göstergesini engelle. (<code>/typing</code>)",
+                "fingerprinting": "Bilinen tanımlama yöntemlerini engelle. (<code>api.js</code> ve <code>cdn-cgi</code>)."
             }
         },
         "permissions": {
-            "name": "Permissions",
-            "description": "Allows or denies the permission checks and request from the Discord website. Please note that other permissions not listed here are blocked automatically by WebCord.",
+            "name": "İzinler",
+            "description": "Discord'un izin kontrollerini ve isteklerini kontrol eder. Burada listelenmeyen izinler WebCord tarafından otomatik olarak engellenecektir.",
             "labels": {
-                "video": "Camera",
-                "audio": "Microphone",
-                "fullscreen": "Fullscreen",
-                "notifications": "Notifications",
-                "display-capture": "Desktop capture",
-                "background-sync": "Background synchronisation"
+                "video": "Kamera",
+                "audio": "Mikrofon",
+                "fullscreen": "Tam ekran",
+                "notifications": "Bildirimler",
+                "display-capture": "Ekran paylaşımı",
+                "background-sync": "Arkaplan eşitlemesi"
             }
         }
     },
     "advanced": {
-        "name": "Advanced",
+        "name": "Gelişmiş",
         "csp": {
-            "name": "Content Security Policy",
-            "description": "Switches whenever application should ignore Discord's Content Security Policy headers and let client set its own CSP for privacy and security concerns.",
+            "name": "İçerik Güvenliği Politikası",
+            "description": "Uygulama Discord'un içerik güvenliği politikası başlıklarını yok sayması gerektiğinde bu ayarı açar/kapatır ve gizlilik endişeleri için istemcinin kendi içerik güvenliği politikasını ayarlamasına izin verir.",
             "labels": {
-                "enabled": "Use built-in Content Security Policy."
+                "enabled": "Yerleşik içerik güvenliği politikasını kullan."
             }
         },
         "cspThirdParty": {
-            "name": "Third party websites",
-            "description": "Sets a list of the third-party websites allowed to connect or display content.",
+            "name": "Üçüncü parti siteler",
+            "description": "Bağlanıp içerik göstermesine izin verilen üçüncü parti sitelerin listesini tutar.",
             "labels": {
-                "gif": "GIF Providers"
+                "gif": "GIF Sağlayıcıları"
             }
         },
         "currentInstance": {
             "name": "Discord instance",
-            "description": "Selects the instance WebCord should connect to. <b>Experimental</b> as the Fosscord implementation is not fully finished yet."
+            "description": "WebCord'un bağlanması gereken sunucuyu (instance) seçer. Fosscord için olan <b>Experimental</b> geliştirme aşamasında."
         },
         "devel": {
-            "name": "Developer mode",
-            "description": "Enables the access to tools and unfinished options that are potentially considered as broken or dangerous. <b>Disclaimer</b>: application maintainers are not responsible for any bugs or issues after this option is enabled – please do not report them!",
+            "name": "Geliştici Modu",
+            "description": "Potansiyel olarak bozuk veya tehlikeli kabul edilen araçları ve bitmemiş seçenekleri erişime açar. <b>Uyarı</b>: uygulama maintainerları bu ayar etkinleştirildikten sonra herhangi bir hata veya sorundan sorumlu değildir - lütfen bunları bildirmeyin",
             "labels": {
-                "enabled": "Enable developer mode."
+                "enabled": "Geliştirici modunu etkinleştir."
             }
         },
         "redirection": {
-            "name": "Cross-origin redirection behavior",
-            "description": "Controls the actions on cross-origin redirections. <b>This affects application security</b>.",
+            "name": "Cross-origin yönlendirme davranışı",
+            "description": "Cross-origin yönlendirmelerde ne olacağını kontrol eder. <b>Bu ayar uygulama güvenliğini etkiler.</b>",
             "labels": {
-                "warn": "Always warn user about cross-origin redirections to external applications."
+                "warn": "Kullanıcıyı başka uygulamaya giden cross-origin yönlendirmeleri hakkında uyar."
             }
         },
         "optimize": {
-            "name": "Client optimizations",
-            "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by default.",
+            "name": "İstemci optimizasyonu",
+            "description": "Electron performansını ve işlevselliğini iyileştir<b>ebilen</b> özel parametreleri Chromium motoruna uygulamak için kullanıcı yazılım ve donanımını tespit etmeye çalışır. <b>Experimental</b>, adından da anlaşılacağı gibi Chromium'un bu parametreleri varsayılan olarak uygulamamasının bir sebebi var.",
             "labels": {
-                "gpu": "Optimize the client for the currently active graphics card."
+                "gpu": "İstemciyi aktif ekran kartı için optimize eder."
             }
         },
         "webApi": {
-            "name": "Access to JavaScript APIs",
-            "description": "Controls which API should be permitted in unpriviledged (DOM) scripts.",
+            "name": "JavaScript API'larına erişim",
+            "description": "Ayrıcalıksız (DOM) betiklerinde (unpriviledged (DOM) scripts) hangi API'a izin verileceğini kontrol eder.",
             "labels": {
-                "webGl": "Enable WebGL support."
+                "webGl": "WebGL desteğini etkinleştir."
             }
         },
         "unix": {
-            "name": "Experimental features for Unix/Unix-like OS",
-            "description": "Enables features that were flagged by Chromium/Blink engine as experimental. <b>Use them at your own responsibility</b>.",
+            "name": "Unix/Unix-benzeri işletim sistemleri için deneysel özellikler",
+            "description": "Chromium/Blink motoru tarafından deneysel olarak kabul edilen özellikleri etkinleştirir. <b>Kullanırken tüm sorumluluk size aittir.</b>",
             "labels": {
-                "autoscroll": "Enable middle-click scrolling (aka. <i>autoscroll</i>)."
+                "autoscroll": "Orta tıklamayla kaydırmayı etkinleştir. (bir diğer deyişle <i>autoscroll</i>)."
             }
         }
     }
