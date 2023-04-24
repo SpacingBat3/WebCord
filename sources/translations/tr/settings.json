@@ -74,7 +74,7 @@
         },
         "currentInstance": {
             "name": "Discord instance",
-            "description": "WebCord'un bağlanması gereken sunucuyu (instance) seçer. Fosscord için olan <b>Experimental</b> geliştirme aşamasında."
+            "description": "WebCord'un bağlanması gereken sunucuyu (instance) seçer. Fosscord şu an <b>deneysel</b> çünkü daha geliştirme aşamasında."
         },
         "devel": {
             "name": "Geliştici Modu",
@@ -92,7 +92,7 @@
         },
         "optimize": {
             "name": "İstemci optimizasyonu",
-            "description": "Electron performansını ve işlevselliğini iyileştir<b>ebilen</b> özel parametreleri Chromium motoruna uygulamak için kullanıcı yazılım ve donanımını tespit etmeye çalışır. <b>Experimental</b>, adından da anlaşılacağı gibi Chromium'un bu parametreleri varsayılan olarak uygulamamasının bir sebebi var.",
+            "description": "Electron performansını ve işlevselliğini iyileştir<b>ebilen</b> özel parametreleri Chromium motoruna uygulamak için kullanıcı yazılım ve donanımını tespit etmeye çalışır. <b>Deneysel</b>, adından da anlaşılacağı gibi Chromium'un bu parametreleri varsayılan olarak uygulamamasının bir sebebi var.",
             "labels": {
                 "gpu": "İstemciyi aktif ekran kartı için optimize eder."
             }
