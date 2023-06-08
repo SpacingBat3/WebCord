@@ -123,7 +123,7 @@ It is strongly advised to read the [application license](../LICENSE) as well.
   - [Linting and validating the code](Build.md#run-linter-and-validate-the-code)
   - [Packaging and creating the distributables](Build.md#packaging-creating-distributables)
 - [Source code directory structure](Files.md)
-- [Translations](Translate.md)
+- [Translations](Contributing.md#how-to-translate-webcord)
 - [Supported platforms](Support.md)
 - [License](../LICENSE)
 - [Privacy policy](Privacy.md)
