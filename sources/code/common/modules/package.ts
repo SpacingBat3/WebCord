@@ -5,7 +5,6 @@
 import { resolve } from "path";
 import { valid, validRange } from "semver";
 import { readFileSync, existsSync } from "fs";
-import spdxParse from "spdx-expression-parse";
 
 interface PersonObject {
   name: string;
@@ -48,7 +47,6 @@ const moduleRegexp = {
    * Name says it well. A `RegExp` that *magically* splits string to Person values.
    */
   personMagic: /^((?:.*?(?=\s*(?:<[^ ]*>|\([^ ]*\)))|.*?))(?: <([^ ]*)>)? *(?:\((.*)\))?$/,
-  email: /^[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*@[a-z0-9!#$%&'*+/=?^_`{|}~-][a-z0-9!#$%&'*+/=?^_`{|}~\-.]*\.[a-z]+$/
 };
 
 export class Person {
@@ -73,11 +71,6 @@ export class Person {
           typeof (variable as PersonObject).email !== "string")
         return false;
     
-      // Validate Emails if present
-      else if(typeof (variable as PersonObject).email === "string" &&
-          !moduleRegexp.email.test((variable as PersonObject).email ?? ""))
-        return false;
-    
       if ((variable as PersonObject).url !== undefined &&
           typeof (variable as PersonObject).url !== "string")
         return false;
@@ -93,11 +86,7 @@ export class Person {
     // Check #2: When Person is string, it shall be in `name <email> [url]` format.
     if (typeof variable === "string"){
       const match = moduleRegexp.personMagic.exec(variable);
-      return (
-        match?.[1] !== undefined
-      ) && (
-        match[2] !== undefined ? moduleRegexp.email.test(match[2]) : true
-      );
+      return match?.[1] !== undefined;
     }
     return false;
   }
@@ -122,9 +111,6 @@ export class Person {
  * this class is not able to return any value from the `package.json`.
  */
 export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
-  private readonly _regexp = {
-    license: /^UNLICEN[SC]ED|SEE LICEN[CS]E IN .+$/
-  };
   public readonly data;
   /**
    * A TypeGuard to check whenever a property is in `package.json` person
@@ -148,7 +134,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     // Check 3: 'author' is 'Person' when definied
     if((object as PackageJsonProperties).author !== undefined)
       if (!Person.isPerson((object as PackageJsonProperties).author))
-        return "Author field is of invalid type.";
+        return `Author field '${JSON.stringify((object as PackageJsonProperties)?.author)}' is of invalid type.`;
     
     // Check 4: 'name', 'description' and 'license' are strings.
     for (const stringKey of ["name", "description", "license"])
@@ -196,18 +182,10 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
       }
     }
 
-    // Check 10: `license` is a valid string:
-    if(!this._regexp.license.test((object as PackageJsonProperties).license))
-      try {
-        spdxParse((object as PackageJsonProperties).license);
-      } catch {
-        return "'license' field is in invalid format.";
-      }
-
-
-    // Check 11: `homepage` is either `undefinied` or `string`
+    // Check 10: `homepage` is either `undefinied` or `string`
     if((object as PackageJsonProperties).homepage !== undefined && typeof (object as PackageJsonProperties).homepage !== "string")
       return "Homepage property is neither 'string' nor 'undefinied'.";
+
     // All checks passed!
     return "";
   }

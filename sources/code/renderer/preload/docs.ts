@@ -1,28 +1,21 @@
 import { marked } from "marked";
+import { markedHighlight } from "marked-highlight"
 import { sanitize } from "dompurify";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
 import { pathToFileURL, fileURLToPath } from "url";
 import { protocols } from "../../common/global";
-import * as _hljsmodule from "highlight.js";
+import hljs from "highlight.js";
 
 const htmlFileUrl = document.URL;
 
-// Workaround for highlight's wrong export type (there shouldn't be default as "root").
-const { highlight } = (_hljsmodule as unknown as _hljsmodule.HLJSApi);
-
 // Code highlighting:
 
-marked.setOptions({
-  highlight: (code, lang) => {
-    if (lang==="") return;
-    const language = (() => {
-      if (lang==="jsonc") return "json"; // highlight does not support JSONC as JSON alias
-      return lang;
-    })();
-    return highlight(code, {language: language}).value;
-  }
-});
+marked.use(markedHighlight({
+  highlight: (code,language) => hljs.getLanguage(language) ?
+      hljs.highlight(code,{ language } ).value :
+      code
+}));
 
 const menu = document.createElement("img");
 menu.src = "../../icons/symbols/menu.svg";

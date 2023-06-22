@@ -41,7 +41,6 @@ import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
 import { parseArgs, ParseArgsConfig, stripVTControlCharacters, debug } from "util";
-import { parseArgs as parseArgsPolyfill } from "@pkgjs/parseargs";
 
 const argvConfig = Object.freeze(({
   options: Object.freeze({
@@ -73,13 +72,7 @@ const argvConfig = Object.freeze(({
     .filter(value => resolvePath(value) !== resolvePath(app.getAppPath()))
 } as const) satisfies ParseArgsConfig);
 
-const argv = Object.freeze(
-  (parseArgs as undefined|typeof import("util").parseArgs) ?
-    // Use native method if supported by Electron (needs Node 18+)
-    parseArgs(argvConfig) :
-    // Use polyfill, for compatibility with the older Node versions
-    parseArgsPolyfill(argvConfig)
-);
+const argv = Object.freeze(parseArgs(argvConfig));
 
 {
   const stdWarn=console.warn,stdError=console.error,stdDebug=console.debug;

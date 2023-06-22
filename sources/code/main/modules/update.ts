@@ -5,16 +5,11 @@
 import { app, Notification, net } from "electron/main";
 import { shell } from "electron/common";
 import { appInfo, getBuildInfo } from "../../common/modules/client";
-import fetchPolyfill from "electron-fetch";
 import L10N from "../../common/modules/l10n";
 import * as semver from "semver";
 import kolor from "@spacingbat3/kolor";
 import { commonCatches } from "./error";
 import { appConfig } from "./config";
-
-const fetch = (global.fetch as typeof global.fetch|undefined) ?
-  global.fetch :
-  fetchPolyfill;
 
 /**
  * Checks and notifies users about the updates.
