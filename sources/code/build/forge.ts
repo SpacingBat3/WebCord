@@ -148,7 +148,9 @@ const config: ForgeConfigFile = {
         options: {
           icon: iconFile + ".png",
           genericName: desktopGeneric,
-          categories: desktopCategories
+          categories: desktopCategories,
+          flagsFile: true,
+          type2runtime: true
         }
       }
     },
