@@ -1,23 +1,11 @@
-<table class="alert-info" align=center>
-<tr>
-    <td> 🆕️ </td>
-    <td>
-        The current release in <code>master</code> is currently deprecated, I'm working on
-	WebCord rewrite in <a href="https://github.com/SpacingBat3/WebCord/tree/next"><code>next</code></a>.
-        Until then, most likely there won't any changes done to `master`, PRs might not be merged at all and
-        there might not be any releases made.
-    </td>
-</tr>
-</table>
 <table class="alert-warn" align=center>
 <tr>
-    <td> ⚠️ </td>
+    <td> 🚧️ </td>
     <td>
-        WebCord development goes temporarily into <b>the maintenance-only mode</b>.
-        This is to show that any abnormal lack of activity isn't going to mean it is
-        no longer maintained. See https://github.com/SpacingBat3/WebCord/discussions/260
-        for more details how this might affect WebCord development and when I plan to
-        end this.
+        <b>A major rewrite of the client is being worked on!</b> That means, most efforts around WebCord
+	will be kept at minimum – there might be no time-intensive and major updates done on top
+	of the existing code. However, WebCord should still receive maintenance updates along with
+	new features or improvements that don't cost investing too much of my time.
     </td>
 </tr>
 </table>
