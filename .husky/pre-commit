@@ -1,7 +1,17 @@
-#!/usr/bin/env -S bash -e
-# shellcheck shell=bash
+#!/usr/bin/env -S sh -e
+# shellcheck shell=sh
 
 . "$(dirname -- "$0")/_/husky.sh";
+
+if [ -n "$husky_skip_init" ] && [ -z "$husky_shell_switch" ]; then
+  readonly husky_shell_switch=1;
+  export husky_shell_switch;
+  # Use BASH instead of SH with Husky.
+  # (Not all scripts are POSIX-compilant).
+  bash -e "$0" "$@";
+  exit $?;
+fi
+
 . "$(dirname -- "$0")/core.sh";
 
 PKGROOT="$(dirname -- "$0")/..";

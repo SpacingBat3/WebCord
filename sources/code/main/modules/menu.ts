@@ -225,7 +225,9 @@ export function bar(repoLink: string, parent: Electron.BrowserWindow): Electron.
       { type: "separator" },
       { label: strings.context.cut, role: "cut" },
       { label: strings.context.copy, role: "copy" },
-      { label: strings.context.paste, role: "paste" }
+      { label: strings.context.paste, role: "paste" },
+      { type: "separator" },
+      { label: strings.menubar.edit.selectAll, role: "selectAll" }
     ]},
     // View
     {

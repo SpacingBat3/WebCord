@@ -6,11 +6,11 @@
   },
   "overrides": [
     // JSON linting
-    {
+    /*{
       "files": ["*.json"],
       "plugins": ["json-schema-validator"],
       "extends": ["plugin:json-schema-validator/recommended"]
-    },
+    },*/
     // TypeScript linting
     {
       "files": ["*.ts", "*.mts", "*.cts"],

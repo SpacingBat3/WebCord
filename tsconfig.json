@@ -1,6 +1,7 @@
 {
-    "extends": "@tsconfig/node16-strictest/tsconfig.json",
+    "extends": "@tsconfig/strictest/tsconfig.json",
     "compilerOptions": {
+        "module":"CommonJS",
         "moduleResolution": "Node",
         "target": "ES2022",
         /* Whenever incremental compilation is enabled */
@@ -26,7 +27,8 @@
         /* Use *nix end-of-line character for emitted files */
         "newLine": "lf",
         /* Do not emit anything when there's an error in source files */
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "verbatimModuleSyntax": false
     },
     "include": [
         "sources/code/**/*.ts"

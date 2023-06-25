@@ -1,3 +1,4 @@
 app/
 node_modules/
-fake-module/
+cache/
+.*

@@ -29,7 +29,8 @@
         "edit": {
             "groupName": "Edycja",
             "undo": "Cofnij",
-            "redo": "Ponów"
+            "redo": "Ponów",
+            "selectAll": "Zaznacz wszystko"
         },
         "view": {
             "groupName": "Widok",

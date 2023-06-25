@@ -11,33 +11,31 @@
 # ```sh
 # npkg {add|run|test|install} [ARGS] 
 # ```
-function npkg() {
-    echo "$0";
-    local PKG;
-    local SUPPORT;
+npkg() {
+    local PKG SUPPORT;
     # A path to Node.js package manager.
     PKG="$(command -v npm || command -v yarn || command -v pnpm || echo false)";
     # A list of supported package manager commands
     SUPPORT=(install test run add);
-    function _install() {
+    _install() {
         case "${PKG##*/}" in
             "npm"|"yarn"|"pnpm") printf "install";;
             *) return 127;;
         esac
     }
-    function _test() {
+    _test() {
         case "${PKG##*/}" in
             "npm"|"yarn"|"pnpm") printf "test";;
             *) return 127;;
         esac
     }
-    function _run() {
+    _run() {
         case "${PKG##*/}" in
             "npm"|"yarn"|"pnpm") printf "run";;
             *) return 127;;
         esac
     }
-    function _add() {
+    _add() {
         case "${PKG##*/}" in
             "npm"|"pnpm") printf "install";;
             "yarn") printf "add";;
@@ -78,7 +76,7 @@ function npkg() {
 # ```sh
 # c_json .[property] PATH
 # ```
-function c_json() {
+c_json() {
     local query file;
     if [[ "$1" == "." ]]; then
         query="";
@@ -96,7 +94,7 @@ function c_json() {
 # ```
 # c_svcom ()
 # ```
-function c_svcom() {
+c_svcom() {
     local sedrule subvr_1 subvr_2 vtype;
     case "$1" in
         maj{,or})  vtype=1    ;;

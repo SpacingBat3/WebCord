@@ -29,7 +29,8 @@
         "edit": {
             "groupName": "Edit",
             "undo": "Undo",
-            "redo": "Redo"
+            "redo": "Redo",
+            "selectAll": "Select All"
         },
         "view": {
             "groupName": "View",

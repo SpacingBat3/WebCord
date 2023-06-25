@@ -1,23 +1,11 @@
-<table class="alert-info" align=center>
-<tr>
-    <td> 🆕️ </td>
-    <td>
-        The current release in <code>master</code> is currently deprecated, I'm working on
-	WebCord rewrite in <a href="https://github.com/SpacingBat3/WebCord/tree/next"><code>next</code></a>.
-        Until then, most likely there won't any changes done to `master`, PRs might not be merged at all and
-        there might not be any releases made.
-    </td>
-</tr>
-</table>
 <table class="alert-warn" align=center>
 <tr>
-    <td> ⚠️ </td>
+    <td> 🚧️ </td>
     <td>
-        WebCord development goes temporarily into <b>the maintenance-only mode</b>.
-        This is to show that any abnormal lack of activity isn't going to mean it is
-        no longer maintained. See https://github.com/SpacingBat3/WebCord/discussions/260
-        for more details how this might affect WebCord development and when I plan to
-        end this.
+        <b>A major rewrite of the client is being worked on!</b> That means, most efforts around WebCord
+	will be kept at minimum – there might be no time-intensive and major updates done on top
+	of the existing code. However, WebCord should still receive maintenance updates along with
+	new features or improvements that don't cost investing too much of my time.
     </td>
 </tr>
 </table>
@@ -40,7 +28,7 @@
 [![Weblate badge][l10nbadge]][l10n] [![GitHub downloads][dlbadge]][downloads]
 [![Discord server][discord-badge]][discord-url]
 
-A Discord and [Fosscord] client implemented directly without [Discord API][discordapi].
+A Discord and [Spacebar] client implemented directly without [Discord API][discordapi].
 Made in 🇵🇱 with the [Electron][electron] framework.
 
 </div>
@@ -123,7 +111,7 @@ It is strongly advised to read the [application license](../LICENSE) as well.
   - [Linting and validating the code](Build.md#run-linter-and-validate-the-code)
   - [Packaging and creating the distributables](Build.md#packaging-creating-distributables)
 - [Source code directory structure](Files.md)
-- [Translations](Translate.md)
+- [Translations](Contributing.md#how-to-translate-webcord)
 - [Supported platforms](Support.md)
 - [License](../LICENSE)
 - [Privacy policy](Privacy.md)
@@ -208,7 +196,7 @@ you don't even need to be familiar with programming at all!
 [electron]: https://www.electronjs.org/ "Build cross-platform desktop apps with JavaScript, HTML, and CSS."
 [electron-forge]: https://www.electronforge.io/ "A complete tool for creating, publishing, and installing modern Electron applications."
 [license]: ../LICENSE "WebCord license"
-[Fosscord]: https://fosscord.com "Free, open source and selfhostable Discord compatible chat, voice and video platform."
+[Spacebar]: https://spacebar.chat "Free, open source and selfhostable Discord compatible chat, voice and video platform."
 [discordapi]: https://discord.com/developers/docs/reference "Official Discord REST API documentation"
 [chromiumbounty]: https://bughunters.google.com/about/rules/5745167867576320/chrome-vulnerability-reward-program-rules "Chrome Vulnerability Reward Program Rules"
 [Electron#Security]: https://www.electronjs.org/docs/latest/tutorial/security "Security | Electron Documentation"
