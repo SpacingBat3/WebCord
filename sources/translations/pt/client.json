@@ -14,7 +14,7 @@
     },
     "menubar": {
         "file": {
-            "groupName": "Arquivo",
+            "groupName": "Ficheiro",
             "quit": "Sair",
             "relaunch": "Reiniciar",
             "addon": {

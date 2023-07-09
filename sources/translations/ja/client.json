@@ -1,0 +1,116 @@
+{
+    "context": {
+        "copyURLText": "リンクをテキストとしてコピー",
+        "cut": "カット",
+        "dictionaryAdd": "ローカルの辞書に登録",
+        "inspectElement": "検証",
+        "copy": "コピー",
+        "paste": "ペースト",
+        "copyURL": "URLのコピー",
+        "copyImage": "画像のコピー",
+        "copyImageURL": "画像へのリンクをコピー"
+    },
+    "tray": {
+        "toggle": "トグル",
+        "quit": "終了"
+    },
+    "windows": {
+        "settings": "設定",
+        "about": "アプリについて",
+        "docs": "ドキュメント",
+        "invite": "招待"
+    },
+    "dialog": {
+        "common": {
+            "error": "エラー",
+            "warning": "警告",
+            "continue": "&次へ",
+            "yes": "&はい",
+            "no": "&いいえ",
+            "source": "ソース"
+        },
+        "ver": {
+            "updateBadge": "[アップデート]",
+            "updateTitle": "アップデートがあります！",
+            "recent": "アプリケーションは最新です！",
+            "update": "アプリケーションの新しいバージョンがあります！",
+            "devel": "プロダクションバージョンではないビルドを利用しています。",
+            "downgrade": "このプロダクションバージョンはstableよりも新しいです！"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: %sの権限リクエストが拒否されました。"
+            },
+            "check": {
+                "denied": "%s: %sの権限チェックが拒否されました。"
+            },
+            "question": {
+                "title": "権限リクエストハンドラ",
+                "message": "Discordに%sへのアクセス権限を付与しますか？",
+                "video": "カメラ",
+                "audio": "マイク",
+                "notifications": "通知"
+            }
+        },
+        "screenShare": {
+            "source": {
+                "entire": "コンピュータの画面",
+                "screen": "画面"
+            },
+            "sound": {
+                "unavailable": "音声を共有する機能はこのプラットフォームには用意されていません。",
+                "system": "デバイスの音声を共有。"
+            },
+            "close": "閉じる"
+        },
+        "externalApp": {
+            "message": "ウェブサイトは別のオリジンのリンクを外部アプリケーションにリダイレクトしようとします。 続けます？",
+            "title": "リンクを外部アプリで開きます"
+        },
+        "mod": {
+            "nodeExt": "WebCord Node.js拡張",
+            "crx": "Chrome/Chromium拡張"
+        }
+    },
+    "help": {
+        "groupName": "ヘルプ",
+        "repo": "リポジトリ",
+        "bugs": "バグレポート"
+    },
+    "log": {
+        "singleInstance": "すでに開かれているウインドウに切り替えます...",
+        "listenPort": "ポート%sにてListenしています。"
+    },
+    "menubar": {
+        "enabled": "有効",
+        "file": {
+            "groupName": "ファイル",
+            "quit": "終了",
+            "relaunch": "再起動",
+            "addon": {
+                "loadChrome": "Chrome拡張の読み込み",
+                "groupName": "拡張機能",
+                "loadNode": "Node拡張の読み込み"
+            }
+        },
+        "view": {
+            "groupName": "表示",
+            "devTools": "デベロッパーツール",
+            "resetZoom": "実際のサイズ",
+            "zoomIn": "ズームイン",
+            "reload": "再読込",
+            "forceReload": "強制再読込",
+            "fullScreen": "フルスクリーン",
+            "zoomOut": "ズームアウト"
+        },
+        "window": {
+            "mobileMode": "モバイルモード",
+            "groupName": "ウインドウ"
+        },
+        "edit": {
+            "groupName": "編集",
+            "undo": "もとに戻す",
+            "redo": "やり直し"
+        }
+    }
+}
