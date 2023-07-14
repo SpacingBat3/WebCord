@@ -1,0 +1,37 @@
+{
+    "offline": {
+        "title": "Discord'a bağlanılamıyor.",
+        "description": "Lütfen internete bağlı olduğunuzdan emin olun."
+    },
+    "aboutWindow": {
+        "nav": {
+            "about": "Hakkında",
+            "credits": "Teşekkürler",
+            "licenses": "Lisanslar"
+        },
+        "about": {
+            "appDescription": "Gizlilik odaklı özellikler içeren bir Discord ve Fosscord istemcisi.",
+            "appRepo": "GitHub Repository",
+            "featuresTitle": "Derleme parametreleri",
+            "featuresDefault": "Varsayılan",
+            "checksumTitle": "Checksum"
+        },
+        "credits": {
+            "people": {
+                "author": "Yapımcı, maintainer and ana geliştirici.",
+                "contributors": {
+                    "default": "Kod kontribütörü."
+                }
+            }
+        },
+        "licenses": {
+            "appLicenseTitle": "Uygulama lisansı",
+            "appLicenseBody": "%s özgür bir yazılımdır: bu yazılımla birlikte dağıtılması gereken MIT lisansı koşulları kapsamında kullanabilir, değiştirebilir ve yeniden dağıtabilirsiniz.",
+            "showLicense": "Lisansı göster",
+            "thirdPartyLicensesTitle": "Üçüncü parti lisanslar",
+            "thirdPartyLicensesBody": "%s şu üçüncü parti yazılımlara bağlıdır:",
+            "licensedUnder": "%s lisansı altında",
+            "packageAuthors": "%s yapımcıları"
+        }
+    }
+}
