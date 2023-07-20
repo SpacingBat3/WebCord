@@ -134,7 +134,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     // Check 3: 'author' is 'Person' when definied
     if((object as PackageJsonProperties).author !== undefined)
       if (!Person.isPerson((object as PackageJsonProperties).author))
-        return `Author field '${JSON.stringify((object as PackageJsonProperties)?.author)}' is of invalid type.`;
+        return `Author field '${JSON.stringify((object as PackageJsonProperties|null|undefined)?.author)}' is of invalid type.`;
     
     // Check 4: 'name', 'description' and 'license' are strings.
     for (const stringKey of ["name", "description", "license"])

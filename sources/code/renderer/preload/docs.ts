@@ -1,5 +1,5 @@
 import { marked } from "marked";
-import { markedHighlight } from "marked-highlight"
+import { markedHighlight } from "marked-highlight";
 import { sanitize } from "dompurify";
 import { basename, relative, resolve } from "path";
 import { existsSync, readFileSync } from "fs";
@@ -13,8 +13,8 @@ const htmlFileUrl = document.URL;
 
 marked.use(markedHighlight({
   highlight: (code,language) => hljs.getLanguage(language) ?
-      hljs.highlight(code,{ language } ).value :
-      code
+    hljs.highlight(code,{ language } ).value :
+    code
 }));
 
 const menu = document.createElement("img");
