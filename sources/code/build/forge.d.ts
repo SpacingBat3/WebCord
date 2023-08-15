@@ -33,7 +33,7 @@ type Redeclare<I, M> = Omit<I, keyof M> & M;
 
 // Base types for makers / publishers
 
-type MPConfig = unknown | {
+type MPConfig = object | {
   /** Maker or publisher specific set of options. */
   options?: unknown;
 };
