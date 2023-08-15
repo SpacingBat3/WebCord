@@ -39,8 +39,9 @@
         "eslint:recommended",
         "plugin:import/recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/recommended-type-checked",
         "plugin:@typescript-eslint/strict",
+        "plugin:@typescript-eslint/strict-type-checked",
         "plugin:import/typescript"
       ],
       "rules": {
@@ -68,7 +69,7 @@
         "no-eval": "error",
         "no-restricted-imports": ["error", {
           "name": "electron",
-          "message": "This module does not provide the information about the process type. Please use 'electron/common', 'electron/main' or 'electron/renderer' instead."
+          "message": "This module includes APIs for all process types, which could cause runtime error on misuse. Please use 'electron/common', 'electron/main' or 'electron/renderer' to explicitly declare intended process type instead."
         }],
 
         /*** TypeScript ESLint cosmetic rules ***/
