@@ -66,7 +66,7 @@ other platforms.
 
 ## 4. Why Electron?
 
-I've seen a long discussion about Electron being criticized and even through
+I've seen a long discussion about Electron being criticized and even though
 I don't find it a perfect software, I think it is the best for me currently as
 for the web-based software development – it is designed to be secure while
 connecting to the internet sites, unlike some other solutions. It is also the
