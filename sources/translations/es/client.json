@@ -29,7 +29,8 @@
         "edit": {
             "groupName": "Editar",
             "undo": "Deshacer",
-            "redo": "Rehacer"
+            "redo": "Rehacer",
+            "selectAll": "Seleccionar todo"
         },
         "view": {
             "groupName": "Ver",
@@ -64,8 +65,8 @@
             },
             "question": {
                 "audio": "Micrófono",
-                "video": "Cámara",
-                "notifications": "Notificaciones",
+                "video": "cámara",
+                "notifications": "notificaciones",
                 "title": "Gestor de las solicitudes de permisos",
                 "message": "¿Quieres conceder a Discord acceso a %s?"
             }
