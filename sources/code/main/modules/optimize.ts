@@ -93,7 +93,7 @@ export async function getRecommendedGPUFlags() {
  * recommended flags for native Wayland if `--ozone-platform=wayland` is used
  * (see {@link getRecommendedGPUFlags} for GPU optimizations for Wayland).
  */
-export function getRedommendedOSFlags() {
+export function getRecommendedOSFlags() {
   const flags: ([string]|[string,string])[] = [];
   if(isUnix) {
     if(isWaylandNative) {
