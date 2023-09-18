@@ -318,9 +318,9 @@ let overwriteMain: (() => unknown) | undefined;
     app.commandLine.appendSwitch("use-gl","angle");
     app.commandLine.appendSwitch("use-angle","swiftshader");
   } else if(appConfig.value.settings.advanced.optimize.gpu)
-  // Apply recommended GPU flags if user had opt in for them.
+    // Apply recommended GPU flags if user had opt in for them.
     for(const flag of getRecommendedGPUFlags())
-        applyFlags(flag[0], flag[1]);
+      applyFlags(flag[0], flag[1]);
   
   // Enable MiddleClickAutoscroll for all windows.
   if(process.platform !== "win32" &&
@@ -415,11 +415,13 @@ app.on("web-contents-created", (_event, webContents) => {
   webContents.on("render-process-gone", (_event, details) => {
     console.error(kolor.bold("[WC_%s:%d]")+" %s", webContents.getProcessId(), details.exitCode, details.reason);
     webContents.reloadIgnoringCache();
+    if(safeMode) return;
     if(++webContentsCrashesCount > 10) {
       console.warn("Crash count exceeded (>10), relaunching in safe mode...");
       app.relaunch({
         args: [...process.argv,"--safe-mode"]
       });
+      app.quit();
     }
   });
 
