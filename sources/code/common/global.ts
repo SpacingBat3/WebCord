@@ -23,16 +23,6 @@ export const enum DiscordFavicon {
 }
 
 /**
- * List of Vendor IDs of common GPU manufacturers. This is usually represented
- * as a hexadecimal number, so it should be also listed here as such.
- */
-export const enum GPUVendors {
-  AMD = 0x1002,
-  NVIDIA = 0x10DE,
-  Intel = 0x8086
-}
-
-/**
  * Allowed protocol list.
  * 
  * For security reasons, `shell.openExternal()` should not be used for every

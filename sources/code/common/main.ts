@@ -313,16 +313,14 @@ let overwriteMain: (() => unknown) | undefined;
     app.commandLine.appendSwitch(name, value);
     console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value !== undefined ? "="+value : ""));
   };
+  if(safeMode) {
+    // Enforce SwAngle for GPU software implementation.
+    app.commandLine.appendSwitch("use-gl","angle");
+    app.commandLine.appendSwitch("use-angle","swiftshader");
+  } else if(appConfig.value.settings.advanced.optimize.gpu)
   // Apply recommended GPU flags if user had opt in for them.
-  if(appConfig.value.settings.advanced.optimize.gpu && !safeMode)
-    getRecommendedGPUFlags().then(flags => {
-      for(const flag of flags) if(!app.isReady()) {
+    for(const flag of getRecommendedGPUFlags())
         applyFlags(flag[0], flag[1]);
-      } else
-        console.warn("Flag '--"+flag[0]+(flag[1] !== undefined ? "="+flag[1] : "")+"' won't be assigned to Chromium's cmdline, since app is already 'ready'!");
-    }).catch(error => {
-      console.error(error);
-    });
   
   // Enable MiddleClickAutoscroll for all windows.
   if(process.platform !== "win32" &&
