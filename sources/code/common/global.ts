@@ -3,6 +3,7 @@
  */
 
 import type { Config } from "dompurify";
+import type { HookFn, HookSignatures } from "@spacingbat3/disconnection";
 
 /**
  * Outputs a fancy log message in the (DevTools) console.
@@ -12,15 +13,6 @@ import type { Config } from "dompurify";
 
 export function wLog(msg: string): void {
   console.log("%c[WebCord]", "color: #69A9C1", msg);
-}
-
-export function isJsonSyntaxCorrect(string: string) {
-  try {
-    JSON.parse(string);
-  } catch {
-    return false;
-  }
-  return true;
 }
 
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
@@ -220,4 +212,30 @@ export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, 
   }
   return (objects as T[])
     .reduce((prev, cur:unknown) => deepMerge(prev, cur), source);
+}
+
+type hookName = keyof HookSignatures;
+
+interface WsCmd {
+  evt: `${"hook-"}${string}`;
+  hook: hookName;
+}
+
+export interface WSHookAdd extends WsCmd {
+  evt: "hook-set";
+}
+
+export interface WSHookTrigger<T extends hookName> extends WsCmd {
+  evt: "hook-trigger";
+  hook: T;
+  data: HookSignatures[T];
+  nonce: number;
+  port?: number|undefined;
+}
+
+export interface WSHookReturn<T extends hookName> extends WsCmd {
+  evt: "hook-return";
+  hook: T;
+  data: Awaited<ReturnType<HookFn<T>>>|Error;
+  nonce: number;
 }
