@@ -24,7 +24,7 @@ type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 class CSPBuilder {
   #value!: cspObject;
   /**
-   * Converts CSP-like string to builder-compilant object.
+   * Converts CSP-like string to builder-compliant object.
    */
   #string2object(value: string):cspObject {
     return Object.fromEntries(value
