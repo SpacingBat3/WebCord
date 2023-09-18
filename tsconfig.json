@@ -28,7 +28,10 @@
         "newLine": "lf",
         /* Do not emit anything when there's an error in source files */
         "noEmitOnError": true,
-        "verbatimModuleSyntax": false
+        /* Do not enforce CJS syntax in TypeScript for imports/exports. */
+        "verbatimModuleSyntax": false,
+        /* Do not ensure compatibility with other transpilers. */
+        "isolatedModules": false
     },
     "include": [
         "sources/code/**/*.ts"
