@@ -15,7 +15,7 @@
     --color-font-header: #fff;
     --color-link: #00A3E3;
     --color-input-bg: #484C52;
-    --scrollbar-width: 6px;
+    --scrollbar-width: 7px;
     --scrollbar-thumb: #202225;
     --color-alert-info: 65, 133, 211;
     --color-alert-warn: 248, 197, 29;
@@ -110,14 +110,19 @@ kbd {
     text-transform: uppercase;
     border-radius: 3px;
     box-shadow: var(--color-bg-border) 0px 4px;
+    border: 1px solid transparent;
     padding: 2px 6px;
     margin-right: 2px;
     margin-left: 2px;
     top: -1px;
 }
 
-.hljs-comment {
-    color: #5E646E;
+kbd:active {
+    border-color: var(--color-bg-border);
+    box-shadow: inset var(--color-bg-primary) 0px -2px;
+    color: var(--color-font-normal);
+    top: 0px;
+    padding-bottom: 4px;
 }
 
 pre {
