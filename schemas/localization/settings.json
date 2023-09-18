@@ -22,6 +22,14 @@
             "type": "string",
             "description": "A label for input element with the same id or name as this entry key. You can use there HTML tags for text formatting, others will be sanitized for security reasons. It should end with a full stop symbol when it is a sentence."
           }
+        },
+        "info": {
+          "type": "object",
+          "description": "Description for each of the elements in \"labels\". This can be used to further explain it, to keep \"labels\" short and uncluttered.",
+          "additionalProperties": {
+            "type": "string",
+            "description": "A title for input element with the same id or name as this entry key. It should end with a full stop symbol when it is a sentence."
+          }
         }
       },
       "additionalProperties": false

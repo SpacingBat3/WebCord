@@ -60,7 +60,7 @@
         "name": "Zaawansowane",
         "csp": {
             "name": "Polityka Bezpieczeństwa Treści",
-            "description": "Przełącza kiedy Webcord powinnien ignorować <i>Politykę Bezpieczeństwa Treści</i> Discorda i pozwolić klientowi na ustawienie własnej polityki ze względu na lepszą prywatność i bezpieczeństwo.",
+            "description": "Przełącza kiedy WebCord powinien ignorować <i>Politykę Bezpieczeństwa Treści</i> Discorda i pozwolić klientowi na ustawienie własnej polityki ze względu na lepszą prywatność i bezpieczeństwo.",
             "labels": {
                 "enabled": "Korzystaj z wbudowanej <i>Polityki Bezpieczeństwa Treści</i>."
             }
@@ -70,6 +70,9 @@
             "description": "Ustala listę firm trzecich, które mogą łączyć się z klientem i wyświetlać treść.",
             "labels": {
                 "gif": "Dostawcy GIF-ów"
+            },
+            "info": {
+                "googleStorageApi": "Wymagane dla wysyłania plików przez Discord!"
             }
         },
         "currentInstance": {
