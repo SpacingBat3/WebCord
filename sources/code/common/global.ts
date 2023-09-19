@@ -174,7 +174,7 @@ interface TypeMergeConfig {
  * @param objects Objects to merge (at least one). 
  * @returns Merged object.
  * 
- * @todo More acurate types (e.g. literals to primitives)
+ * @todo More accurate types (e.g. literals to primitives)
  */
 export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, ...objects:unknown[]&[unknown]) {
   const hasOwn = Object.hasOwn as <T>(o:T,s:string|symbol|number)=>s is keyof T;
