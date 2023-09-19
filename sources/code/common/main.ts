@@ -26,10 +26,10 @@ install();
 import crash, {commonCatches} from "../main/modules/error";
 crash();
 
-import { app, BrowserWindow, dialog, session } from "electron/main";
+import { app, BrowserWindow, dialog, session, screen } from "electron/main";
 import { clipboard, shell } from "electron/common";
 import { existsSync, promises as fs } from "fs";
-import { protocols, knownInstancesList } from "./global";
+import { protocols, knownInstancesList, wordWrap } from "./global";
 import { checkVersion } from "../main/modules/update";
 import L10N from "./modules/l10n";
 import createMainWindow from "../main/windows/main";
@@ -460,7 +460,7 @@ app.on("web-contents-created", (_event, webContents) => {
         buttons: [strings.common.no, actions.copyURL, strings.common.yes],
         defaultId: 0,
         cancelId: 0,
-        detail: strings.common.source + ":\n" + details.url,
+        detail: strings.common.source + ":\n" + wordWrap(details.url,Math.round(screen.getPrimaryDisplay().bounds.width/16),16),
         textWidth: 320,
         normalizeAccessKeys: true
       };

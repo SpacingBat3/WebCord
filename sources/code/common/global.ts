@@ -204,6 +204,16 @@ export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, 
     .reduce((prev, cur:unknown) => deepMerge(prev, cur), source);
 }
 
+export function wordWrap(long:string,maxr:number,maxc:number):string {
+  let res="",pieces = Math.floor(long.length/maxr);
+  const shorten = pieces > maxc;
+  pieces = shorten ? maxc : pieces;
+  for(let i=0;i<pieces;++i)
+    res+=`${res===""?"":"\n"}${long.substring(i*maxr,i*maxr+maxr)}`;
+  if(shorten) res+=" (…)";
+  return res;
+}
+
 type hookName = keyof HookSignatures;
 
 interface WsCmd {
