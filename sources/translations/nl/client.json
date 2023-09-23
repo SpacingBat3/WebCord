@@ -1,1 +1,117 @@
-{}
+{
+    "tray": {
+        "toggle": "Schakel",
+        "quit": "Afsluiten"
+    },
+    "menubar": {
+        "file": {
+            "quit": "Afsluiten",
+            "relaunch": "Heropstarten",
+            "groupName": "Bestand",
+            "addon": {
+                "loadChrome": "Laad Chrome extensie",
+                "loadNode": "Laad node extensie",
+                "groupName": "Extensies"
+            }
+        },
+        "edit": {
+            "selectAll": "Selecteer Alles",
+            "undo": "Ongedaan maken",
+            "redo": "Opnieuw doen",
+            "groupName": "Bewerken"
+        },
+        "view": {
+            "zoomOut": "Uitzoomen",
+            "groupName": "Bekijk",
+            "reload": "Herladen",
+            "resetZoom": "Daadwerkelijke grootte",
+            "zoomIn": "In zoomen",
+            "fullScreen": "Volledig scherm activeren",
+            "devTools": "Schakel ontwikkelaarstools in/uit",
+            "forceReload": "Forceer herladen"
+        },
+        "window": {
+            "groupName": "Venster",
+            "mobileMode": "Verberg de zijbalk"
+        },
+        "enabled": "Ingeschakeld"
+    },
+    "context": {
+        "paste": "Plakken",
+        "copyImage": "Kopieer afbeelding",
+        "cut": "Knip",
+        "copyURLText": "Kopieer linktekst",
+        "copyURL": "Kopieer link adres",
+        "copyImageURL": "Kopieer link naar afbeelding",
+        "dictionaryAdd": "Voeg toe aan het lokale woordenboek",
+        "copy": "kopieer",
+        "inspectElement": "Inspecteren"
+    },
+    "dialog": {
+        "permission": {
+            "question": {
+                "notifications": "meldingen",
+                "message": "Wil je Discord toegang verlenen tot de %s?",
+                "title": "Behandelaar van toestemmingsverzoeken",
+                "audio": "microfoon",
+                "video": "camera"
+            },
+            "request": {
+                "denied": "%s: Toestemmingsverzoek aan %s afgewezen."
+            },
+            "check": {
+                "denied": "%s: Toestemmingscontrole voor %s geweigerd."
+            }
+        },
+        "screenShare": {
+            "close": "Sluiten",
+            "source": {
+                "screen": "Scherm",
+                "entire": "Computer scherm"
+            },
+            "sound": {
+                "unavailable": "Het delen van audio is niet beschikbaar op dit platform.",
+                "system": "Deel met apparaataudio."
+            }
+        },
+        "ver": {
+            "downgrade": "Uw productiebuild is nieuwer dan stabiel!",
+            "update": "Er is een nieuwe applicatieversie beschikbaar!",
+            "recent": "Applicatie is up-to-date!",
+            "updateBadge": "[UPDATE]",
+            "updateTitle": "Update beschikbaar!",
+            "devel": "U gebruikt de niet-productiebuild."
+        },
+        "externalApp": {
+            "message": "Een website probeert de link met de andere oorsprong om te leiden naar de externe applicatie. Ga toch verder?",
+            "title": "Link openen in externe app"
+        },
+        "common": {
+            "continue": "&Doorgaan",
+            "no": "&Nee",
+            "yes": "&Ja",
+            "source": "Bron",
+            "warning": "Waarschuwing",
+            "error": "Fout"
+        },
+        "mod": {
+            "nodeExt": "WebCord Node.js-add-on",
+            "crx": "Chrome/Chromium-extensie"
+        }
+    },
+    "windows": {
+        "settings": "Instellingen",
+        "about": "Over",
+        "docs": "Documentatie",
+        "invite": "Inviteer"
+    },
+    "log": {
+        "singleInstance": "Overschakelen naar het bestaande venster...",
+        "listenPort": "Luisteren op poort %s."
+    },
+    "help": {
+        "groupName": "Help",
+        "bugs": "Rapporteer een bug",
+        "repo": "Opslagplaats"
+    }
+}
