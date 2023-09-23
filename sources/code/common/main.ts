@@ -3,26 +3,17 @@
  *              into one place.
  */
 
-/*
- * Handle source maps.
- * 
- * This module will provide more readable crash output.
- * 
- * It is good idea to load it first to maximize the chance it will load before
- * Electron will print any error.
- */
+// Dirty-close on Squirrel without doing anything.
+if(process.platform === "win32" && (process.argv[1]?.startsWith("--squirrel-")??false)) {
+  console.log("Detected --squirrel-* option, possibly application's being run during installation, aborting...")
+	process.exit();
+}
 
+// Handle source maps.
 import { install } from "source-map-support";
 install();
 
-/*
- * Handle "crashes".
- * 
- * This module should be loaded and initalized before any other part of the code
- * is executed (to maximize the chance WebCord errors will be properly handled)
- * and after source map support (as source map support is less likely to crash
- * while offering more useful information).
- */
+// Handle crashes.
 import crash, {commonCatches} from "../main/modules/error";
 crash();
 
