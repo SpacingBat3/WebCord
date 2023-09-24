@@ -11,7 +11,7 @@
 
 import type { ForgeConfig, ResolvedForgeConfig, ForgeHookMap } from "@electron-forge/shared-types";
 import type { OfficialPlatform } from "electron-packager";
-export type ForgePlatform = Exclude<OfficialPlatform | NodeJS.Platform, "android">;
+type ForgePlatform = Exclude<OfficialPlatform | NodeJS.Platform, "android">;
 
 // Maker config types
 
@@ -113,7 +113,7 @@ export type ForgeConfigFile = Redeclare<Partial<ForgeConfig>, {
     PublisherGitHub
   )[];
   hooks?: Redeclare<ForgeHookMap, {
-    packageAfterCopy: (ForgeConfig: ResolvedForgeConfig, path:string, electronVersion: string, platform: ForgePlatform) => unknown;
-    packageAfterExtract: (ForgeConfig: ResolvedForgeConfig, path:string, electronVersion: string, platform: ForgePlatform) => unknown;
+    packageAfterCopy?: (ForgeConfig: ResolvedForgeConfig, path:string, electronVersion: string, platform: ForgePlatform) => unknown;
+    packageAfterExtract?: (ForgeConfig: ResolvedForgeConfig, path:string, electronVersion: string, platform: ForgePlatform) => unknown;
   }>;
 }>;

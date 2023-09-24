@@ -9,8 +9,9 @@ import { Person, PackageJSON } from "../common/modules/package";
 import { existsSync } from "fs";
 import { readFile, writeFile, rm } from "fs/promises";
 import { resolve } from "path";
-import type { ForgeConfigFile, ForgePlatform } from "./forge.d";
-import { flipFuses, FuseVersion, FuseV1Options } from "@electron/fuses";
+import type { ForgeConfigFile } from "./forge.d";
+import { FusesPlugin } from "@electron-forge/plugin-fuses";
+import { FuseVersion, FuseV1Options } from "@electron/fuses";
 
 const packageJson = new PackageJSON(["author","version","name"]);
 const projectPath = resolve(__dirname, "../../..");
@@ -45,17 +46,6 @@ const env = {
   asar: process.env["WEBCORD_ASAR"]?.toLowerCase() !== "false",
   build: process.env["WEBCORD_BUILD"]?.toLowerCase()
 };
-
-function getElectronPath(platform:ForgePlatform) {
-  switch (platform) {
-    case "darwin":
-      return "Electron.app/Contents/MacOS/Electron";
-    case "win32":
-      return "electron.exe";
-    default:
-      return "electron";
-  }
-}
 
 function getBuildID() {
   switch(env.build) {
@@ -111,7 +101,12 @@ const config: ForgeConfigFile = {
       platforms: ["win32"],
     },
     // Finally, some kind of installer in the configuration for Windows!
-    { name: "@electron-forge/maker-squirrel" },
+    {
+      name: "@electron-forge/maker-squirrel",
+      config: {
+        setupIcon: `${iconFile}.ico`
+      }
+    },
     {
       name: "@electron-forge/maker-wix",
       config: {
@@ -126,9 +121,9 @@ const config: ForgeConfigFile = {
         },
         name: "WebCord",
         manufacturer: author,
-        icon: iconFile+".ico",
+        icon: `${iconFile}.ico`,
         language: 0x0400,
-        version: "v"+packageJson.data.version+(getBuildID() === "devel" ? "-dev" : ""),
+        version: `v${packageJson.data.version}${getBuildID() === "devel" ? "-dev" : ""}`,
         shortName: "WebCord",
         programFilesFolderName: "WebCord",
         shortcutFolderName: "WebCord"
@@ -138,7 +133,7 @@ const config: ForgeConfigFile = {
     {
       name: "@electron-forge/maker-dmg",
       config: {
-        icon: iconFile + ".icns",
+        icon: `${iconFile}.icns`,
         debug: getBuildID() === "devel"
       }
     },
@@ -146,7 +141,7 @@ const config: ForgeConfigFile = {
       name: "@reforged/maker-appimage",
       config: {
         options: {
-          icon: iconFile + ".png",
+          icon: `${iconFile}.png`,
           genericName: desktopGeneric,
           categories: desktopCategories,
           flagsFile: true,
@@ -158,7 +153,7 @@ const config: ForgeConfigFile = {
       name: "@electron-forge/maker-deb",
       config: {
         options: {
-          icon: iconFile + ".png",
+          icon: `${iconFile}.png`,
           section: "web",
           genericName: desktopGeneric,
           categories: desktopCategories
@@ -169,9 +164,10 @@ const config: ForgeConfigFile = {
       name: "@electron-forge/maker-rpm",
       config: {
         options: {
-          icon: iconFile + ".png",
+          icon: `${iconFile}.png`,
           genericName: desktopGeneric,
-          categories: desktopCategories
+          categories: desktopCategories,
+          license: "MIT"
         }
       }
     },
@@ -216,7 +212,7 @@ const config: ForgeConfigFile = {
               ]
             }
           ],
-          icon: iconFile + ".png"
+          icon: `${iconFile}.png`
         }
       },
       enabled: process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true"
@@ -249,6 +245,18 @@ const config: ForgeConfigFile = {
       }
     }
   ],
+  plugins: [
+    // Hardened Electron binary via Electron Fuses feature.
+    new FusesPlugin({
+      version: FuseVersion.V1,
+      resetAdHocDarwinSignature: true,
+      [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,
+      [FuseV1Options.RunAsNode]: getBuildID() === "devel",
+      [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: getBuildID() === "devel",
+      [FuseV1Options.EnableNodeCliInspectArguments]: getBuildID() === "devel",
+      [FuseV1Options.EnableCookieEncryption]: true
+    })
+  ],
   hooks: {
     packageAfterCopy: async (_forgeConfig, path, _electronVersion, platform) => {
       /** Generates `buildInfo.json` file and saves it somewhe. */
@@ -275,15 +283,6 @@ const config: ForgeConfigFile = {
         removeUselessPlatformData()
       ]);
     },
-    // Hardened Electron binary via Electron Fuses feature.
-    packageAfterExtract: (_forgeConfig, path, _electronVersion, platform) =>
-      flipFuses(resolve(path, getElectronPath(platform)), {
-        version: FuseVersion.V1,
-        [FuseV1Options.OnlyLoadAppFromAsar]: env.asar,
-        [FuseV1Options.RunAsNode]: getBuildID() === "devel",
-        [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: getBuildID() === "devel",
-        [FuseV1Options.EnableNodeCliInspectArguments]: getBuildID() === "devel"
-      }),
     // Fix file names of Windows makers:
     postMake: (_forgeConfig, makeResults) => Promise.all(makeResults
       .map(async result => {
@@ -291,18 +290,18 @@ const config: ForgeConfigFile = {
         if(result.platform !== "win32")
           return result;
         // Import modules
-        const p = await import("path"), fs = import("fs/promises");
+        const p = import("path"), fs = import("fs/promises");
         // Set list of new artifacts
         result.artifacts = await Promise.all(result.artifacts
           // Rename artifacts to include arch suffix.
           .map(async artifact => {
-            const ext = p.extname(artifact);
-            const basename = p.basename(artifact,ext);
+            const ext = (await p).extname(artifact);
+            const basename = (await p).basename(artifact,ext);
             // Ignore artifacts that doesn't need to be fixed.
             if(basename.includes(result.arch))
               return artifact;
-            const newArtifact = p.resolve(
-              p.dirname(artifact), basename+"-"+result.arch+ext
+            const newArtifact = (await p).resolve(
+              (await p).dirname(artifact), basename+"-"+result.arch+ext
             );
             await (await fs).rename(artifact,newArtifact);
             return newArtifact;
