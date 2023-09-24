@@ -72,6 +72,7 @@
     "dompurify": "^3.0.1",
     "highlight.js": "^11.4.0",
     "marked": "^9.0.0",
+    "marked-gfm-heading-id": "^3.1.0",
     "marked-highlight": "^2.0.1",
     "semver": "^7.3.5",
     "source-map-support": "^0.5.21",
