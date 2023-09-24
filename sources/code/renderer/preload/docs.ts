@@ -1,3 +1,4 @@
+import { ipcRenderer as ipc } from "electron/renderer";
 import { basename, relative, resolve } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
 import { pathToFileURL, fileURLToPath } from "node:url";
@@ -22,9 +23,9 @@ const htmlFileUrl = document.URL;
 
 marked.use(
   markedHighlight({
-  highlight: (code,language) => hljs.getLanguage(language) ?
-    hljs.highlight(code,{ language } ).value :
-    code
+    highlight: (code,language) => hljs.getLanguage(language) ?
+      hljs.highlight(code,{ language } ).value :
+      code
   }),
   gfmHeadingId()
 );
@@ -134,9 +135,7 @@ function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdA
 
 document.addEventListener("readystatechange", () => {
   if(document.readyState === "interactive")
-    import("electron/renderer")
-      .then(electron => electron.ipcRenderer)
-      .then(ipc => ipc.invoke("documentation-load"))
+    ipc.invoke("documentation-load")
       .then((readmeFile:string) => {
         const mdHeader = document.createElement("header");
         const mdArticle = document.createElement("article");
@@ -171,9 +170,7 @@ document.addEventListener("readystatechange", () => {
         ;
       })
       .finally(() => {
-        void import("electron/renderer")
-          .then(electron => electron.ipcRenderer)
-          .then(ipc => ipc.send("documentation-show"));
+        ipc.send("documentation-show");
       })
       .catch(error => {
         if(error instanceof Error)

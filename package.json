@@ -67,7 +67,7 @@
     "@fontsource/roboto": "^5.0.2",
     "@fontsource/ubuntu": "^5.0.2",
     "@spacingbat3/disconnection": "^1.0.3",
-    "@spacingbat3/kolor": "^3.0.1",
+    "@spacingbat3/kolor": "^3.2.3",
     "deepmerge-ts": "^5.1.0",
     "dompurify": "^3.0.1",
     "highlight.js": "^11.4.0",

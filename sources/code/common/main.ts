@@ -5,8 +5,8 @@
 
 // Dirty-close on Squirrel without doing anything.
 if(process.platform === "win32" && (process.argv[1]?.startsWith("--squirrel-")??false)) {
-  console.log("Detected --squirrel-* option, possibly application's being run during installation, aborting...")
-	process.exit();
+  console.log("Detected --squirrel-* option, possibly application's being run during installation, aborting...");
+  process.exit();
 }
 
 // Handle source maps.
@@ -357,7 +357,7 @@ function main(): void {
     const mainWindow = createMainWindow({startHidden, screenShareAudio});
     
     // WebSocket server
-    import("../main/modules/socket")
+    import("../main/modules/socket.mjs")
       .then(socket => socket.default())
       .catch(commonCatches.print);
 

@@ -1,8 +1,8 @@
 {
     "extends": "@tsconfig/strictest/tsconfig.json",
     "compilerOptions": {
-        "module":"CommonJS",
-        "moduleResolution": "Node",
+        "module": "Node16",
+        "moduleResolution": "Node16",
         "target": "ES2022",
         /* Whenever incremental compilation is enabled */
         "incremental": true,
@@ -10,7 +10,7 @@
         "tsBuildInfoFile": "cache/tsc.json",
         /* Whenever sourcemaps should be made for emitted JavaScript files */
         "sourceMap": true,
-        /* Directrory in which are placed all emitted files */
+        /* Directory in which are placed all emitted files */
         "outDir": "app",
         /* Whenever comments are emitted to files */
         "removeComments": true,
@@ -31,9 +31,11 @@
         /* Do not enforce CJS syntax in TypeScript for imports/exports. */
         "verbatimModuleSyntax": false,
         /* Do not ensure compatibility with other transpilers. */
-        "isolatedModules": false
+        "isolatedModules": false,
+        /* Type workarounds for broken modules: */
+        "paths": {
+            "marked-*": ["./node_modules/marked-*/src/index.d.ts"]
+        }
     },
-    "include": [
-        "sources/code/**/*.ts"
-    ]
+    "include": ["sources/code/**/*.ts", "sources/code/main/modules/socket.mts", "sources/code/utility/ws.ts"]
 }
