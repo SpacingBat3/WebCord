@@ -19,7 +19,7 @@ crash();
 
 import { app, BrowserWindow, dialog, session, screen } from "electron/main";
 import { clipboard, shell } from "electron/common";
-import { existsSync, promises as fs } from "fs";
+import { promises as fs } from "fs";
 import { protocols, knownInstancesList, wordWrap } from "./global";
 import { checkVersion } from "../main/modules/update";
 import L10N from "./modules/l10n";
@@ -52,7 +52,7 @@ const argvConfig = Object.freeze(({
     "user-agent-device": { type: "string" },
     "user-agent-platform": { type: "string" },
     "force-audio-share-support": { type: "boolean" },
-    "add-css-theme": { type: "string" },
+    "add-css-theme": { type: "boolean" },
     "gpu-info": { type: "string" },
     "safe-mode": { type: "boolean" }
   }),
@@ -118,7 +118,7 @@ const userAgent: Partial<{
 let overwriteMain: (() => unknown) | undefined;
 
 {
-  /** Renders a line from the list of the parameters and their descripiton. */
+  /** Renders a line from the list of the parameters and their description. */
   const renderLine = (key:keyof typeof argvConfig.options, description:string, type?:string, length = 32) => {
     const option = argvConfig.options[key];
     const parameter = [
@@ -171,7 +171,7 @@ let overwriteMain: (() => unknown) | undefined;
       renderLine("user-agent-version", "Version of platform in user agent."),
       renderLine("user-agent-device", "Device identifier in the user agent (Android)."),
       renderLine("force-audio-share-support", "Force support for sharing audio in screen share."),
-      renderLine("add-css-theme", "Adds theme to WebCord from {path}.", "{path}"),
+      renderLine("add-css-theme", "Adds theme to WebCord using file picker."),
       renderLine("safe-mode", "Starts WebCord in 'Safe Mode'.")/*,
       renderLine(["remove-css-theme=" + kolor.yellow("{name}")], "Removes WebCord theme by "+kolor.yellow("{name}")),
       renderLine(["list-css-themes"], "Lists currently added WebCord themes")*/
@@ -280,13 +280,8 @@ let overwriteMain: (() => unknown) | undefined;
   if(argv.values["force-audio-share-support"] === true)
     screenShareAudio = true;
   if("add-css-theme" in argv.values) {
-    const path = argv.values["add-css-theme"];
-    if(path === undefined || typeof path !== "string" || !existsSync(path))
-      throw new Error("Flag 'add-css-theme' should include a value of type '{path}'.");
-    if(!path.endsWith(".theme.css"))
-      throw new Error("Value of flag 'add-css-theme' should point to '*.theme.css' file.");
     overwriteMain = () => {
-      styles.add(path)
+      styles.add()
         .then(() => process.exit(0))
         .catch(() => process.exit(1));
     };
