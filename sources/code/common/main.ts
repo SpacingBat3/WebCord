@@ -409,9 +409,10 @@ app.on("web-contents-created", (_event, webContents) => {
     if(safeMode) return;
     if(++webContentsCrashesCount > 10) {
       console.warn("Crash count exceeded (>10), relaunching in safe mode...");
-      app.relaunch({
-        args: [...process.argv,"--safe-mode"]
-      });
+      const args = [...process.argv];
+      args.shift();
+      args.push("--safe-mode");
+      app.relaunch({ args });
       app.quit();
     }
   });
