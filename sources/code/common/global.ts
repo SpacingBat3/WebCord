@@ -211,6 +211,8 @@ export function wordWrap(long:string,maxr:number,maxc:number):string {
   for(let i=0;i<pieces;++i)
     res+=`${res===""?"":"\n"}${long.substring(i*maxr,i*maxr+maxr)}`;
   if(shorten) res+=" (…)";
+  if(res === "")
+    return long;
   return res;
 }
 
