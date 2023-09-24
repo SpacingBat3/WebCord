@@ -71,7 +71,7 @@ jobs:
             arch: x64,arm64,ia32
           - runner: macos-latest
             name: macOS
-            arch: x64,arm64,universal
+            arch: x64,arm64 #,universal
 
     name: '${{ matrix.name }} (${{ matrix.build }})'
     runs-on: ${{ matrix.runner }}
