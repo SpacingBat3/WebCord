@@ -14,7 +14,6 @@ import { protocols } from "../../common/global";
 
 import {
   gfmHeadingId
-  //@ts-expect-error TS14790
 } from "marked-gfm-heading-id";
 
 const htmlFileUrl = document.URL;

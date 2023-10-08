@@ -357,7 +357,7 @@ function main(): void {
     const mainWindow = createMainWindow({startHidden, screenShareAudio});
     
     // WebSocket server
-    import("../main/modules/socket.mjs")
+    import("../main/modules/socket")
       .then(socket => socket.default())
       .catch(commonCatches.print);
 
