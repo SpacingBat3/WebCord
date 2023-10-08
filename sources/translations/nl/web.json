@@ -1,0 +1,36 @@
+{
+    "aboutWindow": {
+        "licenses": {
+            "appLicenseTitle": "Applicatielicentie",
+            "showLicense": "Toon licentie",
+            "licensedUnder": "onder %s licentie",
+            "appLicenseBody": "%s is gratis software: u kunt het gebruiken, wijzigen en herdistribueren onder de voorwaarden van de MIT-licentie, die bij deze software moet worden gedistribueerd.",
+            "packageAuthors": "%s auteurs",
+            "thirdPartyLicensesTitle": "Derde partij licenties",
+            "thirdPartyLicensesBody": "%s is afhankelijk van de volgende derde partij software:"
+        },
+        "about": {
+            "featuresDefault": "Standaard",
+            "checksumTitle": "Checksum",
+            "appRepo": "GitHub-opslagplaats",
+            "appDescription": "Discord- en Fosscord-webclient met op privacy gerichte functies."
+        },
+        "credits": {
+            "people": {
+                "contributors": {
+                    "default": "Codebijdrager."
+                },
+                "author": "Auteur, onderhouder en hoofdontwikkelaar."
+            }
+        },
+        "nav": {
+            "about": "Over",
+            "credits": "Crediteringen",
+            "licenses": "Licenties"
+        }
+    },
+    "offline": {
+        "title": "Kan niet connecteren met de Discord dienst.",
+        "description": "Zorg ervoor dat u verbonden bent met internet."
+    }
+}

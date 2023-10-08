@@ -68,6 +68,9 @@
             "name": "Paginas web de tercero",
             "labels": {
                 "gif": "Proveedor de GIFs"
+            },
+            "info": {
+                "googleStorageApi": "¡Necesario para cargar archivos en Discord!"
             }
         },
         "currentInstance": {
