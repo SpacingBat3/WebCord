@@ -237,7 +237,7 @@ interface WindowStatus {
 
 export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, WindowStatus>>> {
   #windowName: T;
-  #tempstate: PartialRecursive<typeof this.value>;
+  #tempstate: typeof this.value;
   /**
    * An object containing width and height of the window watched by `WinStateKeeper`
    */
@@ -247,29 +247,29 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
       case "maximize":
       case "unmaximize":
         this.#tempstate = Object.freeze({
-          [this.#windowName]: Object.freeze({
-            width: this.value[this.#windowName]?.width ?? window.getNormalBounds().width,
-            height: this.value[this.#windowName]?.height ?? window.getNormalBounds().height,
-            isMaximized: window.isMaximized()
+          [this.#windowName satisfies T]: Object.freeze({
+            width: this.#tempstate[this.#windowName]?.width ?? this.value[this.#windowName]?.width ?? window.getNormalBounds().width,
+            height: this.#tempstate[this.#windowName]?.height ?? this.value[this.#windowName]?.height ?? window.getNormalBounds().height,
+            isMaximized: eventType === "maximize"
           } satisfies WindowStatus)
-        });
+        } as unknown as Record<T, Readonly<WindowStatus>>);
         break;
       default:
         if(window.isMaximized()) return;
         this.#tempstate = Object.freeze({
-          [this.#windowName]: Object.freeze({
+          [this.#windowName satisfies T]: Object.freeze({
             width: window.getNormalBounds().width,
             height: window.getNormalBounds().height,
-            isMaximized: this.value[this.#windowName]?.isMaximized ?? false
+            isMaximized: this.#tempstate[this.#windowName]?.isMaximized ?? this.value[this.#windowName]?.isMaximized ?? false
           } satisfies WindowStatus)
-        });
+        } as unknown as Record<T, Readonly<WindowStatus>>);
     }
-    console.debug("[WIN] Electron event: "+(eventType));
-    console.debug("[WIN] State changed to: "+JSON.stringify(this.value[this.#windowName]));
+    console.debug(`[WIN] Electron event: ${eventType}`);
+    console.debug(`[WIN] State changed to: ${JSON.stringify(this.#tempstate[this.#windowName])}`);
   }
 
   /**
-   * Initializes the EventListeners, usually **after** `window` is definied.
+   * Initializes the EventListeners, usually **after** `window` is defined.
    * 
    * @param window A `BrowserWindow` from which current window bounds are picked.
    */
