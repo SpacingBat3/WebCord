@@ -1,12 +1,13 @@
+import { dirname } from "path";
+import { resolve } from "url";
 import { commonCatches } from "./error";
 
 const safeStoragePromise = (import("electron/main"))
   .then(main => main.safeStorage);
 
-async function fetchOrRead(file:string, signal?:AbortSignal) {
+async function fetchOrRead(url:URL, signal?:AbortSignal) {
   const readFile = import("fs/promises").then(fs => fs.readFile);
 
-  const url = new URL(file);
   if(url.protocol === "file:")
     return { read: (await readFile)(url.pathname, {signal}) };
   else
@@ -19,20 +20,22 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
  * 
  * **Experimental** – it is unknown if that would work properly for all themes.
  */
-async function parseImports(cssString: string, importCalls:string[], maxTries=5):Promise<string> {
+async function parseImports(cssString: string, importCalls: string[], maxTries=5):Promise<string> {
   const anyImport = /^@import .+?$/gm;
   if(!anyImport.test(cssString)) return cssString;
   const promises:Promise<string>[] = [];
+  const newImports = importCalls.slice();
   cssString.match(anyImport)?.forEach(singleImport => {
     const matches = /^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m.exec(singleImport);
     if(matches?.[0] === undefined || matches[1] === undefined) return;
-    const file = matches[1];
+    const lastDir = dirname(importCalls[importCalls.length - 1] ?? "") + "/";
+    const file = resolve(lastDir, matches[1]);
     if(importCalls.includes(file)) {
-      promises.push(Promise.reject(new Error("Circular reference in CSS imports are disallowed!")));
+      promises.push(Promise.reject(new Error("Circular reference in CSS imports are disallowed: " + file)));
       return;
     }
-    importCalls.push(file);
-    promises.push(fetchOrRead(file)
+    newImports.push(file);
+    promises.push(fetchOrRead(new URL(file))
       .then(data => {
         if (data.download)
           return data.download.then(data => data.text());
@@ -46,8 +49,8 @@ async function parseImports(cssString: string, importCalls:string[], maxTries=5)
     await Promise.all(promises);
   } catch(error) {
     if(maxTries > 0) {
-      console.warn("Couldn't resolve CSS theme imports, retrying again...");
-      maxTries--;
+      console.warn("Couldn't resolve CSS theme imports, retrying...");
+      return parseImports(cssString, importCalls, maxTries - 1);
     }
     else if(error instanceof Error)
       throw error;
@@ -55,7 +58,7 @@ async function parseImports(cssString: string, importCalls:string[], maxTries=5)
       throw new Error("Couldn't resolve CSS theme imports, aborting...");
   }
   if(anyImport.test(cssString)) {
-    return parseImports(cssString, importCalls, maxTries);
+    return parseImports(cssString, newImports, maxTries);
   }
   return cssString;
 }
