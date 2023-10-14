@@ -26,7 +26,7 @@ import { commonCatches } from "../modules/error";
 
 import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
-import { lt } from "semver";
+import { satisfies as rSatisfies } from "semver";
 
 interface MainWindowFlags {
   startHidden: boolean;
@@ -475,6 +475,15 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // Load extensions for builds of type "devel".
   if(getBuildInfo().type === "devel")
     void loadChromiumExtensions(win.webContents.session);
+  
+  /**
+   * Whenever `desktopCapturer.getSources()` API is expected to crash
+   * with current Electron version the application is running on.
+   */
+  const capturerApiSafe = rSatisfies(
+    process.versions.electron,
+    "<22.0.0 || >=26.0.0"
+  );
 
   // IPC events validated by secret "API" key and sender frame.
   internalWindowEvents.on("api", (safeApi:string) => {
@@ -496,11 +505,12 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           .includes("WebRTCPipeWireCapturer") ||
           process.env["XDG_SESSION_TYPE"] !== "wayland" ||
           process.platform === "win32";
-        const sources = lock || lt(process.versions.electron,"22.0.0") ?
-          // Use desktop capturer on Electron 22 downwards or X11 systems
+        const sources = lock || capturerApiSafe ?
+          // Use desktop capturer where it doesn't crash.
           desktopCapturer.getSources({
-            types: lock ? ["screen", "window"] : ["screen"],
-            fetchWindowIcons: lock
+            types: ["screen", "window"],
+            fetchWindowIcons: lock,
+            thumbnailSize: lock ? {width: 150, height: 150 } : {width: 0, height: 0}
           // Workaround #328: Segfault on `desktopCapturer.getSources()` since Electron 22
           }) : Promise.resolve([{
             id: "screen:1:0",
