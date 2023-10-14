@@ -55,7 +55,7 @@
     "@types/ws": "^8.5.1",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
-    "electron": "^26.2.4",
+    "electron": "^27.0.0",
     "eslint": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-import": "latest",
