@@ -45,7 +45,7 @@ jobs:
             cache/tsc.json
 
       - name: Publish distributables (${{ matrix.arch}})
-        if: ${{ matrix.name != "Windows" }}
+        if: ${{ matrix.name != 'Windows' }}
         uses: nick-fields/retry@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -56,7 +56,7 @@ jobs:
           command: npm run publish -- -a ${{ matrix.arch }}
 
       - name: Publish distributables (${{ matrix.arch}}) (more retries)
-        if: ${{ matrix.name == "Windows" }}
+        if: ${{ matrix.name == 'Windows' }}
         uses: nick-fields/retry@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
