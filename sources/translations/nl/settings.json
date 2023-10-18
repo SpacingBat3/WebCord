@@ -1,0 +1,22 @@
+{
+    "general": {
+        "tray": {
+            "name": "Tray",
+            "description": "Verandert de zichtbaarheid van het pictogram in het systeemvak.",
+            "labels": {
+                "disable": "Schakel het verbergen van venster naar de systeemvakfunctionaliteit uit."
+            }
+        },
+        "taskbar": {
+            "name": "Taakbalk"
+        },
+        "menuBar": {
+            "labels": {
+                "hide": "Verberg de menubalk automatisch (de <kbd>ALT</kbd>-toets wijzigt de zichtbaarheid)."
+            },
+            "name": "Menubalk",
+            "description": "Wijzigt de zichtbaarheidsinstellingen van de eigen menubalk."
+        },
+        "name": "Algemeen"
+    }
+}

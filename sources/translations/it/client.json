@@ -1,0 +1,116 @@
+{
+    "menubar": {
+        "file": {
+            "addon": {
+                "loadChrome": "Carica estensione di Chrome",
+                "groupName": "Estensioni",
+                "loadNode": "Carica estensione di node"
+            },
+            "quit": "Chiudi",
+            "relaunch": "Rilancia",
+            "groupName": "File"
+        },
+        "window": {
+            "groupName": "Finestra",
+            "mobileMode": "Nascondi barra laterale"
+        },
+        "enabled": "Abilitato",
+        "edit": {
+            "groupName": "Modifica",
+            "undo": "Annulla",
+            "redo": "Ripeti"
+        },
+        "view": {
+            "groupName": "Visualizza",
+            "reload": "Ricarica",
+            "forceReload": "Ricarica forzatamente",
+            "devTools": "Mostra Strumenti per Sviluppatori",
+            "resetZoom": "Dimensione effettiva",
+            "zoomOut": "Riduci",
+            "zoomIn": "Ingrandisci",
+            "fullScreen": "Passa a schermo intero"
+        }
+    },
+    "dialog": {
+        "mod": {
+            "crx": "Estensione Chrome/Chromium",
+            "nodeExt": "Addon WebCord Node.js"
+        },
+        "screenShare": {
+            "close": "Chiudi",
+            "source": {
+                "screen": "Schermo",
+                "entire": "Schermo del computer"
+            },
+            "sound": {
+                "system": "Condividi con l'audio del dispositivo.",
+                "unavailable": "La condivisione dell'audio non è disponibile su questa piattaforma."
+            }
+        },
+        "common": {
+            "error": "Errore",
+            "warning": "Attenzione",
+            "source": "Sorgente",
+            "continue": "&Continua",
+            "no": "&No",
+            "yes": "&Si"
+        },
+        "ver": {
+            "updateBadge": "[AGGIORNAMENTO]",
+            "downgrade": "La build di produzione attuale è più recente di quella stabile!",
+            "update": "Una nuova versione dell'applicazione è disponibile!",
+            "recent": "L'applicazione è aggiornata!",
+            "devel": "Non stai usando la build di produzione.",
+            "updateTitle": "Aggiornamento disponibile!"
+        },
+        "permission": {
+            "check": {
+                "denied": "%s: Ho fallito il controllo dei permessi su %s."
+            },
+            "question": {
+                "notifications": "notifiche",
+                "title": "Gestore di richiesta dei permessi",
+                "message": "Vuoi permettere a Discord di accedere al file %s?",
+                "video": "fotocamera",
+                "audio": "microfono"
+            },
+            "request": {
+                "denied": "%s: Ho negato il permesso richiesto su %s."
+            }
+        },
+        "externalApp": {
+            "title": "Aprire link in app esterna",
+            "message": "Un sito web sta cercando di redirezionare il link con origine differente all'apllicazione esterna. Continuo comunque?"
+        }
+    },
+    "context": {
+        "paste": "Incolla",
+        "dictionaryAdd": "Aggiungi al dizionario locale",
+        "copyURLText": "Copia testo dell'indirizzo",
+        "copy": "Copia",
+        "cut": "Taglia",
+        "copyImageURL": "Copia link all'immagine",
+        "copyURL": "Copia indirizzo",
+        "copyImage": "Copia immagine",
+        "inspectElement": "Ispeziona"
+    },
+    "help": {
+        "groupName": "Aiuto",
+        "repo": "Repository",
+        "bugs": "Segnala un bug"
+    },
+    "log": {
+        "singleInstance": "Passo alla finestra esistente...",
+        "listenPort": "Ascolto su porta %s."
+    },
+    "tray": {
+        "toggle": "Mostra",
+        "quit": "Esci"
+    },
+    "windows": {
+        "settings": "Impostazioni",
+        "docs": "Documentazione",
+        "about": "Riguardo a",
+        "invite": "Invito"
+    }
+}

@@ -1,0 +1,115 @@
+{
+    "$schema": "../../../schemas/localization/settings.json",
+    "general": {
+        "name": "Genel",
+        "menuBar": {
+            "name": "Menü çubuğu",
+            "description": "Menü çubuğunun görünüm ayarlarını değiştirir.",
+            "labels": {
+                "hide": "Menü çubuğunu otomatik olarak gizle. (<kbd>ALT</kbd> gösterir/gizler)"
+            }
+        },
+        "tray": {
+            "name": "Sistem Tepsisi",
+            "description": "Sistem tepsisindeki ikonun görünürlüğünü değiştirir.",
+            "labels": {
+                "disable": "Pencereyi sistem tepsisine gizlemeyi devre dışı bırak."
+            }
+        },
+        "taskbar": {
+            "name": "Görev Çubuğu",
+            "description": "WebCord'un görev çubuğundaki davranışını kontrol eder.",
+            "labels": {
+                "flash": "Mesaj geldiğinde görev çubuğu ikonunu parlat."
+            }
+        },
+        "window": {
+            "name": "WebCord'un Ana Penceresi",
+            "description": "İstemci arayüzünü kontrol eden pencerenin görünümünü ve davranışını kontrol eder.",
+            "labels": {
+                "transparent": "Şeffaf pencere arkaplanına izin ver.",
+                "hideOnClose": "Kapat tuşuna basıldığında pencereyi sistem tepsisine gizle."
+            }
+        }
+    },
+    "privacy": {
+        "name": "Gizlilik",
+        "blockApi": {
+            "name": "Discord API engelleme",
+            "description": "Gizliliği artırmak için Discord API isteklerini engeller.",
+            "labels": {
+                "science": "Bilinen telemetri yollarını engelle. (<code>/science</code> ve <code>/tracing</code>).",
+                "typingIndicator": "Yazıyor göstergesini engelle. (<code>/typing</code>)",
+                "fingerprinting": "Bilinen tanımlama yöntemlerini engelle. (<code>api.js</code> ve <code>cdn-cgi</code>)."
+            }
+        },
+        "permissions": {
+            "name": "İzinler",
+            "description": "Discord'un izin kontrollerini ve isteklerini kontrol eder. Burada listelenmeyen izinler WebCord tarafından otomatik olarak engellenecektir.",
+            "labels": {
+                "video": "Kamera",
+                "audio": "Mikrofon",
+                "fullscreen": "Tam ekran",
+                "notifications": "Bildirimler",
+                "display-capture": "Ekran paylaşımı",
+                "background-sync": "Arkaplan eşitlemesi"
+            }
+        }
+    },
+    "advanced": {
+        "name": "Gelişmiş",
+        "csp": {
+            "name": "İçerik Güvenliği Politikası",
+            "description": "Uygulama Discord'un içerik güvenliği politikası başlıklarını yok sayması gerektiğinde bu ayarı açar/kapatır ve gizlilik endişeleri için istemcinin kendi içerik güvenliği politikasını ayarlamasına izin verir.",
+            "labels": {
+                "enabled": "Yerleşik içerik güvenliği politikasını kullan."
+            }
+        },
+        "cspThirdParty": {
+            "name": "Üçüncü parti siteler",
+            "description": "Bağlanıp içerik göstermesine izin verilen üçüncü parti sitelerin listesini tutar.",
+            "labels": {
+                "gif": "GIF Sağlayıcıları"
+            }
+        },
+        "currentInstance": {
+            "name": "Discord instance",
+            "description": "WebCord'un bağlanması gereken sunucuyu (instance) seçer. Fosscord şu an <b>deneysel</b> çünkü daha geliştirme aşamasında."
+        },
+        "devel": {
+            "name": "Geliştici Modu",
+            "description": "Potansiyel olarak bozuk veya tehlikeli kabul edilen araçları ve bitmemiş seçenekleri erişime açar. <b>Uyarı</b>: uygulama maintainerları bu ayar etkinleştirildikten sonra herhangi bir hata veya sorundan sorumlu değildir - lütfen bunları bildirmeyin",
+            "labels": {
+                "enabled": "Geliştirici modunu etkinleştir."
+            }
+        },
+        "redirection": {
+            "name": "Cross-origin yönlendirme davranışı",
+            "description": "Cross-origin yönlendirmelerde ne olacağını kontrol eder. <b>Bu ayar uygulama güvenliğini etkiler.</b>",
+            "labels": {
+                "warn": "Kullanıcıyı başka uygulamaya giden cross-origin yönlendirmeleri hakkında uyar."
+            }
+        },
+        "optimize": {
+            "name": "İstemci optimizasyonu",
+            "description": "Electron performansını ve işlevselliğini iyileştir<b>ebilen</b> özel parametreleri Chromium motoruna uygulamak için kullanıcı yazılım ve donanımını tespit etmeye çalışır. <b>Deneysel</b>, adından da anlaşılacağı gibi Chromium'un bu parametreleri varsayılan olarak uygulamamasının bir sebebi var.",
+            "labels": {
+                "gpu": "İstemciyi aktif ekran kartı için optimize eder."
+            }
+        },
+        "webApi": {
+            "name": "JavaScript API'larına erişim",
+            "description": "Ayrıcalıksız (DOM) betiklerinde (unpriviledged (DOM) scripts) hangi API'a izin verileceğini kontrol eder.",
+            "labels": {
+                "webGl": "WebGL desteğini etkinleştir."
+            }
+        },
+        "unix": {
+            "name": "Unix/Unix-benzeri işletim sistemleri için deneysel özellikler",
+            "description": "Chromium/Blink motoru tarafından deneysel olarak kabul edilen özellikleri etkinleştirir. <b>Kullanırken tüm sorumluluk size aittir.</b>",
+            "labels": {
+                "autoscroll": "Orta tıklamayla kaydırmayı etkinleştir. (bir diğer deyişle <i>autoscroll</i>)."
+            }
+        }
+    }
+}

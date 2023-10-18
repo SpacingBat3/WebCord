@@ -15,7 +15,7 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
 
 /**
  * A function that recursively parses `@import` CSS statements, so they can be
- * understand for Electron on CSS instertion.
+ * understand for Electron on CSS insertion.
  * 
  * **Experimental** – it is unknown if that would work properly for all themes.
  */
@@ -55,9 +55,8 @@ async function parseImports(cssString: string, maxTries=5):Promise<string> {
   return cssString;
 }
 
-async function addStyle(path:string) {
+async function addStyle(window?:Electron.BrowserWindow) {
   const [
-
     { app, dialog },
     { readFile, writeFile },
     { resolve, basename },
@@ -73,20 +72,26 @@ async function addStyle(path:string) {
       return safeStorage.encryptString(buffer.toString());
     return buffer.toString();
   }
-  const data = readFile(path).then(path => optionalCrypt(path));
-  const out = resolve(app.getPath("userData"),"Themes", basename(path, ".theme.css"));
-  if(resolve(path) === out) return;
-  const {response} = await dialog.showMessageBox({
-    title: "WebCord plugin attestation",
-    message: "WebCord received a request to import theme from path '"+path+"'. Proceed?",
-    type: "question",
-    buttons: ["&No","&Yes"],
-    defaultId: 0,
-    cancelId: 0,
-    normalizeAccessKeys: true,
-  });
-  if(response === 1)
-    await writeFile(out, await data);
+  const options = {
+    title: "Select a Discord theme to add to WebCord",
+    properties: ["multiSelections", "openFile"],
+    filters: [
+      { name: "CSS stylesheet theme", extensions: ["theme.css"] }
+    ]
+  } satisfies Electron.OpenDialogOptions;
+  const result = window
+    ? await dialog.showOpenDialog(window, options)
+    : await dialog.showOpenDialog(options);
+  if(result.canceled)
+    return;
+  const promises:Promise<unknown>[] = [];
+  for (const path of result.filePaths) {
+    const data = readFile(path).then(path => optionalCrypt(path));
+    const out = resolve(app.getPath("userData"),"Themes", basename(path, ".css"));
+    if(resolve(path) === out) return;
+    promises.push(data.then(data => writeFile(out, data)));
+  }
+  await Promise.all(promises);
 }
 
 /**
@@ -118,7 +123,7 @@ async function loadStyles(webContents:Electron.WebContents) {
         const promises:Promise<Buffer>[] = [];
         for(const path of paths) {
           const index = resolve(stylesDir,path);
-          if (!path.includes(".") && statSync(index).isFile())
+          if (!path.endsWith(".theme.css") && statSync(index).isFile())
             promises.push(readFile(index));
         }
         Promise.all(promises).then(dataArray => {

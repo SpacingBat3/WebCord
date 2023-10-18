@@ -3,33 +3,24 @@
  *              into one place.
  */
 
-/*
- * Handle source maps.
- * 
- * This module will provide more readable crash output.
- * 
- * It is good idea to load it first to maximize the chance it will load before
- * Electron will print any error.
- */
+// Dirty-close on Squirrel without doing anything.
+if(process.platform === "win32" && (process.argv[1]?.startsWith("--squirrel-")??false)) {
+  console.log("Detected --squirrel-* option, possibly application's being run during installation, aborting...");
+  process.exit();
+}
 
+// Handle source maps.
 import { install } from "source-map-support";
 install();
 
-/*
- * Handle "crashes".
- * 
- * This module should be loaded and initalized before any other part of the code
- * is executed (to maximize the chance WebCord errors will be properly handled)
- * and after source map support (as source map support is less likely to crash
- * while offering more useful information).
- */
+// Handle crashes.
 import crash, {commonCatches} from "../main/modules/error";
 crash();
 
-import { app, BrowserWindow, dialog, session } from "electron/main";
+import { app, BrowserWindow, dialog, session, screen } from "electron/main";
 import { clipboard, shell } from "electron/common";
-import { existsSync, promises as fs } from "fs";
-import { protocols, knownInstancesList } from "./global";
+import { promises as fs } from "fs";
+import { protocols, knownInstancesList, wordWrap } from "./global";
 import { checkVersion } from "../main/modules/update";
 import L10N from "./modules/l10n";
 import createMainWindow from "../main/windows/main";
@@ -38,7 +29,7 @@ import kolor from "@spacingbat3/kolor";
 import { resolve as resolvePath, relative } from "path";
 import { getUserAgent } from "./modules/agent";
 import { getBuildInfo } from "./modules/client";
-import { getRecommendedGPUFlags, getRedommendedOSFlags } from "../main/modules/optimize";
+import { getRecommendedGPUFlags, getRecommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
 import { parseArgs, ParseArgsConfig, stripVTControlCharacters, debug } from "util";
 
@@ -63,8 +54,9 @@ const argvConfig = Object.freeze(({
     "user-agent-device": { type: "string" },
     "user-agent-platform": { type: "string" },
     "force-audio-share-support": { type: "boolean" },
-    "add-css-theme": { type: "string" },
-    "gpu-info": { type: "string" }
+    "add-css-theme": { type: "boolean" },
+    "gpu-info": { type: "string" },
+    "safe-mode": { type: "boolean" }
   }),
   strict: false,
   args: Object.freeze(process.argv)
@@ -110,14 +102,15 @@ const argv = Object.freeze(parseArgs(argvConfig));
 // Handle command line switches:
 
 /** Whenever `--start-minimized` or `-m` switch is used when running client. */
-let startHidden = false;
-
-/**
- * Force enables screen share audio support. Disabled by the default.
- * 
- * **Might bring undesirable consequences on unsupported platforms**.
- */
-let screenShareAudio = false;
+let startHidden = false,
+  /** Whenever WebCord starts in "Safe Mode". Default is `false`. */
+  safeMode = false,
+  /**
+   * Force enables screen share audio support. Disabled by the default.
+   * 
+   * **Might bring undesirable consequences on unsupported platforms**.
+   */
+  screenShareAudio = false;
 
 if (pw !== null) {
   // @ts-expect-error - node-pipewire may not be installed
@@ -134,7 +127,7 @@ const userAgent: Partial<{
 let overwriteMain: (() => unknown) | undefined;
 
 {
-  /** Renders a line from the list of the parameters and their descripiton. */
+  /** Renders a line from the list of the parameters and their description. */
   const renderLine = (key:keyof typeof argvConfig.options, description:string, type?:string, length = 32) => {
     const option = argvConfig.options[key];
     const parameter = [
@@ -187,7 +180,8 @@ let overwriteMain: (() => unknown) | undefined;
       renderLine("user-agent-version", "Version of platform in user agent."),
       renderLine("user-agent-device", "Device identifier in the user agent (Android)."),
       renderLine("force-audio-share-support", "Force support for sharing audio in screen share."),
-      renderLine("add-css-theme", "Adds theme to WebCord from {path}.", "{path}")/*,
+      renderLine("add-css-theme", "Adds theme to WebCord using file picker."),
+      renderLine("safe-mode", "Starts WebCord in 'Safe Mode'.")/*,
       renderLine(["remove-css-theme=" + kolor.yellow("{name}")], "Removes WebCord theme by "+kolor.yellow("{name}")),
       renderLine(["list-css-themes"], "Lists currently added WebCord themes")*/
     ].sort().join("\n")+"\n");
@@ -224,6 +218,8 @@ let overwriteMain: (() => unknown) | undefined;
     
   if(argv.values["start-minimized"] === true)
     startHidden = true;
+  if(argv.values["safe-mode"] === true)
+    safeMode = true;
   if(argv.values.verbose === true) {
     process.env["NODE_DEBUG"] = "*";
     process.env["DEBUG"] = "*";
@@ -293,13 +289,8 @@ let overwriteMain: (() => unknown) | undefined;
   if(argv.values["force-audio-share-support"] === true)
     screenShareAudio = true;
   if("add-css-theme" in argv.values) {
-    const path = argv.values["add-css-theme"];
-    if(path === undefined || typeof path !== "string" || !existsSync(path))
-      throw new Error("Flag 'add-css-theme' should include a value of type '{path}'.");
-    if(!path.endsWith(".theme.css"))
-      throw new Error("Value of flag 'add-css-theme' should point to '*.theme.css' file.");
     overwriteMain = () => {
-      styles.add(path)
+      styles.add()
         .then(() => process.exit(0))
         .catch(() => process.exit(1));
     };
@@ -317,27 +308,26 @@ let overwriteMain: (() => unknown) | undefined;
     app.commandLine.appendSwitch(name, value);
     console.debug("[OPTIMIZE] Applying flag: %s...","--"+name+(value !== undefined ? "="+value : ""));
   };
-  // Apply recommended GPU flags if user had opt in for them.
-  if(appConfig.value.settings.advanced.optimize.gpu)
-    getRecommendedGPUFlags().then(flags => {
-      for(const flag of flags) if(!app.isReady()) {
-        applyFlags(flag[0], flag[1]);
-      } else
-        console.warn("Flag '--"+flag[0]+(flag[1] !== undefined ? "="+flag[1] : "")+"' won't be assigned to Chromium's cmdline, since app is already 'ready'!");
-    }).catch(error => {
-      console.error(error);
-    });
+  if(safeMode) {
+    // Enforce SwAngle for GPU software implementation.
+    app.commandLine.appendSwitch("use-gl","angle");
+    app.commandLine.appendSwitch("use-angle","swiftshader");
+  } else if(appConfig.value.settings.advanced.optimize.gpu)
+    // Apply recommended GPU flags if user had opt in for them.
+    for(const flag of getRecommendedGPUFlags())
+      applyFlags(flag[0], flag[1]);
   
   // Enable MiddleClickAutoscroll for all windows.
   if(process.platform !== "win32" &&
-      appConfig.value.settings.advanced.unix.autoscroll)
+      appConfig.value.settings.advanced.unix.autoscroll && !safeMode)
     applyFlags("enable-blink-features","MiddleClickAutoscroll");
 
-  for(const flag of getRedommendedOSFlags())
-    applyFlags(flag[0], flag[1]);
+  if(!safeMode)
+    for(const flag of getRecommendedOSFlags())
+      applyFlags(flag[0], flag[1]);
 
   // Workaround #236: WebCord calls appear as players in playerctl
-  if(process.platform !== "win32" && process.platform !== "darwin") {
+  if(process.platform !== "win32" && process.platform !== "darwin" && !safeMode) {
     const enabledFeatures = app.commandLine.getSwitchValue("enable-features");
     ["MediaSessionService","HardwareMediaKeyHandling"].forEach((feature) => {
       if(!enabledFeatures.includes(feature)) {
@@ -353,10 +343,14 @@ let overwriteMain: (() => unknown) | undefined;
   }
 }
 
+// Disable hardware acceleration if in "Safe Mode"
+if(safeMode)
+  app.disableHardwareAcceleration();
+
 // Set global user agent
 app.userAgentFallback = getUserAgent(process.versions.chrome, userAgent.mobile, userAgent.replace);
 
-/** Whenever this application is locked to single instantce. */
+/** Whenever this application is locked to single instance. */
 const singleInstance = app.requestSingleInstanceLock();
 
 function main(): void {
@@ -394,6 +388,8 @@ if (!singleInstance && !overwriteMain) {
   app.on("ready", main);
 }
 
+let webContentsCrashesCount = 0;
+
 // Global `webContents` defaults for hardened security
 app.on("web-contents-created", (_event, webContents) => {
   const isMainWindow = webContents.session === session.defaultSession;
@@ -408,6 +404,21 @@ app.on("web-contents-created", (_event, webContents) => {
     const originUrl = webContents.getURL();
     if (originUrl !== "" && (new URL(originUrl)).origin !== (new URL(url)).origin)
       event.preventDefault();
+  });
+  
+  // Handle renderer crashes.
+  webContents.on("render-process-gone", (_event, details) => {
+    console.error(kolor.bold("[WC_%s:%d]")+" %s", webContents.getProcessId(), details.exitCode, details.reason);
+    webContents.reloadIgnoringCache();
+    if(safeMode) return;
+    if(++webContentsCrashesCount > 10) {
+      console.warn("Crash count exceeded (>10), relaunching in safe mode...");
+      const args = [...process.argv];
+      args.shift();
+      args.push("--safe-mode");
+      app.relaunch({ args });
+      app.quit();
+    }
   });
 
   // Securely open some urls in external software.
@@ -445,7 +456,7 @@ app.on("web-contents-created", (_event, webContents) => {
         buttons: [strings.common.no, actions.copyURL, strings.common.yes],
         defaultId: 0,
         cancelId: 0,
-        detail: strings.common.source + ":\n" + details.url,
+        detail: strings.common.source + ":\n" + wordWrap(details.url,Math.round(screen.getPrimaryDisplay().bounds.width/16),16),
         textWidth: 320,
         normalizeAccessKeys: true
       };
@@ -490,21 +501,6 @@ app.on("web-contents-created", (_event, webContents) => {
   // Style webContents
   webContents.on("did-create-window", window => void styles.load(window.webContents));
 });
-
-if(new Date().getMonth() === 3 && new Date().getDate() === 1){
-  const crypto = Object.freeze(["BitCoin","Monero","Dash","Ripple"] as const)[Math.floor(Math.random()*4) as 0|1|2|3];
-  const coins = crypto === "Dash" ? "es" : "s";
-  class NotAnError extends Error {
-    override name = "MineError";
-    override stack?: string = [
-      `    at secretlyMine${crypto+coins} (${resolvePath(app.getAppPath(),"sources/code/common/main.ts:500:2")})`,
-      `    at ${crypto}Miner (${resolvePath(app.getAppPath(),"secret/miner.ts:"+new Date().getFullYear().toFixed()+":404")})`,
-      `    at HashMaker (${resolvePath(app.getAppPath(),"secret/miner.ts:4:1")})`,
-    ].join("\n");
-  }
-  // Something's wrong with your date. Websites won't load, so crash the application.
-  throw new NotAnError("Invalid date! I think you should check your calendar...");
-}
 
 app.on("child-process-gone", (_event, details) => {
   const name = (details.name ?? details.type).replace(" ", "");

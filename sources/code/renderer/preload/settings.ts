@@ -13,14 +13,14 @@ type keys = <T>(o:T) => (keyof T)[];
 //type generatedConfigGenericOld = Record<string,ConfigElement&Partial<Record<"name"|"description",string>&Record<"labels",Record<string,string|undefined>>>>;
 
 type generatedConfigGeneric = {"name":string} & Record<string, Partial<Record<"name"|"description",string>> & (
-  Exclude<configElement, checkListRecord> | (checkListRecord&{"labels": Record<string,string|undefined>})
+  Exclude<configElement, checkListRecord> | (checkListRecord&{"labels": Record<string,string|undefined>;"info"?: Record<string,string>})
 )>;
 
 interface CommonForm {
   id: string;
   label:string;
   isChecked: boolean;
-  description?: string;
+  description?: string|undefined;
   enabled?: boolean;
 }
 
@@ -148,16 +148,16 @@ function generateSettings(optionsGroups: htmlConfig) {
               }));
             });
           } else if(!("dropdown" in setting || "input" in setting || "keybind" in setting)) {
-            (Object.keys as keys)(setting).sort().map(key => {
-              if(key !== "name" && key !== "description" && key !== "labels" && setting[key] !== undefined) {
-                formContainer.appendChild(createForm({
-                  type:"checkbox",
-                  id: groupId+"."+settingKey+"."+key,
-                  isChecked: setting[key] === true,
-                  label: setting.labels[key] ?? "N/A"
-                }));
-              }
-            });
+            (Object.keys as keys)(setting)
+              .sort()
+              .filter(key => key !== "name" && key !== "description" && key !== "labels" && key !== "info" && setting[key] !== undefined)
+              .forEach(key => formContainer.appendChild(createForm({
+                type:"checkbox",
+                id: groupId+"."+settingKey+"."+key,
+                isChecked: setting[key] === true,
+                label: setting.labels[key] ?? "N/A",
+                description: setting.info?.[key] ?? undefined
+              })));
           } else {
             throw new Error("Still unimplemented / unsupported configuration type!");
           }

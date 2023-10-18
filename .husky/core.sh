@@ -11,6 +11,7 @@
 # ```sh
 # npkg {add|run|test|install} [ARGS] 
 # ```
+# shellcheck disable=SC2317
 npkg() {
     local PKG SUPPORT;
     # A path to Node.js package manager.

@@ -121,7 +121,7 @@ function showAppLicense() {
             animation.reverse();
             promises.push(event2promise(animation, "finish"));
           }
-          Promise.allSettled(promises).finally(() => {
+          void Promise.allSettled(promises).finally(() => {
             dialog.remove();
             content.remove();
             locks.dialog = false;

@@ -1,21 +1,33 @@
+import { ipcRenderer as ipc } from "electron/renderer";
+import { basename, relative, resolve } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { pathToFileURL, fileURLToPath } from "node:url";
+
 import { marked } from "marked";
-import { markedHighlight } from "marked-highlight"
+import { markedHighlight } from "marked-highlight";
 import { sanitize } from "dompurify";
-import { basename, relative, resolve } from "path";
-import { existsSync, readFileSync } from "fs";
-import { pathToFileURL, fileURLToPath } from "url";
-import { protocols } from "../../common/global";
 import hljs from "highlight.js";
+
+import { protocols } from "../../common/global";
+
+// Broken modules wrongly interpreted with Node16.
+
+import {
+  gfmHeadingId
+} from "marked-gfm-heading-id";
 
 const htmlFileUrl = document.URL;
 
-// Code highlighting:
+// Code highlighting and GFM heading IDs:
 
-marked.use(markedHighlight({
-  highlight: (code,language) => hljs.getLanguage(language) ?
+marked.use(
+  markedHighlight({
+    highlight: (code,language) => hljs.getLanguage(language) ?
       hljs.highlight(code,{ language } ).value :
       code
-}));
+  }),
+  gfmHeadingId()
+);
 
 const menu = document.createElement("img");
 menu.src = "../../icons/symbols/menu.svg";
@@ -122,9 +134,7 @@ function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdA
 
 document.addEventListener("readystatechange", () => {
   if(document.readyState === "interactive")
-    import("electron/renderer")
-      .then(electron => electron.ipcRenderer)
-      .then(ipc => ipc.invoke("documentation-load"))
+    ipc.invoke("documentation-load")
       .then((readmeFile:string) => {
         const mdHeader = document.createElement("header");
         const mdArticle = document.createElement("article");
@@ -159,9 +169,7 @@ document.addEventListener("readystatechange", () => {
         ;
       })
       .finally(() => {
-        void import("electron/renderer")
-          .then(electron => electron.ipcRenderer)
-          .then(ipc => ipc.send("documentation-show"));
+        ipc.send("documentation-show");
       })
       .catch(error => {
         if(error instanceof Error)

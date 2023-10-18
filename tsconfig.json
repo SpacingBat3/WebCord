@@ -10,7 +10,7 @@
         "tsBuildInfoFile": "cache/tsc.json",
         /* Whenever sourcemaps should be made for emitted JavaScript files */
         "sourceMap": true,
-        /* Directrory in which are placed all emitted files */
+        /* Directory in which are placed all emitted files */
         "outDir": "app",
         /* Whenever comments are emitted to files */
         "removeComments": true,
@@ -28,7 +28,10 @@
         "newLine": "lf",
         /* Do not emit anything when there's an error in source files */
         "noEmitOnError": true,
-        "verbatimModuleSyntax": false
+        /* Do not enforce CJS syntax in TypeScript for imports/exports. */
+        "verbatimModuleSyntax": false,
+        /* Do not ensure compatibility with other transpilers. */
+        "isolatedModules": false
     },
     "include": [
         "sources/code/**/*.ts"

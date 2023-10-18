@@ -1,7 +1,7 @@
 name: Bug Report
 description: File a bug report
 assignees: [SpacingBat3]
-labels: [bug]
+labels: ['type:bug']
 body:
   - type: markdown
     id: notice
@@ -19,22 +19,22 @@ body:
               officially. These are distributables available on the GitHub
               releases and <code>webcord-git</code> PKGBUILD. <b>Please do not
               open issues for unsupported distributable formats!</b> Please
-              reffer <a href=https://github.com/SpacingBat3/WebCord/blob/master/docs/FAQ.md#1-which-file-i-should-download>to the documentation</a>
+              refer <a href=https://github.com/SpacingBat3/WebCord/blob/master/docs/FAQ.md#1-which-file-i-should-download>to the documentation</a>
               for a list of currently recommended distributables for each
               platform.
             </td> 
           </tr>
         </table>
   - type: checkboxes
-    id: aknowledgments
+    id: acknowledgments
     attributes:
-      label: Aknowledgements
+      label: Acknowledgements
       description: |
         These checklists will help to understand if the reported issue is
         specific to WebCord, keep discussion at the currently opened issue
         tickets and so on. Please fill them according to the real state of this
         bug. Some of the checkboxes are optional and they does not have to be
-        checked, altrough verifying all of the situations would most likely
+        checked, although verifying all of the situations would most likely
         help to resolve this issue faster.
       options:
         - label: |
@@ -45,10 +45,10 @@ body:
         - label: |
             This bug affects [Discord website](https://discord.com/app).
         - label: |
-            This issue is confirmed to be reproduceable when WebCord is packaged
+            This issue is confirmed to be reproducible when WebCord is packaged
             on at least all three latest supported Electron major releases.
         - label: |
-            This issue is reproduceable in Chrome, Chromium or any
+            This issue is reproducible in Chrome, Chromium or any
             Chromium-based browser, e.g Brave or Edge (please write in
             *Additional Context* which browser you have used if it is neither
             Chrome nor unmodified Chromium).
@@ -99,7 +99,7 @@ body:
       description: |
         An Electron version used by the application. You can find this at
         *About* window.
-      placeholder: e.g. v22.0.0
+      placeholder: e.g. v25.3.2
     validations:
       required: true
       
@@ -110,7 +110,7 @@ body:
       description: | 
         On which application version or versions you have encountered this bug?
         You can check this at *About* window or using `--version` command-line flag.
-      placeholder: e.g. v4.0.0
+      placeholder: e.g. v4.3.0
     validations:
       required: true
 

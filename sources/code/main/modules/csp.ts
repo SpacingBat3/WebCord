@@ -24,7 +24,7 @@ type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
 class CSPBuilder {
   #value!: cspObject;
   /**
-   * Converts CSP-like string to builder-compilant object.
+   * Converts CSP-like string to builder-compliant object.
    */
   #string2object(value: string):cspObject {
     return Object.fromEntries(value
@@ -155,13 +155,10 @@ const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
   }),
   soundcloud: new CSPBuilder({ "frame-src": "https://w.soundcloud.com/player/" }),
   spotify: new CSPBuilder({
-    "script-src": "https://open.spotifycdn.com/cdn/build/embed/ "+
-      "https://open.spotifycdn.com/cdn/build/embed-legacy/",
-    "img-src": "https://open.spotifycdn.com/cdn/images/ https://i.scdn.co/image/",
-    "style-src": "https://open.spotifycdn.com/cdn/build/embed/ "+
-      "https://open.spotifycdn.com/cdn/build/embed-legacy/",
-    "connect-src": "wss://dealer.spotify.com https://api.spotify.com "+
-      "https://open.spotifycdn.com/cdn/generated-locales/embed/",
+    "script-src": "https://embed-cdn.spotifycdn.com/_next/static/",
+    "img-src": "https://i.scdn.co/image/",
+    "style-src": "https://embed-cdn.spotifycdn.com/_next/static/",
+    "connect-src": "https://spclient.wg.spotify.com/melody/unauth/v1/",
     "frame-src": "https://open.spotify.com/embed/",
     "media-src": "https://p.scdn.co/mp3-preview/"
   }),

@@ -26,12 +26,11 @@ import { commonCatches } from "../modules/error";
 
 import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
+import { satisfies as rSatisfies } from "semver";
 
 // eslint-disable-next-line
 // @ts-ignore - This will ignore the error if pipewire isn't installed
 import type { PipewireLink, PipewireNode, PipewirePort } from "node-pipewire/build/types";
-
-import { lt } from "semver";
 import { pw } from "../../common/modules/node-pipewire-provider";
 
 type UndefinedOrT<T> = T extends any ? undefined : T;
@@ -526,6 +525,15 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // Load extensions for builds of type "devel".
   if(getBuildInfo().type === "devel")
     void loadChromiumExtensions(win.webContents.session);
+  
+  /**
+   * Whenever `desktopCapturer.getSources()` API is expected to crash
+   * with current Electron version the application is running on.
+   */
+  const capturerApiSafe = rSatisfies(
+    process.versions.electron,
+    "<22.0.0 || >=26.0.0"
+  );
 
   ipcMain.handle("getActualSources", async () => {
     const lock = !app.commandLine.getSwitchValue("enable-features")
@@ -533,7 +541,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       process.env["XDG_SESSION_TYPE"] !== "wayland" ||
       process.platform === "win32";
   
-    const sources = lock || lt(process.versions.electron,"22.0.0") ?
+    const sources = lock || capturerApiSafe ?
     // Use desktop capturer on Electron 22 downwards or X11 systems
       desktopCapturer.getSources({
         types: lock ? ["screen", "window"] : ["screen"],
@@ -594,11 +602,12 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           process.env["XDG_SESSION_TYPE"] !== "wayland" ||
           process.platform === "win32";
         
-        const sources = lock || lt(process.versions.electron,"22.0.0") ?
+        const sources = lock || capturerApiSafe ?
         // Use desktop capturer on Electron 22 downwards or X11 systems
           desktopCapturer.getSources({
             types: lock ? ["screen", "window"] : ["screen"],
-            fetchWindowIcons: lock
+            fetchWindowIcons: lock,
+            // thumbnailSize: lock ? {width: 150, height: 150 } : {width: 0, height: 0}
             // Workaround #328: Segfault on `desktopCapturer.getSources()` since Electron 22
           }) : Promise.resolve([{
             id: "screen:1:0",

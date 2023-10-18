@@ -1,0 +1,116 @@
+{
+    "tray": {
+        "toggle": "Göster/gizle",
+        "quit": "Kapat"
+    },
+    "context": {
+        "copy": "Kopyala",
+        "paste": "Yapıştır",
+        "cut": "Kes",
+        "dictionaryAdd": "Sözlüğe ekle",
+        "copyURL": "Bağlantı adresini kopyala",
+        "copyURLText": "Bağlantı metnini kopyala",
+        "copyImage": "Resmi kopyala",
+        "copyImageURL": "Resim bağlantısını kopyala",
+        "inspectElement": "İncele"
+    },
+    "menubar": {
+        "enabled": "Etkin",
+        "file": {
+            "groupName": "Dosya",
+            "quit": "Kapat",
+            "relaunch": "Yeniden başlat",
+            "addon": {
+                "groupName": "Eklentiler",
+                "loadNode": "Node eklentisi yükle",
+                "loadChrome": "Chrome eklentisi yükle"
+            }
+        },
+        "edit": {
+            "groupName": "Düzenle",
+            "undo": "Geri al",
+            "redo": "Yeniden yap"
+        },
+        "view": {
+            "groupName": "Görünüm",
+            "reload": "Yeniden yükle",
+            "forceReload": "Yeniden yüklemeyi zorla",
+            "devTools": "Geliştirici araçları",
+            "resetZoom": "Gerçek boyut",
+            "zoomIn": "Yakınlaştır",
+            "zoomOut": "Uzaklaştır",
+            "fullScreen": "Tam ekran"
+        },
+        "window": {
+            "groupName": "Pencere",
+            "mobileMode": "Kenar çubuğunu gizle"
+        }
+    },
+    "windows": {
+        "settings": "Ayarlar",
+        "about": "Hakkında",
+        "docs": "Dökümantasyon",
+        "invite": "Davet"
+    },
+    "dialog": {
+        "common": {
+            "error": "Hata",
+            "warning": "Uyarı",
+            "continue": "&Sürdür",
+            "yes": "&Evet",
+            "no": "&Hayır",
+            "source": "Kaynak"
+        },
+        "ver": {
+            "updateBadge": "[GÜNCELLEME]",
+            "updateTitle": "Güncelleme mevcut!",
+            "update": "Yeni uygulama versiyonu mevcut!",
+            "recent": "Uygulama güncel!",
+            "devel": "Kararsız sürüm kullanıyorsunuz.",
+            "downgrade": "Bu versiyon kararlı versiyondan daha yeni!"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: %s için izin isteği reddedildi."
+            },
+            "check": {
+                "denied": "%s: %s için izin kontrolü reddedildi."
+            },
+            "question": {
+                "title": "İzin isteği işleyici",
+                "message": "Discord'a %s erişim izni vermek istiyor musunuz?",
+                "video": "kamera",
+                "audio": "mikrofon",
+                "notifications": "bildirimler"
+            }
+        },
+        "mod": {
+            "nodeExt": "WebCord Node.js Eklentisi",
+            "crx": "Chrome/Chromium Eklentisi"
+        },
+        "externalApp": {
+            "title": "Bağlantı başka uygulamada açılıyor",
+            "message": "Bir web sitesi başka uygulamaya götüren kökeni farklı bir bağlantıya yönlendirmeye çalışıyor. Devam edilsin mi?"
+        },
+        "screenShare": {
+            "close": "Kapat",
+            "sound": {
+                "unavailable": "Ses paylaşımı bu platformda desteklenmiyor.",
+                "system": "Cihaz sesini de paylaş."
+            },
+            "source": {
+                "entire": "Bilgisayar ekranı",
+                "screen": "Ekran"
+            }
+        }
+    },
+    "help": {
+        "groupName": "Yardım",
+        "repo": "Repository",
+        "bugs": "Hata bildir"
+    },
+    "log": {
+        "singleInstance": "Mevcut pencereye geçiliyor...",
+        "listenPort": "%s bağlantı noktasında dinleniyor."
+    }
+}

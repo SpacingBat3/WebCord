@@ -1,5 +1,5 @@
 /*
- * global/package.ts – Scripts, types and typeguards for `package.json` file.
+ * global/package.ts – Scripts, types and type guards for `package.json` file.
  */
 
 import { resolve } from "path";
@@ -79,6 +79,10 @@ export class Person {
     }
     return true;
   }
+  /**
+   * A type guard to check whenever a property is in `package.json` person
+   * field format.
+   */
   public static isPerson(variable: unknown): variable is PersonLike {
     // Check #1: Variable might be PersonObject:
     if(this.isPersonObject(variable)) return true;
@@ -112,10 +116,6 @@ export class Person {
  */
 export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
   public readonly data;
-  /**
-   * A TypeGuard to check whenever a property is in `package.json` person
-   * field format.
-   */
   
   /** A function used to return the details about the `package.json` wrong configuration. */
   private checkPackageJsonComplete(object: unknown): string {
@@ -131,10 +131,10 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
       for (const key of (object as Record<string, unknown[]>)["contributors"]??[])
         if (!Person.isPerson(key)) return "Contributors field is of invalid type.";
     
-    // Check 3: 'author' is 'Person' when definied
+    // Check 3: 'author' is 'Person' when defined
     if((object as PackageJsonProperties).author !== undefined)
       if (!Person.isPerson((object as PackageJsonProperties).author))
-        return `Author field '${JSON.stringify((object as PackageJsonProperties)?.author)}' is of invalid type.`;
+        return `Author field '${JSON.stringify((object as PackageJsonProperties|null|undefined)?.author)}' is of invalid type.`;
     
     // Check 4: 'name', 'description' and 'license' are strings.
     for (const stringKey of ["name", "description", "license"])
@@ -156,7 +156,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     if((/^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.exec((object as PackageJsonProperties).name)) === null)
       return "'"+(object as PackageJsonProperties).name+"' is not a valid Node.js package name.";
     
-    // Check 8: `version` is a `semver`-parseable string
+    // Check 8: `version` is a `semver`-parsable string
     if(typeof (object as PackageJsonProperties).version === "string") {
       if (valid((object as PackageJsonProperties).version) === null)
         return "Version "+(object as PackageJsonProperties).version+" can't be parsed to 'semver'.";
@@ -164,7 +164,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
       return "Version property is not assignable to type 'string'!";
     }
 
-    // Check 9: `devDependencies` or `dependencies` are either `undefinied` or `Record<string,string>`:
+    // Check 9: `devDependencies` or `dependencies` are either `undefined` or `Record<string,string>`:
     for(const key of ["dependencies", "devDependencies"] as const) {
       const testValue = (object as PackageJsonProperties)[key];
       if (!/undefined|object/.test(typeof testValue))
@@ -182,9 +182,9 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
       }
     }
 
-    // Check 10: `homepage` is either `undefinied` or `string`
+    // Check 10: `homepage` is either `undefined` or `string`
     if((object as PackageJsonProperties).homepage !== undefined && typeof (object as PackageJsonProperties).homepage !== "string")
-      return "Homepage property is neither 'string' nor 'undefinied'.";
+      return "Homepage property is neither 'string' nor 'undefined'.";
 
     // All checks passed!
     return "";
@@ -197,7 +197,7 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     return resolve(cwd, "package.json");
   }
   /**
-   * A typeguard that verifies if the `package.json` is in the correct format.
+   * A type guard that verifies if the `package.json` is in the correct format.
    * 
    * **Warning**: These checks includes even the syntax of some strings like
    * for the `[Person].email` or the `name` top-level property.

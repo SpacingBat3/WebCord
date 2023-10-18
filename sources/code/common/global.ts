@@ -3,6 +3,7 @@
  */
 
 import type { Config } from "dompurify";
+import type { HookFn, HookSignatures } from "@spacingbat3/disconnection";
 
 /**
  * Outputs a fancy log message in the (DevTools) console.
@@ -14,30 +15,11 @@ export function wLog(msg: string): void {
   console.log("%c[WebCord]", "color: #69A9C1", msg);
 }
 
-export function isJsonSyntaxCorrect(string: string) {
-  try {
-    JSON.parse(string);
-  } catch {
-    return false;
-  }
-  return true;
-}
-
 /** SHA1 hashes of Discord favicons (in RAW bitmap format). */
 export const enum DiscordFavicon {
   Default = "528c5d45bc69bbbcd0abebc5ac867cd164a35ad2",
   Unread = "ea6dd5012654b5260934bc7f481dc94a63ea4ae3",
   UnreadAlt = "c92b9034cc8456525cc7cd6bedba10056512a1d3"
-}
-
-/**
- * List of Vendor IDs of common GPU manufacturers. This is usually represented
- * as a hexadecimal number, so it should be also listed here as such.
- */
-export const enum GPUVendors {
-  AMD = 0x1002,
-  NVIDIA = 0x10DE,
-  Intel = 0x8086
 }
 
 /**
@@ -192,7 +174,7 @@ interface TypeMergeConfig {
  * @param objects Objects to merge (at least one). 
  * @returns Merged object.
  * 
- * @todo More acurate types (e.g. literals to primitives)
+ * @todo More accurate types (e.g. literals to primitives)
  */
 export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, ...objects:unknown[]&[unknown]) {
   const hasOwn = Object.hasOwn as <T>(o:T,s:string|symbol|number)=>s is keyof T;
@@ -220,4 +202,42 @@ export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, 
   }
   return (objects as T[])
     .reduce((prev, cur:unknown) => deepMerge(prev, cur), source);
+}
+
+export function wordWrap(long:string,maxr:number,maxc:number):string {
+  let res="",pieces = Math.floor(long.length/maxr);
+  const shorten = pieces > maxc;
+  pieces = shorten ? maxc : pieces;
+  for(let i=0;i<pieces;++i)
+    res+=`${res===""?"":"\n"}${long.substring(i*maxr,i*maxr+maxr)}`;
+  if(shorten) res+=" (…)";
+  if(res === "")
+    return long;
+  return res;
+}
+
+type hookName = keyof HookSignatures;
+
+interface WsCmd {
+  evt: `${"hook-"}${string}`;
+  hook: hookName;
+}
+
+export interface WSHookAdd extends WsCmd {
+  evt: "hook-set";
+}
+
+export interface WSHookTrigger<T extends hookName> extends WsCmd {
+  evt: "hook-trigger";
+  hook: T;
+  data: HookSignatures[T];
+  nonce: number;
+  port?: number|undefined;
+}
+
+export interface WSHookReturn<T extends hookName> extends WsCmd {
+  evt: "hook-return";
+  hook: T;
+  data: Awaited<ReturnType<HookFn<T>>>|Error;
+  nonce: number;
 }

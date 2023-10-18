@@ -22,7 +22,7 @@ jobs:
             arch: x64,arm64,ia32
           - name: macOS
             runner: macos-latest
-            arch: x64,arm64,universal
+            arch: x64,arm64 #,universal
 
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
@@ -45,6 +45,7 @@ jobs:
             cache/tsc.json
 
       - name: Publish distributables (${{ matrix.arch}})
+        if: ${{ matrix.name != 'Windows' }}
         uses: nick-fields/retry@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -52,4 +53,15 @@ jobs:
           retry_on: error
           max_attempts: 3
           timeout_minutes: 10
+          command: npm run publish -- -a ${{ matrix.arch }}
+
+      - name: Publish distributables (${{ matrix.arch}}) (more retries)
+        if: ${{ matrix.name == 'Windows' }}
+        uses: nick-fields/retry@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          retry_on: error
+          max_attempts: 6
+          timeout_minutes: 15
           command: npm run publish -- -a ${{ matrix.arch }}

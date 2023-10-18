@@ -2,42 +2,18 @@
  * Platform / hardware-specific Electron optimizations.
  */
 
-import { app } from "electron/main";
-import { GPUVendors } from "../../common/global";
-
 /** Whenever the current process is ran on *nix. */
 const isUnix = process.platform !== "win32" && process.platform !== "darwin";
 
-const isWayland = process.env["XDG_SESSION_TYPE"] === "wayland" || process.env["WAYLAND_DISPLAY"] !== undefined;
-const isWaylandNative = isWayland && (
-  process.argv.includes("--ozone-platform=wayland") ||
+const isWaylandNative = isUnix && process.argv.includes("--ozone-platform=wayland") ||
   process.argv.includes("--ozone-hint=auto") ||
-  process.argv.includes("--ozone-hint=wayland")
+  process.argv.includes("--ozone-hint=wayland");
+
+const isWayland = isUnix && (
+  process.env["XDG_SESSION_TYPE"] === "wayland" ||
+  process.env["WAYLAND_DISPLAY"] !== undefined ||
+  isWaylandNative
 );
-
-interface PartialGPU {
-  gpuDevice: {
-    active: boolean;
-    vendorId: number;
-    deviceId: number;
-  }[];
-}
-
-function hasGPUDevices(object: unknown):object is PartialGPU {
-  if(typeof object !== "object" || object === null)
-    return false;
-  if(!("gpuDevice" in object) || !Array.isArray((object as PartialGPU).gpuDevice))
-    return false;
-  for(const device of (object as PartialGPU).gpuDevice) {
-    if(!("active" in device) || typeof device.active !== "boolean")
-      return false;
-    if(!("vendorId" in device) || typeof device.vendorId !== "number")
-      return false;
-    if(!("deviceId" in device) || typeof device.deviceId !== "number")
-      return false;
-  }
-  return true;
-}
 
 /**
  * An experimental function that might return the flags, which seem to improve
@@ -48,41 +24,22 @@ function hasGPUDevices(object: unknown):object is PartialGPU {
  * enable this by the default – it is advised to test whenever this app performs
  * better or worse with these settings applied.
  */
-export async function getRecommendedGPUFlags() {
-  /**
-     * Tries to guess the best GL backend for the current desktop enviroment
-     * to use as native instead of ANGLE.
-     * It is `desktop` by default (all platforms) and `egl` on WayLand (*nix).
-     */
-  let desktopGl:"desktop"|"egl";
-
-  if(isUnix && isWayland)
-    desktopGl = "egl";
-  else
-    desktopGl = "desktop";
-  let activeGPU = false;
-  const flags:([string]|[string,string])[] = [];
-  const gpuInfoResult = await app.getGPUInfo("basic");
-  if(hasGPUDevices(gpuInfoResult))
-    loop: for(const device of gpuInfoResult.gpuDevice) if(device.active) switch(device.vendorId) {
-      // Common desktop GPU vendors.
-      case GPUVendors.Intel:
-      case GPUVendors.AMD:
-      case GPUVendors.NVIDIA:
-        flags.push(
-          // use GL/GLES instead ANGLE:
-          ["use-gl", desktopGl],
-          // enable VA-API:
-          ["enable-features", "VaapiVideoDecoder,VaapiVideoEncoder"],
-          ["disable-features", "UseChromeOSDirectVideoDecoder"]
-        );
-        activeGPU = true;
-        break loop;
-    }
-  // Use OpenGL ES driver for Linux ARM devices.
-  if(!activeGPU && isUnix && process.arch === "arm64")
-    flags.push(["use-gl", "egl"]);
-  return flags;
+export function getRecommendedGPUFlags() {
+  const switches:([string]|[string,string])[] = [];
+  // Use EGL on Wayland and ARM devices.
+  if(isWayland || (isUnix && process.arch === "arm64"))
+    switches.push(["use-gl", "egl"]);
+  if(isUnix) {
+    switches.push(
+      // Enforce VA-API:
+      ["enable-features", "VaapiVideoDecoder,VaapiVideoEncoder,VaapiIgnoreDriverChecks"],
+      ["disable-features", "UseChromeOSDirectVideoDecoder"],
+      // Bypass GPU blocklist:
+      ["ignore-gpu-blocklist"],
+      ["enable-zero-copy"]
+    );
+  }
+  return switches;
 }
 
 /**
@@ -93,18 +50,16 @@ export async function getRecommendedGPUFlags() {
  * recommended flags for native Wayland if `--ozone-platform=wayland` is used
  * (see {@link getRecommendedGPUFlags} for GPU optimizations for Wayland).
  */
-export function getRedommendedOSFlags() {
-  const flags: ([string]|[string,string])[] = [];
-  if(isUnix) {
-    if(isWaylandNative) {
-      flags.push(
-        ["enable-features","UseOzonePlatform,WebRTCPipeWireCapturer,WaylandWindowDecorations"]
-      );
-    } else if(isWayland) {
-      flags.push(
-        ["enable-features","WebRTCPipeWireCapturer"]
-      );
-    }
+export function getRecommendedOSFlags() {
+  const switches: ([string]|[string,string])[] = [];
+  if(isWaylandNative) {
+    switches.push(
+      ["enable-features","UseOzonePlatform,WebRTCPipeWireCapturer,WaylandWindowDecorations"]
+    );
+  } else if(isWayland) {
+    switches.push(
+      ["enable-features","WebRTCPipeWireCapturer"]
+    );
   }
-  return flags;
+  return switches;
 }

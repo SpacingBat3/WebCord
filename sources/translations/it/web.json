@@ -1,0 +1,37 @@
+{
+    "offline": {
+        "description": "Verifica di essere connesso ad internet.",
+        "title": "Impossibile collegarsi al servizio di Discord."
+    },
+    "aboutWindow": {
+        "nav": {
+            "credits": "Crediti",
+            "licenses": "Licenze",
+            "about": "Riguardo a"
+        },
+        "about": {
+            "featuresDefault": "Default",
+            "checksumTitle": "Checksum",
+            "appDescription": "Client web per Discord e Fosscord con features orientate alla privacy.",
+            "featuresTitle": "Build flags",
+            "appRepo": "Repository GitHub"
+        },
+        "licenses": {
+            "appLicenseTitle": "Licenza dell'applicazione",
+            "thirdPartyLicensesBody": "%s dipende dai software di terze parti seguenti:",
+            "appLicenseBody": "%s è un software gratuito: puoi usarlo, modificarlo e ridistribuirlo sotto termini di licenza MIT, che dovrebbe essere distribuita insieme a questo software.",
+            "packageAuthors": "autori %s",
+            "licensedUnder": "sotto licenza %s",
+            "showLicense": "Mostra licenza",
+            "thirdPartyLicensesTitle": "Licenze di terze parti"
+        },
+        "credits": {
+            "people": {
+                "author": "Autore, manutentore e sviluppatore principale.",
+                "contributors": {
+                    "default": "Contributore di codice."
+                }
+            }
+        }
+    }
+}

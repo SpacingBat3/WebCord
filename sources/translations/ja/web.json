@@ -1,0 +1,37 @@
+{
+    "aboutWindow": {
+        "licenses": {
+            "thirdPartyLicensesBody": "%sは次のサードパーティライセンスに依存しています:",
+            "appLicenseTitle": "アプリケーションライセンス",
+            "showLicense": "ライセンスを表示",
+            "thirdPartyLicensesTitle": "サードパーティーライセンス",
+            "appLicenseBody": "%sはフリーなソフトウェアです。MITライセンスのもとで自由に使用、改変そして再配布することができます。再配布の際にはライセンスも含める必要があります。",
+            "licensedUnder": "%s ライセンス",
+            "packageAuthors": "%s 作者"
+        },
+        "nav": {
+            "about": "アプリについて",
+            "credits": "クレジット",
+            "licenses": "ライセンス"
+        },
+        "about": {
+            "appDescription": "DiscordとFosscordのプライバシー重視のウェブクライアント。",
+            "appRepo": "GitHubリポジトリ",
+            "featuresTitle": "ビルドフラッグ",
+            "featuresDefault": "デフォルト",
+            "checksumTitle": "チェックサム"
+        },
+        "credits": {
+            "people": {
+                "author": "作者、メンテーナーとメイン開発者。",
+                "contributors": {
+                    "default": "コントリビューター。"
+                }
+            }
+        }
+    },
+    "offline": {
+        "title": "Discordのサーバーに接続できません。",
+        "description": "インターネットに接続されていることを確認してください。"
+    }
+}
