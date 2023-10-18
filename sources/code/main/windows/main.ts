@@ -535,17 +535,20 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     "<22.0.0 || >=26.0.0"
   );
 
-  ipcMain.handle("getActualSources", async () => {
+  ipcMain.handle("getActualSources", async (_, params: {skipScreenSearch?: boolean}) => {
     const lock = !app.commandLine.getSwitchValue("enable-features")
       .includes("WebRTCPipeWireCapturer") ||
       process.env["XDG_SESSION_TYPE"] !== "wayland" ||
       process.platform === "win32";
+
+    const skipScreenSearch = params.skipScreenSearch ?? false;
   
-    const sources = lock || capturerApiSafe ?
+    const sources = !skipScreenSearch && (lock || capturerApiSafe) ?
     // Use desktop capturer on Electron 22 downwards or X11 systems
       desktopCapturer.getSources({
         types: lock ? ["screen", "window"] : ["screen"],
-        fetchWindowIcons: lock
+        fetchWindowIcons: lock,
+        thumbnailSize: lock ? {width: 150, height: 150 } : {width: 0, height: 0}
         // Workaround #328: Segfault on `desktopCapturer.getSources()` since Electron 22
       }) : Promise.resolve([{
         id: "screen:1:0",
@@ -607,7 +610,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
           desktopCapturer.getSources({
             types: lock ? ["screen", "window"] : ["screen"],
             fetchWindowIcons: lock,
-            // thumbnailSize: lock ? {width: 150, height: 150 } : {width: 0, height: 0}
+            thumbnailSize: lock ? {width: 150, height: 150 } : {width: 0, height: 0}
             // Workaround #328: Segfault on `desktopCapturer.getSources()` since Electron 22
           }) : Promise.resolve([{
             id: "screen:1:0",

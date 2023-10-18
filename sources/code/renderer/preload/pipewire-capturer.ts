@@ -148,7 +148,8 @@ window.addEventListener("DOMContentLoaded", () => {
   let newActualSources: ExpectedIncomingResult = [[], false];
 
   const getActualSourcesInterval = setInterval(() => {
-    ipc.invoke("getActualSources")
+    const isWayland = process.env["XDG_SESSION_TYPE"] === "wayland";
+    ipc.invoke("getActualSources", {skipScreenSearch: isWayland})
       .then((result: null|ExpectedIncomingResult) => {
         if (result) {
           newActualSources = result;
