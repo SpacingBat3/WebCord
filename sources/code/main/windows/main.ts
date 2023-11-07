@@ -30,7 +30,7 @@ import { satisfies as rSatisfies } from "semver";
 
 // eslint-disable-next-line
 // @ts-ignore - This will ignore the error if pipewire isn't installed
-import type { PipewireLink, PipewireNode, PipewirePort } from "node-pipewire/build/types";
+import type { PipewireLink, PipewireNode, PipewirePort } from "node-pipewire";
 import { pw } from "../../common/modules/node-pipewire-provider";
 
 type UndefinedOrT<T> = T extends any ? undefined : T;
