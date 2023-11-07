@@ -25,11 +25,11 @@ sideBar.on("hide", (contents: Electron.WebContents) => {
   console.debug("[EVENT] Hiding menu bar...");
   contents.insertCSS([
     // Make left sidebar hidden
-    "div[class|=sidebar]{ width: 0px !important; }",
+    "div[class^=sidebar_]{ width: 0px !important; }",
     // Make settings sidebar hidden
-    "div[class|=sidebarRegion]{ display: none !important; }",
+    "div[class^=sidebarRegion_]{ display: none !important; }",
     // Make settings content fit entire available space.
-    "div[class|=contentColumn]{ max-width: 100%; }"
+    "div[class^=contentColumn_]{ max-width: 100%; }"
   ].join("\n")).then(cssKey => {
     sideBar.once("show", () => {
       console.debug("[EVENT] Showing menu bar...");
