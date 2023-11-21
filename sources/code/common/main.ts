@@ -33,8 +33,6 @@ import { getRecommendedGPUFlags, getRecommendedOSFlags } from "../main/modules/o
 import { styles } from "../main/modules/extensions";
 import { parseArgs, ParseArgsConfig, stripVTControlCharacters, debug } from "util";
 
-import { pw } from "./modules/node-pipewire-provider"
-
 const argvConfig = Object.freeze(({
   options: Object.freeze({
     /**
@@ -112,12 +110,13 @@ let startHidden = false,
    */
   screenShareAudio = false;
 
-if (pw !== null) {
-  // @ts-expect-error - node-pipewire may not be installed
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+import("node-pipewire").then((pw) => {
   pw.createPwThread(argv.values.verbose === true);
   screenShareAudio = true;
-}
+}).catch(() => {
+  console.log("Error initializing pipewire, screen share audio will be disabled");
+});
+
 
 const userAgent: Partial<{
   replace: Parameters<typeof getUserAgent>[2];

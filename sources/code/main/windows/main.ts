@@ -28,12 +28,7 @@ import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
 import { satisfies as rSatisfies } from "semver";
 
-// eslint-disable-next-line
-// @ts-ignore - This will ignore the error if pipewire isn't installed
-import type { PipewireLink, PipewireNode, PipewirePort } from "node-pipewire";
-import { pw } from "../../common/modules/node-pipewire-provider";
-
-type UndefinedOrT<T> = T extends any ? undefined : T;
+import { setupScreenShareWithPW } from "../../common/modules/node-pipewire-provider";
 
 interface MainWindowFlags {
   startHidden: boolean;
@@ -46,43 +41,39 @@ interface AudioInformation {
 
 const blacklistInputNodes: number[] = [];
 
-// eslint-disable-next-line import/no-unused-modules
 export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   
   let pipewireAudio = false;
-  let testAudioAttempts = 0;
   
-  const testAudioInterval: NodeJS.Timeout | null = pw === null ? null : setInterval(() => {
-    // get the actual input nodes from pipewire.
-    // @ts-expect-error - node-pipewire may not be installed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-    const inputNodes = pw.getInputNodes();
+  import("node-pipewire").then((pw) => {
+    let testAudioAttempts = 0;
+    const testAudioInterval = setInterval(() => {
+      // get the actual input nodes from pipewire.
+      const inputNodes = pw.getInputNodes();
     
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (inputNodes.length > 0) {
-      //If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const chromiumInputNodes = inputNodes.filter((node: { name: string }) => node.name === "Chromium");
+      if (inputNodes.length > 0) {
+        //If the user is using a chromium based browser, and is using a microphone, it will be in the list of input nodes.
+        const chromiumInputNodes = inputNodes.filter((node: { name: string }) => node.name === "Chromium");
     
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (chromiumInputNodes.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        chromiumInputNodes.forEach((node: { id: number }) => {
-          blacklistInputNodes.push(node.id);
-        });
+        if (chromiumInputNodes.length > 0) {
+          chromiumInputNodes.forEach((node: { id: number }) => {
+            blacklistInputNodes.push(node.id);
+          });
+        }
+        flags.screenShareAudio = true;
+        pipewireAudio = true;
+        clearInterval(testAudioInterval);
+      } else{
+        testAudioAttempts++;
+        if (testAudioAttempts === 5) {
+          clearInterval(testAudioInterval);
+        }
       }
-      flags.screenShareAudio = true;
-      pipewireAudio = true;
-      // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
-      clearInterval(testAudioInterval!!);
-    } else{
-      testAudioAttempts++;
-      if (testAudioAttempts === 5) {
-        // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
-        clearInterval(testAudioInterval!!);
-      }
-    }
-  }, 1000);
+    }, 1000);
+  }).catch((error) => {
+    console.log("Error testing audio");
+    console.error(error);
+  });
     
   const l10nStrings = new L10N().client;
 
@@ -558,26 +549,21 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         thumbnail: nativeImage.createEmpty()
       } satisfies Electron.DesktopCapturerSource]);
 
-    if(pipewireAudio && pw !== null) {
-      // @ts-expect-error - node-pipewire may not be installed
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    if(pipewireAudio) {
+      const pw = await import("node-pipewire");
+
       const outputNodesName = pw.getOutputNodesName();
 
-      // @ts-expect-error - node-pipewire may not be installed
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      // Because Webcord is detected as 'Chromium', we need to remove it from the blacklist
       const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
-      blacklistInputNodes.push(...chromiumInputNodes.map((node: { id: any }) => node.id));
+      const newBlacklistInputNodes: number[] = chromiumInputNodes.map((node) => node.id);
+      blacklistInputNodes.push(...newBlacklistInputNodes);
 
       // Filter outputNodesName to remove the repeated names
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const outputNodesNameFiltered = outputNodesName.filter((node: any, index: any) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      const outputNodesNameFiltered = outputNodesName.filter((node, index) => {
         return outputNodesName.indexOf(node) === index;
       }).sort();
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return [await sources, flags.screenShareAudio, outputNodesNameFiltered];
     }
 
@@ -648,34 +634,26 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
               return null;
           });
         } else {
-          if(pw !== null) {
-            ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
-              // @ts-expect-error - node-pipewire may not be installed
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-              const outputNodesName = pw.getOutputNodesName();
+          ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
+            const pw = await import("node-pipewire");
+            
+            const outputNodesName = pw.getOutputNodesName();
 
-              // @ts-expect-error - node-pipewire may not be installed
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-              const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+            // Because Webcord is detected as 'Chromium', we need to remove it from the blacklist
+            const chromiumInputNodes = pw.getInputNodes().filter((node: { name: string; id: number }) => node.name.startsWith("Chromium") && !blacklistInputNodes.includes(node.id));
+            const newBlacklistInputNodes: number[] = chromiumInputNodes.map((node) => node.id);
+            blacklistInputNodes.push(...newBlacklistInputNodes);
 
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
-              blacklistInputNodes.push(...chromiumInputNodes.map((node: { id: any }) => node.id));
+            // Filter outputNodesName to remove the repeated names
+            const outputNodesNameFiltered = outputNodesName.filter((node, index) => {
+              return outputNodesName.indexOf(node) === index;
+            }).sort();
 
-              // Filter outputNodesName to remove the repeated names
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-              const outputNodesNameFiltered = outputNodesName.filter((node: any, index: any) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-                return outputNodesName.indexOf(node) === index;
-              }).sort();
-
-              if(event.sender === view.webContents)
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-                return [await sources, flags.screenShareAudio, outputNodesNameFiltered];
-              else
-                return null;
-            });
-          }
-
+            if(event.sender === view.webContents)
+              return [await sources, flags.screenShareAudio, outputNodesNameFiltered];
+            else
+              return null;
+          });
         }
         const autoResize = () => setImmediate(() => view.setBounds({
           ...win.getBounds(),
@@ -696,63 +674,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
             const selectedAudioNodes = audioInfo.selectedAudioNodes;
 
             if (selectedAudioNodes.length > 0) {
-              // eslint-disable-next-line @typescript-eslint/no-floating-promises
-              if(pw !== null) (async () => {
-                let screenShareNode: UndefinedOrT<PipewireNode> = undefined;
-                try {
-                  // @ts-expect-error - node-pipewire may not be installed
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-                  screenShareNode = await pw.waitForNewNode("Chromium", "Input");
-                } catch (error) {
-                  console.log("Error waiting for new node");
-                  console.error(error);
-                }
-
-                if (screenShareNode !== undefined) {
-                  // @ts-expect-error - node-pipewire may not be installed
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                  const screenSharePorts = screenShareNode.ports.filter((port: PipewirePort) => port.direction === "Input");
-                  
-                  // unlink mic from the screen-share (if it was linked, in my case it was)
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                  if (screenSharePorts.length > 0) {
-                    // @ts-expect-error - node-pipewire may not be installed
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-                    const links = pw.getLinks();
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                    screenSharePorts.forEach((port: PipewirePort) => {
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                      const micLink = links.find((link: PipewireLink) =>  port.id === link.input_port_id);
-                      // @ts-expect-error - node-pipewire may not be installed
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                      if (micLink !== undefined) pw.unlinkPorts(port.id, micLink.output_port_id);
-                    });
-                  }
-
-                  // send to PW the name of selected audio nodes with the id of the new chromium input nodes
-                  const interval = setInterval(() => {
-                    // check if the port of the screenShareNode exits
-                    // @ts-expect-error - node-pipewire may not be installed
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                    const targetNode = pw.getInputNodes().find((node: PipewireNode) => screenShareNode?.id === node.id);
-                    if (targetNode !== undefined) {
-                      try {
-                        selectedAudioNodes.forEach((nodeName) => {
-                          // link the the selected audio nodes to the target node
-                          // @ts-expect-error - node-pipewire may not be installed
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                          pw.linkNodesNameToId(nodeName, targetNode.id);
-                        });
-                      } catch (error) {
-                        console.log("Error linking nodes");
-                        console.error(error);
-                      }
-                    } else {
-                      clearInterval(interval);
-                    }
-                  }, 1000);
-                }
-              })();
+              setupScreenShareWithPW(selectedAudioNodes).catch((error) => {
+                console.error(error);
+              });
             }
           }
         
