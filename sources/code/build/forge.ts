@@ -274,4 +274,4 @@ const config:ForgeConfig = {
 };
 
 /* eslint-disable-next-line import/no-unused-modules *//* Module entry point */
-export default config;
+module.exports = config;
