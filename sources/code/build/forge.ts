@@ -125,7 +125,11 @@ const config:ForgeConfig = {
       setupIcon: `${iconFile}.ico`,
       setupExe: `${packageJson.data.name}-squirrel-${arch}.exe`,
       setupMsi: `${packageJson.data.name}-squirrel-${arch}.msi`,
-      noMsi: false
+      noMsi: false,
+      // I have no clue what it does, but I'm gonna risk it.
+      fixUpPaths: true,
+      iconUrl: `https://raw.githubusercontent.com/SpacingBat3/WebCord/${packageJson.data.version}/${iconFile}.ico`,
+      noDelta: true
     })),
     new MakerDMG({ icon: `${iconFile}.icns`, debug: getBuildID() === "devel" }),
     new MakerAppImage({ options: {
@@ -145,7 +149,8 @@ const config:ForgeConfig = {
       icon: `${iconFile}.png`,
       genericName: desktopGeneric,
       categories: desktopCategories,
-      license: "MIT"
+      license: "MIT",
+      compressionLevel: 9
     }}),
     ...(process.env["WEBCORD_ALL_MAKERS"]?.toLowerCase() === "true" ? [
       new MakerWix({
