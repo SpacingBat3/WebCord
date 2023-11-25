@@ -322,7 +322,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     throw new TypeError("'repository' in package.json is not of type 'object'.");
 
   let lastStatus:boolean|null = null;
-
+  const pluralRules = new Intl.PluralRules();
   // Window Title & "red dot" icon feature
   win.on("page-title-updated", (event, title) => {
     event.preventDefault();
@@ -347,11 +347,12 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       if(lastStatus === status || !tray) return;
       // Set tray icon and taskbar flash
       {
-        let icon: Electron.NativeImage, flash = false;
+        let icon: Electron.NativeImage, flash = false, tooltipSuffix="";
         switch(status) {
           case true:
             icon = appInfo.icons.tray.warn;
             flash = true;
+            tooltipSuffix=` - ${dirty} ${l10nStrings.tray.mention[pluralRules.select(parseInt(`${dirty}`))]}`;
             break;
           case false:
             icon = appInfo.icons.tray.unread;
@@ -363,6 +364,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         if(process.platform === "darwin" && icon.getSize().height > 22)
           icon = icon.resize({height:22});
         tray.setImage(icon);
+        tray.setToolTip(`${app.getName()}${tooltipSuffix}`);
         win.flashFrame(flash&&appConfig.value.settings.general.taskbar.flash);
       }
       lastStatus = status;

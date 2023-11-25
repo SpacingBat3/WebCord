@@ -1,7 +1,13 @@
 {
     "tray": {
         "toggle": "Przełącz",
-        "quit": "Zakończ"
+        "quit": "Zakończ",
+        "mention": {
+            "one":"wzmianka",
+            "few":"wzmianki",
+            "many":"wzmianek",
+            "other":"wzmianek"
+        }
     },
     "context": {
         "copy": "Kopiuj",
