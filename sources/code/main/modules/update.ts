@@ -14,15 +14,18 @@ import { appConfig } from "./config";
 /**
  * Checks and notifies users about the updates.
  *
- * @param updateInterval Object that indentifies currently running interval.
+ * @param updateInterval Object that identifies a currently running interval.
  */
 export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): Promise<void> {
-  // Do not execute when offline.
-  if (!net.isOnline()) return;
   // When app is not ready, wait until it is ready.
-  if (!app.isReady()) await app.whenReady();
+  await app.whenReady();
   // Initialize app translation.
   const strings = new L10N().client;
+  // Do not execute when offline.
+  if (!net.isOnline()) {
+    console.debug(strings.dialog.ver.updateBadge + " Network is offline, skipping check...");
+    return;
+  }
   // An alias to app's repository name.
   const repoName = appInfo.repository.name;
   let updateMsg: string, showGui = false;
@@ -51,12 +54,6 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
       throw new Error("Couldn't compare versions while doing an update");
   }
   console.log(kolor.bold(kolor.blue(strings.dialog.ver.updateBadge)) + " " + updateMsg);
-
-  const updatePopup:Electron.NotificationConstructorOptions = {
-    title: app.getName() + ": " + strings.dialog.ver.updateTitle,
-    icon: appInfo.icons.app,
-    body: updateMsg
-  };
   const nextWeek = new Date();
   nextWeek.setDate(nextWeek.getDate()+7);
   const ignored = (
@@ -64,7 +61,11 @@ export async function checkVersion(updateInterval: NodeJS.Timeout | undefined): 
         new Date(appConfig.value.update.notification.till) < nextWeek
   );
   if (showGui && (getBuildInfo().features.updateNotifications) && !ignored) {
-    const notification = new Notification(updatePopup);
+    const notification = new Notification({
+      title: app.getName() + ": " + strings.dialog.ver.updateTitle,
+      icon: appInfo.icons.app,
+      body: updateMsg
+    });
     notification.on("click", () => {
       if(githubApi["html_url"] !== undefined)
         shell.openExternal(githubApi["html_url"]).catch(commonCatches.throw);

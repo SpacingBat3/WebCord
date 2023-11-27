@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import { EventEmitter } from "events";
 import { resolve } from "path";
 
@@ -17,7 +16,7 @@ import {
   systemPreferences
 } from "electron/main";
 import * as getMenu from "../modules/menu";
-import { DiscordFavicon, knownInstancesList } from "../../common/global";
+import { knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
 import L10N from "../../common/modules/l10n";
@@ -207,7 +206,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     };
     /** Common handler for  */
     const permissionHandler = (type:"request"|"check",webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null => {
-      // Verify URL adress of the permissions.
+      // Verify URL address of the permissions.
       try {
         const webContents = new URL(webContentsUrl);
         if(webContents.origin !== trustedURLs[0] && webContents.protocol !== trustedURLs[1]) {
@@ -363,55 +362,9 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   else
     throw new TypeError("'repository' in package.json is not of type 'object'.");
 
-  // "Red dot" icon feature
-  const hashMap = new Map<string,string>();
-  let lastFavicon = "";
-  win.webContents.on("page-favicon-updated", (_event, favicons) => {
-    if(favicons[0] === undefined || lastFavicon === favicons[0]) return;
-    let icon: Electron.NativeImage, flash = false;
-    // Hash discord favicon.
-    const faviconHash = hashMap.has(favicons[0]) ?
-      (hashMap.get(favicons[0])??"") : createHash("sha1")
-        .update(nativeImage.createFromDataURL(favicons[0]).toJPEG(0))
-        .digest("hex");
-    hashMap.set(favicons[0],faviconHash);
-    // Stop code execution on Fosscord instances.
-    const currentInstance = knownInstancesList
-      .find((value) => value[1].origin === new URL(win.webContents.getURL()).origin);
-    if (!(currentInstance?.[1].hostname.endsWith(".discord.com")??false) &&
-        currentInstance?.[1].hostname !== "discord.com") {
-      lastFavicon = favicons[0];
-      icon = appInfo.icons.tray.default;
-      win.flashFrame(false);
-      return;
-    }
-
-    // Compare hashes.
-    switch(faviconHash) {
-      case DiscordFavicon.Default:
-        icon = appInfo.icons.tray.default;
-        break;
-      case DiscordFavicon.Unread:
-      case DiscordFavicon.UnreadAlt:
-        icon = appInfo.icons.tray.unread;
-        break;
-      default:
-        console.debug("[Mention] Hash: "+faviconHash);
-        icon = appInfo.icons.tray.warn;
-        flash = true;
-    }
-    // Set tray icon and taskbar flash
-    if(tray) {
-      // Resize icon on MacOS when its height is longer than 22 pixels.
-      if(process.platform === "darwin" && icon.getSize().height > 22)
-        icon = icon.resize({height:22});
-      tray.setImage(icon);
-    }
-    win.flashFrame(flash&&appConfig.value.settings.general.taskbar.flash);
-    lastFavicon = favicons[0];
-  });
-
-  // Window Title
+  let lastStatus:boolean|null = null;
+  const pluralRules = new Intl.PluralRules();
+  // Window Title & "red dot" icon feature
   win.on("page-title-updated", (event, title) => {
     event.preventDefault();
     if (title.includes("Discord Test Client"))
@@ -429,7 +382,33 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
         sections[1]?.trim() ?? "",
         sections[2]?.trim() ?? null
       ];
-      win.setTitle((typeof dirty === "string" ? "["+dirty+"] " : dirty ? "*" : "") + client + " - " + section + (group !== null ? " ("+group+")" : ""));
+      // Fetch status for ping and title from current title
+      const status=typeof dirty === "string" ? true : dirty ? false : null;
+      win.setTitle((status === true ? "["+dirty+"] " : status === false ? "*" : "") + client + " - " + section + (group !== null ? " ("+group+")" : ""));
+      if(lastStatus === status || !tray) return;
+      // Set tray icon and taskbar flash
+      {
+        let icon: Electron.NativeImage, flash = false, tooltipSuffix="";
+        switch(status) {
+          case true:
+            icon = appInfo.icons.tray.warn;
+            flash = true;
+            tooltipSuffix=` - ${dirty} ${l10nStrings.tray.mention[pluralRules.select(parseInt(`${dirty}`))]}`;
+            break;
+          case false:
+            icon = appInfo.icons.tray.unread;
+            break;
+          default:
+            icon = appInfo.icons.tray.default;
+        }
+        // Resize icon on MacOS when its height is longer than 22 pixels.
+        if(process.platform === "darwin" && icon.getSize().height > 22)
+          icon = icon.resize({height:22});
+        tray.setImage(icon);
+        tray.setToolTip(`${app.getName()}${tooltipSuffix}`);
+        win.flashFrame(flash&&appConfig.value.settings.general.taskbar.flash);
+      }
+      lastStatus = status;
     }
     else if (title.includes("Discord") && !/[0-9]+/.test(win.webContents.getURL()))
       win.setTitle(title.replace("Discord",app.getName()));
@@ -459,7 +438,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   ipcMain.on("api-exposed", (_event, api:unknown) => {
     if(typeof api !== "string") return;
     const safeApi = api.replaceAll("'","\\'");
-    console.debug("[IPC] Exposing a `getDisplayMedia` and spoffing it as native method.");
+    console.debug("[IPC] Exposing a `getDisplayMedia` and spoofing it as native method.");
     const functionString = `
     if('${safeApi}' in window && typeof window['${safeApi}'] === "function" && !(delete window['${safeApi}'])) {
       const media = navigator.mediaDevices.getUserMedia;

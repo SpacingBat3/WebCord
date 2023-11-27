@@ -43,16 +43,18 @@ export function initWindow(name:keyof L10N["client"]["windows"], parent: Electro
         preload: resolve(app.getAppPath(), "app/code/renderer/preload/"+name+".js")
       } : {}),
     },
-    ...(process.platform !== "win32" ? {icon: appInfo.icons.app} : {}),
+    ...(process.platform !== "win32" ? {icon: appInfo.icons.app} : {})
   }, properties??{}));
   if(win.webContents.session === parent.webContents.session && !isPopup)
     throw new Error("Child took session from parent!");
-  // Style "popup" windows
-  if(isPopup)
+  if(isPopup) {
+    win.removeMenu();
+    // Style "popup" windows
     win.webContents.on("did-navigate", () => {
       styles.load(win.webContents)
         .catch(commonCatches.throw);
     });
+  }
   // Cleanup listeners
   win.once("closed", () => win.removeAllListeners());
   win.setAutoHideMenuBar(true);

@@ -15,13 +15,6 @@ export function wLog(msg: string): void {
   console.log("%c[WebCord]", "color: #69A9C1", msg);
 }
 
-/** SHA1 hashes of Discord favicons (in RAW bitmap format). */
-export const enum DiscordFavicon {
-  Default = "528c5d45bc69bbbcd0abebc5ac867cd164a35ad2",
-  Unread = "ea6dd5012654b5260934bc7f481dc94a63ea4ae3",
-  UnreadAlt = "c92b9034cc8456525cc7cd6bedba10056512a1d3"
-}
-
 /**
  * Allowed protocol list.
  * 

@@ -84,7 +84,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci ${{ matrix.name == 'macOS' && '&& npm i -D appdmg' || '' }}
 
       - name: Update dependencies
         if: ${{ matrix.build == 'latest' }}

@@ -34,7 +34,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci ${{ matrix.name == 'macOS' && '&& npm i -D appdmg' || '' }}
 
       - name: TSC cache
         uses: actions/cache@v3
@@ -45,23 +45,11 @@ jobs:
             cache/tsc.json
 
       - name: Publish distributables (${{ matrix.arch}})
-        if: ${{ matrix.name != 'Windows' }}
         uses: nick-fields/retry@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           retry_on: error
-          max_attempts: 3
-          timeout_minutes: 10
-          command: npm run publish -- -a ${{ matrix.arch }}
-
-      - name: Publish distributables (${{ matrix.arch}}) (more retries)
-        if: ${{ matrix.name == 'Windows' }}
-        uses: nick-fields/retry@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          retry_on: error
-          max_attempts: 6
-          timeout_minutes: 15
+          max_attempts: ${{ matrix.name == 'Windows' && 6 || 3 }}
+          timeout_minutes: ${{ matrix.name == 'Windows' && 15 || 10 }}
           command: npm run publish -- -a ${{ matrix.arch }}

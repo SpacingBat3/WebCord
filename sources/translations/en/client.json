@@ -1,7 +1,15 @@
 {
     "tray": {
         "toggle": "Toggle",
-        "quit": "Quit"
+        "quit": "Quit",
+        "mention": {
+            "one":"mention",
+            "other":"mentions",
+            "zero": "",
+            "two": "",
+            "few":"",
+            "many":""
+        }
     },
     "context": {
         "copy": "Copy",
