@@ -32,7 +32,7 @@ jobs:
           node-version: latest
           cache: npm
 
-      - name: Install dependencies
+      - name: Install dependencies (NPM)
         run: npm ci
 
       - name: Update dependencies
@@ -83,8 +83,8 @@ jobs:
           node-version: latest
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci ${{ matrix.name == 'macOS' && '&& npm i -D appdmg' || '' }}
+      - name: Install dependencies (NPM${{ matrix.name == 'macOS' && '+PIP' || '' }})
+        run: ${{ matrix.name == 'macOS' && 'python -m pip install packaging &&' || '' }} npm ci
 
       - name: Update dependencies
         if: ${{ matrix.build == 'latest' }}
