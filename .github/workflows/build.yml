@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-20.04, windows-latest, macos-latest]
+        name: ['Linux', 'Windows', 'macOS-x64', 'macOS-arm64']
         build: [latest, locked]
         include:
           - runner: ubuntu-20.04
