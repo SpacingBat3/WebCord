@@ -104,7 +104,7 @@ jobs:
           retry_on: error
           max_attempts: 3
           timeout_minutes: 10
-          command: npm run make -- -a ${{ matrix.arch }}
+          command: ${{ matrix.name == 'macOS' && 'DEBUG="*" ' || '' }} npm run make -- -a ${{ matrix.arch }}
 
       - name: Upload distributables as artifact
         uses: actions/upload-artifact@v3
