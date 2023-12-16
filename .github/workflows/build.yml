@@ -70,8 +70,11 @@ jobs:
             name: Windows
             arch: x64,arm64,ia32
           - runner: macos-latest
-            name: macOS
-            arch: x64,arm64 #,universal
+            name: macOS-x64
+            arch: x64 #,arm64,universal
+          - runner: macos-latest
+            name: macOS-arm64
+            arch: arm64
 
     name: '${{ matrix.name }} (${{ matrix.build }})'
     runs-on: ${{ matrix.runner }}
@@ -84,7 +87,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies (NPM${{ matrix.name == 'macOS' && '+PIP' || '' }})
-        run: ${{ matrix.name == 'macOS' && 'python -m pip install setuptools &&' || '' }} npm ci
+        run: ${{ matrix.runner == 'macos-latest' && 'python -m pip install setuptools &&' || '' }} npm ci
 
       - name: Update dependencies
         if: ${{ matrix.build == 'latest' }}
@@ -104,7 +107,7 @@ jobs:
           retry_on: error
           max_attempts: 3
           timeout_minutes: 10
-          command: ${{ matrix.name == 'macOS' && 'DEBUG="*" ' || '' }} npm run make -- -a ${{ matrix.arch }}
+          command: npm run make -- -a ${{ matrix.arch }}
 
       - name: Upload distributables as artifact
         uses: actions/upload-artifact@v3
