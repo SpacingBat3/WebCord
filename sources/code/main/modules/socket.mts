@@ -4,9 +4,9 @@ import { BrowserWindow, session, utilityProcess, app, type UtilityProcess } from
 import { WebSocketClose, type HookFn, type HookSignatures } from "@spacingbat3/disconnection";
 import kolor from "@spacingbat3/kolor";
 
-import L10N from "../../common/modules/l10n";
-import type { WSHookAdd, WSHookReturn, WSHookTrigger } from "../../common/global";
-import { initWindow } from "./parent";
+import L10N from "../../common/modules/l10n.js";
+import type { WSHookAdd, WSHookReturn, WSHookTrigger } from "../../common/global.js";
+import { initWindow } from "./parent.js";
 
 type LocalHookFn<T extends keyof HookSignatures> = (...args:[...HookSignatures[T],(number|undefined)?]) => Awaited<ReturnType<HookFn<T>>>;
 
@@ -24,7 +24,7 @@ function getMainWindow() {
 }
 
 export default function startServer() {
-  const l10n = new L10N();
+  const l10n = new L10N.default();
   let lock = false;
   const isColorEnabled = kolor.cyan("")!=="";
   server = utilityProcess.fork(resolve(app.getAppPath(),"app/code/utility/ws.js"), [

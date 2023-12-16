@@ -32,8 +32,8 @@ export default async function loadDocsWindow(parent: Electron.BrowserWindow) {
     { initWindow },  // from "../modules/parent"
     { appInfo },     // from "../modules/client"
   ] = await Promise.all([
-    import("../modules/parent"),
-    import("../../common/modules/client")
+    import("../modules/parent.js"),
+    import("../../common/modules/client.js")
   ]);
   const docsWindow = initWindow("docs", parent, {
     minWidth: appInfo.minWinWidth,

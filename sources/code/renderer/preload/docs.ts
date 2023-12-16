@@ -14,6 +14,7 @@ import { protocols } from "../../common/global";
 
 import {
   gfmHeadingId
+  //@ts-expect-error TS14790
 } from "marked-gfm-heading-id";
 
 const htmlFileUrl = document.URL;
@@ -21,6 +22,7 @@ const htmlFileUrl = document.URL;
 // Code highlighting and GFM heading IDs:
 
 marked.use(
+  //@ts-expect-error TS2379
   markedHighlight({
     highlight: (code,language) => hljs.getLanguage(language) ?
       hljs.highlight(code,{ language } ).value :
