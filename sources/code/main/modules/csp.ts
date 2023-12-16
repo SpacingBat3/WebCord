@@ -153,7 +153,14 @@ const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
     "media-src": "https://v.redd.it",
     "frame-src": "https://www.redditmedia.com/mediaembed/"
   }),
-  soundcloud: new CSPBuilder({ "frame-src": "https://w.soundcloud.com/player/" }),
+  soundcloud: new CSPBuilder({
+    "frame-src": "https://w.soundcloud.com/player/",
+    "script-src": "https://widget.sndcdn.com/",
+    "img-src": "https://widget.sndcdn.com/assets/images/ https://i1.sndcdn.com",
+    "connect-src": "https://api-widget.soundcloud.com "+
+      "https://cf-hls-media.sndcdn.com/playlist/ https://wave.sndcdn.com "+
+      "https://cf-hls-media.sndcdn.com/media/"
+  }),
   spotify: new CSPBuilder({
     "script-src": "https://embed-cdn.spotifycdn.com/_next/static/",
     "img-src": "https://i.scdn.co/image/",
