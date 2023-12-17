@@ -123,6 +123,6 @@ be done in the future in which case Chromium extensions might be deprecated
 and / or removed.
 
 You can load Chromium extensions by extracting them from `.crx` archive to
-`{userData}/Extensions/Chromium/{extension name}/` folder.
+`{userData}/Extensions/Chrome/{extension name}/` folder.
 
 [chrome-ext]: https://www.electronjs.org/docs/latest/api/extensions "Chrome Extension Support | Electron's online documentation"
