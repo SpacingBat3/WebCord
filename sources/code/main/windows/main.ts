@@ -16,7 +16,7 @@ import {
   systemPreferences
 } from "electron/main";
 import * as getMenu from "../modules/menu";
-import { knownInstancesList } from "../../common/global";
+import { fonts, knownInstancesList } from "../../common/global";
 import packageJson from "../../common/modules/package";
 import { getWebCordCSP } from "../modules/csp";
 import L10N from "../../common/modules/l10n";
@@ -58,9 +58,7 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
       contextIsolation: true, // Isolates website from preloads.
       sandbox: false, // Removes Node.js from preloads (TODO).
       devTools: true, // Allows the use of the devTools.
-      defaultFontFamily: {
-        standard: "Arial" // `sans-serif` as default font.
-      },
+      defaultFontFamily: fonts,
       enableWebSQL: false,
       webgl: appConfig.value.settings.advanced.webApi.webGl,
       safeDialogs: true, // prevents dialog spam by the website

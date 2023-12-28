@@ -209,6 +209,18 @@ export function wordWrap(long:string,maxr:number,maxc:number):string {
   return res;
 }
 
+/** A definitions for default font families that will be used in Electron. */
+export const fonts = Object.freeze({
+  standard: process.platform === "win32" ? "SegoeUI" as const :
+    process.platform === "darwin" ? "SF Pro" as const : "Sans" as const,
+  sansSerif: process.platform === "win32" ? "SegoeUI" as const :
+    process.platform === "darwin" ? "SF Pro" as const : "Sans" as const,
+  serif: process.platform === "win32" ? "Times New Roman" as const :
+    process.platform === "darwin" ? "New York" as const : "Serif" as const,
+  monospace: process.platform === "win32" ? "Cascadia Code" as const :
+    process.platform === "darwin" ? "SF Pro" as const : "Monospace" as const
+} satisfies Electron.DefaultFontFamily);
+
 type hookName = keyof HookSignatures;
 
 interface WsCmd {

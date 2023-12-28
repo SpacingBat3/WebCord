@@ -63,9 +63,6 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@fontsource/fira-code": "^5.0.2",
-    "@fontsource/roboto": "^5.0.2",
-    "@fontsource/ubuntu": "^5.0.2",
     "@spacingbat3/disconnection": "^1.0.3",
     "@spacingbat3/kolor": "^4.0.0",
     "deepmerge-ts": "^5.1.0",
