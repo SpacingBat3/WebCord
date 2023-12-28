@@ -139,6 +139,9 @@
         /*** Import plugin rules ***/
         "import/no-unused-modules": ["error", {
           "unusedExports": true
+        }],
+        "import/no-unresolved": ["error", {
+          "ignore": ["^(node:)?original-fs$"]
         }]
       }
     }
