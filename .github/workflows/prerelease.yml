@@ -20,9 +20,12 @@ jobs:
           - name: Windows
             runner: windows-latest
             arch: x64,arm64,ia32
-          - name: macOS
+          - name: macOS-x64
             runner: macos-latest
-            arch: x64,arm64 #,universal
+            arch: x64 #,arm64,universal
+          - name: macOS-arm64
+            runner: macos-latest
+            arch: arm64
 
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
@@ -33,8 +36,8 @@ jobs:
           node-version: latest
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci ${{ matrix.name == 'macOS' && '&& npm i -D appdmg' || '' }}
+      - name: Install dependencies (NPM${{ matrix.name == 'macOS' && '+PIP' || '' }})
+        run: ${{ matrix.runner == 'macos-latest' && 'python -m pip install setuptools &&' || '' }} npm ci
 
       - name: TSC cache
         uses: actions/cache@v3

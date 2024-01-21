@@ -32,7 +32,7 @@ jobs:
           node-version: latest
           cache: npm
 
-      - name: Install dependencies
+      - name: Install dependencies (NPM)
         run: npm ci
 
       - name: Update dependencies
@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-20.04, windows-latest, macos-latest]
+        name: ['Linux', 'Windows', 'macOS-x64', 'macOS-arm64']
         build: [latest, locked]
         include:
           - runner: ubuntu-20.04
@@ -70,8 +70,11 @@ jobs:
             name: Windows
             arch: x64,arm64,ia32
           - runner: macos-latest
-            name: macOS
-            arch: x64,arm64 #,universal
+            name: macOS-x64
+            arch: x64 #,arm64,universal
+          - runner: macos-latest
+            name: macOS-arm64
+            arch: arm64
 
     name: '${{ matrix.name }} (${{ matrix.build }})'
     runs-on: ${{ matrix.runner }}
@@ -83,8 +86,8 @@ jobs:
           node-version: latest
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci ${{ matrix.name == 'macOS' && '&& npm i -D appdmg' || '' }}
+      - name: Install dependencies (NPM${{ matrix.name == 'macOS' && '+PIP' || '' }})
+        run: ${{ matrix.runner == 'macos-latest' && 'python -m pip install setuptools &&' || '' }} npm ci
 
       - name: Update dependencies
         if: ${{ matrix.build == 'latest' }}

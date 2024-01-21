@@ -2,6 +2,8 @@
 import { app } from "electron/main";
 import { existsSync } from "fs";
 import { resolve } from "path";
+import { promises as fso } from "node:original-fs";
+import { createHash, getHashes } from "crypto";
 import type { BinaryToTextEncoding } from "crypto";
 
 function catchAndThrowErrors (error:unknown) {
@@ -61,19 +63,11 @@ export function getName() {
  * Get hash of current `app.asar` file in given algorithm.
  */
 export async function getAppHash(algorithm = "sha512", encoding:BinaryToTextEncoding = "hex") {
-  const [
-    { stat, readFile },
-    { createHash, getHashes }
-  ] = await Promise.all([
-    // eslint-disable-next-line import/no-unresolved
-    import("original-fs").then(fs => fs.promises),
-    import("crypto")
-  ]);
   const file = getAppPath();
   if(!getHashes().includes(algorithm))
     throw new Error("Unsuported hashing algorithm: "+algorithm);
-  if((await stat(file)).isFile())
-    return readFile(file)
+  if((await fso.stat(file)).isFile())
+    return fso.readFile(file)
       .then(buffer => createHash(algorithm).update(buffer).digest(encoding));
   return;
 }

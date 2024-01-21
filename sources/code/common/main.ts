@@ -32,6 +32,7 @@ import { getBuildInfo } from "./modules/client";
 import { getRecommendedGPUFlags, getRecommendedOSFlags } from "../main/modules/optimize";
 import { styles } from "../main/modules/extensions";
 import { parseArgs, ParseArgsConfig, stripVTControlCharacters, debug } from "util";
+import cleanupURL from "./modules/urlTrack";
 
 const argvConfig = Object.freeze(({
   options: Object.freeze({
@@ -365,7 +366,7 @@ function main(): void {
     const mainWindow = createMainWindow({startHidden, screenShareAudio});
     
     // WebSocket server
-    import("../main/modules/socket")
+    import("../main/modules/socket.mjs")
       .then(socket => socket.default())
       .catch(commonCatches.print);
 
@@ -424,7 +425,8 @@ app.on("web-contents-created", (_event, webContents) => {
   webContents.setWindowOpenHandler((details) => {
     const config = appConfig.value.settings;
     if (!app.isReady()) return { action: "deny" };
-    const openUrl = new URL(details.url);
+    const openUrl = cleanupURL(details.url);
+    details.url = openUrl.toString();
     const sameOrigin = new URL(webContents.getURL()).origin === openUrl.origin;
     const protocolMeta = { trust: false, allow: false };
 

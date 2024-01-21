@@ -7,6 +7,7 @@ import packageJson, { PackageJSON, Person } from "../../common/modules/package";
 import { createHash } from "crypto";
 import { sanitize } from "dompurify";
 import { appInfo, defaultBuildInfo } from "../../common/modules/client";
+import { readFile } from "fs/promises";
 
 /**
  * Fetches user avatar by making the requests to both GitHub and Gravatar
@@ -95,11 +96,9 @@ function event2promise<C extends EventTarget>(emitter:C, channel:Parameters<C["a
 function showAppLicense() {
   if(!locks.dialog) {
     locks.dialog = true;
-    void import("fs/promises")
-      .then(fs => fs.readFile)
-      .then(read => read(resolve(getAppPath(), "LICENSE")))
+    void readFile(resolve(getAppPath(), "LICENSE"))
       .then(data => data.toString())
-      // Replace "(c)" with the actuall copyright symbol
+      // Replace "(c)" with the actual copyright symbol
       .then(text => text.replaceAll("(c)","©"))
       // Fix end-of-line characters
       .then(text => text.replace(/(?<!\r?\n)\r?\n(?!\r?\n)/g," ").replace(/\r?\n/g,"<br>"))

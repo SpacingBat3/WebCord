@@ -5,6 +5,7 @@ import { resolve } from "path";
 import { deepmerge } from "deepmerge-ts";
 import { styles } from "./extensions";
 import { commonCatches } from "./error";
+import { fonts } from "../../common/global";
 
 /** A list of popup windows (i.e. non-local ones). */
 const popups = [
@@ -36,9 +37,7 @@ export function initWindow(name:keyof L10N["client"]["windows"], parent: Electro
       enableWebSQL: false,
       webgl: false,
       autoplayPolicy: "user-gesture-required",
-      defaultFontFamily: {
-        standard: "Arial" // `sans-serif` as default font.
-      },
+      defaultFontFamily: fonts,
       ...( !isPopup ? {
         preload: resolve(app.getAppPath(), "app/code/renderer/preload/"+name+".js")
       } : {}),

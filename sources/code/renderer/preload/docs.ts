@@ -14,6 +14,7 @@ import { protocols } from "../../common/global";
 
 import {
   gfmHeadingId
+  //@ts-expect-error TS14790
 } from "marked-gfm-heading-id";
 
 const htmlFileUrl = document.URL;
@@ -21,6 +22,7 @@ const htmlFileUrl = document.URL;
 // Code highlighting and GFM heading IDs:
 
 marked.use(
+  //@ts-expect-error TS2379
   markedHighlight({
     highlight: (code,language) => hljs.getLanguage(language) ?
       hljs.highlight(code,{ language } ).value :
@@ -45,8 +47,8 @@ function getId(url:string) {
   return;
 }
 
-function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
-  mdBody.innerHTML = sanitize(marked.parse(readFileSync(mdFile).toString()));
+async function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
+  mdBody.innerHTML = sanitize(await marked.parse(readFileSync(mdFile).toString(), {async:true}));
 }
 
 function fixImages(container:HTMLElement) {
@@ -92,8 +94,9 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
         const oldHeader = menuHeader.innerHTML;
         menuHeader.innerText = basename(mdFile);
         document.body.removeChild(article);
+        let promise:Promise<void>;
         if(existsSync(mdFile)){
-          loadMarkdown(container,mdFile);
+          promise = loadMarkdown(container,mdFile);
           mdPrevious = mdFile;
         } else {
           // Fix for HTML links ('<a>' elements) that are unhandled by marked.
@@ -107,13 +110,14 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
             menuHeader.innerHTML = oldHeader;
             return false;
           }
-          loadMarkdown(container,mdFile);
+          promise = loadMarkdown(container,mdFile);
           mdPrevious = mdFile;
           console.log(relFile);
         }
         window.scroll(0,0);
-        handleUrls(container, article, header, mdPrevious);
-        fixImages(container);
+        void promise
+          .then(() => handleUrls(container, article, header, mdPrevious))
+          .then(() => fixImages(container));
         document.body.appendChild(article);
         if (id !== undefined) {
           const element = document.getElementById(id);
@@ -126,8 +130,8 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
   }
 }
 
-function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdArticle: HTMLElement) {
-  loadMarkdown(mdBody, mdFile);
+async function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdArticle: HTMLElement) {
+  await loadMarkdown(mdBody, mdFile);
   handleUrls(mdBody, mdArticle, mdHeader, mdFile);
   fixImages(mdBody);
 }
@@ -135,7 +139,7 @@ function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdA
 document.addEventListener("readystatechange", () => {
   if(document.readyState === "interactive")
     ipc.invoke("documentation-load")
-      .then((readmeFile:string) => {
+      .then(async (readmeFile:string) => {
         const mdHeader = document.createElement("header");
         const mdArticle = document.createElement("article");
         const mdBody = document.createElement("div");
@@ -145,26 +149,28 @@ document.addEventListener("readystatechange", () => {
         menuHeader.innerText = basename(readmeFile);
         mdHeader.appendChild(menu);
         mdHeader.appendChild(menuHeader);
-        setBody(mdBody, mdHeader, readmeFile, mdArticle);
+        await setBody(mdBody, mdHeader, readmeFile, mdArticle);
         mdBody.getElementsByTagName("sub")[0]?.parentElement?.remove();
         document.body.appendChild(mdHeader);
         document.body.appendChild(mdArticle);
         menu.onclick = () => {
           let scrollOptions:ScrollIntoViewOptions|undefined;
+          let promise:Promise<void> = Promise.resolve();
           if(!menuHeader.innerText.includes("Readme.md")) {
             window.scroll(0,0);
             menuHeader.innerText = basename(readmeFile);
-            setBody(mdBody, mdHeader, readmeFile, mdArticle);
-            mdBody.getElementsByTagName("sub")[0]?.parentElement?.remove();
+            promise = setBody(mdBody, mdHeader, readmeFile, mdArticle)
+              .then(() => mdBody.getElementsByTagName("sub")[0]?.parentElement?.remove());
           } else {
             scrollOptions = {behavior:"smooth"};
           }
           let docsId = "documentation";
           if(navigator.language === "pl")
             docsId = "dokumentacja-w-większości-jeszcze-nie-przetłumaczona";
-            
-          const docsHeader = document.getElementById(docsId);
-          if(docsHeader) docsHeader.scrollIntoView(scrollOptions);
+          void promise.then(() => {
+            const docsHeader = document.getElementById(docsId);
+            if(docsHeader) docsHeader.scrollIntoView(scrollOptions);
+          });
         }
         ;
       })
