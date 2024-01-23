@@ -1,7 +1,11 @@
 {
     "tray": {
         "toggle": "Alternar",
-        "quit": "Quitar"
+        "quit": "Quitar",
+        "mention": {
+            "one": "mención",
+            "other": "menciones"
+        }
     },
     "context": {
         "copy": "Copiar",

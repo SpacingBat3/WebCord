@@ -1,7 +1,10 @@
 {
     "tray": {
         "toggle": "Göster/gizle",
-        "quit": "Kapat"
+        "quit": "Kapat",
+        "mention": {
+            "one": "bahset"
+        }
     },
     "context": {
         "copy": "Kopyala",
@@ -29,7 +32,8 @@
         "edit": {
             "groupName": "Düzenle",
             "undo": "Geri al",
-            "redo": "Yeniden yap"
+            "redo": "Yeniden yap",
+            "selectAll": "Hepsini seç"
         },
         "view": {
             "groupName": "Görünüm",

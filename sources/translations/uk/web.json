@@ -1,0 +1,37 @@
+{
+    "aboutWindow": {
+        "about": {
+            "featuresTitle": "Флаги збірки",
+            "featuresDefault": "За замовченням",
+            "checksumTitle": "Контрольна сума",
+            "appRepo": "GitHub репозиторій",
+            "appDescription": "Веб клієнт Discord та Fosscord орієнтований на приватність."
+        },
+        "licenses": {
+            "appLicenseTitle": "Ліцензія додатку",
+            "showLicense": "Показати ліцензію",
+            "licensedUnder": "під ліцензією %s",
+            "appLicenseBody": "%s це вільне програмне забезпечення: ви можете використовувати, модифікувати та розповсюджувати його під умовами MIT ліцензії, яка має розповсюджуватися з цим програмним забезпеченням.",
+            "packageAuthors": "%s автори",
+            "thirdPartyLicensesTitle": "Ліцензії третіх сторін",
+            "thirdPartyLicensesBody": "%s залежить від наступного програмного забезпечення третіх сторін:"
+        },
+        "credits": {
+            "people": {
+                "contributors": {
+                    "default": "Со-автори коду."
+                },
+                "author": "Автор, супроводжувач і головний розробник."
+            }
+        },
+        "nav": {
+            "about": "Про додаток",
+            "credits": "Подяки",
+            "licenses": "Ліцензії"
+        }
+    },
+    "offline": {
+        "title": "Не вдається приєднатися до сервісу Discord.",
+        "description": "Впевніться, що ви підключені до інтернету."
+    }
+}
