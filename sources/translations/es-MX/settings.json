@@ -1,1 +1,30 @@
-{}
+{
+    "general": {
+        "tray": {
+            "name": "Bandeja",
+            "description": "Cambia la visibilidad del icono en la bandeja del sistema.",
+            "labels": {
+                "disable": "Deshabilitar la función de ocultar la ventana en la bandeja del sistema."
+            }
+        },
+        "taskbar": {
+            "labels": {
+                "flash": "boton con estello en la barra de tareas cuando existen nuevos mensajes."
+            },
+            "description": "Controla el comportamiento de la barra de tareas en la bandeja de WebCord.",
+            "name": "Barra de tareas"
+        },
+        "menuBar": {
+            "labels": {
+                "hide": "oculta la barra de menú  (<kbd>ALT</kbd> comando cambia automáticamente la visibilidad."
+            },
+            "name": "Barra de menú",
+            "description": "Cambia la configuración de visibilidad de la barra de menús nativas."
+        },
+        "window": {
+            "description": "Controla el aspecto y el comportamiento de la ventana que muestra la interfaz de cliente.",
+            "name": "Ventana principal de WebCord"
+        },
+        "name": "General"
+    }
+}
