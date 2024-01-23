@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: latest
+          node-version: ${{ matrix.name == 'macOS' && 21.1.0 || latest }}
           cache: npm
 
       - name: Install dependencies (NPM${{ matrix.name == 'macOS' && '+PIP' || '' }})
