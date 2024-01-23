@@ -6,13 +6,15 @@
         "inspectElement": "Untersuchen",
         "copy": "Kopieren",
         "paste": "Einfügen",
-        "dictionaryAdd": "Dem lokalen Wörterbuch hinzufügen"
+        "dictionaryAdd": "Dem lokalen Wörterbuch hinzufügen",
+        "copyImage": "Bild kopieren",
+        "copyImageURL": "Link zum Bild kopieren"
     },
     "menubar": {
         "enabled": "Aktiviert",
         "file": {
             "groupName": "Datei",
-            "quit": "Schließen",
+            "quit": "Beenden",
             "addon": {
                 "groupName": "Erweiterungen",
                 "loadChrome": "Chrome-Erweiterung laden",
@@ -23,7 +25,8 @@
         "edit": {
             "groupName": "Bearbeiten",
             "undo": "Rückgängig machen",
-            "redo": "Wiederherstellen"
+            "redo": "Wiederherstellen",
+            "selectAll": "Alles auswählen"
         },
         "view": {
             "reload": "Neu laden",
@@ -48,7 +51,12 @@
     },
     "tray": {
         "toggle": "Umschalten",
-        "quit": "Schließen"
+        "quit": "Beenden",
+        "mention": {
+            "one": "erwähnen",
+            "other": "erwähnt",
+            "two": "Erwähnungen"
+        }
     },
     "dialog": {
         "common": {
@@ -86,7 +94,8 @@
                 "message": "Möchtest du Discord Zugriff auf \"%s\" gewähren?",
                 "video": "Kamera",
                 "audio": "Mikrofon",
-                "notifications": "Benachrichtigungen"
+                "notifications": "Benachrichtigungen",
+                "title": "Berechtigungsanfrage-Handler"
             }
         },
         "screenShare": {
