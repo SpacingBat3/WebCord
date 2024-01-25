@@ -27,12 +27,11 @@ import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
 import { satisfies as rSatisfies } from "semver";
 
-interface MainWindowFlags {
-  startHidden: boolean;
-  screenShareAudio: boolean;
-}
+type MainWindowFlags = [
+  startHidden: boolean
+];
 
-export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
+export default function createMainWindow(...flags:MainWindowFlags): BrowserWindow {
   const l10nStrings = new L10N().client;
 
   const internalWindowEvents = new EventEmitter();
@@ -85,11 +84,11 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   });
   win.webContents.once("did-finish-load", () => {
     console.debug("[PAGE] Starting to load the Discord page...");
-    if (!flags.startHidden) win.show();
+    if (!flags[0]) win.show();
     setTimeout(() => {void win.loadURL(knownInstancesList[appConfig.value.settings.advanced.currentInstance.radio][1].href);}, 1500);
   });
   if (mainWindowState.initState.isMaximized)
-    if(!flags.startHidden || win.isVisible())
+    if(!flags[0] || win.isVisible())
       win.maximize();
     else
       win.once("show", () => win.maximize());
@@ -143,13 +142,10 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     const getMediaTypesPermission = (mediaTypes: unknown[] = []) => {
       const supportsMediaAccessStatus = ["darwin","win32"].includes(process.platform);
       if(mediaTypes.length === 0)
-        return (
-          supportsMediaAccessStatus ?
-            systemPreferences.getMediaAccessStatus("screen") === "granted" :
-            true
-        ) && (
-          appConfig.value.settings.privacy.permissions["display-capture"]
-        );
+        return (supportsMediaAccessStatus ?
+          systemPreferences.getMediaAccessStatus("screen") === "granted" :
+          true
+        ) && appConfig.value.settings.privacy.permissions["display-capture"];
       return [...new Set(mediaTypes)]
         .map(media => {
           const mediaType = media === "video" ? "camera" : media === "audio" ? "microphone" : null;
@@ -394,29 +390,18 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
   // Inject desktop capturer and block getUserMedia.
   ipcMain.on("api-exposed", (_event, api:unknown) => {
     if(typeof api !== "string") return;
-    const safeApi = api.replaceAll("'","\\'");
-    console.debug("[IPC] Exposing a `getDisplayMedia` and spoofing it as native method.");
-    const functionString = `
-    if('${safeApi}' in window && typeof window['${safeApi}'] === "function" && !(delete window['${safeApi}'])) {
+    console.debug("[IPC] Replace and spoof `getUserMedia` to block unauthorized screen sharing.");
+    const functionString = `{
       const media = navigator.mediaDevices.getUserMedia;
       navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [(constrains) => {
         if(constrains?.audio?.mandatory || constrains?.video?.mandatory)
-          return new Promise((resolve,reject) => setImmediate(() => reject(new DOMException("Invalid state.", "NotAllowedError"))));
+          return Promise.rejected(new DOMException("Invalid state.", "NotAllowedError"));
         return media(constrains);
       }]);
-      navigator.mediaDevices.getDisplayMedia = Function.prototype.call.apply(Function.prototype.bind, [
-        () => window['${safeApi}'](${safeApi}).then(value => media(value)).catch(error => {
-          if(typeof error === "string")
-            throw new DOMException(error, "NotAllowedError");
-          else
-            throw error;
-        })
-      ]);
       Object.defineProperty(navigator.mediaDevices.getUserMedia, "name", {value: "getUserMedia"});
-      Object.defineProperty(navigator.mediaDevices.getDisplayMedia, "name", {value: "getDisplayMedia"});
     }`;
-    win.webContents.executeJavaScript(functionString + ";0")
-      .then(() => internalWindowEvents.emit("api", safeApi))
+    win.webContents.executeJavaScript(`${functionString};0`)
+      .then(() => internalWindowEvents.emit("api", api.replaceAll("'","\\'")))
       .catch(commonCatches.throw);
   });
 
@@ -462,99 +447,100 @@ export default function createMainWindow(flags:MainWindowFlags): BrowserWindow {
     "<22.0.0 || >=26.0.0"
   );
 
+  /** Determines whenever another request to desktopCapturer is processed. */
+  let lock = false;
+
+  win.webContents.session.setDisplayMediaRequestHandler((req, callback) => {
+    const checkStatus =
+      // Handle lock and check for a presence of another BrowserView.
+      lock || win.getBrowserViews().length !== 0 ||
+      // Fail when client has denied the permission to the capturer.
+      (
+        appConfig.value.settings.privacy.permissions["display-capture"] &&
+        process.platform === "darwin" ?
+          systemPreferences.getMediaAccessStatus("screen") === "granted" :
+          true
+      ) ||
+      // Fail on different frame
+      req.frame.routingId !== win.webContents.mainFrame.routingId ||
+      // Whenever user is the one who most likely triggered this
+      req.userGesture;
+
+    if(!checkStatus) {
+      callback(null as unknown as Electron.Streams);
+      return;
+    }
+
+    lock = !app.commandLine.getSwitchValue("enable-features")
+      .includes("WebRTCPipeWireCapturer") ||
+      process.env["XDG_SESSION_TYPE"] !== "wayland" ||
+      process.platform === "win32";
+
+    const sources = lock || capturerApiSafe ?
+      // Use desktop capturer where it doesn't crash.
+      desktopCapturer.getSources({
+        types: ["screen", "window"],
+        fetchWindowIcons: lock,
+        thumbnailSize: lock ? {width: 150, height: 150 } : {width: 0, height: 0}
+      // Workaround #328: Segfault on `desktopCapturer.getSources()` since Electron 22
+      }) : Promise.resolve([{
+        id: "screen:1:0",
+        appIcon: nativeImage.createEmpty(),
+        display_id: "",
+        name: "Entire Screen",
+        thumbnail: nativeImage.createEmpty()
+      } satisfies Electron.DesktopCapturerSource]);
+    if(lock) {
+      const view = new BrowserView({
+        webPreferences: {
+          preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js"),
+          nodeIntegration: false,
+          contextIsolation: true,
+          sandbox: false,
+          enableWebSQL: false,
+          webgl: false,
+          autoplayPolicy: "user-gesture-required"
+        }
+      });
+      ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
+        if(event.sender === view.webContents)
+          return await sources;
+        else
+          return null;
+      });
+      const autoResize = () => setImmediate(() => view.setBounds({
+        ...win.getBounds(),
+        x:0,
+        y:0,
+      }));
+      ipcMain.handleOnce("capturer-get-settings", () => {
+        return appConfig.value.screenShareStore;
+      });
+      ipcMain.once("closeCapturerView", (_event,data:Electron.Streams) => {
+        win.removeBrowserView(view);
+        view.webContents.delete();
+        win.removeListener("resize", autoResize);
+        ipcMain.removeHandler("capturer-get-settings");
+        callback(data);
+        lock = false;
+      });
+      win.setBrowserView(view);
+      void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
+      view.webContents.once("did-finish-load", () => {
+        autoResize();
+        win.on("resize", autoResize);
+      });
+    } else void sources.then(sources => {
+      const { id, name } = sources[0] ?? {};
+      if(id === undefined || name === undefined)
+        callback(null as unknown as Electron.Streams);
+      else
+        callback({video: { id, name }, audio: "loopbackWithMute"});
+    });
+  });
+
   // IPC events validated by secret "API" key and sender frame.
   internalWindowEvents.on("api", (safeApi:string) => {
-    /** Determines whenever another request to desktopCapturer is processed. */
-    let lock = false;
-    ipcMain.removeHandler("desktopCapturerRequest");
-    ipcMain.handle("desktopCapturerRequest", (event, api:unknown) => {
-      if(safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
-      return new Promise((resolvePromise) => {
-        // Handle lock and check for a presence of another BrowserView.
-        if(lock || win.getBrowserViews().length !== 0)
-          return new Error("Main process is busy by another request.");
-        // Fail when client has denied the permission to the capturer.
-        if(!appConfig.value.settings.privacy.permissions["display-capture"]) {
-          resolvePromise("Permission denied");
-          return;
-        }
-        lock = !app.commandLine.getSwitchValue("enable-features")
-          .includes("WebRTCPipeWireCapturer") ||
-          process.env["XDG_SESSION_TYPE"] !== "wayland" ||
-          process.platform === "win32";
-        const sources = lock || capturerApiSafe ?
-          // Use desktop capturer where it doesn't crash.
-          desktopCapturer.getSources({
-            types: ["screen", "window"],
-            fetchWindowIcons: lock,
-            thumbnailSize: lock ? {width: 150, height: 150 } : {width: 0, height: 0}
-          // Workaround #328: Segfault on `desktopCapturer.getSources()` since Electron 22
-          }) : Promise.resolve([{
-            id: "screen:1:0",
-            appIcon: nativeImage.createEmpty(),
-            display_id: "",
-            name: "Entire Screen",
-            thumbnail: nativeImage.createEmpty()
-          } satisfies Electron.DesktopCapturerSource]);
-        if(lock) {
-          const view = new BrowserView({
-            webPreferences: {
-              preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js"),
-              nodeIntegration: false,
-              contextIsolation: true,
-              sandbox: false,
-              enableWebSQL: false,
-              webgl: false,
-              autoplayPolicy: "user-gesture-required"
-            }
-          });
-          ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
-            if(event.sender === view.webContents)
-              return [await sources, flags.screenShareAudio];
-            else
-              return null;
-          });
-          const autoResize = () => setImmediate(() => view.setBounds({
-            ...win.getBounds(),
-            x:0,
-            y:0,
-          }));
-          ipcMain.handleOnce("capturer-get-settings", () => {
-            return appConfig.value.screenShareStore;
-          });
-          ipcMain.once("closeCapturerView", (_event,data:unknown) => {
-            win.removeBrowserView(view);
-            view.webContents.delete();
-            win.removeListener("resize", autoResize);
-            ipcMain.removeHandler("capturer-get-settings");
-            resolvePromise(data);
-            lock = false;
-          });
-          win.setBrowserView(view);
-          void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
-          view.webContents.once("did-finish-load", () => {
-            autoResize();
-            win.on("resize", autoResize);
-          });
-        } else {
-          sources.then(sources => resolvePromise({
-            audio: flags.screenShareAudio ? {
-              mandatory: {
-                chromeMediaSource: "desktop",
-                chromeMediaSourceId: sources[0]?.id
-              }
-            } : false,
-            video: {
-              mandatory: {
-                chromeMediaSource: "desktop",
-                chromeMediaSourceId: sources[0]?.id
-              }
-            }
-          })).catch(error => console.error(error));
-        }
-        return;
-      });
-    });
     ipcMain.removeAllListeners("paste-workaround");
     ipcMain.on("paste-workaround", (event, api:unknown) => {
       if(safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;

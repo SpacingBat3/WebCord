@@ -3,7 +3,6 @@ import { clipboard } from "electron/common";
 import { generateSafeKey, navigate } from "../modules/api";
 import { wLog } from "../../common/global";
 import { appInfo } from "../../common/modules/client";
-import desktopCapturerPicker from "../modules/capturer";
 import L10N from "../../common/modules/l10n";
 
 if (window.location.protocol === "file:") {
@@ -24,7 +23,6 @@ if (window.location.protocol === "file:") {
    * by the Context Bridge.
    */
   const contextBridgeApiKey = generateSafeKey();
-  contextBridge.exposeInMainWorld(contextBridgeApiKey,() => desktopCapturerPicker(contextBridgeApiKey));
 
   /*
    * Expose API key back to the main process.

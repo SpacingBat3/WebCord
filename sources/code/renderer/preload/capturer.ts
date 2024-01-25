@@ -53,26 +53,19 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
   }
 }
 
-type ExpectedIncomingResult = [
-  /** List of sources fetched from the Electron API. */
-  sources: Electron.DesktopCapturerSource[],
-  /** Whenever audio has been enforced by command-line flags. */
-  screenShareAudio: boolean
-];
+type ExpectedIncomingResult = Electron.DesktopCapturerSource[];
 
 window.addEventListener("DOMContentLoaded", () => {
-  let audioSupport = false;
   const audioButton = document.getElementById("capturer-sound") as HTMLInputElement|null;
   ipc.invoke("getDesktopCapturerSources")
     .then((result:null|ExpectedIncomingResult) => {
       if(result === null) {
-        ipc.send("closeCapturerView", new Error("Unknown sources list."));
+        ipc.send("closeCapturerView", null);
       } else {
         {
           const l10n = new L10N().client.dialog.screenShare;
           const closeButton = document.getElementById("capturer-close") as HTMLButtonElement|null;
-          if((process.platform === "win32" || result[1]) && audioButton) {
-            audioSupport = true;
+          if((process.platform === "win32") && audioButton) {
             audioButton.disabled = false;
             audioButton.title = l10n.sound.system;
             void ipc.invoke("capturer-get-settings")
@@ -91,35 +84,26 @@ window.addEventListener("DOMContentLoaded", () => {
           if(closeButton) closeButton.title = l10n.close;
         }
         try {
-          renderCapturerContainer(result[0]);
+          renderCapturerContainer(result);
           [...document.querySelectorAll(".capturer-button")].map(button =>
             button.addEventListener("click", () => {
-              const id = button.getAttribute("data-id");
-              const source = result[0].find(source => source.id === id);
-              if (!source) {
+              const bid = button.getAttribute("data-id");
+              const {id, name} = result.find(source => source.id === bid) ?? {};
+              if (id === undefined || name === undefined) {
                 throw new Error('Source with id: "' + (id ?? "[null]") + '" does not exist!');
               }
               ipc.send("closeCapturerView", {
-                audio: audioSupport && (audioButton?.checked ?? false) ? {
-                  mandatory: {
-                    chromeMediaSource: "desktop"
-                  }
-                } : false,
-                video: {
-                  mandatory: {
-                    chromeMediaSource: "desktop",
-                    chromeMediaSourceId: source.id
-                  }
-                }
-              });
+                video: { id, name } satisfies Electron.Video,
+                audio: "loopbackWithMute"
+              } satisfies Electron.Streams);
             })
           );
           document.getElementById("capturer-close")
-            ?.addEventListener("click", () => ipc.send("closeCapturerView", "Permission denied"));
-        } catch(reason) {
-          ipc.send("closeCapturerView", reason);
+            ?.addEventListener("click", () => ipc.send("closeCapturerView", null));
+        } catch {
+          ipc.send("closeCapturerView", null);
         }
       }
     })
-    .catch(reason => ipc.send("closeCapturerView", reason));
+    .catch(() => ipc.send("closeCapturerView", null));
 });

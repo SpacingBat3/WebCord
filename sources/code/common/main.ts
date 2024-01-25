@@ -52,7 +52,6 @@ const argvConfig = Object.freeze(({
     "user-agent-version": { type: "string" },
     "user-agent-device": { type: "string" },
     "user-agent-platform": { type: "string" },
-    "force-audio-share-support": { type: "boolean" },
     "add-css-theme": { type: "boolean" },
     "gpu-info": { type: "string" },
     "safe-mode": { type: "boolean" }
@@ -103,13 +102,7 @@ const argv = Object.freeze(parseArgs(argvConfig));
 /** Whenever `--start-minimized` or `-m` switch is used when running client. */
 let startHidden = false,
   /** Whenever WebCord starts in "Safe Mode". Default is `false`. */
-  safeMode = false,
-  /**
-   * Force enables screen share audio support. Disabled by the default.
-   * 
-   * **Might bring undesirable consequences on unsupported platforms**.
-   */
-  screenShareAudio = false;
+  safeMode = false;
 
 const userAgent: Partial<{
   replace: Parameters<typeof getUserAgent>[2];
@@ -171,7 +164,6 @@ let overwriteMain: (() => unknown) | undefined;
       renderLine("user-agent-platform", "Platform to replace in the user agent."),
       renderLine("user-agent-version", "Version of platform in user agent."),
       renderLine("user-agent-device", "Device identifier in the user agent (Android)."),
-      renderLine("force-audio-share-support", "Force support for sharing audio in screen share."),
       renderLine("add-css-theme", "Adds theme to WebCord using file picker."),
       renderLine("safe-mode", "Starts WebCord in 'Safe Mode'.")/*,
       renderLine(["remove-css-theme=" + kolor.yellow("{name}")], "Removes WebCord theme by "+kolor.yellow("{name}")),
@@ -278,8 +270,6 @@ let overwriteMain: (() => unknown) | undefined;
         throw new Error("Flag 'gpu-info' should include a value of type '\"basic\"|\"complete\"'.");
     }
   }
-  if(argv.values["force-audio-share-support"] === true)
-    screenShareAudio = true;
   if("add-css-theme" in argv.values) {
     overwriteMain = () => {
       styles.add()
@@ -355,7 +345,7 @@ function main(): void {
       checkVersion(updateInterval).catch(commonCatches.print);
     }, 30/*min*/*60000);
     checkVersion(updateInterval).catch(commonCatches.print);
-    const mainWindow = createMainWindow({startHidden, screenShareAudio});
+    const mainWindow = createMainWindow(startHidden);
     
     // WebSocket server
     import("../main/modules/socket.mjs")
