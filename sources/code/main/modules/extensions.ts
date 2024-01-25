@@ -148,8 +148,8 @@ async function loadStyles(webContents:Electron.WebContents) {
                 .then(data => webContents.insertCSS(data))
             );
           callback(themeIDs);
-        }).catch(reason => reject(reason));
-      }).catch(reason => reject(reason));
+        }).catch(reason => reject(reason as Error));
+      }).catch(reason => reject(reason as Error));
   });
   watch(stylesDir).once("change", () => {
     webContents.reload();
