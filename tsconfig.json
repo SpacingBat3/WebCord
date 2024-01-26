@@ -37,5 +37,5 @@
             "marked-*": ["./node_modules/marked-*/src/index.d.ts"]
         }
     },
-    "include": ["sources/code/**/*.ts", "sources/code/main/modules/socket.mts", "sources/code/utility/ws.ts"]
+    "include": ["sources/code/**/*.ts", "sources/code/**/*.mts",]
 }

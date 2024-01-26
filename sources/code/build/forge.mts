@@ -4,14 +4,15 @@
 
 // Let's import some keys from the package.json:
 
-import { existsSync } from "fs";
-import { readFile, writeFile, rm } from "fs/promises";
-import { resolve } from "path";
+import { resolve, dirname } from "node:path";
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { readFile, writeFile, rm } from "node:fs/promises";
 import { FuseVersion, FuseV1Options } from "@electron/fuses";
-import { Person, PackageJSON } from "../common/modules/package";
-
-import type { BuildInfo } from "../common/global";
 import type { ForgeConfig } from "@electron-forge/shared-types";
+
+import { Person, PackageJSON } from "../common/modules/package.js";
+import type { BuildInfo } from "../common/global.js";
 
 // Makers
 
@@ -36,7 +37,7 @@ import { FusesPlugin } from "@electron-forge/plugin-fuses";
 // Constrains
 
 const packageJson = new PackageJSON(["author","version","name"]);
-const projectPath = resolve(__dirname, "../../..");
+const projectPath = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const appUserModelId = process.env["WEBCORD_WIN32_APPID"];
 const flatpakId = process.env["WEBCORD_FLATPAK_ID"]?.toLowerCase() ??
   "io.github.spacingbat3.webcord";
@@ -274,4 +275,4 @@ const config:ForgeConfig = {
 };
 
 /* eslint-disable-next-line import/no-unused-modules *//* Module entry point */
-module.exports = config;
+export default config;
