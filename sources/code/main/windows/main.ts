@@ -26,6 +26,7 @@ import { commonCatches } from "../modules/error";
 import type { PartialRecursive } from "../../common/global";
 import { nativeImage } from "electron/common";
 import { satisfies as rSatisfies } from "semver";
+import { existsSync } from "fs";
 
 type MainWindowFlags = [
   startHidden: boolean
@@ -63,7 +64,9 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       safeDialogs: true, // prevents dialog spam by the website
       autoplayPolicy: "no-user-gesture-required"
     },
-    ...(process.platform !== "win32" ? {icon: appInfo.icons.app} : {}),
+    ...(process.platform !== "win32" ? {icon: appInfo.icons.app} :
+      existsSync(resolve(app.getAppPath(),"sources/assets/icons/app.ico")) ?
+        {icon: resolve(app.getAppPath(),"sources/assets/icons/app.ico")} : {}),
   });
   win.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedURL) => {
     if (errorCode <= -100 && errorCode >= -199)
