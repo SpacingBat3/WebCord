@@ -211,9 +211,9 @@ export function wordWrap(long:string,maxr:number,maxc:number):string {
 
 /** A definitions for default font families that will be used in Electron. */
 export const fonts = Object.freeze({
-  standard: process.platform === "win32" ? "SegoeUI" as const :
+  standard: process.platform === "win32" ? "Segoe UI" as const :
     process.platform === "darwin" ? "SF Pro" as const : "Sans" as const,
-  sansSerif: process.platform === "win32" ? "SegoeUI" as const :
+  sansSerif: process.platform === "win32" ? "Segoe UI" as const :
     process.platform === "darwin" ? "SF Pro" as const : "Sans" as const,
   serif: process.platform === "win32" ? "Times New Roman" as const :
     process.platform === "darwin" ? "New York" as const : "Serif" as const,
