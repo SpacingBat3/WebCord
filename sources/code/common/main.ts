@@ -52,6 +52,7 @@ const argvConfig = Object.freeze(({
     "user-agent-version": { type: "string" },
     "user-agent-device": { type: "string" },
     "user-agent-platform": { type: "string" },
+    "user-agent-arch": { type: "string" },
     "add-css-theme": { type: "boolean" },
     "gpu-info": { type: "string" },
     "safe-mode": { type: "boolean" }
@@ -164,6 +165,7 @@ let overwriteMain: (() => unknown) | undefined;
       renderLine("user-agent-platform", "Platform to replace in the user agent."),
       renderLine("user-agent-version", "Version of platform in user agent."),
       renderLine("user-agent-device", "Device identifier in the user agent (Android)."),
+      renderLine("user-agent-arch", "Architecture to replace in the user agent."),
       renderLine("add-css-theme", "Adds theme to WebCord using file picker."),
       renderLine("safe-mode", "Starts WebCord in 'Safe Mode'.")/*,
       renderLine(["remove-css-theme=" + kolor.yellow("{name}")], "Removes WebCord theme by "+kolor.yellow("{name}")),
@@ -187,7 +189,8 @@ let overwriteMain: (() => unknown) | undefined;
 
   if("user-agent-device" in argv.values ||
       "user-agent-version" in argv.values ||
-      "user-agent-platform" in argv.values)
+      "user-agent-platform" in argv.values ||
+      "user-agent-arch" in argv.values)
     userAgent.replace = {
       platform: typeof argv.values["user-agent-platform"] === "string" ?
         argv.values["user-agent-platform"] :
@@ -197,7 +200,10 @@ let overwriteMain: (() => unknown) | undefined;
         process.getSystemVersion(),
       device: typeof argv.values["user-agent-device"] === "string" ?
         argv.values["user-agent-device"] :
-        ""
+        undefined,
+      arch: typeof argv.values["user-agent-arch"] === "string" ?
+        argv.values["user-agent-arch"] :
+        process.arch,
     };
     
   if(argv.values["start-minimized"] === true)
