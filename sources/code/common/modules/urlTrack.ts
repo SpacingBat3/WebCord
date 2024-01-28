@@ -6,7 +6,7 @@ export default function removeTrackingFromURIs(url:URL|string) {
   switch(urlObj.hostname) {
     case "cdn.discordapp.com":
       for(const el of [...urlObj.searchParams])
-        urlObj.searchParams.delete(el[0],el[1]);
+        urlObj.searchParams.delete(...el);
       break;
   }
   return urlObj;
