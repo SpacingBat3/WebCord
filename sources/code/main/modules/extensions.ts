@@ -19,7 +19,7 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
  * 
  * **Experimental** – it is unknown if that would work properly for all themes.
  */
-async function parseImports(cssString: string, maxTries=5):Promise<string> {
+async function parseImports(cssString: string, importCalls:string[], maxTries=5):Promise<string> {
   const anyImport = /^@import .+?$/gm;
   if(!anyImport.test(cssString)) return cssString;
   const promises:Promise<string>[] = [];
@@ -27,6 +27,11 @@ async function parseImports(cssString: string, maxTries=5):Promise<string> {
     const matches = /^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m.exec(singleImport);
     if(matches?.[0] === undefined || matches[1] === undefined) return;
     const file = matches[1];
+    if(importCalls.includes(file)) {
+      promises.push(Promise.reject(new Error("Circular reference in CSS imports are disallowed!")));
+      return;
+    }
+    importCalls.push(file);
     promises.push(fetchOrRead(file)
       .then(data => {
         if (data.download)
@@ -50,7 +55,7 @@ async function parseImports(cssString: string, maxTries=5):Promise<string> {
       throw new Error("Couldn't resolve CSS theme imports, aborting...");
   }
   if(anyImport.test(cssString)) {
-    return parseImports(cssString, maxTries);
+    return parseImports(cssString, importCalls, maxTries);
   }
   return cssString;
 }
@@ -120,16 +125,16 @@ async function loadStyles(webContents:Electron.WebContents) {
     // Read CSS module directories.
     readdir(stylesDir)
       .then(paths => {
-        const promises:Promise<Buffer>[] = [];
+        const promises:Promise<[string,Buffer]>[] = [];
         for(const path of paths) {
           const index = resolve(stylesDir,path);
           if (!path.endsWith(".theme.css") && statSync(index).isFile())
-            promises.push(readFile(index));
+            promises.push(Promise.all([index,readFile(index)]));
         }
-        Promise.all(promises).then(dataArray => {
+        Promise.all(promises).then(resArray => {
           const themeIDs:Promise<string>[] = [];
           const decrypt = async (string:Buffer) => {
-            if(!safeStorage.isEncryptionAvailable() && !app.isReady())
+            if(!safeStorage.isEncryptionAvailable() && !app.isReady() && process.platform !== "darwin")
               await app.whenReady();
             if(!safeStorage.isEncryptionAvailable())
               return string.toString();
@@ -137,10 +142,10 @@ async function loadStyles(webContents:Electron.WebContents) {
               throw new Error("One of loaded styles was not encrypted and could not be loaded.");
             return safeStorage.decryptString(string);
           };
-          for(const data of dataArray)
+          for(const res of resArray)
             themeIDs.push(
-              decrypt(data)
-                .then(data => parseImports(data))
+              decrypt(res[1])
+                .then(data => parseImports(data,[res[0]]))
                 /* Makes all CSS variables and color / background properties
                  * `!important` (this should fix most styles).
                  */
