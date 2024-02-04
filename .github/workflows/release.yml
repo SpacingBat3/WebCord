@@ -24,7 +24,7 @@ jobs:
             runner: macos-latest
             arch: x64 #,arm64,universal
           - name: macOS-arm64
-            runner: macos-latest
+            runner: macos-14
             arch: arm64
 
     name: ${{ matrix.name }} (${{ matrix.arch }})
