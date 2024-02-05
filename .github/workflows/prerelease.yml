@@ -42,7 +42,7 @@ jobs:
       - name: TSC cache
         uses: actions/cache@v3
         with:
-          key: tsc-${{ matrix.build }}
+          key: tsc-release
           path: |
             app
             cache/tsc.json
