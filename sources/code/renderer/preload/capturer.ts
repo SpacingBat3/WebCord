@@ -55,6 +55,10 @@ function renderCapturerContainer(sources:Electron.DesktopCapturerSource[]) {
 
 type ExpectedIncomingResult = Electron.DesktopCapturerSource[];
 
+const audioSupport = process.platform === "win32" || (
+  process.platform !== "darwin" && Number(process.versions.electron.split(".")[0]) >= 29
+);
+
 window.addEventListener("DOMContentLoaded", () => {
   const audioButton = document.getElementById("capturer-sound") as HTMLInputElement|null;
   ipc.invoke("getDesktopCapturerSources")
@@ -65,7 +69,7 @@ window.addEventListener("DOMContentLoaded", () => {
         {
           const l10n = new L10N().client.dialog.screenShare;
           const closeButton = document.getElementById("capturer-close") as HTMLButtonElement|null;
-          if((process.platform === "win32") && audioButton) {
+          if(audioSupport && audioButton) {
             audioButton.disabled = false;
             audioButton.title = l10n.sound.system;
             void ipc.invoke("capturer-get-settings")
@@ -94,7 +98,9 @@ window.addEventListener("DOMContentLoaded", () => {
               }
               ipc.send("closeCapturerView", {
                 video: { id, name } satisfies Electron.Video,
-                audio: "loopbackWithMute"
+                ...((audioButton?.checked??false)&&audioSupport ?
+                  { audio: "loopbackWithMute" } : {}
+                )
               } satisfies Electron.Streams);
             })
           );
