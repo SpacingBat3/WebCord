@@ -19,6 +19,9 @@ application-specific flags:
 - **`--gpu-info=basic|complete`** – displays a raw GPU information from Chromium
   in form of a JavaScript object.
 
+# Environment variables
+`ELECTRON_OZONE_PLATFORM_HINT=wayland` - Forces Wayland on Electron apps using Electron 28 or higher. ([More information.](https://wiki.archlinux.org/title/Wayland#Electron))
+
 # Build flags:
 
 ## 1. In Electron Forge
