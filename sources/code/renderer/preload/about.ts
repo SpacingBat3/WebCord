@@ -16,12 +16,12 @@ import { readFile } from "fs/promises";
  * the network and cleanup the code.
  */
 async function getUserAvatar(person: Person, size = 96) {
-  const sources = [], promises = [], controler = new AbortController();
+  const sources = [], promises = [], controller = new AbortController();
   sources.push("https://github.com/"+encodeURIComponent(person.name)+".png?size="+size.toString());
   if(person.email !== undefined)
     sources.push("https://gravatar.com/avatar/"+createHash("md5").update(person.email).digest("hex")+"?d=404&s="+size.toString());
   for(const source of sources) {
-    promises.push(fetch(source, { signal: controler.signal }).then(async (data) => {
+    promises.push(fetch(source, { signal: controller.signal }).then(async (data) => {
       if(data.ok && (data.headers.get("Content-Type")?.startsWith("image") ?? false)) {
         const blobUrl =  URL.createObjectURL(await data.blob());
         const image = document.createElement("img");
@@ -34,7 +34,7 @@ async function getUserAvatar(person: Person, size = 96) {
         throw new Error("[Avatar] HTTP "+data.status.toString()+data.statusText);
     }));
   }
-  return await Promise.any(promises).finally(() => controler.abort());
+  return await Promise.any(promises).finally(() => controller.abort());
 }
 
 function addContributor(person: Person, role?: string) {

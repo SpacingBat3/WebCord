@@ -63,9 +63,6 @@ function checkPlatformKey(key:string) {
   switch(key as NodeJS.Platform|"unix") {
     case "win32":
     case "darwin":
-    case "linux":
-    case "freebsd":
-    case "openbsd":
       return process.platform === key;
     case "unix":
       return process.platform !== "win32";

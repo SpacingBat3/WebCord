@@ -43,23 +43,18 @@ export function getRecommendedGPUFlags() {
 }
 
 /**
- * An experimental function to return information about recommended flags to
- * improve the app's integration within the OS.
- * 
- * This is currently used only for Wayland to enable screen recording and use
- * recommended flags for native Wayland if `--ozone-platform=wayland` is used
- * (see {@link getRecommendedGPUFlags} for GPU optimizations for Wayland).
+ * A function to return information about recommended flags to improve
+ * the app's integration within the OS.
  */
 export function getRecommendedOSFlags() {
   const switches: ([string]|[string,string])[] = [];
-  if(isWaylandNative) {
-    switches.push(
-      ["enable-features","UseOzonePlatform,WebRTCPipeWireCapturer,WaylandWindowDecorations"]
-    );
-  } else if(isWayland) {
-    switches.push(
-      ["enable-features","WebRTCPipeWireCapturer"]
-    );
-  }
+  // Recommended switches when running on Wayland Native
+  if(isWaylandNative) switches.push(
+    ["enable-features","UseOzonePlatform,WebRTCPipeWireCapturer,WaylandWindowDecorations"]
+  );
+  // Recommended switches for XWayland
+  else if(isWayland) switches.push(
+    ["enable-features","WebRTCPipeWireCapturer"]
+  );
   return switches;
 }
