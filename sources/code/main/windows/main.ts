@@ -442,13 +442,13 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     void loadChromiumExtensions(win.webContents.session);
   
   /**
-   * Whenever `desktopCapturer.getSources()` API is expected to crash
-   * with current Electron version the application is running on.
+   * Limitations for APIs to allow running WebCord properly with different
+   * Electron releases.
    */
-  const capturerApiSafe = rSatisfies(
-    process.versions.electron,
-    "<22.0.0 || >=26.0.0"
-  );
+  const apiSafe = Object.freeze({
+    capturer: rSatisfies(process.versions.electron,"<22.0.0 || >=26.0.0"),
+    unixAudioSharing: Number(process.versions.electron.split(".")[0])>=29
+  });
 
   /** Determines whenever another request to desktopCapturer is processed. */
   let lock = false;
@@ -479,7 +479,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       process.env["XDG_SESSION_TYPE"] !== "wayland" ||
       process.platform === "win32";
 
-    const sources = lock || capturerApiSafe ?
+    const sources = lock || apiSafe.capturer ?
       // Use desktop capturer where it doesn't crash.
       desktopCapturer.getSources({
         types: ["screen", "window"],
@@ -533,13 +533,10 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         autoResize();
         win.on("resize", autoResize);
       });
-    } else void sources.then(sources => {
-      const { id, name } = sources[0] ?? {};
-      if(id === undefined || name === undefined)
-        callback(null as unknown as Electron.Streams);
-      else
-        callback({video: { id, name }, audio: "loopbackWithMute"});
-    });
+    } else void sources.then(sources => sources[0] ? callback({
+      video: sources[0],
+      ...(apiSafe.unixAudioSharing ? {audio:"loopbackWithMute"} : {})
+    }) : callback(null as unknown as Electron.Streams));
   });
 
   // IPC events validated by secret "API" key and sender frame.
