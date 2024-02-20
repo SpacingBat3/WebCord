@@ -314,9 +314,10 @@ let overwriteMain: (() => unknown) | undefined;
       applyFlags(flag[0], flag[1]);
 
   // Workaround #236: WebCord calls appear as players in playerctl
+  // Workaround Chromium bug: monitor inputs are silenced during screen share
   if(process.platform !== "win32" && process.platform !== "darwin" && !safeMode) {
     const enabledFeatures = app.commandLine.getSwitchValue("enable-features");
-    ["MediaSessionService","HardwareMediaKeyHandling"].forEach((feature) => {
+    for(const feature of ["MediaSessionService","HardwareMediaKeyHandling","WebRtcAllowInputVolumeAdjustment"])
       if(!enabledFeatures.includes(feature)) {
         const disabledFeatures = app.commandLine.getSwitchValue("disable-features");
         console.debug("[FEATURE] Disabling '%s'...",feature);
@@ -326,7 +327,6 @@ let overwriteMain: (() => unknown) | undefined;
           app.commandLine.appendSwitch("disable-features",disabledFeatures+","+feature);
         }
       }
-    });
   }
 }
 
