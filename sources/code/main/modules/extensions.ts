@@ -27,8 +27,7 @@ async function parseImports(cssString: string, importCalls: string[], maxTries=5
   cssString.match(anyImport)?.forEach(singleImport => {
     const matches = /^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m.exec(singleImport);
     if(matches?.[0] === undefined || matches[1] === undefined) return;
-    const lastUrl = importCalls[importCalls.length - 1] ?? "";
-    const file = resolve(lastUrl, matches[1]);
+    const file = resolve(importCalls.at(-1) ?? "", matches[1]);
     if(importCalls.includes(file)) {
       promises.push(Promise.reject(new Error("Circular reference in CSS imports are disallowed: " + file)));
       return;
