@@ -22,7 +22,7 @@ async function fetchOrRead(file:string, signal?:AbortSignal) {
 async function parseImports(cssString: string, importCalls:string[], maxTries=5):Promise<string> {
   const anyImport = /^@import .+?$/gm;
   if(!anyImport.test(cssString)) return cssString;
-  const promises:Promise<string>[] = [];
+  const promises:Promise<unknown>[] = [];
   cssString.match(anyImport)?.forEach(singleImport => {
     const matches = /^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m.exec(singleImport);
     if(matches?.[0] === undefined || matches[1] === undefined) return;
@@ -31,7 +31,6 @@ async function parseImports(cssString: string, importCalls:string[], maxTries=5)
       promises.push(Promise.reject(new Error("Circular reference in CSS imports are disallowed!")));
       return;
     }
-    importCalls.push(file);
     promises.push(fetchOrRead(file)
       .then(data => {
         if (data.download)
@@ -40,19 +39,17 @@ async function parseImports(cssString: string, importCalls:string[], maxTries=5)
           return data.read.then(data => data.toString());
       })
       .then(content => cssString = cssString.replace(singleImport, content))
+      .then(() => importCalls.push(file))
     );
   });
-  try {
-    await Promise.all(promises);
-  } catch(error) {
+  const result = await Promise.allSettled(promises);
+  const rejection = result.findIndex(({status})=> status === "rejected");
+  if(rejection >= 0) {
     if(maxTries > 0) {
       console.warn("Couldn't resolve CSS theme imports, retrying again...");
       maxTries--;
     }
-    else if(error instanceof Error)
-      throw error;
-    else
-      throw new Error("Couldn't resolve CSS theme imports, aborting...");
+    else await promises[rejection];
   }
   if(anyImport.test(cssString)) {
     return parseImports(cssString, importCalls, maxTries);
