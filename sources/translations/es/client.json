@@ -4,7 +4,10 @@
         "quit": "Quitar",
         "mention": {
             "one": "mención",
-            "other": "menciones"
+            "other": "menciones",
+            "zero": "cero",
+            "many": "Muchos mencionan",
+            "few": "Algunos mencionan"
         }
     },
     "context": {
