@@ -47,6 +47,7 @@
     "@electron-forge/publisher-github": "^7.1.0",
     "@electron/fuses": "^1.5.0",
     "@reforged/maker-appimage": "^4.0.0",
+    "@stylistic/eslint-plugin": "^1.8.0",
     "@tsconfig/strictest": "^2.0.0",
     "@types/dompurify": "^3.0.1",
     "@types/node": "^18.6.4",
