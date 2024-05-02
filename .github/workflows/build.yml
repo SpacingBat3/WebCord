@@ -87,7 +87,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies (NPM${{ matrix.name == 'macOS' && '+PIP' || '' }})
-        run: ${{ matrix.runner == 'macos-latest' && 'python -m pip install setuptools &&' || '' }} npm ci
+        run: ${{ matrix.runner == 'macos-latest' && 'python -m pip install setuptools --break-system-packages &&' || '' }} npm ci
 
       - name: Update dependencies
         if: ${{ matrix.build == 'latest' }}
