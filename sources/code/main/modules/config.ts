@@ -156,16 +156,18 @@ class Config<T> {
   #read(): unknown {
     const encodedData = readFileSync(this.#path+this.#pathExtension);
     let decodedData = encodedData.toString();
-    if(this.#pathExtension === FileExt.Encrypted)
+    if(this.#pathExtension === FileExt.Encrypted) try {
       decodedData = safeStorage.decryptString(encodedData);
-    return JSON.parse(decodedData);
+      return JSON.parse(decodedData);
+    } catch {}
+    return {};
   }
-  /** 
+  /**
    * Merges the configuration object with the another `object`.
-   * 
+   *
    * To do this, both old and new values are deeply merged,
    * where new values can overwite the old ones.
-   * 
+   *
    * @param object A JavaScript object that will be merged with the configuration object.
    */
 
@@ -270,7 +272,7 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
 
   /**
    * Initializes the EventListeners, usually **after** `window` is defined.
-   * 
+   *
    * @param window A `BrowserWindow` from which current window bounds are picked.
    */
 
@@ -283,7 +285,7 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
 
   /**
    * Reads the data from the current configuration
-   * 
+   *
    * @param windowName Name of the group in which other properties should be saved.
    * @param path Path to application's configuration. Defaults to `app.getPath('userData')+/windowState.json`
    * @param spaces Number of spaces that will be used for indentation of the configuration file.
