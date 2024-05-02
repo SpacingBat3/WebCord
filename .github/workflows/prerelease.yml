@@ -36,8 +36,14 @@ jobs:
           node-version: latest
           cache: npm
 
-      - name: Install dependencies (NPM${{ matrix.name == 'macOS' && '+PIP' || '' }})
-        run: ${{ matrix.runner == 'macos-latest' && 'python -m pip install setuptools &&' || '' }} npm ci
+      - name: Lock Python version (macOS only)
+        if: ${{ matrix.runner == 'macos-latest' || matrix.runner == 'macos-14' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+  
+      - name: Install dependencies (NPM)
+        run: npm ci
 
       - name: TSC cache
         uses: actions/cache@v3
