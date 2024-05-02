@@ -204,7 +204,7 @@ let overwriteMain: (() => unknown) | undefined;
         argv.values["user-agent-arch"] :
         process.arch,
     };
-    
+
   if(argv.values["start-minimized"] === true)
     startHidden = true;
   if(argv.values["safe-mode"] === true)
@@ -238,23 +238,29 @@ let overwriteMain: (() => unknown) | undefined;
           "   '" + kolor.blue(kolor.underline(directory)) + "'!\n"
         ].join("\n"));
         app.quit();
-      }).catch((err:NodeJS.ErrnoException) => {
-        const path = err.path !== undefined ? {
+      }).catch((err:unknown) => {
+        if(!(err instanceof Error)) return;
+        const path = "path" in err && typeof err.path === "string" ? {
           relative: relative(process.cwd(),err.path),
           absolute: resolvePath(process.cwd(),err.path),
-        } : {};
+          original: err.path
+        } : {original: ""};
         const finalPath = path.absolute !== undefined  ?
           path.absolute.length > path.relative.length ?
             path.relative :
             path.absolute :
           null;
+        const syscall = "syscall" in err && typeof err.syscall === "string" ? err.syscall : "";
+        const code = "code" in err && typeof err.code === "string" ? err.code : "";
         console.error([
-          "\n⛔️ " + kolor.red(kolor.bold(err.code ?? err.name)) + " " + (err.syscall ?? "") + ": ",
+          "\n⛔️ " + kolor.red(kolor.bold(
+            "code" in err && typeof err.code === "string" ? err.code : err.name
+          )) + " " + syscall + ": ",
           (finalPath !== null ? kolor.blue(kolor.underline(finalPath)) + ": " : ""),
-          err.message.replace((err.code ?? "") + ": ", "")
-            .replace(", " + (err.syscall ?? "") + " '" + (err.path ?? "") + "'", "") + ".\n"
+          err.message.replace(code + ": ", "")
+            .replace(", " + syscall + " '" + path.original + "'", "") + ".\n"
         ].join(""));
-        app.exit((err.errno??0)*(-1));
+        app.exit(("errno" in err && typeof err.errno === "number" ? err.errno : 0)*(-1));
       });
     };
   }
@@ -303,7 +309,7 @@ let overwriteMain: (() => unknown) | undefined;
     // Apply recommended GPU flags if user had opt in for them.
     for(const flag of getRecommendedGPUFlags())
       applyFlags(flag[0], flag[1]);
-  
+
   // Enable MiddleClickAutoscroll for all windows.
   if(process.platform !== "win32" &&
       appConfig.value.settings.advanced.unix.autoscroll && !safeMode)
@@ -351,7 +357,7 @@ function main(): void {
     }, 30/*min*/*60000);
     checkVersion(updateInterval).catch(commonCatches.print);
     const mainWindow = createMainWindow(startHidden);
-    
+
     // WebSocket server
     import("../main/modules/socket.mjs")
       .then(socket => socket.default())
@@ -392,7 +398,7 @@ app.on("web-contents-created", (_event, webContents) => {
     if (originUrl !== "" && (new URL(originUrl)).origin !== (new URL(url)).origin)
       event.preventDefault();
   });
-  
+
   // Handle renderer crashes.
   webContents.on("render-process-gone", (_event, details) => {
     console.error(kolor.bold("[WC_%s:%d]")+" %s", webContents.getProcessId(), details.exitCode, details.reason);
@@ -424,7 +430,7 @@ app.on("web-contents-created", (_event, webContents) => {
     if(protocols.allowed.includes(openUrl.protocol))
       protocolMeta.allow = true;
 
-    /* 
+    /*
      * If origins of `openUrl` and current webContents URL are different,
      * ask the end user to confirm if the URL is safe enough for him.
      * (unless an application user disabled that functionality)

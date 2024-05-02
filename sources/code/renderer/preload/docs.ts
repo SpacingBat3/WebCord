@@ -14,7 +14,7 @@ import { protocols } from "../../common/global";
 
 import {
   gfmHeadingId
-  //@ts-expect-error TS14790
+  //@ts-expect-error due to TS14790
 } from "marked-gfm-heading-id";
 
 const htmlFileUrl = document.URL;
@@ -22,7 +22,7 @@ const htmlFileUrl = document.URL;
 // Code highlighting and GFM heading IDs:
 
 marked.use(
-  //@ts-expect-error TS2379
+  //@ts-expect-error due to TS2379
   markedHighlight({
     highlight: (code,language) => hljs.getLanguage(language) ?
       hljs.highlight(code,{ language } ).value :
@@ -37,7 +37,7 @@ menu.id = "menu-hamburger";
 
 const menuHeader = document.createElement("p");
 
-/** 
+/**
  * Handles URL clicks – it will open websites in default browser and load
  * markdown files instead of trying it to open.
  */
@@ -64,7 +64,7 @@ function fixImages(container:HTMLElement) {
     logo.src=logo.src.replace("/sources/assets","");
   const newLogo = logo.cloneNode();
   logoAnchor.appendChild(newLogo);
-    
+
   // Remove badges (they require an internet connection).
   for(const image of container.getElementsByTagName("img"))
     if(image.src.startsWith("https:") && image.parentElement?.parentElement?.tagName === "P") {
@@ -177,7 +177,7 @@ document.addEventListener("readystatechange", () => {
       .finally(() => {
         ipc.send("documentation-show");
       })
-      .catch(error => {
+      .catch((error:unknown) => {
         if(error instanceof Error)
           throw error;
         else if(typeof error === "string")

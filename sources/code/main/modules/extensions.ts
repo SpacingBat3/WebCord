@@ -16,7 +16,7 @@ async function fetchOrRead(url:URL, signal?:AbortSignal) {
 /**
  * A function that recursively parses `@import` CSS statements, so they can be
  * understand for Electron on CSS insertion.
- * 
+ *
  * **Experimental** – it is unknown if that would work properly for all themes.
  */
 async function parseImports(cssString: string, importCalls: string[], maxTries=5):Promise<string> {
@@ -98,7 +98,7 @@ async function addStyle(window?:Electron.BrowserWindow) {
 
 /**
  * Loads CSS styles from `${userdata}/Themes` directory and observes their changes.
- * 
+ *
  * Loaded themes are encrypted with {@link safeStorage.encryptString} whenever
  * Electron decides that encryption is available.
  */
@@ -150,8 +150,8 @@ async function loadStyles(webContents:Electron.WebContents) {
                 .then(data => webContents.insertCSS(data))
             );
           callback(themeIDs);
-        }).catch(reason => reject(reason as Error));
-      }).catch(reason => reject(reason as Error));
+        }).catch((reason:unknown) => reject(reason as Error));
+      }).catch((reason:unknown) => reject(reason as Error));
   });
   watch(stylesDir).once("change", () => {
     webContents.reload();
@@ -161,12 +161,12 @@ async function loadStyles(webContents:Electron.WebContents) {
 
 /**
  * Loads **unpacked** Chromium extensions from `{userData}/Extensions/Chromium`.
- * 
+ *
  * Due to limitations of Electron, there's no full support to whole API of
  * Chromium extensions and there's likely no support at all to `v3` manifest
  * based extensions. See [*Chrome Extension Support*][chrome-ext] for more
  * details what should work and what might not have been implemented yet.
- * 
+ *
  * [chrome-ext]: https://www.electronjs.org/docs/latest/api/extensions "Electron API documentation"
  */
 export async function loadChromiumExtensions(session:Electron.Session) {

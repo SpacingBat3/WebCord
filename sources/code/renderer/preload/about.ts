@@ -40,10 +40,10 @@ async function getUserAvatar(person: Person, size = 96) {
 function addContributor(person: Person, role?: string) {
   const container = document.createElement("div");
   const description = document.createElement("div");
-    
+
   void getUserAvatar(person)
     .then(avatar => container.prepend(avatar));
-    
+
   container.classList.add("contributor");
 
   const nameElement = document.createElement("h2");
@@ -139,10 +139,10 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
   nameElement.innerText = details.appName + " ("+details.buildInfo.type+")";
   versionElement.innerText = "v" + details.appVersion + (details.buildInfo.commit !== undefined ? "-"+details.buildInfo.commit.substring(0, 7) : "");
   (document.getElementById("logo") as HTMLImageElement).src = appInfo.icons.app.toDataURL();
-    
+
   if(repoElement.tagName === "A")
     (repoElement as HTMLAnchorElement).href = details.appRepo??"";
-    
+
   for (const id of Object.keys(l10n.about)) {
     const element = document.getElementById(id);
     if(element)
@@ -222,7 +222,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
   // Get app details and inject them into the page
   const details = ipc.invoke("about.getDetails") as Promise<AboutWindowDetails>;
-  generateAppContent(l10n, details).catch(e => {
+  generateAppContent(l10n, details).catch((e:unknown) => {
     if(e instanceof Error)
       throw e;
     else if(typeof e === "string")
@@ -231,7 +231,7 @@ window.addEventListener("DOMContentLoaded", () => {
       console.error(e);
   });
   generateLicenseContent(l10n, details);
-        
+
   // Generate "credits"
   if(packageJson.data.author !== undefined)
     addContributor(new Person(packageJson.data.author), l10n.credits.people.author);

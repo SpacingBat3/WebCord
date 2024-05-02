@@ -161,7 +161,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         .reduce((previousValue,currentValue) => (previousValue??false) && (currentValue??false))??true;
     };
     /** Common handler for  */
-    const permissionHandler = (type:"request"|"check",webContentsUrl:string, permission:string, details:Electron.PermissionRequestHandlerHandlerDetails|Electron.PermissionCheckHandlerHandlerDetails):boolean|null => {
+    const permissionHandler = (type:"request"|"check",webContentsUrl:string, permission:string, details:Electron.PermissionRequest|Electron.MediaAccessPermissionRequest|Electron.PermissionCheckHandlerHandlerDetails):boolean|null => {
       // Verify URL address of the permissions.
       try {
         const webContents = new URL(webContentsUrl);
@@ -253,10 +253,11 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         // Either WebCord or system denies the request.
         default:
           if(permission === "media") {
+            const mediaTypes = "mediaTypes" in details ? details.mediaTypes : undefined;
             const promises:Promise<boolean>[] = [];
             (["camera","microphone"] as const).forEach(media => {
               const permission = media === "camera" ? "video" : "audio";
-              if(!(details.mediaTypes?.includes(permission)??false))
+              if(!(mediaTypes?.includes(permission)??false))
                 return;
               // macOS: try asking for media access whenever possible.
               if(process.platform === "darwin" && systemPreferences.getMediaAccessStatus(media) === "not-determined")
@@ -271,7 +272,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
               Promise.all(promises)
                 // Re-check permissions and return their values.
                 .then(dialogs => dialogs.reduce((prev,cur) => prev && cur, true))
-                .then(result => result && getMediaTypesPermission(details.mediaTypes))
+                .then(result => result && getMediaTypesPermission(mediaTypes))
                 .then(result => callback(result))
                 // Deny on failure.
                 .catch(() => callback(false));
@@ -340,7 +341,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       ];
       // Fetch status for ping and title from current title
       const status=typeof dirty === "string" ? true : dirty ? false : null;
-      win.setTitle((status === true ? "["+dirty+"] " : status === false ? "*" : "") + client + " - " + section + (group !== null ? " ("+group+")" : ""));
+      win.setTitle((status === true ? "["+(dirty as string)+"] " : status === false ? "*" : "") + client + " - " + section + (group !== null ? " ("+group+")" : ""));
       if(lastStatus === status || !tray) return;
       // Set tray icon and taskbar flash
       {
@@ -349,7 +350,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
           case true:
             icon = appInfo.icons.tray.warn;
             flash = true;
-            tooltipSuffix=` - ${dirty} ${l10nStrings.tray.mention[pluralRules.select(parseInt(`${dirty}`))]}`;
+            tooltipSuffix=` - ${dirty as string} ${l10nStrings.tray.mention[pluralRules.select(parseInt(dirty as string))]}`;
             break;
           case false:
             icon = appInfo.icons.tray.unread;
@@ -440,7 +441,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
   // Load extensions for builds of type "devel".
   if(getBuildInfo().type === "devel")
     void loadChromiumExtensions(win.webContents.session);
-  
+
   /**
    * Limitations for APIs to allow running WebCord properly with different
    * Electron releases.
