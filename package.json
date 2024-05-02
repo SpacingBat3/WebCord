@@ -55,7 +55,7 @@
     "@types/source-map-support": "^0.5.4",
     "@types/ws": "^8.5.1",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
-    "electron": "^29.0.0",
+    "electron": "^30.0.0",
     "eslint": "latest",
     "eslint-import-resolver-typescript": "latest",
     "eslint-plugin-import": "latest",
