@@ -30,17 +30,23 @@ jobs:
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: ${{ matrix.name == 'Windows' && 21 || 'latest' }}
           cache: npm
 
-      - name: Install dependencies (NPM${{ matrix.name == 'macOS' && '+PIP' || '' }})
-        run: ${{ matrix.runner == 'macos-latest' && 'python -m pip install setuptools --break-system-packages &&' || '' }} npm ci
+      - name: Lock Python version (macOS only)
+        if: ${{ matrix.runner == 'macos-latest' || matrix.runner == 'macos-14' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+    
+      - name: Install dependencies (NPM)
+        run: npm ci
 
       - name: TSC cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: tsc-prerelease
           path: |
