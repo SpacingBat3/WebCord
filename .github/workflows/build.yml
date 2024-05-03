@@ -26,8 +26,8 @@ jobs:
     name: "Test build"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: latest
           cache: npm
@@ -40,7 +40,7 @@ jobs:
         run: npm update
 
       - name: TSC cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: tsc-${{ matrix.deps }}
           path: |
@@ -48,7 +48,7 @@ jobs:
             cache/tsc.json
       
       - name: ESLint cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: eslint-${{ matrix.deps }}
           path: |
@@ -80,8 +80,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     needs: ['test']
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: latest
           cache: npm
@@ -100,7 +100,7 @@ jobs:
         run: npm update
 
       - name: TSC cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: tsc-${{ matrix.build }}
           path: |
@@ -116,14 +116,14 @@ jobs:
           command: npm run make -- -a ${{ matrix.arch }}
 
       - name: Upload distributables as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }}_${{ matrix.build }}
           path: out/devel/make/*
 
       - name: Upload lockfile as artifact
         if: ${{ matrix.build == 'latest' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }}-lockfile_updated
           path: package-lock.json

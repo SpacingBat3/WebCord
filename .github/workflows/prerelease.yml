@@ -30,8 +30,8 @@ jobs:
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: latest
           cache: npm
@@ -46,7 +46,7 @@ jobs:
         run: npm ci
 
       - name: TSC cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: tsc-release
           path: |
