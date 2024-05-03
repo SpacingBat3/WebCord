@@ -156,10 +156,14 @@ class Config<T> {
   #read(): unknown {
     const encodedData = readFileSync(this.#path+this.#pathExtension);
     let decodedData = encodedData.toString();
-    if(this.#pathExtension === FileExt.Encrypted) try {
-      decodedData = safeStorage.decryptString(encodedData);
+    try {
+      if(this.#pathExtension === FileExt.Encrypted)
+        decodedData = safeStorage.decryptString(encodedData);
       return JSON.parse(decodedData);
-    } catch {}
+    } catch(err) {
+      console.debug("[Config] Error in #read during config decoding.");
+      console.debug(err);
+    }
     return {};
   }
   /**
