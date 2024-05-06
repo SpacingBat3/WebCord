@@ -39,7 +39,7 @@
             "labels": {
                 "science": "Αποκλείστε τα γνωστά τελικά σημεία τηλεμετρίας (<code>/science</code> και <code>/tracing</code>).",
                 "typingIndicator": "Αποκλεισμούς Δείκτη πληκτρολόγησης (<code>/typing</code>).",
-                "fingerprinting": "Αποκλεισμός γνωστών μεθόδων δακτυλικών αποτυπωμάτων (<code>api.js</code> <code>και <code>cdn-cgi</code>)."
+                "fingerprinting": "Αποκλεισμός γνωστών μεθόδων δακτυλικών αποτυπωμάτων (<code>api.js</code> και <code>cdn-cgi</code>)."
             }
         },
         "permissions": {
