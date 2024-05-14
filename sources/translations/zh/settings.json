@@ -1,0 +1,118 @@
+{
+    "$schema": "../../../schemas/localization/settings.json",
+    "general": {
+        "name": "常规",
+        "menuBar": {
+            "name": "菜单栏",
+            "description": "更改原生菜单栏的可见性设置。",
+            "labels": {
+                "hide": "自动隐藏菜单栏（按<kbd>ALT</kbd>键切换可见性）。"
+            }
+        },
+        "tray": {
+            "name": "托盘",
+            "description": "更改系统托盘中图标的可见性。",
+            "labels": {
+                "disable": "禁用将窗口隐藏到系统托盘的功能。"
+            }
+        },
+        "taskbar": {
+            "name": "任务栏",
+            "description": "控制WebCord的任务栏条目的行为。",
+            "labels": {
+                "flash": "有新消息时闪烁任务栏按钮。"
+            }
+        },
+        "window": {
+            "name": "WebCord的主窗口",
+            "description": "控制显示客户端界面窗口的外观和行为。",
+            "labels": {
+                "transparent": "允许半透明窗口背景。",
+                "hideOnClose": "使用关闭按钮将窗口隐藏到托盘。"
+            }
+        }
+    },
+    "privacy": {
+        "name": "隐私",
+        "blockApi": {
+            "name": "Discord API拦截",
+            "description": "拦截Discord API请求以加强隐私保护。",
+            "labels": {
+                "science": "拦截已知的遥测端点（<code>/science</code> 和 <code>/tracing</code>）。",
+                "typingIndicator": "拦截输入指示器（<code>/typing</code>）。",
+                "fingerprinting": "拦截已知的指纹识别方法（<code>api.js</code> 和 <code>cdn-cgi</code>）。"
+            }
+        },
+        "permissions": {
+            "name": "权限",
+            "description": "允许或拒绝Discord网站的权限检查和请求。请注意，这里未列出的其他权限将被WebCord自动阻止。",
+            "labels": {
+                "video": "摄像头",
+                "audio": "麦克风",
+                "fullscreen": "全屏",
+                "notifications": "通知",
+                "display-capture": "屏幕捕获",
+                "background-sync": "后台同步"
+            }
+        }
+    },
+    "advanced": {
+        "name": "高级",
+        "csp": {
+            "name": "内容安全策略",
+            "description": "切换应用程序是否应忽略Discord的内容安全策略头部，并允许客户端为隐私和安全考虑设置自己的CSP。",
+            "labels": {
+                "enabled": "使用内置的内容安全策略。"
+            }
+        },
+        "cspThirdParty": {
+            "name": "第三方网站",
+            "description": "设置允许连接或显示内容的第三方网站列表。",
+            "labels": {
+                "gif": "GIF提供商"
+            },
+            "info": {
+                "googleStorageApi": "Discord上文件上传所需的！"
+            }
+        },
+        "currentInstance": {
+            "name": "Discord实例",
+            "description": "选择WebCord应连接到的实例。<b>实验性</b>，因为Fosscord实现尚未完全完成。"
+        },
+        "devel": {
+            "name": "开发者模式",
+            "description": "启用访问工具和未完成选项的功能，这些选项可能被视为破坏性或危险的。<b>免责声明</b>：启用此选项后，应用程序维护者不负责任何错误或问题——请不要报告它们！",
+            "labels": {
+                "enabled": "启用开发者模式。"
+            }
+        },
+        "redirection": {
+            "name": "跨源重定向行为",
+            "description": "控制跨源重定向上的操作。<b>这影响应用程序的安全性</b>。",
+            "labels": {
+                "warn": "始终警告用户关于跨源重定向到外部应用程序。"
+            }
+        },
+        "optimize": {
+            "name": "客户端优化",
+            "description": "尝试检测用户软件和硬件以应用自定义标志到Chromium引擎，这<b>可能</b>会提高Electron的性能或功能。<b>实验性</b>，因为Chromium默认不应用这些标志是有原因的。",
+            "labels": {
+                "gpu": "为当前活动的显卡优化客户端。"
+            }
+        },
+        "webApi": {
+            "name": "访问JavaScript API",
+            "description": "控制未特权（DOM）脚本中应允许的API。",
+            "labels": {
+                "webGl": "启用WebGL支持。"
+            }
+        },
+        "unix": {
+            "name": "Unix/类Unix操作系统的实验性功能",
+            "description": "启用被Chromium/Blink引擎标记为实验性的功能。<b>自行负责使用它们</b>。",
+            "labels": {
+                "autoscroll": "启用中键滚动（即<i>自动滚动</i>）。"
+            }
+        }
+    }
+}
