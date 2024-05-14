@@ -3,12 +3,12 @@
         "toggle": "切换",
         "quit": "退出",
         "mention": {
-            "one": "提及",
-            "other": "提及",
+            "one":"提及",
+            "other":"提及",
             "zero": "",
             "two": "",
-            "few": "",
-            "many": ""
+            "few":"",
+            "many":""
         }
     },
     "context": {
@@ -30,8 +30,8 @@
             "relaunch": "重新启动",
             "addon": {
                 "groupName": "扩展",
-                "loadNode": "加载Node扩展",
-                "loadChrome": "加载Chrome扩展"
+                "loadNode": "加载 node 扩展",
+                "loadChrome": "加载 Chrome 扩展"
             }
         },
         "edit": {
@@ -87,15 +87,15 @@
             },
             "question": {
                 "title": "权限请求处理",
-                "message": "您是否要授予Discord访问%s的权限？",
+                "message": "您是否要授予 Discord 访问%s的权限？",
                 "video": "摄像头",
                 "audio": "麦克风",
                 "notifications": "通知"
             }
         },
         "mod": {
-            "nodeExt": "WebCord Node.js插件",
-            "crx": "Chrome/Chromium扩展"
+            "nodeExt": "WebCord Node.js 插件",
+            "crx": "Chrome/Chromium 扩展"
         },
         "externalApp": {
             "title": "在外部应用中打开链接",
@@ -120,6 +120,6 @@
     },
     "log": {
         "singleInstance": "切换到现有窗口...",
-        "listenPort": "在端口%s监听。"
+        "listenPort": "在端口 %s 监听。"
     }
 }
