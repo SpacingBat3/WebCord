@@ -12,6 +12,9 @@
 <p align='right'><sub>
   Znasz 🇵🇱? Przejdź <a href='pl/Readme.md' title='Polski plik README'>tutaj</a>.
 </sub></p>
+<p align='right'><sub>
+  简体中文，请点击<a href='zh/Readme.md' title='zh-ch README'>这里</a>.
+</sub></p>
 <div align='center'>
 <a href='https://github.com/SpacingBat3/WebCord' title="WebCord's GitHub Repository">
   <picture>
