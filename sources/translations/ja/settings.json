@@ -100,6 +100,9 @@
             "description": "接続またはコンテンツを表示しても良いサードパーティーのウェブサイトのリストを設定。",
             "labels": {
                 "gif": "GIFプロバイダ"
+            },
+            "info": {
+                "googleStorageApi": "Discordにファイルをアップロードするように必要！"
             }
         },
         "redirection": {

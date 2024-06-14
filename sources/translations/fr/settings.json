@@ -38,7 +38,7 @@
             "labels": {
                 "science": "Bloquer les points de terminaison de télémétrie connus (<code>/science</code> et <code>/tracing</code>).",
                 "typingIndicator": "Bloquer l'indicateur de frappe (<code>/typing</code>).",
-                "fingerprinting": "Bloquer le script de fingerprinting <code>api.js</code>."
+                "fingerprinting": "Bloquer le script de fingerprinting (<code>api.js</code> et <code>cdn-cgi</code>)."
             },
             "description": "Bloquer les demandes API de Discord pour renforcer la confidentialité."
         },
@@ -69,6 +69,9 @@
             "name": "Sites Web de tiers",
             "labels": {
                 "gif": "Fournisseurs de GIF"
+            },
+            "info": {
+                "googleStorageApi": "Requis pour télécharger des fichiers sur Discord !"
             }
         },
         "currentInstance": {
