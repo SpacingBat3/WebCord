@@ -6,7 +6,9 @@
         "paste": "Coller",
         "dictionaryAdd": "Ajouter au dictionnaire local",
         "inspectElement": "Inspecter",
-        "copyURLText": "Copier le texte du lien"
+        "copyURLText": "Copier le texte du lien",
+        "copyImage": "Copier l'Image",
+        "copyImageURL": "Copier le lien de l'Image"
     },
     "menubar": {
         "enabled": "Activé",
@@ -23,7 +25,8 @@
         "edit": {
             "groupName": "Édition",
             "undo": "Annuler",
-            "redo": "Rétablir"
+            "redo": "Rétablir",
+            "selectAll": "Tout Sélectionner"
         },
         "view": {
             "groupName": "Affichage",
