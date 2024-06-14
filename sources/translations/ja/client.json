@@ -12,7 +12,11 @@
     },
     "tray": {
         "toggle": "トグル",
-        "quit": "終了"
+        "quit": "終了",
+        "mention": {
+            "one": "言及",
+            "other": "言及"
+        }
     },
     "windows": {
         "settings": "設定",
@@ -110,7 +114,8 @@
         "edit": {
             "groupName": "編集",
             "undo": "もとに戻す",
-            "redo": "やり直し"
+            "redo": "やり直し",
+            "selectAll": "すべて選択"
         }
     }
 }
