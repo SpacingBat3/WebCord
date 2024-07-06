@@ -62,13 +62,13 @@ class CSPBuilder {
   }
   /**
    * Merges two or more builders into one.
-   * 
+   *
    * @param builders Any `CSPBuilder` which should be merged with another ones.
-   * 
+   *
    * @returns Computed `CSPBuilder` with merged object values from the `builders`.
    */
   public static merge(...builders:CSPBuilder[]):CSPBuilder {
-    if(builders.find(builder => !(builder instanceof CSPBuilder)) !== undefined)
+    if(!builders.every(builder => builder instanceof CSPBuilder))
       throw new TypeError("One of the argument is not a 'CSPBuilder' class!");
     switch(builders.length) {
       case 1: return (builders as [CSPBuilder])[0];
