@@ -12,7 +12,7 @@ import {
   net,
   ipcMain,
   desktopCapturer,
-  BrowserView,
+  WebContentsView,
   systemPreferences
 } from "electron/main";
 import * as getMenu from "../modules/menu";
@@ -160,8 +160,9 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         })
         .reduce((previousValue,currentValue) => (previousValue??false) && (currentValue??false))??true;
     };
+    type handlerParamType<H extends "request"|"check", T extends number> = Parameters<Exclude<Parameters<Electron.Session[`setPermission${Capitalize<H>}Handler`]>[0],null>>[T];
     /** Common handler for  */
-    const permissionHandler = (type:"request"|"check",webContentsUrl:string, permission:string, details:Electron.PermissionRequest|Electron.MediaAccessPermissionRequest|Electron.PermissionCheckHandlerHandlerDetails):boolean|null => {
+    const permissionHandler = <T extends "request"|"check">(type:T,webContentsUrl:string, permission:string, details:handlerParamType<T,3>) => {
       // Verify URL address of the permissions.
       try {
         const webContents = new URL(webContentsUrl);
@@ -199,6 +200,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         case "notifications":
         case "fullscreen":
         case "background-sync":
+        case "speaker-selection":
           return appConfig.value.settings.privacy.permissions[permission]??false;
         default:
           return null;
@@ -266,7 +268,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
               if(appConfig.value.settings.privacy.permissions[permission] === null)
                 promises.push(permissionDialog(permission));
               else
-                promises.push(Promise.resolve(appConfig.value.settings.privacy.permissions[permission] === true));
+                promises.push(Promise.resolve(appConfig.value.settings.privacy.permissions[permission]??false));
             });
             if(promises.length === 0)
               Promise.all(promises)
@@ -457,7 +459,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
   win.webContents.session.setDisplayMediaRequestHandler((req, callback) => {
     const checkStatus =
       // Handle lock and check for a presence of another BrowserView.
-      lock || win.getBrowserViews().length !== 0 ||
+      lock || win.contentView.children.length !== 0 ||
       // Fail when client has denied the permission to the capturer.
       (
         appConfig.value.settings.privacy.permissions["display-capture"] &&
@@ -495,7 +497,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         thumbnail: nativeImage.createEmpty()
       } satisfies Electron.DesktopCapturerSource]);
     if(lock) {
-      const view = new BrowserView({
+      const view = new WebContentsView({
         webPreferences: {
           preload: resolve(app.getAppPath(), "app/code/renderer/preload/capturer.js"),
           nodeIntegration: false,
@@ -521,14 +523,14 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         return appConfig.value.screenShareStore;
       });
       ipcMain.once("closeCapturerView", (_event,data:Electron.Streams) => {
-        win.removeBrowserView(view);
+        win.contentView.addChildView(view);
         view.webContents.delete();
         win.removeListener("resize", autoResize);
         ipcMain.removeHandler("capturer-get-settings");
         callback(data);
         lock = false;
       });
-      win.setBrowserView(view);
+      win.contentView.addChildView(view);
       void view.webContents.loadFile(resolve(app.getAppPath(), "sources/assets/web/html/capturer.html"));
       view.webContents.once("did-finish-load", () => {
         autoResize();

@@ -52,7 +52,8 @@
                 "fullscreen": "Pełny ekran",
                 "notifications": "Powiadomienia",
                 "display-capture": "Nagrywanie ekranu",
-                "background-sync": "Synchronizacja w tle"
+                "background-sync": "Synchronizacja w tle",
+                "speaker-selection": "Lista urządzeń audio"
             }
         }
     },
