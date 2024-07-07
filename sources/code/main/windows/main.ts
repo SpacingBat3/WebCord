@@ -504,6 +504,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
           contextIsolation: true,
           sandbox: false,
           enableWebSQL: false,
+          transparent: true,
           webgl: false,
           autoplayPolicy: "user-gesture-required"
         }
@@ -523,7 +524,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         return appConfig.value.screenShareStore;
       });
       ipcMain.once("closeCapturerView", (_event,data:Electron.Streams) => {
-        win.contentView.addChildView(view);
+        win.contentView.removeChildView(view);
         view.webContents.delete();
         win.removeListener("resize", autoResize);
         ipcMain.removeHandler("capturer-get-settings");
