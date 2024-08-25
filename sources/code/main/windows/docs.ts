@@ -2,28 +2,28 @@ import { commonCatches } from "../modules/error";
 
 async function handleEvents(docsWindow: Electron.BrowserWindow) {
   const [
-    { existsSync },  // from "fs"
-    { resolve },     // from "path"
-    { app, ipcMain } // from "electron/main"
-  ] = await Promise.all([
-    import("fs"),
-    import("path"),
+    existsSync,  // from "fs"
+    resolve,     // from "path"
+    e
+  ] = [
+    import("fs").then(mod => mod.existsSync),
+    import("path").then(mod => (...args:string[])=> mod.resolve(...args)),
     import("electron/main")
-  ]);
+  ];
   // Guess correct Readme.md file
   let readmeFile = "docs/Readme.md";
-  if(existsSync(resolve(app.getAppPath(), "docs", app.getLocale(), "Readme.md")))
-    readmeFile = "docs/"+app.getLocale()+"/Readme.md";
-  ipcMain.removeHandler("documentation-load");
-  ipcMain.removeAllListeners("documentation-show");
-  ipcMain.handle("documentation-load", (event) => {
+  if((await existsSync)((await resolve)((await e).app.getAppPath(), "docs", (await e).app.getLocale(), "Readme.md")))
+    readmeFile = "docs/"+(await e).app.getLocale()+"/Readme.md";
+  (await e).ipcMain.removeHandler("documentation-load");
+  (await e).ipcMain.removeAllListeners("documentation-show");
+  (await e).ipcMain.handle("documentation-load", async (event) => {
     if(event.senderFrame.url !== docsWindow.webContents.getURL()) return;
-    ipcMain.once("documentation-show", (event) => {
+    (await e).ipcMain.once("documentation-show", (event) => {
       if(!docsWindow.isDestroyed() && event.senderFrame.url === docsWindow.webContents.getURL()) {
         docsWindow.show();
       }
     });
-    return resolve(app.getAppPath(), readmeFile);
+    return (await resolve)((await e).app.getAppPath(), readmeFile);
   });
 }
 

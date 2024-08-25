@@ -7,7 +7,7 @@ import type { HookFn, HookSignatures } from "@spacingbat3/disconnection";
 
 /**
  * Outputs a fancy log message in the (DevTools) console.
- * 
+ *
  * @param msg Message to log in the console.
  */
 
@@ -17,14 +17,14 @@ export function wLog(msg: string): void {
 
 /**
  * Allowed protocol list.
- * 
+ *
  * For security reasons, `shell.openExternal()` should not be used for every
  * link protocol handling, as this may allow potential attackers to compromise
  * host or even execute arbitary commands.
- * 
+ *
  * This way, we can also force the usage of the secure links variants where
  * applicable and block *insecure* and unencrypted protocols.
- * 
+ *
  * See:
  * https://www.electronjs.org/docs/tutorial/security#14-do-not-use-openexternal-with-untrusted-content
  */
@@ -33,7 +33,7 @@ export const protocols = Object.freeze({
   allowed: Object.freeze(["http:"])
 });
 
-/** 
+/**
  * Two-dimensional array of known Discord instances, including the official
  * ones.
  */
@@ -67,7 +67,7 @@ export interface BuildInfo {
    *  in `PascalCase`). Defaults to `SpacingBat3.WebCord`. For forks and
    * community builds, the recommended value of `AppUserModelId` is
    * `{AuthorOrPackager}.WebCord` or `{Author}.{Name}`.
-   * 
+   *
    * @platform win32
    */
   AppUserModelId?: string;
@@ -79,7 +79,7 @@ export interface BuildInfo {
      * Used to disable notifications on new WebCord releases. It does not
      * disable the update check through to still give an indication of used
      * version in logs.
-     * 
+     *
      * Notifications should be only disabled for builds whose have a different
      * way of checking updates and/or updating the WebCord. This mostly applies
      * to UNIX repositories where the it is a duty of the package manager to
@@ -160,36 +160,36 @@ interface TypeMergeConfig {
  * 1. `Array` aren't merged at all.
  * 2. Only primitive `Object` can be deeply merged.
  * 3. Other values are assigned by type.
- * 
+ *
  * **Note:** Values of same type are expected to have the same constructors.
- * 
+ *
  * @param source Object used as a type source.
- * @param objects Objects to merge (at least one). 
+ * @param objects Objects to merge (at least one).
  * @returns Merged object.
- * 
+ *
  * @todo More accurate types (e.g. literals to primitives)
  */
 export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, ...objects:unknown[]&[unknown]) {
   const hasOwn = Object.hasOwn as <T>(o:T,s:string|symbol|number)=>s is keyof T;
   const typeOf = (o1:unknown,c:unknown) => (o1?.constructor ?? o1) === c;
-  function deepMerge<T,U>(source:T,object:U) {
+  function deepMerge<T>(source:T,object:unknown) {
     const result = {...source};
     if(!(source instanceof Object) || !(object instanceof Object))
       return source;
     (Object.keys(source)
       .filter(
-        key => hasOwn(source as T,key) && hasOwn(object as U,key) && (
+        key => hasOwn(source as T,key) && hasOwn(object,key) && (
           typeOf(source[key],(object[key] as unknown)?.constructor) || (config.nullType !== undefined ?
             (source[key] as unknown) === null && (object[key] as unknown)?.constructor === config.nullType :
             false
           )
         ) && !Array.isArray(source)
-      ) as (keyof T & keyof U)[])
+      ) as (keyof T)[])
       .map(key => {
         if(typeOf(source[key],Object))
-          result[key] = deepMerge(source[key], object[key]);
+          result[key] = deepMerge(source[key], object[key as keyof object]);
         else
-          result[key] = object[key] as T[typeof key];
+          result[key] = object[key as keyof object] as T[typeof key];
       });
     return result;
   }

@@ -41,16 +41,16 @@ export function generateSafeKey() {
  * which its name includes the `searchString`. This tries to replicate the
  * similar behaviour as the one achieved by the `.getElementsByClassName`
  * method, except it can allow for part of the class names as an input.
- * 
+ *
  * This can be useful when trying to tweak the elements whose class names
  * includes some part being randomly generated for each build/version.
- * 
+ *
  * **Currently unused in the code itself, reserved for WebCord's future API for
  * the extensions.**
  */
-export function findClass<T extends keyof HTMLElementTagNameMap, S extends string>(searchString: S, tagName: T) {
+export function findClass<S extends string>(searchString: S, tagName: keyof HTMLElementTagNameMap) {
   const searchResult = new Set<`${string}${S}${string}`>();
-  for (const container of document.getElementsByTagName<T>(tagName))
+  for (const container of document.getElementsByTagName(tagName))
     for (const classString of container.classList)
       if(classString.includes(searchString))
         searchResult.add(classString as `${string}${S}${string}`);
@@ -61,12 +61,12 @@ export function findClass<T extends keyof HTMLElementTagNameMap, S extends strin
  * A function that allows the access to the Discord API without the need of
  * sharing the user token to the untrusted scripts. Currently at
  * **Work-in-Progress** state.
- * 
+ *
  * Currently unused in the code itself, reserved for WebCord's future API for
  * the extensions.**
- * 
+ *
  * @param method
- * @param apiVersion 
+ * @param apiVersion
  * @param endpoint
  */
 export function sendRequest(method:"POST"|"GET", apiVersion: 6|7|8|9|10, endpoint:string, body?: XMLHttpRequestBodyInit) {
