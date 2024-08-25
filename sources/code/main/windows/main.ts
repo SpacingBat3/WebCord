@@ -160,9 +160,9 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         })
         .reduce((previousValue,currentValue) => (previousValue??false) && (currentValue??false))??true;
     };
-    type handlerParamType<H extends "request"|"check", T extends number> = Parameters<Exclude<Parameters<Electron.Session[`setPermission${Capitalize<H>}Handler`]>[0],null>>[T];
+    type handlerParamType<H extends "request"|"check"> = Parameters<Exclude<Parameters<Electron.Session[`setPermission${Capitalize<H>}Handler`]>[0],null>>;
     /** Common handler for  */
-    const permissionHandler = <T extends "request"|"check">(type:T,webContentsUrl:string, permission:string, details:handlerParamType<T,3>) => {
+    const permissionHandler = <T extends "request"|"check">(type:T,webContentsUrl:string, permission:string, details:handlerParamType<T>[3]) => {
       // Verify URL address of the permissions.
       try {
         const webContents = new URL(webContentsUrl);
