@@ -57,23 +57,32 @@ async function parseImports(cssString: string, importCalls: string[], maxTries=5
   return cssString;
 }
 
+async function encrypt(buffer:Buffer) {
+  if((await safeStoragePromise).isEncryptionAvailable())
+    return (await safeStoragePromise).encryptString(buffer.toString());
+  return buffer.toString();
+}
+
+async function decrypt(app:Electron.App, string:Buffer) {
+  if(!(await safeStoragePromise).isEncryptionAvailable() && !app.isReady() && process.platform !== "darwin")
+    await app.whenReady();
+  if(!(await safeStoragePromise).isEncryptionAvailable())
+    return string.toString();
+  if(!string.toString("utf-8").includes("�"))
+    throw new Error("One of loaded styles was not encrypted and could not be loaded.");
+  return (await safeStoragePromise).decryptString(string);
+}
+
 async function addStyle(window?:Electron.BrowserWindow) {
   const [
-    electron,
+    e,
     fs,
-    pth,
-    safeStorage
+    pth
   ] = [
     import("electron/main"),
     import("fs/promises"),
-    import("path"),
-    safeStoragePromise
+    import("path")
   ];
-  async function optionalCrypt(buffer:Buffer) {
-    if((await safeStorage).isEncryptionAvailable())
-      return (await safeStorage).encryptString(buffer.toString());
-    return buffer.toString();
-  }
   const options = {
     title: "Select a Discord theme to add to WebCord",
     properties: ["multiSelections", "openFile"],
@@ -82,18 +91,16 @@ async function addStyle(window?:Electron.BrowserWindow) {
     ]
   } satisfies Electron.OpenDialogOptions;
   const result = window
-    ? await (await electron).dialog.showOpenDialog(window, options)
-    : await (await electron).dialog.showOpenDialog(options);
+    ? await (await e).dialog.showOpenDialog(window, options)
+    : await (await e).dialog.showOpenDialog(options);
   if(result.canceled)
     return;
   const promises:Promise<unknown>[] = [];
-  for (const path of result.filePaths) {
-    const data = fs.then(fs => fs.readFile(path)).then(path => optionalCrypt(path));
-    electron.then(async electron => [electron.app, await pth] as const).then(([app,pth]) => {
-      const out = pth.resolve(app.getPath("userData"),"Themes", pth.basename(path, ".css"));
-      if(pth.resolve(path) === out) return;
-      promises.push(data.then(async data => (await fs).writeFile(out, data)));
-    }).catch((err:unknown) => { throw err; });
+  for await (const path of result.filePaths) {
+    const data = encrypt(await (await fs).readFile(path));
+    const out = (await pth).resolve((await e).app.getPath("userData"),"Themes", (await pth).basename(path, ".css"));
+    if((await pth).resolve(path) === out) return;
+    promises.push((await fs).writeFile(out, await data));
   }
   await Promise.all(promises);
 }
@@ -109,43 +116,29 @@ async function loadStyles(webContents:Electron.WebContents) {
     app,
     fsp,
     fs,
-    pth,
-    safeStorage
+    pth
   ] = [
     import("electron/main").then(mod => mod.app),
     import("fs/promises"),
     import("fs"),
     import("path"),
-    safeStoragePromise
   ];
   const stylesDir = (await pth).resolve((await app).getPath("userData"),"Themes");
   if(!(await fs).existsSync(stylesDir)) (await fs).mkdirSync(stylesDir, {recursive:true});
-  const callback = async () => {
+  async function callback() {
     // Read CSS module directories.
     const {readdir,readFile} = (await fsp).default;
-    const paths = await readdir(stylesDir);
     const promises:Promise<[string,Buffer]>[] = [];
-    for(const path of paths) {
-      const index = resolve(stylesDir,path);
-      fs.then(fs => {
-        if (!path.endsWith(".theme.css") && fs.statSync(index).isFile())
-          promises.push(Promise.all([index,readFile(index)]));
-      }).catch((error:unknown) => { throw error; });
+    for await(const path of await readdir(stylesDir)) {
+      const index = (await pth).resolve(stylesDir,path);
+      console.log(index);
+      if (!path.endsWith(".theme.css") && (await fs).statSync(index).isFile())
+        promises.push(Promise.all([index,readFile(index)]));
     }
-    const resArray = await Promise.all(promises);
     const themeIDs:Promise<string>[] = [];
-    const decrypt = async (string:Buffer) => {
-      if(!(await safeStorage).isEncryptionAvailable() && !(await app).isReady() && process.platform !== "darwin")
-        await (await app).whenReady();
-      if(!(await safeStorage).isEncryptionAvailable())
-        return string.toString();
-      if(!string.toString("utf-8").includes("�"))
-        throw new Error("One of loaded styles was not encrypted and could not be loaded.");
-      return (await safeStorage).decryptString(string);
-    };
-    for(const res of resArray)
+    for await(const res of await Promise.all(promises))
       themeIDs.push(
-        decrypt(res[1])
+        decrypt(await app,res[1])
           .then(data => parseImports(data,[res[0]]))
           /* Makes all CSS variables and color / background properties
             * `!important` (this should fix most styles).
@@ -153,8 +146,8 @@ async function loadStyles(webContents:Electron.WebContents) {
           .then(data => data.replaceAll(/((?:--|color|background)[^:;{]*:(?![^:]*?!important)[^:;]*)(;|})/g, "$1 !important$2"))
           .then(data => webContents.insertCSS(data))
       );
-    return themeIDs;
-  };
+    return Promise.all(themeIDs);
+  }
   (await fs).watch(stylesDir).once("change", () => {
     webContents.reload();
   });
