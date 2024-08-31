@@ -51,7 +51,8 @@
                 "fullscreen": "全画面表示",
                 "display-capture": "画面キャプチャ",
                 "notifications": "通知",
-                "background-sync": "バックグラウンド同期"
+                "background-sync": "バックグラウンド同期",
+                "speaker-selection": "オーディオデバイスのリスト"
             }
         }
     },
@@ -100,6 +101,9 @@
             "description": "接続またはコンテンツを表示しても良いサードパーティーのウェブサイトのリストを設定。",
             "labels": {
                 "gif": "GIFプロバイダ"
+            },
+            "info": {
+                "googleStorageApi": "Discordにファイルをアップロードするには必要です！"
             }
         },
         "redirection": {
