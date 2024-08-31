@@ -5,9 +5,10 @@
         "mention": {
             "one": "mención",
             "other": "menciones",
-            "zero": "cero",
-            "many": "Muchos mencionan",
-            "few": "Algunos mencionan"
+            "zero": "menciones",
+            "many": "Menciones",
+            "few": "mención",
+            "two": "menciones"
         }
     },
     "context": {

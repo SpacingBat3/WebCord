@@ -50,7 +50,8 @@
                 "video": "Cámara",
                 "audio": "Microfono",
                 "fullscreen": "Pantalla completa",
-                "notifications": "Notificaciones"
+                "notifications": "Notificaciones",
+                "speaker-selection": "Lista de dispositivos de audio"
             },
             "description": "Permite o niega los chequeos de permisos desde la pagina web de Discord. Por favor note que los demas permisos no listados aqui son bloqueados automaticamente por WebCord."
         }
