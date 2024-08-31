@@ -1,8 +1,125 @@
 {
     "tray": {
         "mention": {
-            "other": "mención"
+            "other": "menciones",
+            "zero": "Cero",
+            "many": "Muchos",
+            "one": "Mencionar",
+            "two": "Dos",
+            "few": "Algunos"
         },
-        "quit": "Quitar"
+        "quit": "Salir",
+        "toggle": "Alternar"
+    },
+    "context": {
+        "copy": "Copiar",
+        "paste": "Pegar",
+        "cut": "Cortar",
+        "dictionaryAdd": "Agregar al diccionario local",
+        "copyURL": "Copiar direccion de enlace",
+        "copyURLText": "Copiar texto de enlace",
+        "copyImage": "Copiar imagen",
+        "inspectElement": "Inspeccionar",
+        "copyImageURL": "Copiar el enlace de la imagen"
+    },
+    "menubar": {
+        "enabled": "Habilitado",
+        "file": {
+            "groupName": "Archivo",
+            "quit": "Salir",
+            "relaunch": "Reiniciar",
+            "addon": {
+                "loadChrome": "Cargar la extensión Chrome",
+                "loadNode": "Cargar la extensión del nodo",
+                "groupName": "Extensiones"
+            }
+        },
+        "edit": {
+            "groupName": "Editar",
+            "undo": "Deshacer",
+            "redo": "Rehacer",
+            "selectAll": "Seleccionar todo"
+        },
+        "view": {
+            "groupName": "Vista",
+            "reload": "Recargar",
+            "forceReload": "Forzar recarga",
+            "devTools": "Activar herramientas de desarrollo",
+            "resetZoom": "Tamaño actual",
+            "zoomIn": "Acercar",
+            "zoomOut": "Alejar",
+            "fullScreen": "Activar pantalla completa"
+        },
+        "window": {
+            "groupName": "Ventana",
+            "mobileMode": "Ocultar barra lateral"
+        }
+    },
+    "windows": {
+        "settings": "Configuracion",
+        "about": "Acerca de",
+        "docs": "Documentación",
+        "invite": "Invitar"
+    },
+    "dialog": {
+        "common": {
+            "error": "Error",
+            "warning": "Precaución",
+            "continue": "&Continuar",
+            "yes": "&Si",
+            "no": "&No",
+            "source": "Fuente"
+        },
+        "ver": {
+            "updateBadge": "[Actualizar]",
+            "updateTitle": "¡Actualización disponible!",
+            "update": "¡Una nueva versión de la aplicación está disponible!",
+            "recent": "¡La aplicación está actualizada!",
+            "devel": "Estás usando una versión inestable",
+            "downgrade": "¡Tu versión de producción es más nueva que la versión estable!"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: La solicitud de permiso para %s se ha denegado."
+            },
+            "check": {
+                "denied": "%s: La verificación de permiso para %s se ha denegado."
+            },
+            "question": {
+                "title": "Manejador de solicitud de permisos",
+                "message": "¿Quieres permitir a discord acceso a %s?",
+                "audio": "Microfono",
+                "notifications": "Notificaciones",
+                "video": "Camara"
+            }
+        },
+        "mod": {
+            "nodeExt": "Complemento WebCord Node.js",
+            "crx": "Extension para Chrome/Chromium"
+        },
+        "externalApp": {
+            "title": "Abriendo el enlace en una aplicación externa",
+            "message": "Un sitio web intenta redireccionar el enlace con un origen diferente hacia la aplicación externa. ¿Continuar?"
+        },
+        "screenShare": {
+            "sound": {
+                "unavailable": "Compartir el audio no está disponible en esta plataforma.",
+                "system": "Compartir con dispositivo de audio."
+            },
+            "source": {
+                "entire": "Pantalla de la computadora",
+                "screen": "Pantalla"
+            },
+            "close": "Cerrar"
+        }
+    },
+    "help": {
+        "groupName": "Ayuda",
+        "bugs": "Reportar un fallo",
+        "repo": "Repositorio"
+    },
+    "log": {
+        "singleInstance": "Cambiando hacia la pantalla actual...",
+        "listenPort": "Escuchando en el puerto %s."
     }
 }
