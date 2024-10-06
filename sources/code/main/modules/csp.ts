@@ -1,21 +1,6 @@
 import type { cspTP } from "./config";
 
-const cspKeys = [
-  "default-src",
-  "script-src",
-  "worker-src",
-  "connect-src",
-  "style-src",
-  "img-src",
-  "font-src",
-  "media-src",
-  "frame-src",
-  "child-src"
-] as const;
-
-const cspKeysRegExp = new RegExp("(?<="+cspKeys.join("|")+")\\s+");
-
-type cspObject = Partial<Record<(typeof cspKeys)[number],string>>;
+type cspObject = Partial<Record<string,string>>;
 
 /**
  * A class used to manipulate and build Content Security Policy from objects
@@ -29,11 +14,11 @@ class CSPBuilder {
   #string2object(value: string):cspObject {
     return Object.fromEntries(value
       .split(/;\s+/)
-      .map(element => element.split(cspKeysRegExp,2) as [string|undefined, string|undefined])
-      .filter((element => element[0] !== undefined && element[1] !== undefined &&
-        cspKeys.includes(element[0] as (typeof cspKeys)[number])) as
-        (v:[string|undefined,string|undefined]) => v is [typeof cspKeys[number],string]
-      )
+      .map(element => {
+        const i = element.indexOf(" ");
+        return [element.slice(0,i),element.slice(i)] satisfies [string,string];
+      })
+      .filter((element => element[0] !== "" && element[1] !== ""))
     );
   }
   /**
@@ -46,9 +31,8 @@ class CSPBuilder {
       .join("; ");
   }
   public set value(value: string|cspObject) {
-    if(value instanceof Object && Object
-      .keys(value)
-      .map(key => cspKeys.includes(key as typeof cspKeys[number]))
+    if(value instanceof Object && Object.values(value)
+      .map(key => typeof key === "string")
       .reduce((prev,cur) => prev && cur, true)
     )
       this.#value = value;
@@ -77,7 +61,7 @@ class CSPBuilder {
         .filter(value => Object.keys(value).length !== 0)
         .reduce((prev,cur,index) => {
           if(index === 0) return cur;
-          (Object.keys(cur) as (keyof cspObject)[]).forEach(key => {
+          (Object.keys(cur)).forEach(key => {
             const policy = cur[key];
             if(policy === undefined)
               return;
@@ -93,6 +77,13 @@ class CSPBuilder {
   }
   constructor(value: string|cspObject = {}) {
     this.value = value;
+  }
+  [Symbol.toPrimitive](hint:"string"|"number"|"default") {
+    switch(hint) {
+      case "string": return this.build();
+      case "number": return NaN;
+      default:       return this;
+    }
   }
 }
 
@@ -211,16 +202,17 @@ const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
   })
 };
 
-let cache:[key:symbol,content:string]|null = null;
+let cache:[key:symbol,content:WeakRef<CSPBuilder>]|null = null;
 
 export function getWebCordCSP(configValues: cspTP<boolean>,...additionalPolicies: CSPBuilder[]) {
   type parties = keyof typeof configValues;
   type cspFilter = (value:CSPBuilder|undefined) => value is CSPBuilder;
   const key = Symbol.for(Object.values(configValues).join("")+additionalPolicies.map(policy => policy.build()).join(""));
-  if(cache?.[0] === key)
-    return cache[1];
+  let val = cache?.[1].deref();
+  if(val && cache?.[0] === key)
+    return val;
   console.debug("[CSP] Caching function arguments...");
-  cache = [key, CSPBuilder.merge(
+  val = CSPBuilder.merge(
     builders.base,
     ...Object.keys(configValues)
       .map((key) => {
@@ -231,6 +223,7 @@ export function getWebCordCSP(configValues: cspTP<boolean>,...additionalPolicies
       })
       .filter(((value) => value instanceof CSPBuilder) as cspFilter),
     ...additionalPolicies
-  ).build()];
-  return cache[1];
+  );
+  cache = [key, new WeakRef(val)];
+  return val;
 }

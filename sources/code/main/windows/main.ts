@@ -102,7 +102,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     const {csp,cspThirdParty} = appConfig.value.settings.advanced;
     const responseHeaders = details.responseHeaders??{};
     if(csp.enabled)
-      responseHeaders["Content-Security-Policy"] = [getWebCordCSP(cspThirdParty)];
+      responseHeaders["Content-Security-Policy"] = [getWebCordCSP(cspThirdParty).build()];
     callback({ responseHeaders });
   });
 
