@@ -1,7 +1,10 @@
 {
     "tray": {
         "toggle": "Schakel",
-        "quit": "Afsluiten"
+        "quit": "Afsluiten",
+        "mention": {
+            "one": "Benoem"
+        }
     },
     "menubar": {
         "file": {
