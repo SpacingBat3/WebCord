@@ -2,8 +2,6 @@
  * Electron Forge Config (configForge.js)
  */
 
-// Let's import some keys from the package.json:
-
 import { resolve, dirname } from "node:path";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -16,15 +14,15 @@ import type { BuildInfo } from "../common/global.js";
 
 // Makers
 
-import { MakerDeb }      from "@electron-forge/maker-deb";
-import { MakerSnap }     from "@electron-forge/maker-snap";
-import { MakerFlatpak }  from "@electron-forge/maker-flatpak";
-import { MakerRpm }      from "@electron-forge/maker-rpm";
-import { MakerZIP }      from "@electron-forge/maker-zip";
-import { MakerAppImage } from "@reforged/maker-appimage";
-import { MakerDMG }      from "@electron-forge/maker-dmg";
-import { MakerWix }      from "@electron-forge/maker-wix";
-import { MakerSquirrel } from "@electron-forge/maker-squirrel";
+import { MakerDeb }                      from "@electron-forge/maker-deb";
+import { MakerSnap }                     from "@electron-forge/maker-snap";
+import { MakerFlatpak }                  from "@electron-forge/maker-flatpak";
+import { MakerRpm }                      from "@electron-forge/maker-rpm";
+import { MakerZIP }                      from "@electron-forge/maker-zip";
+import { MakerAppImage }                 from "@reforged/maker-appimage";
+import { MakerDMG, type MakerDMGConfig } from "@electron-forge/maker-dmg";
+import { MakerWix }                      from "@electron-forge/maker-wix";
+import { MakerSquirrel }                 from "@electron-forge/maker-squirrel";
 
 // Publishers
 
@@ -127,12 +125,14 @@ const config:ForgeConfig = {
       setupExe: `${packageJson.data.name}-squirrel-${arch}.exe`,
       setupMsi: `${packageJson.data.name}-squirrel-${arch}.msi`,
       noMsi: false,
-      // I have no clue what it does, but I'm gonna risk it.
       fixUpPaths: true,
       iconUrl: `https://raw.githubusercontent.com/SpacingBat3/WebCord/${packageJson.data.version}/${iconFile}.ico`,
       noDelta: true
     })),
-    new MakerDMG({ icon: `${iconFile}.icns`, debug: getBuildID() === "devel" }),
+    new MakerDMG({
+      icon: `${iconFile}.icns`,
+      overwrite: true
+    } satisfies Partial<MakerDMGConfig> as unknown as MakerDMGConfig),
     new MakerAppImage({ options: {
       icon: `${iconFile}.png`,
       genericName: desktopGeneric,
@@ -229,6 +229,7 @@ const config:ForgeConfig = {
         owner: author,
         name: "WebCord"
       },
+      generateReleaseNotes: true,
       draft: false
     })
   ],

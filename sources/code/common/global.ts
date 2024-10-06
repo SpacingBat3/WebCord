@@ -96,7 +96,7 @@ export function isPartialBuildInfo(object: unknown): object is Partial<BuildInfo
     return false;
   // #2 'type' property contains 'release' and 'devel' strings if defined.
   if("type" in object)
-    switch ((object as BuildInfo).type) {
+    switch ((object as Partial<BuildInfo>).type) {
       case "release":
       case "devel":
         break;
