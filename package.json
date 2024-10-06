@@ -7,8 +7,8 @@
   "main": "app/code/common/main.js",
   "scripts": {
     "prepare": "husky",
-    "test": "tsc && eslint --cache --cache-location cache/eslint.json --ext .ts .",
-    "lint": "eslint --cache --cache-location cache/eslint.json --ext .ts .",
+    "test": "tsc && ESLINT_USE_FLAT_CONFIG=false eslint --cache --cache-location cache/eslint.json --ext .ts .",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint --cache --cache-location cache/eslint.json --ext .ts .",
     "build": "tsc",
     "compile": "tsc",
     "tsc": "tsc",
