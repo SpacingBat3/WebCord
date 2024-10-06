@@ -1,5 +1,9 @@
-import { resolve } from "url";
+import { app, dialog } from "electron/main";
+import { resolve as resolveUrl } from "url";
 import { commonCatches } from "./error";
+import { resolve as resolveFs, basename } from "path";
+import { readFile, writeFile, mkdir, readdir } from "fs/promises";
+import { statSync, watch } from "fs";
 
 const safeStoragePromise = (import("electron/main"))
   .then(main => main.safeStorage);
@@ -26,7 +30,7 @@ async function parseImports(cssString: string, importCalls: string[], maxTries=5
   cssString.match(anyImport)?.forEach(singleImport => {
     const matches = /^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m.exec(singleImport);
     if(matches?.[0] === undefined || matches[1] === undefined) return;
-    const file = resolve(importCalls.at(-1) ?? "", matches[1]);
+    const file = resolveUrl(importCalls.at(-1) ?? "", matches[1]);
     if(importCalls.includes(file)) {
       promises.push(Promise.reject(new Error("Circular reference in CSS imports are disallowed: " + file)));
       return;
@@ -63,26 +67,17 @@ async function encrypt(buffer:Buffer) {
   return buffer.toString();
 }
 
-async function decrypt(app:Electron.App, string:Buffer) {
+async function decrypt(app:Electron.App, string:Buffer|Promise<Buffer>) {
   if(!(await safeStoragePromise).isEncryptionAvailable() && !app.isReady() && process.platform !== "darwin")
     await app.whenReady();
   if(!(await safeStoragePromise).isEncryptionAvailable())
-    return string.toString();
-  if(!string.toString("utf-8").includes("�"))
+    return (await string).toString();
+  if(!(await string).toString("utf-8").includes("�"))
     throw new Error("One of loaded styles was not encrypted and could not be loaded.");
-  return (await safeStoragePromise).decryptString(string);
+  return (await safeStoragePromise).decryptString(await string);
 }
 
 async function addStyle(window?:Electron.BrowserWindow) {
-  const [
-    e,
-    fs,
-    pth
-  ] = [
-    import("electron/main"),
-    import("fs/promises"),
-    import("path")
-  ];
   const options = {
     title: "Select a Discord theme to add to WebCord",
     properties: ["multiSelections", "openFile"],
@@ -91,16 +86,16 @@ async function addStyle(window?:Electron.BrowserWindow) {
     ]
   } satisfies Electron.OpenDialogOptions;
   const result = window
-    ? await (await e).dialog.showOpenDialog(window, options)
-    : await (await e).dialog.showOpenDialog(options);
+    ? await dialog.showOpenDialog(window, options)
+    : await dialog.showOpenDialog(options);
   if(result.canceled)
     return;
   const promises:Promise<unknown>[] = [];
-  for await (const path of result.filePaths) {
-    const data = encrypt(await (await fs).readFile(path));
-    const out = (await pth).resolve((await e).app.getPath("userData"),"Themes", (await pth).basename(path, ".css"));
-    if((await pth).resolve(path) === out) return;
-    promises.push((await fs).writeFile(out, await data));
+  for (const path of result.filePaths) {
+    const data = readFile(path).then(data => encrypt(data));
+    const out = resolveFs(app.getPath("userData"),"Themes", basename(path, ".css"));
+    if(resolveFs(path) === out) return;
+    promises.push(data.then(data => writeFile(out, data)));
   }
   await Promise.all(promises);
 }
@@ -112,34 +107,21 @@ async function addStyle(window?:Electron.BrowserWindow) {
  * Electron decides that encryption is available.
  */
 async function loadStyles(webContents:Electron.WebContents) {
-  const [
-    app,
-    fsp,
-    fs,
-    pth
-  ] = [
-    import("electron/main").then(mod => mod.app),
-    import("fs/promises"),
-    import("fs"),
-    import("path"),
-  ];
-  const stylesDir = (await pth).resolve((await app).getPath("userData"),"Themes");
-  if(!(await fs).existsSync(stylesDir)) (await fs).mkdirSync(stylesDir, {recursive:true});
+  const stylesDir = resolveFs(app.getPath("userData"),"Themes");
+  await mkdir(stylesDir, {recursive:true});
   async function callback() {
     // Read CSS module directories.
-    const {readdir,readFile} = (await fsp).default;
     const promises:Promise<[string,Buffer]>[] = [];
-    for await(const path of await readdir(stylesDir)) {
-      const index = (await pth).resolve(stylesDir,path);
-      console.log(index);
-      if (!path.endsWith(".theme.css") && (await fs).statSync(index).isFile())
+    for (const path of await readdir(stylesDir)) {
+      const index = resolveFs(stylesDir,path);
+      if (!path.endsWith(".theme.css") && statSync(index).isFile())
         promises.push(Promise.all([index,readFile(index)]));
     }
     const themeIDs:Promise<string>[] = [];
-    for await(const res of await Promise.all(promises))
+    for (const res of promises)
       themeIDs.push(
-        decrypt(await app,res[1])
-          .then(data => parseImports(data,[res[0]]))
+        decrypt(app,res.then(res => res[1]))
+          .then(async data => parseImports(data,[(await res)[0]]))
           /* Makes all CSS variables and color / background properties
             * `!important` (this should fix most styles).
             */
@@ -148,7 +130,7 @@ async function loadStyles(webContents:Electron.WebContents) {
       );
     return Promise.all(themeIDs);
   }
-  (await fs).watch(stylesDir).once("change", () => {
+  watch(stylesDir).once("change", () => {
     webContents.reload();
   });
   callback().catch(commonCatches.print);
@@ -165,27 +147,14 @@ async function loadStyles(webContents:Electron.WebContents) {
  * [chrome-ext]: https://www.electronjs.org/docs/latest/api/extensions "Electron API documentation"
  */
 export async function loadChromiumExtensions(session:Electron.Session) {
-  const [
-    app,
-    readdir,
-    fs,
-    pth
-  ] = [
-    import("electron/main").then(mod => mod.app),
-    import("fs/promises").then(mod => mod.readdir),
-    import("fs"),
-    import("path")
-  ];
-  const extDir = (await pth).resolve((await app).getPath("userData"),"Extensions", "Chrome");
-  if(!(await fs).existsSync(extDir)) {
-    (await fs).mkdirSync(extDir, {recursive:true});
-    return;
-  }
-  (await readdir)(extDir, {withFileTypes: true}).then(paths => {
-    for (const path of paths) if (path.isDirectory() && session.isPersistent())
-      pth.then(pth => session.loadExtension(pth.resolve(extDir, path.name)))
-        .catch(commonCatches.print);
-  }).catch(commonCatches.print);
+  const
+    extDir = resolveFs(app.getPath("userData"),"Extensions", "Chrome"),
+    promises = [];
+  await mkdir(extDir, { recursive:true });
+  for(const path of await readdir(extDir, {withFileTypes: true}))
+    if (path.isDirectory() && session.isPersistent())
+      promises.push(session.loadExtension(resolveFs(extDir, path.name)));
+  return Promise.all(promises);
 }
 
 export const styles = Object.freeze({
