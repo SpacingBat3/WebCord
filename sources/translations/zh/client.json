@@ -1,0 +1,125 @@
+{
+    "tray": {
+        "toggle": "切换",
+        "quit": "退出",
+        "mention": {
+            "one":"提及",
+            "other":"提及",
+            "zero": "",
+            "two": "",
+            "few":"",
+            "many":""
+        }
+    },
+    "context": {
+        "copy": "复制",
+        "paste": "粘贴",
+        "cut": "剪切",
+        "dictionaryAdd": "添加到本地字典",
+        "copyURL": "复制链接地址",
+        "copyURLText": "复制链接文本",
+        "copyImage": "复制图片",
+        "copyImageURL": "复制图片链接",
+        "inspectElement": "检查"
+    },
+    "menubar": {
+        "enabled": "已启用",
+        "file": {
+            "groupName": "文件",
+            "quit": "退出",
+            "relaunch": "重新启动",
+            "addon": {
+                "groupName": "扩展",
+                "loadNode": "加载 node 扩展",
+                "loadChrome": "加载 Chrome 扩展"
+            }
+        },
+        "edit": {
+            "groupName": "编辑",
+            "undo": "撤销",
+            "redo": "重做",
+            "selectAll": "全选"
+        },
+        "view": {
+            "groupName": "视图",
+            "reload": "重新加载",
+            "forceReload": "强制重新加载",
+            "devTools": "切换开发者工具",
+            "resetZoom": "实际大小",
+            "zoomIn": "放大",
+            "zoomOut": "缩小",
+            "fullScreen": "切换全屏"
+        },
+        "window": {
+            "groupName": "窗口",
+            "mobileMode": "隐藏侧边栏"
+        }
+    },
+    "windows": {
+        "settings": "设置",
+        "about": "关于",
+        "docs": "文档",
+        "invite": "邀请"
+    },
+    "dialog": {
+        "common": {
+            "error": "错误",
+            "warning": "警告",
+            "continue": "&继续",
+            "yes": "&是",
+            "no": "&否",
+            "source": "来源"
+        },
+        "ver": {
+            "updateBadge": "[更新]",
+            "updateTitle": "可用更新！",
+            "update": "新应用版本可用！",
+            "recent": "应用是最新的！",
+            "devel": "您正在使用非生产构建。",
+            "downgrade": "您的生产构建比稳定版还要新！"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: 拒绝访问%s的权限请求。"
+            },
+            "check": {
+                "denied": "%s: 拒绝检查%s的权限。"
+            },
+            "question": {
+                "title": "权限请求处理",
+                "message": "您是否要授予 Discord 访问%s的权限？",
+                "video": "摄像头",
+                "audio": "麦克风",
+                "notifications": "通知"
+            }
+        },
+        "mod": {
+            "nodeExt": "WebCord Node.js 插件",
+            "crx": "Chrome/Chromium 扩展"
+        },
+        "externalApp": {
+            "title": "在外部应用中打开链接",
+            "message": "一个网站试图将链接重定向到具有不同来源的外部应用。无论如何继续？"
+        },
+        "screenShare": {
+            "close": "关闭",
+            "sound": {
+                "unavailable": "在该平台上无法共享音频。",
+                "system": "与设备音频共享。"
+            },
+            "source": {
+                "entire": "计算机屏幕",
+                "screen": "屏幕"
+            }
+        }
+    },
+    "help": {
+        "groupName": "帮助",
+        "repo": "仓库",
+        "bugs": "报告错误"
+    },
+    "log": {
+        "singleInstance": "切换到现有窗口...",
+        "listenPort": "在端口 %s 监听。"
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "offline": {
+        "title": "无法连接到Discord服务。",
+        "description": "请确保您已连接到互联网。"
+    },
+    "aboutWindow": {
+        "nav": {
+            "about": "关于",
+            "credits": "致谢",
+            "licenses": "许可证"
+        },
+        "about": {
+            "appDescription": "注重隐私特性的Discord和Fosscord网页客户端。",
+            "appRepo": "GitHub仓库",
+            "featuresTitle": "构建标志",
+            "featuresDefault": "默认",
+            "checksumTitle": "校验和"
+        },
+        "credits": {
+            "people": {
+                "author": "作者、维护者和主要开发者。",
+                "contributors": {
+                    "default": "代码贡献者。"
+                }
+            }
+        },
+        "licenses": {
+            "appLicenseTitle": "应用程序许可证",
+            "appLicenseBody": "%s是一个免费软件：您可以根据MIT许可证的条款使用、修改和重新分发它，该许可证应随此软件一起分发。",
+            "showLicense": "显示许可证",
+            "thirdPartyLicensesTitle": "第三方许可证",
+            "thirdPartyLicensesBody": "%s依赖于以下第三方软件：",
+            "licensedUnder": "根据%s许可证",
+            "packageAuthors": "%s作者"
+        }
+    }
+}
