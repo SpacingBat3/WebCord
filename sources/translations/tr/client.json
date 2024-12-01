@@ -1,7 +1,7 @@
 {
     "tray": {
         "toggle": "Göster/gizle",
-        "quit": "Kapat",
+        "quit": "Çık",
         "mention": {
             "one": "bahset"
         }
@@ -21,7 +21,7 @@
         "enabled": "Etkin",
         "file": {
             "groupName": "Dosya",
-            "quit": "Kapat",
+            "quit": "Çık",
             "relaunch": "Yeniden başlat",
             "addon": {
                 "groupName": "Eklentiler",
@@ -43,7 +43,7 @@
             "resetZoom": "Gerçek boyut",
             "zoomIn": "Yakınlaştır",
             "zoomOut": "Uzaklaştır",
-            "fullScreen": "Tam ekran"
+            "fullScreen": "Tam ekrana geçiş yap"
         },
         "window": {
             "groupName": "Pencere",
