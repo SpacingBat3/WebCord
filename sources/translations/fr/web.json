@@ -26,10 +26,10 @@
         },
         "licenses": {
             "appLicenseTitle": "Licence d'application",
-            "appLicenseBody": "%s est un logiciel libre : vous pouvez l'utiliser, le modifier et le redistribuer selon les termes de la licence MIT, qui devrait être distribuée avec ce logiciel.",
+            "appLicenseBody": "%s est un logiciel libre : vous pouvez l'utiliser, le modifier et le redistribuer selon les termes de la licence MIT, qui devrait être distribuée avec ce logiciel.",
             "showLicense": "Afficher la licence",
             "thirdPartyLicensesTitle": "Licences tierces",
-            "thirdPartyLicensesBody": "%s dépend des logiciels tiers suivants :",
+            "thirdPartyLicensesBody": "%s dépend des logiciels tiers suivants :",
             "licensedUnder": "sous licence %s",
             "packageAuthors": "Auteurs de %s"
         }

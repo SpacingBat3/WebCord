@@ -5,7 +5,7 @@
     },
     "aboutWindow": {
         "nav": {
-            "about": "Hakkında",
+            "about": "Detaylar",
             "credits": "Teşekkürler",
             "licenses": "Lisanslar"
         },
@@ -14,13 +14,13 @@
             "appRepo": "GitHub Repository",
             "featuresTitle": "Derleme parametreleri",
             "featuresDefault": "Varsayılan",
-            "checksumTitle": "Checksum"
+            "checksumTitle": "Checksum (doğrulama)"
         },
         "credits": {
             "people": {
-                "author": "Yapımcı, maintainer and ana geliştirici.",
+                "author": "Yapımcı, bakımcı ve ana geliştirici.",
                 "contributors": {
-                    "default": "Kod kontribütörü."
+                    "default": "Yazılım destekçisi."
                 }
             }
         },

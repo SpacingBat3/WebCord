@@ -6,7 +6,7 @@
             "name": "Menü çubuğu",
             "description": "Menü çubuğunun görünüm ayarlarını değiştirir.",
             "labels": {
-                "hide": "Menü çubuğunu otomatik olarak gizle. (<kbd>ALT</kbd> gösterir/gizler)"
+                "hide": "Menü çubuğunu otomatik olarak gizle. (<kbd>ALT</kbd> tuşu görünürlüğü aktifleştirir/kapatır)."
             }
         },
         "tray": {
@@ -39,7 +39,7 @@
             "description": "Gizliliği artırmak için Discord API isteklerini engeller.",
             "labels": {
                 "science": "Bilinen telemetri yollarını engelle. (<code>/science</code> ve <code>/tracing</code>).",
-                "typingIndicator": "Yazıyor göstergesini engelle. (<code>/typing</code>)",
+                "typingIndicator": "Yazdığını belirten göstergeyi engelle (<code>/typing</code>).",
                 "fingerprinting": "Bilinen tanımlama yöntemlerini engelle. (<code>api.js</code> ve <code>cdn-cgi</code>)."
             }
         },
@@ -52,7 +52,8 @@
                 "fullscreen": "Tam ekran",
                 "notifications": "Bildirimler",
                 "display-capture": "Ekran paylaşımı",
-                "background-sync": "Arkaplan eşitlemesi"
+                "background-sync": "Arkaplan eşitlemesi",
+                "speaker-selection": "Ses cihazları listesi"
             }
         }
     },
@@ -76,19 +77,19 @@
             }
         },
         "currentInstance": {
-            "name": "Discord instance",
+            "name": "Discord işlemi",
             "description": "WebCord'un bağlanması gereken sunucuyu (instance) seçer. Fosscord şu an <b>deneysel</b> çünkü daha geliştirme aşamasında."
         },
         "devel": {
             "name": "Geliştici Modu",
-            "description": "Potansiyel olarak bozuk veya tehlikeli kabul edilen araçları ve bitmemiş seçenekleri erişime açar. <b>Uyarı</b>: uygulama maintainerları bu ayar etkinleştirildikten sonra herhangi bir hata veya sorundan sorumlu değildir - lütfen bunları bildirmeyin",
+            "description": "Potansiyel olarak bozuk veya tehlikeli kabul edilen araçları ve bitmemiş seçenekleri erişime açar. <b>Uyarı</b>: uygulama bakımcıları bu ayar etkinleştirildikten sonra herhangi bir hata veya sorundan sorumlu değildir - lütfen bunları bildirmeyiniz!",
             "labels": {
                 "enabled": "Geliştirici modunu etkinleştir."
             }
         },
         "redirection": {
             "name": "Cross-origin yönlendirme davranışı",
-            "description": "Cross-origin yönlendirmelerde ne olacağını kontrol eder. <b>Bu ayar uygulama güvenliğini etkiler.</b>",
+            "description": "Cross-origin yönlendirmelerde ne olacağını kontrol eder. <b>Bu ayar uygulama güvenliğini etkiler</b>.",
             "labels": {
                 "warn": "Kullanıcıyı başka uygulamaya giden cross-origin yönlendirmeleri hakkında uyar."
             }
@@ -109,7 +110,7 @@
         },
         "unix": {
             "name": "Unix/Unix-benzeri işletim sistemleri için deneysel özellikler",
-            "description": "Chromium/Blink motoru tarafından deneysel olarak kabul edilen özellikleri etkinleştirir. <b>Kullanırken tüm sorumluluk size aittir.</b>",
+            "description": "Chromium/Blink motoru tarafından deneysel olarak kabul edilen özellikleri etkinleştirir. <b>Kullanırken tüm sorumluluk size aittir</b>.",
             "labels": {
                 "autoscroll": "Orta tıklamayla kaydırmayı etkinleştir. (bir diğer deyişle <i>autoscroll</i>)."
             }
