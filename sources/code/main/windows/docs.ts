@@ -17,9 +17,9 @@ async function handleEvents(docsWindow: Electron.BrowserWindow) {
   (await e).ipcMain.removeHandler("documentation-load");
   (await e).ipcMain.removeAllListeners("documentation-show");
   (await e).ipcMain.handle("documentation-load", async (event) => {
-    if(event.senderFrame.url !== docsWindow.webContents.getURL()) return;
+    if(event.senderFrame?.url !== docsWindow.webContents.getURL()) return;
     (await e).ipcMain.once("documentation-show", (event) => {
-      if(!docsWindow.isDestroyed() && event.senderFrame.url === docsWindow.webContents.getURL()) {
+      if(!docsWindow.isDestroyed() && event.senderFrame?.url === docsWindow.webContents.getURL()) {
         docsWindow.show();
       }
     });

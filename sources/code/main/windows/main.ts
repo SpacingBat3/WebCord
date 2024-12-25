@@ -413,7 +413,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
 
   // Apply settings that doesn't need app restart on change
   ipcMain.on("settings-config-modified", (event, object:null|PartialRecursive<AppConfig>) => {
-    if(new URL(event.senderFrame.url).protocol !== "file:")
+    if(event.senderFrame && new URL(event.senderFrame.url).protocol !== "file:")
       return;
     try {
       // Menu bar
@@ -468,7 +468,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
           true
       ) ||
       // Fail on different frame
-      req.frame.routingId !== win.webContents.mainFrame.routingId ||
+      req.frame?.routingId !== win.webContents.mainFrame.routingId ||
       // Whenever user is the one who most likely triggered this
       req.userGesture;
 
@@ -547,7 +547,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
   internalWindowEvents.on("api", (safeApi:string) => {
     ipcMain.removeAllListeners("paste-workaround");
     ipcMain.on("paste-workaround", (event, api:unknown) => {
-      if(safeApi !== api || event.senderFrame.url !== win.webContents.getURL()) return;
+      if(safeApi !== api || event.senderFrame?.url !== win.webContents.getURL()) return;
       console.debug("[Clipboard] Applying workaround to the image...");
       win.webContents.paste();
     });

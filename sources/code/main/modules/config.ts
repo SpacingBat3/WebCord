@@ -321,7 +321,7 @@ void import("electron/main")
   .then(ipc => ipc.on("settings-config-modified",
     (event, config:AppConfig) => {
       // Only permit the local pages.
-      if(new URL(event.senderFrame.url).protocol === "file:")
+      if(event.senderFrame && new URL(event.senderFrame.url).protocol === "file:")
         appConfig.value = config;
     })
   );

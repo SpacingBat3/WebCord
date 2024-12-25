@@ -27,15 +27,15 @@ export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.
   };
   if(aboutPanel === undefined) return;
   ipc.once("about.close", (event) => {
-    if(!aboutPanel.isDestroyed() && event.senderFrame.url === aboutPanel.webContents.getURL())
+    if(!aboutPanel.isDestroyed() && event.senderFrame?.url === aboutPanel.webContents.getURL())
       aboutPanel.close();
   });
   ipc.once("about.readyToShow", (event) => {
-    if(!aboutPanel.isDestroyed() && event.senderFrame.url === aboutPanel.webContents.getURL())
+    if(!aboutPanel.isDestroyed() && event.senderFrame?.url === aboutPanel.webContents.getURL())
       aboutPanel.show();
   });
   ipc.handle("about.getDetails", (event) => {
-    if(event.senderFrame.url === aboutPanel.webContents.getURL())
+    if(event.senderFrame?.url === aboutPanel.webContents.getURL())
       return appDetails;
     return undefined;
   });

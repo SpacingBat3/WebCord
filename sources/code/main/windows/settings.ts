@@ -73,7 +73,8 @@ export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electr
   });
   if(settingsWindow === undefined) return;
   ipcMain.handle("settings-generate-html", (event) => {
-    if(new URL(event.senderFrame.url).protocol !== "file:") return;
+    if(event.senderFrame && new URL(event.senderFrame.url).protocol !== "file:")
+      return;
     if(!settingsWindow.isDestroyed()) settingsWindow.show();
     return htmlConfig;
   });
