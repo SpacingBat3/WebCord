@@ -15,7 +15,7 @@
         /* Whenever comments are emitted to files */
         "removeComments": true,
         /* Replace a set of core libraries. */
-        "lib": ["ES2022", "DOM.Iterable"],
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
         /* Limit module resolution to project's path only */
         "typeRoots": ["./node_modules/@types"],
         /* Use `tslib` for import helpers. */

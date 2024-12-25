@@ -4,9 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { pathToFileURL, fileURLToPath } from "node:url";
 
 import { marked } from "marked";
-import { markedHighlight } from "marked-highlight";
 import { sanitize } from "dompurify";
-import hljs from "highlight.js";
 
 import { protocols } from "../../common/global";
 
@@ -19,15 +17,10 @@ import {
 
 const htmlFileUrl = document.URL;
 
-// Code highlighting and GFM heading IDs:
+// GFM heading IDs:
 
 marked.use(
   //@ts-expect-error due to TS2379
-  markedHighlight({
-    highlight: (code,language) => hljs.getLanguage(language) ?
-      hljs.highlight(code,{ language } ).value :
-      code
-  }),
   gfmHeadingId()
 );
 
