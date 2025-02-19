@@ -68,26 +68,26 @@ const argv = Object.freeze(parseArgs(argvConfig));
 
 {
   const stdWarn=console.warn,stdError=console.error,stdDebug=console.debug;
-  console.error = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
-    .then(kolor => kolor.default)
-    .then(kolor => {
-      stdError(typeof message === "string" ? kolor.red(message) : message, ...optionalParams);
-    })
-  );
-
-  console.warn = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
-    .then(kolor => kolor.default)
-    .then(kolor => {
-      stdWarn(typeof message === "string" ? kolor.yellow(message) : message, ...optionalParams);
-    })
-  );
-  console.debug = ((message:unknown,...optionalParams:unknown[]) => void import("@spacingbat3/kolor")
-    .then(kolor => kolor.default)
-    .then(kolor => {
-      if((__filename.startsWith(app.getAppPath()) ?
-        debug("webcord").enabled : false) || argv.values.verbose === true)
-        stdDebug(typeof message === "string" ? kolor.gray(message) : message, ...optionalParams);
-    }));
+  console.error = (message:unknown,...optionalParams:unknown[]) => {
+    stdError(typeof message === "string" ? kolor.red(message) : message, ...optionalParams);
+  };
+  console.warn = (message:unknown,...optionalParams:unknown[]) => {
+    stdWarn(typeof message === "string" ? kolor.yellow(message) : message, ...optionalParams);
+  };
+  console.debug = (message:unknown,...optionalParams:unknown[]) => {
+    if((__filename.startsWith(app.getAppPath())&&debug("webcord").enabled) || argv.values.verbose === true)
+      stdDebug(typeof message === "string" ? kolor.gray(message) : message, ...optionalParams)
+  };
+  // Looks like the `console` is still rather unsafe in Node.js:
+  // https://github.com/nodejs/node/issues/831
+  // This is temporary workaround, as I expect `console` errors to be
+  // handled within the context of the `console` itself. I don't want to kill
+  // `process.stdout` and `process.stderr` errors entirely when they might mean
+  // something more troublesome.
+  const clearOut = () => console.log = console.debug = () => {};
+  const clearErr = () => console.error = console.warn = () => {};
+  process.stdout.once("error", clearOut).once("close", clearOut);
+  process.stderr.once("error", clearErr).once("close", clearErr);
 }
 
 // Set AppUserModelID on Windows
