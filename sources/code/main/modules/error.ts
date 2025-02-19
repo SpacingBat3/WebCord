@@ -1,6 +1,8 @@
 import { app, dialog } from "electron/main";
 import kolor from "@spacingbat3/kolor";
 
+let prevDialog:Promise<unknown> = Promise.resolve();
+
 export const commonCatches = {
   print: (reason:unknown) => {
     if(reason instanceof Error)
@@ -18,13 +20,18 @@ export const commonCatches = {
 
 async function handleWithGUI(wasReady:boolean, name:string, message:string, stack:string, stackColor:string, error:Error&NodeJS.ErrnoException) {
   if(!app.isReady()) await app.whenReady();
-  let result = 0;
   let buttons:[string,string] = ["Abort", "Ignore"];
   if(new Date().getMonth() === 3 && new Date().getDate() === 1)
     // You saw nothing!
     buttons = ["Abort, abort!", "Not today, Satan!"];
   if(wasReady) console.error("\n" + kolor.red(kolor.bold(name)) + kolor.blue(message) + stackColor);
-  result = dialog.showMessageBoxSync({
+  let dialogAPI;
+  try {
+    dialogAPI = (await import("../../common/modules/client.js")).getBuildInfo().type === "devel" ? dialog.showMessageBox.bind(dialog) : dialog.showMessageBoxSync.bind(dialog);
+  } catch {
+    dialogAPI = dialog.showMessageBoxSync.bind(dialog);
+  }
+  const result = await dialogAPI({
     title: name,
     message: error.message + stack,
     type: "error",
@@ -65,7 +72,7 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
     default:
       errCode = 100;
   }
-  if(result === 0) {
+  if((typeof result === "number"?result:result.response) === 0) {
     process.removeAllListeners("uncaughtException");
     console.error("\nApplication crashed (Error code: " + errCode.toString() + (error.errno !== undefined ? ", ERRNO: " + error.errno.toString() : "") + ")\n");
     app.exit(errCode);
@@ -89,7 +96,6 @@ export default function uncaughtExceptionHandler(): void {
     }: ${app.getName()} threw '${error.name}'.` as const;
     if (error.message !== "")
       message = "\n\n" + error.message;
-
 
     if (error.stack !== undefined) {
       stack = "\n" + error.stack
@@ -116,6 +122,6 @@ export default function uncaughtExceptionHandler(): void {
         stack = stackProcessed.join("\n");
       stackColor = stackColorProcessed.join("\n");
     }
-    handleWithGUI(wasReady,name,message,stack,stackColor,error).catch(() => app.exit(200));
+    prevDialog = prevDialog.then(() => handleWithGUI(wasReady,name,message,stack,stackColor,error).catch(() => app.exit(200)));
   });
 }
