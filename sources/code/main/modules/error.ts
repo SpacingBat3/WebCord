@@ -80,11 +80,13 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
 /* Handles uncaughtException errors */
 
 export default function uncaughtExceptionHandler(): void {
-  process.removeAllListeners("uncaughtException").on("uncaughtException", (error:Error&NodeJS.ErrnoException) => {
+  process.removeAllListeners("uncaughtException").on("uncaughtException", (error:Error&NodeJS.ErrnoException,origin) => {
     let wasReady = false;
     if(app.isReady()) wasReady = true;
     let stack = "", message = "", stackColor = "";
-    const name = "UncaughtException: " + app.getName() + " threw '" + error.name + "'.";
+    const name = `${
+      (origin[0]?.toLocaleUpperCase()??"")+origin.substring(1) as Capitalize<typeof origin>
+    }: ${app.getName()} threw '${error.name}'.` as const;
     if (error.message !== "")
       message = "\n\n" + error.message;
 
