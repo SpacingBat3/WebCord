@@ -66,6 +66,7 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
       errCode = 100;
   }
   if(result === 0) {
+    process.removeAllListeners("uncaughtException");
     console.error("\nApplication crashed (Error code: " + errCode.toString() + (error.errno !== undefined ? ", ERRNO: " + error.errno.toString() : "") + ")\n");
     app.exit(errCode);
   } else {
