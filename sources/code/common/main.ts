@@ -76,7 +76,7 @@ const argv = Object.freeze(parseArgs(argvConfig));
   };
   console.debug = (message:unknown,...optionalParams:unknown[]) => {
     if((__filename.startsWith(app.getAppPath())&&debug("webcord").enabled) || argv.values.verbose === true)
-      stdDebug(typeof message === "string" ? kolor.gray(message) : message, ...optionalParams)
+      stdDebug(typeof message === "string" ? kolor.gray(message) : message, ...optionalParams);
   };
   // Looks like the `console` is still rather unsafe in Node.js:
   // https://github.com/nodejs/node/issues/831
