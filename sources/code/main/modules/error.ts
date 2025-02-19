@@ -1,5 +1,7 @@
 import { app, dialog } from "electron/main";
 import kolor from "@spacingbat3/kolor";
+import { stripVTControlCharacters } from "util";
+import { sep } from "path";
 
 let prevDialog:Promise<unknown> = Promise.resolve();
 
@@ -103,24 +105,21 @@ export default function uncaughtExceptionHandler(): void {
       stackColor = stack;
       const stackLines = stack.split(/\r\n|\n|\r/);
       const stackProcessed: string[] = [], stackColorProcessed: string[] = [];
-      for (const line of stackLines) {
-        const regexAppPath = app.getAppPath().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        if (line.match(RegExp("at.*\\(" + regexAppPath + ".*\\).*", "g"))) {
-          let modifiedLine = line;
-          const tsRule = /\(\/.*\.ts.*\)/.exec(line);
-          if (tsRule?.[0] !== undefined)
-            modifiedLine = line.replace(tsRule[0].replace(new RegExp("\\((" + regexAppPath + "\\/).*\\)"), "$1"), "");
-          stackProcessed.push(modifiedLine);
-          stackColorProcessed.push(modifiedLine);
-        } else {
-          stackColorProcessed.push(kolor.gray(line));
-        }
+      const appPath = app.getAppPath()+sep;
+      for (let line of stackLines) if (/^\s*at/.exec(line) && line.includes(appPath)) {
+        line = line.replace(appPath, "");
+        stackProcessed.push(line);
+        stackColorProcessed.push(line);
+      } else {
+        stackColorProcessed.push(kolor.gray(line));
       }
       if (error.message !== "")
         stack = "\n\n" + stackProcessed.join("\n");
       else
         stack = stackProcessed.join("\n");
       stackColor = stackColorProcessed.join("\n");
+      if(!stack.includes("at"))
+        stack = stripVTControlCharacters(stackColor);
     }
     prevDialog = prevDialog.then(() => handleWithGUI(wasReady,name,message,stack,stackColor,error).catch(() => app.exit(200)));
   });
