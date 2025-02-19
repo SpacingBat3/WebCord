@@ -224,7 +224,7 @@ export const fonts = Object.freeze({
 type hookName = keyof HookSignatures;
 
 interface WsCmd {
-  evt: `${"hook-"}${string}`;
+  evt: `hook-${string}`;
   hook: hookName;
 }
 

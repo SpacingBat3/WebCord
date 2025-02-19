@@ -92,7 +92,9 @@
     }],
 
     /*** TypeScript ESLint plugin rules ***/
-    "@typescript-eslint/switch-exhaustiveness-check": "warn",
+    "@typescript-eslint/switch-exhaustiveness-check": ["warn", {
+      "considerDefaultExhaustiveForUnions": true
+    }],
     "@typescript-eslint/strict-boolean-expressions": ["error", {
       "allowString": false,
       "allowNumber": false
