@@ -60,7 +60,7 @@ async function handleWithGUI(wasReady:boolean, name:string, message:string, stac
     case "EvalError":
       errCode = 105;
       break;
-    case "RefferenceError":
+    case "ReferenceError":
       errCode = 106;
       break;
     case "URIError":
