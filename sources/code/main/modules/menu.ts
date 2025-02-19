@@ -29,11 +29,18 @@ sideBar.on("hide", (contents: Electron.WebContents) => {
     // Make settings sidebar hidden
     "div[class^=sidebarRegion_]{ display: none !important; }",
     // Make settings content fit entire available space.
-    "div[class^=contentColumn_]{ max-width: 100%; }"
-  ].join("\n")).then(cssKey => {
+    "div[class^=contentColumn_]{ max-width: 100% !important; }"
+  ].join("\n"),{cssOrigin:"user"}).then(cssKey => {
     sideBar.once("show", () => {
-      console.debug("[EVENT] Showing menu bar...");
-      contents.removeInsertedCSS(cssKey).catch(commonCatches.throw);
+      console.debug(`[EVENT] Showing menu bar (${cssKey})...`);
+      contents.insertCSS([
+        // Try reverting all above via CSS (workaround electron#27792)
+        // It's hard-coded, based on Discord's CSS or overall defaults.
+        // To remove once Electron's done with cssOrigin:user removal impl.
+        "div[class^=sidebar_]{ width: 240px !important; }",
+        "div[class^=sidebarRegion_]{ display: flex !important; }",
+        "div[class^=contentColumn_]{ max-width: 740px !important; }"
+      ].join("\n"), {cssOrigin:"user"}).catch(commonCatches.throw);
     });
   }).catch(commonCatches.print);
 });
