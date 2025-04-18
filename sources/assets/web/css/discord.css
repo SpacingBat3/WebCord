@@ -1,11 +1,13 @@
 /* Animate side bar on resize. */
-div[class^=sidebar_] {
+div[class^=sidebar_]
+div[class^=sidebarList_] {
     transition: width .1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Hide Discord elements. */
 div[class^=scroller_] > div[class^=listItem_]:nth-last-child(2) > *,
-div[class^=scroller_] > div[class^=listItem_]:nth-last-child(3) > * {
+div[class^=scroller_] > div[class^=listItem_]:nth-last-child(3) > *,
+div[class*=" scroller_"] > div[class^="listItem_"]:nth-last-child(2) {
     display: none !important;
 }
 
@@ -61,6 +63,10 @@ img[src*="423864076095979522"] ~ :is(h1,h2,h3,h4,h5,h6) > span > span {
     }
 }
 
+div[class^=bar_] {
+    height: 0px;
+}
+
 /* Hide "help" button. */
 div[class^=toolbar_] > a {
     display: none;
@@ -79,7 +85,7 @@ div[class^=layerContainer_] :not([class*=Tooltip]) {
 /* Mobile interface tweaks */
 @media screen and (max-width: 480px) {
     div[class^=channelTextArea_] > div[class^=scrollableContainer_] >
-    div[class^=inner_] > div[class^=buttons_] > :not(:last-child) {
+    div[class^=inner_] > div[class^=buttons_] > :not(:nth-last-child(2)) {
         display: none;
     }
     /* Hide search input if the screen is too small to display toolbar right.*/
