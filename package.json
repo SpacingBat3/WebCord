@@ -67,6 +67,7 @@
     "deepmerge-ts": "^7.0.3",
     "dompurify": "^3.0.1",
     "marked": "^15.0.4",
+    "marked-alert": "^2.1.2",
     "marked-gfm-heading-id": "^4.0.0",
     "semver": "^7.3.5",
     "source-map-support": "^0.5.21",

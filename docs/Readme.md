@@ -1,14 +1,9 @@
-<table class="alert-warn" align=center>
-<tr>
-    <td> 🚧️ </td>
-    <td>
-        <b>A major rewrite of the client is being worked on!</b> That means, most efforts around WebCord
-	will be kept at minimum – there might be no time-intensive and major updates done on top
-	of the existing code. However, WebCord should still receive maintenance updates along with
-	new features or improvements that don't cost investing too much of my time.
-    </td>
-</tr>
-</table>
+> [!WARNING]
+> **🚧️ A major rewrite of the client is being worked on! 🚧️** That means, most efforts around WebCord
+> will be kept at minimum – there might be no time-intensive and major updates done on top
+> of the existing code. However, WebCord should still receive maintenance updates along with
+> new features or improvements that don't cost investing too much of my time.
+
 <p align='right'><sub>
   Znasz 🇵🇱? Przejdź <a href='pl/Readme.md' title='Polski plik README'>tutaj</a>.
 </sub></p>

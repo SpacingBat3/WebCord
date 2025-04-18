@@ -15,13 +15,17 @@ import {
   //@ts-expect-error due to TS14790
 } from "marked-gfm-heading-id";
 
+//@ts-expect-error due to TS14790
+import mdAlerts from "marked-alert";
+
 const htmlFileUrl = document.URL;
 
 // GFM heading IDs:
 
 marked.use(
   //@ts-expect-error due to TS2379
-  gfmHeadingId()
+  gfmHeadingId(),
+  mdAlerts()
 );
 
 const menu = document.createElement("img");

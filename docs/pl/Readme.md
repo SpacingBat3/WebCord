@@ -1,3 +1,10 @@
+> [!WARNING]
+> **🚧️ Planowana przebudowa aplikacji! 🚧️** To oznacza, że wkład wokół WebCord'a
+> będzie utrzymywany do minimum – może nie być czasu na czasochłonne i duże
+> aktualizacje, robione na obecnym kodzie. Jednakże WebCord wciąż powinien
+> otrzymywać aktualizacje wraz z nowymi funkcjami i poprawkami, jeżeli nie
+> kosztują ode mnie sporych nakładów czasowych.
+
 <div align='right'>
 <sub>
   You don't speak 🇵🇱️? <a href='../Readme.md'>Go back</a> to 🇬🇧️ docs.
