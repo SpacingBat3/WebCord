@@ -51,7 +51,8 @@
                 "fullscreen": "Полноэкранный режим",
                 "notifications": "Уведомления",
                 "display-capture": "Захват экрана",
-                "background-sync": "Фоновая синхронизация"
+                "background-sync": "Фоновая синхронизация",
+                "speaker-selection": "Список аудиоустройств"
             }
         }
     },

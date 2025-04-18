@@ -97,9 +97,9 @@
         },
         "optimize": {
             "name": "Client optimizations",
-            "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by default.",
+            "description": "Tries to detect the user software and hardware to apply custom flags to the Chromium engine that <b>might</b> improve Electron's performance or functionality. <b>Experimental</b>, as there's a reason why Chromium does not apply these flags by default.",
             "labels": {
-                "gpu": "Optimize the client for the currently active graphics card."
+                "gpu": "Optimize the client for the currently active graphics card."
             }
         },
         "webApi": {
