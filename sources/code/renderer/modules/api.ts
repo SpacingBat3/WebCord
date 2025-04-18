@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unused-modules */
 /*
  * A place to move useful WebCord's function that could be exposed to
  * third-party addons in the future as part of planned "API".
@@ -47,7 +46,7 @@ export function generateSafeKey() {
  *
  * **Currently unused in the code itself, reserved for WebCord's future API for
  * the extensions.**
- */
+ *//*
 export function findClass<S extends string>(searchString: S, tagName: keyof HTMLElementTagNameMap) {
   const searchResult = new Set<`${string}${S}${string}`>();
   for (const container of document.getElementsByTagName(tagName))
@@ -55,7 +54,7 @@ export function findClass<S extends string>(searchString: S, tagName: keyof HTML
       if(classString.includes(searchString))
         searchResult.add(classString as `${string}${S}${string}`);
   return [...searchResult];
-}
+}/**/
 
 /**
  * A function that allows the access to the Discord API without the need of
@@ -68,7 +67,7 @@ export function findClass<S extends string>(searchString: S, tagName: keyof HTML
  * @param method
  * @param apiVersion
  * @param endpoint
- */
+ *//*
 export function sendRequest(method:"POST"|"GET", apiVersion: 6|7|8|9|10, endpoint:string, body?: XMLHttpRequestBodyInit) {
   const request = new XMLHttpRequest();
   request.open(method,new URL(document.URL).origin+"/api/v"+apiVersion.toString()+endpoint);
@@ -82,7 +81,7 @@ export function sendRequest(method:"POST"|"GET", apiVersion: 6|7|8|9|10, endpoin
     request.abort();
     return;
   });
-}
+}/**/
 
 /**
  * Allows to navigate to the given path without reloading the entire Discord
