@@ -201,6 +201,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         case "fullscreen":
         case "background-sync":
         case "speaker-selection":
+        case "clipboard-sanitized-write":
           return appConfig.value.settings.privacy.permissions[permission]??false;
         default:
           return null;

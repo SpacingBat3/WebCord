@@ -53,7 +53,8 @@
                 "notifications": "Powiadomienia",
                 "display-capture": "Nagrywanie ekranu",
                 "background-sync": "Synchronizacja w tle",
-                "speaker-selection": "Lista urządzeń audio"
+                "speaker-selection": "Lista urządzeń audio",
+                "clipboard-sanitized-write": "Dostęp do zapisu w schowku"
             }
         }
     },
