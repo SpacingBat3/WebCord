@@ -39,7 +39,7 @@
             "labels": {
                 "science": "Blockiert bekannte Telemetrie (<code>/science</code> und <code>/tracing</code>).",
                 "typingIndicator": "Tippanzeige blockieren (<code>/typing</code>).",
-                "fingerprinting": "Fingerprinting Blockieren <code>api.js</code> script."
+                "fingerprinting": "Blockiere bekannte Fingerprinting-Methoden (<code>api.js</code> und <code>cdn-cgi</code>)."
             }
         },
         "permissions": {
@@ -94,7 +94,7 @@
             "labels": {
                 "gpu": "Optimieren Sie den Client für die derzeit aktive Grafikkarte."
             },
-            "description": "Anhand der vorliegenden Soft- und Hardwarekonfiguration wird versucht, der Chromium-Engine angepasste Flags zu übergeben, sodass die Leistungsfähigkeit von Electron erhöht wird. Dies ist ein <b>experimentelles</b> Feature, da Chromium Gründe hat, diese Einstellungen nicht standardmäßig anzuwenden."
+            "description": "Versucht, die Software und Hardware des Nutzers zu erkennen, um benutzerdefinierte Flags für die Chromium-Engine anzuwenden, die <b>möglicherweise</b> die Leistung oder Funktionalität von Electron verbessern. <b>Experimentell</b>, da es einen Grund gibt, warum Chromium diese Flags standardmäßig nicht verwendet."
         },
         "webApi": {
             "name": "Zugang zu JavaScript APIs",
@@ -107,7 +107,7 @@
             "description": "Aktiviert Features, die von Chromium/Blink als experimentell eingestuft wurden. <b>Verwenden auf eigene Gefahr</b>.",
             "name": "Experimentelle Features für Unix-oide Betriebssysteme",
             "labels": {
-                "autoscroll": "Scrollen mit mittlerer Maustaste aktivieren."
+                "autoscroll": "Mittelklick-Scrollen aktivieren (aka. <i>Autoscroll</i>)."
             }
         }
     }
