@@ -136,9 +136,7 @@ const config:ForgeConfig = {
     new MakerAppImage({ options: {
       icon: `${iconFile}.png`,
       genericName: desktopGeneric,
-      categories: desktopCategories,
-      flagsFile: true,
-      type2runtime: true
+      categories: desktopCategories
     }}),
     new MakerDeb({ options: {
       icon: `${iconFile}.png`,

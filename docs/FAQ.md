@@ -23,8 +23,8 @@ grouped in tables by platforms:
 
 | <div align=center> Architecture </div> | <div align=center> Archive name </div> |
 | :------------------------------------- | :------------------------------------- |
-| 64-bit X86 (Regular Mac computers)     | `webcord-darwin-x64-{version}.zip`     |
-| 64-bit ARM (Apple M1 computers)        | `webcord-darwin-arm64-{version}.zip`   |
+| 64-bit X86 (Regular Mac computers)     | `WebCord-{version}-x64.dmg`            |
+| 64-bit ARM (Apple M1 computers)        | `WebCord-{version}-arm64.dmg`          |
 
 ### Linux
 
@@ -108,7 +108,7 @@ At the current state, it modifies the style of the page via CSS injection and
 tweaks the JavaScript, so I believe **yes**. However, I focus in WebCord on
 spoofing and hiding all modifications done in way Discord can't be sure what and
 how modifications were done (e.g. stylesheets are injected without HTML, so they
-can't be programatically catched via `MutationObserver`), so even when WebCord
+can't be programmatically caught via `MutationObserver`), so even when WebCord
 does any modifications, including injecting custom stylesheets, **you should be safe**.
 
 In my eyes, WebCord is the last client from which you should expect to be banned

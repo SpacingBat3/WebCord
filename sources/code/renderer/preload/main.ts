@@ -61,7 +61,7 @@ if (window.location.protocol === "file:") {
   }
 
   /*
-   * Handle WebSocket Server IPC communication 
+   * Handle WebSocket Server IPC communication
    */
   ipc.on("navigate", (_event, path:string) => {
     navigate(path);

@@ -1,14 +1,9 @@
-<table class="alert-warn" align=center>
-<tr>
-    <td> 🚧️ </td>
-    <td>
-        <b>A major rewrite of the client is being worked on!</b> That means, most efforts around WebCord
-	will be kept at minimum – there might be no time-intensive and major updates done on top
-	of the existing code. However, WebCord should still receive maintenance updates along with
-	new features or improvements that don't cost investing too much of my time.
-    </td>
-</tr>
-</table>
+> [!WARNING]
+> **🚧️ A major rewrite of the client is being worked on! 🚧️** That means, most efforts around WebCord
+> will be kept at minimum – there might be no time-intensive and major updates done on top
+> of the existing code. However, WebCord should still receive maintenance updates along with
+> new features or improvements that don't cost investing too much of my time.
+
 <p align='right'><sub>
   Znasz 🇵🇱? Przejdź <a href='pl/Readme.md' title='Polski plik README'>tutaj</a>.
 </sub></p>
@@ -28,7 +23,7 @@
 [![Weblate badge][l10nbadge]][l10n] [![GitHub downloads][dlbadge]][downloads]
 [![Discord server][discord-badge]][discord-url]
 
-A Discord and [Spacebar] client implemented directly without [Discord API][discordapi].
+A Discord client implemented directly without [Discord API][discordapi].
 Made in 🇵🇱 with the [Electron][electron] framework.
 
 </div>
@@ -196,7 +191,6 @@ you don't even need to be familiar with programming at all!
 [electron]: https://www.electronjs.org/ "Build cross-platform desktop apps with JavaScript, HTML, and CSS."
 [electron-forge]: https://www.electronforge.io/ "A complete tool for creating, publishing, and installing modern Electron applications."
 [license]: ../LICENSE "WebCord license"
-[Spacebar]: https://spacebar.chat "Free, open source and selfhostable Discord compatible chat, voice and video platform."
 [discordapi]: https://discord.com/developers/docs/reference "Official Discord REST API documentation"
 [chromiumbounty]: https://bughunters.google.com/about/rules/5745167867576320/chrome-vulnerability-reward-program-rules "Chrome Vulnerability Reward Program Rules"
 [Electron#Security]: https://www.electronjs.org/docs/latest/tutorial/security "Security | Electron Documentation"

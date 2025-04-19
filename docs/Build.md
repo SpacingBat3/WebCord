@@ -6,29 +6,18 @@ distributable format, run linter and so on. This section will describe the
 commands you may need to know to proceed with its development or packaging it
 yourself from its source code.
 
-<table class="alert-info">
-<tr>
-    <td> ℹ️ </td>
-    <td>
-        To simplify the documentation, only <code>npm</code> command syntax is
-        shown below. If you prefer using another package manager, you're free to
-        do so as in my philosophy you should not be limited with the set of
-        tools used by maintainers and have the right to choose your own.
-    </td>
-</tr>
-</table>
-<table class="alert-warn">
-<tr>
-    <td> ⚠️ </td>
-    <td>
-        WebCord comes with <code>package-lock.json</code> as a lock file format
-        and your preffered package manager might not be functional with it. You
-        still can install the latest dependencies, yet the created lockfile will
-        not be used to reproduce the tested enviroment when a dependency
-        breakage will occur.
-    </td>
-</tr>
-</table>
+> [!NOTE]
+> To simplify the documentation, only <code>npm</code> command syntax is
+> shown below. If you prefer using another package manager, you're free to
+> do so as in my philosophy you should not be limited with the set of
+> tools used by maintainers and have the right to choose your own.
+
+> [!WARNING]
+> WebCord comes with <code>package-lock.json</code> as a lock file format
+> and your preferred package manager might not be functional with it. You
+> still can install the latest dependencies, yet the created lockfile will
+> not be used to reproduce the tested environment when a dependency
+> breakage will occur.
 
 ## Install app dependencies.
 

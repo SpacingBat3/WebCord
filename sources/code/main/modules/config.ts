@@ -79,7 +79,8 @@ const defaultAppConfig = Object.freeze({
         "notifications": null as boolean|null,
         "display-capture": true,
         "background-sync": false,
-        "speaker-selection": false
+        "speaker-selection": false,
+        "clipboard-sanitized-write": true
       },
     },
     advanced: {

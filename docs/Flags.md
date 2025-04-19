@@ -66,7 +66,7 @@ The `buildInfo.json` file should be placed in the application's root directory
 - `"commit": [hash]` – this property will save the information about the build
   commit; it is ignored for the `release` build type.
 
-- `AppUserModelId: [string]` *(Windows only)* – definies an
+- `AppUserModelId: [string]` *(Windows only)* – defines an
   `ApplicationUserModelId` of the WebCord build, this should always be present
   in Windows distributables.
 

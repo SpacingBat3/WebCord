@@ -53,7 +53,8 @@
                 "notifications": "Notifications",
                 "display-capture": "Desktop capture",
                 "background-sync": "Background synchronisation",
-                "speaker-selection": "Audio devices list"
+                "speaker-selection": "Audio devices list",
+                "clipboard-sanitized-write": "Clipboard write access"
             }
         }
     },

@@ -112,15 +112,44 @@ article {
     transition: background-color 0.5s ease-in-out;
 }
 
-/*
- * Many Markdown documents (or even GitHub AsciiDoc parser itself) uses tables
- * as alert popups. 
- */
-table > tbody > tr:only-child {
-    display: block;
-    border: solid 1px var(--color-bg-border);
-    background-color: var(--color-bg-secondary);
-    border-radius: 20px;
+.markdown-alert {
+    border-style: solid;
+    border-width: 4px;
+    border-radius: 16px;
+    padding: 4px 16px;
+    margin-bottom: 1em;
+}
+
+.markdown-alert-note {
+    background-color: rgba(var(--color-alert-info), 15%);
+    border-color: rgb(var(--color-alert-info));
+}
+
+.markdown-alert-note .markdown-alert-title {
+    color: rgb(var(--color-alert-info));
+    fill: rgb(var(--color-alert-info));
+}
+
+.markdown-alert-warning {
+    background-color: rgba(var(--color-alert-warn), 20%);
+    border-color: rgb(var(--color-alert-warn));
+    
+}
+
+.markdown-alert-warning .markdown-alert-title {
+    color: rgb(var(--color-alert-warn));
+    fill: rgb(var(--color-alert-warn));
+}
+
+
+.markdown-alert-title {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.markdown-alert .octicon {
+    margin-right: 4px;
 }
 
 table.alert-info > tbody > tr:only-child {

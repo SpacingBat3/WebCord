@@ -68,8 +68,8 @@ electron$v $path
 ### *nix on Wayland
 
 Currently, Wayland support is hit or miss and it is going to be greatly
-dependant on sofware bugs within Electron/Chromium or `xdg-desktop-portals`
-implementations (in case of screen share) or some kind of inconsistences.
+dependant on software bugs within Electron/Chromium or `xdg-desktop-portals`
+implementations (in case of screen share) or some kind of inconsistencies.
 Moreover, many browsers run in XWayland by the default – in both Chromium and
 Firefox, native Wayland seems to be treated as an experimental feature and you
 will have to opt-in for it either via command-line flags or some kind of hidden,

@@ -15,7 +15,7 @@ jobs:
       matrix:
         include:
           - name: Linux
-            runner: ubuntu-20.04
+            runner: ubuntu-latest
             arch: x64,arm64,armv7l
           - name: Windows
             runner: windows-latest
