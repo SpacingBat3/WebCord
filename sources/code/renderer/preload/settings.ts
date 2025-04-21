@@ -60,14 +60,12 @@ function generateRadioLabels(key:string) {
 }
 
 function checkPlatformKey(key:string) {
-  switch(key as NodeJS.Platform|"unix") {
+  switch(key as NodeJS.Platform|"unix"|"menuBar") {
     case "win32":
-    case "darwin":
-      return process.platform === key;
-    case "unix":
-      return process.platform !== "win32";
-    default:
-      return true;
+    case "darwin":  return process.platform === key;
+    case "unix":    return process.platform !== "win32";
+    case "menuBar": return process.platform !== "darwin";
+    default:        return true;
   }
 }
 
@@ -93,84 +91,76 @@ function createForm(form:CheckBoxForm|RadioForm){
     inputLabel.title = form.description;
   }
   if(!(form.enabled??true)) {
-    inputTag.disabled = true;
     inputLabel.classList.add("disabled");
+    inputTag.disabled = true;
   }
   inputTag.addEventListener("change", fetchFromWebsite);
   inputLabel.innerHTML = sanitize(form.label+(inputTag.title !== "" ? " 🛈" : ""), sanitizeConfig);
-  inputForm.appendChild(inputTag);
-  inputForm.appendChild(inputLabel);
+  inputForm.append(inputTag,inputLabel);
   return inputForm;
 }
 
 function generateSettings(optionsGroups: htmlConfig) {
   // Clear old config (so this function can be executed multiple times).
-  document.body.innerHTML = "";
-  optionsGroups.map(groupArray => {
-    const [groupId, group] = groupArray;
-    const h1 = document.createElement("h1");
-    h1.innerHTML = sanitize(group.name, sanitizeConfig);
-    document.body.appendChild(h1);
-    (Object.keys)(group).map(settingKey => {
-      if(settingKey !== "name" && settingKey !== buildType && checkPlatformKey(settingKey)) {
-        const setting = (group as unknown as generatedConfigGeneric)[settingKey];
-        if(setting) {
-          // Skip unlocalized configurations.
-          if(setting.name === undefined || setting.description === undefined) {
-            try {
-              console.warn("Invalid configuration option: "+JSON.stringify(setting));
-            } catch {
-              console.warn("'setting' is not a valid object!");
-            }
-            return;
-          }
-          const h2 = document.createElement("h2");
-          const pDesc = document.createElement("p");
-          const formContainer = document.createElement("form");
-          h2.innerHTML = sanitize(setting.name);
-          pDesc.classList.add("description");
-          pDesc.innerHTML = sanitize(setting.description);
-          formContainer.classList.add("settingsContainer");
+  document.body.replaceChildren();
+  for(const [groupId, group] of optionsGroups) {
+    document.body.appendChild(document.createElement("h1"))
+      .innerHTML = sanitize(group.name, sanitizeConfig);
+    for(const settingKey of Object.keys(group)) if(settingKey !== "name" && settingKey !== buildType && checkPlatformKey(settingKey)) {
+      const setting = (group as unknown as generatedConfigGeneric)[settingKey];
+      if(setting) {
+        // Skip unlocalized configurations.
 
-          if("radio" in setting) {
-            const types = generateRadioLabels(settingKey);
-            types.map(value => {
-              formContainer.appendChild(createForm({
-                type: "radio",
-                id: groupId+"."+settingKey+".radio",
-                isChecked: value === types[setting.radio],
-                label: value[0],
-                value: types.indexOf(value).toString(),
-                enabled: value[1],
-              }));
-            });
-          } else if(!("dropdown" in setting || "input" in setting || "keybind" in setting)) {
-            (Object.keys as keys)(setting)
-              .sort()
-              .filter(key => key !== "name" && key !== "description" && key !== "labels" && key !== "info" && setting[key] !== undefined)
-              .forEach(key => formContainer.appendChild(createForm({
-                type:"checkbox",
-                id: groupId+"."+settingKey+"."+key,
-                isChecked: setting[key] === true,
-                label: setting.labels[key] ?? "N/A",
-                description: setting.info?.[key] ?? undefined
-              })));
-          } else {
-            throw new Error("Still unimplemented / unsupported configuration type!");
-          }
-          document.body.appendChild(h2);
-          document.body.appendChild(pDesc);
-          document.body.appendChild(formContainer);
+        if(setting.name === undefined || setting.description === undefined) try {
+          console.warn("Invalid configuration option: "+JSON.stringify(setting));
+        } catch {
+          console.warn("'setting' is not a valid object!");
+        } finally {
+          // eslint-disable-next-line no-unsafe-finally
+          return;
         }
+        // Generate forms
+        const pDesc = document.createElement("p");
+        const formContainer = document.createElement("form");
+        pDesc.innerHTML = sanitize(setting.description);
+        pDesc.classList.add("description");
+        formContainer.classList.add("settingsContainer");
+
+        if("radio" in setting) for(const [key,value] of (Object.entries(generateRadioLabels(settingKey))))
+          formContainer.appendChild(createForm({
+            type: "radio",
+            id: groupId+"."+settingKey+".radio",
+            isChecked: Number(key) === setting.radio,
+            label: value[0],
+            value: key,
+            enabled: value[1],
+          }));
+        else if(!("dropdown" in setting || "input" in setting || "keybind" in setting))
+          formContainer.append(...(Object.keys as keys)(setting)
+            .sort()
+            .filter(key => key !== "name" && key !== "description" && key !== "labels" && key !== "info" && setting[key] !== undefined)
+            .map(key => createForm({
+              type:"checkbox",
+              id: groupId+"."+settingKey+"."+key,
+              isChecked: setting[key] === true,
+              label: setting.labels[key] ?? "N/A",
+              description: setting.info?.[key] ?? undefined
+            }))
+          );
+        else
+          throw new Error("Still unimplemented / unsupported configuration type!");
+        // Append elements to DOM tree
+        document.body.appendChild(document.createElement("h2"))
+          .innerHTML = sanitize(setting.name);
+        document.body.append(pDesc,formContainer);
       }
-    });
-  });
+    }
+  }
 }
 
-window.addEventListener("load", () => {
-  void ipcRenderer.invoke("settings-generate-html", "ready-to-render")
-    .then((args:htmlConfig) => {
-      generateSettings(args);
-      wLog("Settings preloaded!");
-    });
-});
+window.addEventListener("load", () => void (async () => {
+  generateSettings(
+    await ipcRenderer.invoke("settings-generate-html", "ready-to-render") as htmlConfig
+  );
+  wLog("Settings preloaded!");
+})());
