@@ -52,7 +52,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     backgroundColor: appInfo.backgroundColor,
     transparent: appConfig.value.settings.general.window.transparent,
     show: false,
-    ...(process.platform === "darwin" && {
+    ...(process.platform === "darwin" && appConfig.value.settings.general.darwin.csd && {
       titleBarStyle: "hiddenInset",
       trafficLightPosition: { x: 10, y: 10 },
     }),
