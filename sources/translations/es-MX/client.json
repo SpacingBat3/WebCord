@@ -71,7 +71,7 @@
             "updateTitle": "¡Actualización disponible!",
             "update": "¡Una nueva versión de la aplicación está disponible!",
             "recent": "¡La aplicación está actualizada!",
-            "devel": "Estás usando una versión inestable",
+            "devel": "Estás usando una versión inestable.",
             "downgrade": "¡Tu versión de producción es más nueva que la versión estable!"
         },
         "permission": {

@@ -52,7 +52,7 @@
             "description": "தனியுரிமையை கடினப்படுத்துவதற்கான டிச்கார்ட் பநிஇ கோரிக்கைகளைத் தடுக்கிறது.",
             "labels": {
                 "science": "அறியப்பட்ட டெலிமெட்ரி எண்ட்பாயிண்ட்ச் (<code>/அறிவியல் </code> மற்றும் <code>/tracing </code>).",
-                "typingIndicator": "தட்டச்சு காட்டி காட்டி (<code>/தட்டச்சு </code>).",
+                "typingIndicator": "தட்டச்சு காட்டி (<code>/தட்டச்சு </code>).",
                 "fingerprinting": "அறியப்பட்ட கைரேகை முறைகளைத் தடுக்கவும் (<code> api.js </code> மற்றும் <code> CDN-CGI </code>)."
             }
         }
