@@ -54,11 +54,11 @@
             "error": "Feil"
         },
         "ver": {
-            "updateTitle": "Oppgradering tilgjengelig.",
-            "update": "Ny programversjon tilgjengelig.",
-            "recent": "Nyeste utgave av programmet er i bruk.",
+            "updateTitle": "Oppgradering tilgjengelig!",
+            "update": "Ny programversjon tilgjengelig!",
+            "recent": "Nyeste utgave av programmet er i bruk!",
             "devel": "Du bruker et utviklingsbygg.",
-            "downgrade": "Din versjon er nyere enn den stabile versjonen.",
+            "downgrade": "Din versjon er nyere enn den stabile versjonen!",
             "updateBadge": "[OPPGRADER]"
         },
         "permission": {

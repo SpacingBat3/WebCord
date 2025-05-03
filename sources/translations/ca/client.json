@@ -6,7 +6,9 @@
         "copy": "Còpia",
         "cut": "Talla",
         "dictionaryAdd": "Afegeix al diccionari local",
-        "copyURL": "Copia l'adreça de l'enllaç"
+        "copyURL": "Copia l'adreça de l'enllaç",
+        "copyImageURL": "Copia l'enllaç de la imatge",
+        "copyImage": "Copia la imatge"
     },
     "menubar": {
         "window": {
@@ -36,7 +38,8 @@
         "edit": {
             "groupName": "Edita",
             "undo": "Desfer",
-            "redo": "Refer"
+            "redo": "Refer",
+            "selectAll": "Selecciona tot"
         },
         "enabled": "Habilitat"
     },
@@ -63,6 +66,13 @@
             },
             "check": {
                 "denied": "%s: Comprovació de permisos a %s denegada."
+            },
+            "question": {
+                "video": "càmera",
+                "audio": "micròfon",
+                "notifications": "notificacions",
+                "message": "Voleu donar a Discord access a %s?",
+                "title": "Manipulador de sol·licitud de permís"
             }
         },
         "mod": {
@@ -87,7 +97,11 @@
     },
     "tray": {
         "toggle": "Commuta",
-        "quit": "Sortir"
+        "quit": "Sortir",
+        "mention": {
+            "one": "menció",
+            "other": "mencions"
+        }
     },
     "help": {
         "groupName": "Ajuda",
