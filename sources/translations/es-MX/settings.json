@@ -16,7 +16,7 @@
         },
         "menuBar": {
             "labels": {
-                "hide": "oculta la barra de menú  (<kbd>ALT</kbd> comando cambia automáticamente la visibilidad."
+                "hide": "oculta la barra de menú (<kbd>ALT</kbd> comando cambia automáticamente la visibilidad."
             },
             "name": "Barra de menú",
             "description": "Cambia la configuración de visibilidad de la barra de menús nativas."
