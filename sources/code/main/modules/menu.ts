@@ -67,6 +67,13 @@ export function context(parent: Electron.BrowserWindow): void {
         enabled: clipboard.availableFormats().length !== 0 && params.editFlags.canPaste,
         role: "paste"
       },
+      {
+        label: context.googleSearch,
+        enabled: params.editFlags.canCopy,
+        click: () => {
+          shell.openExternal(`https://www.google.com/search?q=${encodeURIComponent(params.selectionText)}`).catch(commonCatches.throw);
+        }
+      },
       { type: "separator" }
     ] satisfies Electron.MenuItemConstructorOptions[] : []),
     // Copy link text / copy link url

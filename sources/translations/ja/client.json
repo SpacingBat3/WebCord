@@ -8,7 +8,8 @@
         "paste": "ペースト",
         "copyURL": "URLのコピー",
         "copyImage": "画像のコピー",
-        "copyImageURL": "画像へのリンクをコピー"
+        "copyImageURL": "画像へのリンクをコピー",
+        "googleSearch": "Googleで検索"
     },
     "tray": {
         "toggle": "トグル",
