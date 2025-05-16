@@ -80,7 +80,7 @@
         },
         "currentInstance": {
             "name": "Instancja Discorda",
-            "description": "Wybiera instancję Discorda, z którą WebCord powinien się łączyć. <b>Eksperymentalne</b>, ponieważ implementacja Fosscorda nie jest w pełni ukończona."
+            "description": "Wybiera instancję Discorda, z którą WebCord powinien się łączyć."
         },
         "devel": {
             "name": "Tryb deweloperski",

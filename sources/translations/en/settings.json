@@ -80,7 +80,7 @@
         },
         "currentInstance": {
             "name": "Discord instance",
-            "description": "Selects the instance WebCord should connect to. <b>Experimental</b> as the Fosscord implementation is not fully finished yet."
+            "description": "Selects the Discord instance WebCord should connect to."
         },
         "devel": {
             "name": "Developer mode",

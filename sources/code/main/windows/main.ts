@@ -331,9 +331,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
   // Window Title & "red dot" icon feature
   win.on("page-title-updated", (event, title) => {
     event.preventDefault();
-    if (title.includes("Discord Test Client"))
-      win.setTitle(app.getName() + " (Fosscord)");
-    else if (title.includes("|")) {
+    if (title.includes("|")) {
       // Wrap new title style!
       const sections = title.split("|");
       const [dirty,client,section,group] = [
