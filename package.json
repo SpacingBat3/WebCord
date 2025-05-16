@@ -2,7 +2,7 @@
   "$schema": "./schemas/schemastore/package.json",
   "name": "webcord",
   "productName": "WebCord",
-  "version": "4.10.5",
+  "version": "4.11.0",
   "description": "A Discord made with the Electron API.",
   "main": "app/code/common/main.js",
   "scripts": {
