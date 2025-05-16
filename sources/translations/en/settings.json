@@ -105,7 +105,7 @@
         },
         "webApi": {
             "name": "Access to JavaScript APIs",
-            "description": "Controls which API should be permitted in unpriviledged (DOM) scripts.",
+            "description": "Controls which API should be permitted in unprivileged (DOM) scripts.",
             "labels": {
                 "webGl": "Enable WebGL support."
             }

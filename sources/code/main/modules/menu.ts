@@ -38,7 +38,7 @@ sideBar.on("hide", (contents: Electron.WebContents) => {
   }).catch(commonCatches.print);
 });
 
-// Contex Menu with spell checker
+// Context Menu with spell checker
 
 export function context(parent: Electron.BrowserWindow): void {
   const { context } = new L10N().client;

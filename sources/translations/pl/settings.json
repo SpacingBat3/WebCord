@@ -98,7 +98,7 @@
         },
         "optimize": {
             "name": "Optymalizacje klienta",
-            "description": "Próbuje wykryć oprogramowanie i sprzęt użytkownika, aby zastosować niestandardowe flagi do silnika Chromium, które <b>mogą</b> polepszyć wydajność lub funkcjonalność Elektrona. <b>Eksperymentalne</b>, ponieważ istnieje powód, dla którego domyślnie Chromium nie stosuje tych flag.",
+            "description": "Próbuje wykryć oprogramowanie i sprzęt użytkownika, aby zastosować niestandardowe flagi do silnika Chromium, które <b>mogą</b> polepszyć wydajność lub funkcjonalność Electrona. <b>Eksperymentalne</b>, ponieważ istnieje powód, dla którego domyślnie Chromium nie stosuje tych flag.",
             "labels": {
                 "gpu": "Optymalizuj klient względem obecnie aktywnej karty graficznej."
             }
