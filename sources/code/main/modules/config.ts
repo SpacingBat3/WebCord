@@ -69,6 +69,7 @@ const defaultAppConfig = Object.freeze({
     privacy: {
       blockApi: {
         science: true,
+        sentry: true,
         typingIndicator: false,
         fingerprinting: true
       },

@@ -36,9 +36,10 @@
         "name": "Privacy",
         "blockApi": {
             "name": "Discord API blocking",
-            "description": "Blocks Discord API requests for hardening the privacy.",
+            "description": "Block Discord API requests and scripts to harden the privacy.",
             "labels": {
                 "science": "Block known telemetry endpoints (<code>/science</code> and <code>/tracing</code>).",
+                "sentry": "Block loading Sentry in Discord",
                 "typingIndicator": "Block typing indicator (<code>/typing</code>).",
                 "fingerprinting": "Block known fingerprinting methods (<code>api.js</code> and <code>cdn-cgi</code>)."
             }

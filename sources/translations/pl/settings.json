@@ -36,9 +36,10 @@
         "name": "Prywatność",
         "blockApi": {
             "name": "Blokowanie API Discorda",
-            "description": "Blokowanie wybranych żądań API i skryptów Discorda w celu polepszenia prywatności.",
+            "description": "Zablokuj żądania API i skrypty Discorda celem polepszenia prywatności.",
             "labels": {
                 "science": "Blokuj żądania telemetrii (<code>/science</code> i <code>/tracing</code>).",
+                "sentry": "Blokuj wczytywanie Sentry w Discordzie",
                 "typingIndicator": "Blokuj wskaźnik pisania (<code>/typing</code>).",
                 "fingerprinting": "Blokuj znane metody zbierania odcisku palca (<code>api.js</code> i <code>cdn-cgi</code>)."
             }

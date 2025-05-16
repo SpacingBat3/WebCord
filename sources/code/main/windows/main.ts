@@ -110,6 +110,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     {
       urls: [
         "https://*/cdn-cgi/**",
+        "https://*/assets/sentry.*.js",
         "https://*/api/*/science",
         "https://*/api/*/channels/*/typing",
         "https://*/api/*/track"
@@ -118,6 +119,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     (details, callback) => {
       const {
         science,
+        sentry,
         fingerprinting,
         typingIndicator
       } = appConfig.value.settings.privacy.blockApi;
@@ -127,6 +129,8 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         console.debug("[API] Blocking " + url.pathname);
       if (url.pathname.endsWith("/science") || url.pathname.endsWith("/track"))
         callback({ cancel: science });
+      else if(/\/assets\/sentry\..*.js$/.test(url.pathname))
+        callback({ cancel: sentry });
       else if (url.pathname.endsWith("/typing"))
         callback({ cancel: typingIndicator });
       else if (url.pathname.endsWith("/api.js") || url.pathname.startsWith("/cdn-cgi/"))
