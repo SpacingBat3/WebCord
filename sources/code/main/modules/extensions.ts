@@ -153,7 +153,7 @@ export async function loadChromiumExtensions(session:Electron.Session) {
   await mkdir(extDir, { recursive:true });
   for(const path of await readdir(extDir, {withFileTypes: true}))
     if (path.isDirectory() && session.isPersistent())
-      promises.push(session.loadExtension(resolveFs(extDir, path.name)));
+      promises.push(session.extensions.loadExtension(resolveFs(extDir, path.name)));
   return Promise.all(promises);
 }
 
