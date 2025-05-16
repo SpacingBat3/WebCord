@@ -25,9 +25,9 @@
         "blockApi": {
             "name": "Bloqueig de l'API de Discord",
             "labels": {
-                "typingIndicator": "Bloqueja l'indicació d'escriptura  (<code>/typing</code>).",
+                "typingIndicator": "Bloqueja l'indicació d'escriptura (<code>/typing</code>).",
                 "science": "Bloqueja els punts finals de telemetria coneguts (<code>/science</code> i <code>/tracing</code>).",
-                "fingerprinting": "Bloqueja l'script d'empremtes digitals <code>api.js</code>."
+                "fingerprinting": "Bloqueja els mètodes coneguts d'empremta digital (<code>api.js</code> i <code>cdn-cgi</code>)."
             },
             "description": "Bloqueja les sol·licituds de l'API de Discord per endurir la privadesa."
         },
