@@ -399,7 +399,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     if(typeof api !== "string") return;
     console.debug("[IPC] Replace and spoof `getUserMedia` to block unauthorized screen sharing.");
     const functionString = `{
-      const media = navigator.mediaDevices.getUserMedia;
+      const media = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
       navigator.mediaDevices.getUserMedia = Function.prototype.call.apply(Function.prototype.bind, [(constrains) => {
         if(constrains?.audio?.mandatory || constrains?.video?.mandatory)
           return Promise.rejected(new DOMException("Invalid state.", "NotAllowedError"));
