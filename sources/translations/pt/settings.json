@@ -19,7 +19,24 @@
             }
         },
         "tray": {
-            "description": "Altera a visibilidade do ícone na área de notificação do sistema."
+            "description": "Altera a visibilidade do ícone na área de notificação do sistema.",
+            "labels": {
+                "disable": "Desativar a funcionalidade de minimizar a janela para a área de notificação."
+            }
+        },
+        "taskbar": {
+            "name": "Barra de Tarefas",
+            "description": "Controla o comportamento do item da barra de tarefas do WebCord.",
+            "labels": {
+                "flash": "Piscar o botão da barra de tarefas ao receber novas mensagens."
+            }
+        },
+        "window": {
+            "name": "Janela principal do WebCord",
+            "description": "Controla a aparência e o comportamento da janela que exibe a interface do client.",
+            "labels": {
+                "transparent": "Permitir para fundo de janela translúcida."
+            }
         }
     }
 }
