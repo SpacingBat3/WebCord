@@ -1,6 +1,6 @@
 > [!WARNING]
 > **🚧️ A major rewrite of the client is being worked on! 🚧️** That means, most efforts around WebCord
-> will be kept at minimum – there might be no time-intensive and major updates done on top
+> will be kept to a minimum – there might be no time-intensive and major updates done on top
 > of the existing code. However, WebCord should still receive maintenance updates along with
 > new features or improvements that don't cost investing too much of my time.
 
@@ -45,12 +45,12 @@ permissions to sensitive APIs like camera or microphone, sets its own user agent
 to the one present in Chromium browsers and spoof web API modifications in order
 to prevent distinguishing it from the real Chrome/Chromium browsers.
 
-- 🛡️ **Follows the best security practises**
+- 🛡️ **Follows the best security practices**
 
 WebCord cares a lot about your security. Being fully written in TypeScript, it
 brings the power of static types to help detecting common bugs without the need
-of testing the app at runtime. All of this is hardened by ESLint, which forbidds
-some TypeScript practises like the use of `any` type and enforces some cosmetic
+of testing the app at runtime. All of this is hardened by ESLint, which forbids
+some TypeScript practices like the use of `any` type and enforces some cosmetic
 aspects of the code to keep it more consistent.
 
 Unlike the official Discord client, WebCord's policy about Electron also makes it
@@ -64,7 +64,7 @@ one of the most known programs like this when comparing to different popular
 browser engines choices. Electron is also well-prepared for loading remote
 content, using their process model to the advantage and different Chromium
 sandboxing techniques to split Node.js from browser scripts. WebCord also tries
-its best to follow practises from the [Electron#Security].
+its best to follow practices from the [Electron#Security].
 
 - 🛠️ **Customizable**
 
@@ -115,10 +115,10 @@ It is strongly advised to read the [application license](../LICENSE) as well.
 
 At first, this project was a fork of the [Discord-Electron], but then eventually
 I rewrote it as *Electron Discord Web App* project, which is now
-refered to as *WebCord*.
+referred to as *WebCord*.
 
 At its early days, it had a very simple concept: a better web app implementation
-than Nativefier was, at least in terms of the features. Since I were too young
+than Nativefier was, at least in terms of the features. Since I was too young
 to understand how to keep things private and secure, this project's code was
 full of flaws. It was like that until `1.x.y`, when the privacy and the security
 of the code has slowly been shaping, with `1.2.0` being a major step forward,
@@ -126,22 +126,22 @@ since TypeScript was started to being adopted. Later, I've added the default
 linter to the project's documentation and configured the rules for it and
 focused on child window design, which added the *documentation*, *settings* and
 *about* windows to the Discord page. I've then also realized there's a serious issue with the current screen share
-dialog – it was injected to the page, meaing Discord could technically access
+dialog – it was injected to the page, meaning Discord could technically access
 the windows' thumbnails and *simulate* the mouse click events to trigger sharing
 the screen even without any interaction. This flaw was thankfully fixed thanks
 to the BrowserViews in more modern WebCord releases.
 
-With the code quality, a new philosophies and goals has shaped for this project
+With the code quality, new philosophies and goals has shaped for this project
 – it now approaches to wrap Discord website and develop its own UI (todo) for
-non-Discord instances primarly based on the Discord API (might decide some
+non-Discord instances primarily based on the Discord API (might decide some
 day that WebCord will also support other APIs as well). With that, I want to
-reimplement Discord in a way it is a trully FOSS client, without any risk that
+reimplement Discord in a way it is a truly FOSS client, without any risk that
 users will get banned by either breaking the ToS or being detected as self-bot
 because of the suspicious use of Discord REST API. This is what WebCord mainly
 focuses to achieve nowadays.
 
 And it should be said that before I knew much about how Electron does work,
-[**@GyozaGuy**](https://github.com/GyozaGuy)'s project help me to begin on my
+[**@GyozaGuy**](https://github.com/GyozaGuy)'s project helped me begin on my
 own with developing a Discord webapp. Without his work, it is unknown whenever I
 would begin developing WebCord or not.
 
@@ -149,7 +149,7 @@ would begin developing WebCord or not.
 
 Because **GitHub Wiki Pages** of this project **are meant to be maintained by**
 **the community**, they should be considered as a potentially malicious or
-misleading source of the information. It is recommended to read the official
+misleading source of information. It is recommended to read the official
 documentation first before you will proceed reading the community-maintained
 Wiki pages.
 
