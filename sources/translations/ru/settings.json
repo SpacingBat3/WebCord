@@ -35,11 +35,12 @@
         "name": "Конфиденциальность",
         "blockApi": {
             "name": "Блокировка API Discord",
-            "description": "Блокирует запросы Discord API для усиления конфиденциальности.",
+            "description": "Блокируйте API-запросы и скрипты Discord, чтобы защитить конфиденциальность.",
             "labels": {
                 "science": "Блокировать известные запросы телеметрии (<code>/science</code> и <code>/tracing</code>).",
                 "typingIndicator": "Блокировать индикатор ввода текста (<code>/typing</code>).",
-                "fingerprinting": "Блокировать скрипт <code>api.js</code> и <code>cdn-cgi</code>, собирающий отпечаток пальца клиента."
+                "fingerprinting": "Блокировать скрипт <code>api.js</code> и <code>cdn-cgi</code>, собирающий отпечаток пальца клиента.",
+                "sentry": "Заблокировать загрузку часового в Discord"
             }
         },
         "permissions": {
@@ -52,7 +53,8 @@
                 "notifications": "Уведомления",
                 "display-capture": "Захват экрана",
                 "background-sync": "Фоновая синхронизация",
-                "speaker-selection": "Список аудиоустройств"
+                "speaker-selection": "Список аудиоустройств",
+                "clipboard-sanitized-write": "Доступ к записи в буфер обмена"
             }
         }
     },
@@ -77,7 +79,7 @@
         },
         "currentInstance": {
             "name": "Инстанс Discord",
-            "description": "Выбирает инстанс, к которому должен подключаться WebCord. <b>Экспериментально</b>, так как реализация Fosscord не полностью завершена."
+            "description": "Выбор экземпляра Discord, к которому должен подключиться WebCord."
         },
         "devel": {
             "name": "Режим разработчика",
@@ -102,7 +104,7 @@
         },
         "webApi": {
             "name": "Доступ к API методам JavaScript",
-            "description": "Управляет, какие методы API должны быть разрешены в непривилегированных (DOM) скриптах.",
+            "description": "Контролирует, какие API должны быть разрешены в непривилегированных (DOM) сценариях.",
             "labels": {
                 "webGl": "Включить поддержку WebGL."
             }
