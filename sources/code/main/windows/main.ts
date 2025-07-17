@@ -544,7 +544,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       video: sources[0],
       ...(apiSafe.unixAudioSharing ? {audio:"loopbackWithMute"} : {})
     }) : callback(null as unknown as Electron.Streams));
-  });
+  },{ useSystemPicker: true });
 
   // IPC events validated by secret "API" key and sender frame.
   internalWindowEvents.on("api", (safeApi:string) => {

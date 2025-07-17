@@ -3,30 +3,24 @@ import { basename, relative, resolve } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
 import { pathToFileURL, fileURLToPath } from "node:url";
 
-import { marked } from "marked";
 import { sanitize } from "dompurify";
 
 import { protocols } from "../../common/global";
 
-// Broken modules wrongly interpreted with Node16.
-
-import {
-  gfmHeadingId
-  //@ts-expect-error due to TS14790
-} from "marked-gfm-heading-id";
-
-//@ts-expect-error due to TS14790
-import mdAlerts from "marked-alert";
+// Marked is ESM only: go with dynamic imports for now.
+// (They work now in Electron renderer? No crashes?)
+const mdAlerts = import("marked-alert").then(module => module.default);
+const gfmHeadingId = import("marked-gfm-heading-id").then(module => module.gfmHeadingId);
+// Marked itself can mutate via config update
+let marked = import("marked").then(module => module.marked);
 
 const htmlFileUrl = document.URL;
 
-// GFM heading IDs:
-
-marked.use(
-  //@ts-expect-error due to TS2379
-  gfmHeadingId(),
-  mdAlerts()
-);
+// Marked extensions:
+marked = marked.then(async marked => marked.use(
+  (await gfmHeadingId)(),
+  (await mdAlerts)()
+));
 
 const menu = document.createElement("img");
 menu.src = "../../icons/symbols/menu.svg";
@@ -45,7 +39,7 @@ function getId(url:string) {
 }
 
 async function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
-  mdBody.innerHTML = sanitize(await marked.parse(readFileSync(mdFile).toString(), {async:true}));
+  mdBody.innerHTML = sanitize(await (await marked).parse(readFileSync(mdFile).toString(), {async:true}));
 }
 
 function fixImages(container:HTMLElement) {
