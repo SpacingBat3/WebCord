@@ -22,7 +22,7 @@
         "enabled": "Включено",
         "file": {
             "groupName": "Файл",
-            "quit": "Quit",
+            "quit": "Выйти",
             "relaunch": "Перезапустить",
             "addon": {
                 "groupName": "Расширения",
