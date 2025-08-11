@@ -20,7 +20,8 @@
         "copyURLText": "Copy link text",
         "copyImage": "Copy image",
         "copyImageURL": "Copy link to image",
-        "inspectElement": "Inspect"
+        "inspectElement": "Inspect",
+        "googleSearch": "Search in Google"
     },
     "menubar": {
         "enabled": "Enabled",
