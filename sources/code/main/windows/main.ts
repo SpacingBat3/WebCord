@@ -146,8 +146,8 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       knownInstancesList[appConfig.value.settings.advanced.currentInstance.radio][1].origin,
       "devtools://"
     ];
+    const supportsMediaAccessStatus = ["darwin","win32"].includes(process.platform);
     const getMediaTypesPermission = (mediaTypes: unknown[] = []) => {
-      const supportsMediaAccessStatus = ["darwin","win32"].includes(process.platform);
       if(mediaTypes.length === 0)
         return (supportsMediaAccessStatus ?
           systemPreferences.getMediaAccessStatus("screen") === "granted" :
@@ -167,6 +167,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     type handlerParamType<H extends "request"|"check"> = Parameters<Exclude<Parameters<Electron.Session[`setPermission${Capitalize<H>}Handler`]>[0],null>>;
     /** Common handler for  */
     const permissionHandler = <T extends "request"|"check">(type:T,webContentsUrl:string, permission:string, details:handlerParamType<T>[3]) => {
+      const perms = appConfig.value.settings.privacy.permissions;
       // Verify URL address of the permissions.
       try {
         const webContents = new URL(webContentsUrl);
@@ -187,18 +188,20 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
               if(!callbackValue)
                 break;
               else
-                callbackValue = appConfig.value.settings.privacy.permissions[type]??false;
+                callbackValue = perms[type]??false;
           }
           else if("mediaType" in details && details.mediaType !== "unknown")
             callbackValue = getMediaTypesPermission([details.mediaType]) && (
-              appConfig.value.settings.privacy.permissions[details.mediaType]??false
+              perms[details.mediaType]??false
             );
-          else if(parseInt(process.versions.electron.split(".",1)[0]??"0") > 20)
-            callbackValue = type === "request";
           else
-            callbackValue = false;
+            // By default, unknown media typed request will resolve to true
+            // only if user explicitly grants every permission related to it
+            // to WebCord. Should be great middle-ground when stuff breaks
+            // while keeping everything privacy-oriented.
+            callbackValue = (perms.audio && perms.video && perms["display-capture"]) === true;
           if(!callbackValue)
-            console.debug("[PERM]: Permission denied for a request to media.");
+            console.debug(`[PERM]: Permission ${type} denied for 'media'.`);
           return callbackValue;
         }
         case "notifications":
@@ -206,7 +209,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         case "background-sync":
         case "speaker-selection":
         case "clipboard-sanitized-write":
-          return appConfig.value.settings.privacy.permissions[permission]??false;
+          return perms[permission]??false;
         default:
           return null;
       }
@@ -250,7 +253,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       switch(returnValue) {
         // WebCord does not recognize the permission – it should be denied.
         case null:
-          console.warn("[" + l10nStrings.dialog.common.warning.toLocaleUpperCase() + "] " + l10nStrings.dialog.permission.request.denied, webContents.getURL(), permission);
+          console.warn(`[${l10nStrings.dialog.common.warning.toLocaleUpperCase()}] ${l10nStrings.dialog.permission.request.denied}`, webContents.getURL(), permission);
           callback(false);
           break;
         // Both WebCord and system allows for the permission.
