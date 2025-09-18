@@ -115,7 +115,7 @@ async function loadStyles(webContents:Electron.WebContents) {
     for (const path of await readdir(stylesDir)) {
       const index = resolveFs(stylesDir,path);
       if (!path.endsWith(".theme.css") && statSync(index).isFile())
-        promises.push(Promise.all([index,readFile(index)]));
+        promises.push(readFile(index).then(buff=>[index,buff]));
     }
     const themeIDs:Promise<string>[] = [];
     for (const res of promises)
