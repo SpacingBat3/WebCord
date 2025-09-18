@@ -102,7 +102,7 @@ const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
       "https://cdn.discordapp.com https://media.discordapp.net "+
       "https://router.discordapp.net wss://*.discord.gg "+
       "https://best.discord.media https://latency.discord.media "+
-      "wss://*.discord.media",
+      "wss://*.discord.media:*",
     "media-src": "'self' blob: https://*.discordapp.net https://*.discord.com "+
       "https://*.discordapp.com",
     "frame-src": "https://discordapp.com/domain-migration "+
