@@ -98,13 +98,15 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
 
   // CSP
 
-  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    const {csp,cspThirdParty} = appConfig.value.settings.advanced;
+  const headerCallback: Parameters<typeof win.webContents.session.webRequest.onHeadersReceived>[0] = (details, callback) => {
+    const {cspThirdParty} = appConfig.value.settings.advanced;
     const responseHeaders = details.responseHeaders??{};
-    if(csp.enabled)
-      responseHeaders["Content-Security-Policy"] = [getWebCordCSP(cspThirdParty).build()];
+    responseHeaders["Content-Security-Policy"] = [getWebCordCSP(cspThirdParty).build()];
     callback({ responseHeaders });
-  });
+  }
+
+  if(appConfig.value.settings.advanced.csp.enabled)
+    win.webContents.session.webRequest.onHeadersReceived(headerCallback);
 
   win.webContents.session.webRequest.onBeforeRequest(
     {
@@ -433,11 +435,13 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         void win.loadURL(knownInstancesList[appConfig.value.settings.advanced.currentInstance.radio][1].href);
       }
       // CSP
-      if(
-        object?.settings?.advanced?.cspThirdParty !== undefined ||
-        object?.settings?.advanced?.csp !== undefined
-      )
+      if(object?.settings?.advanced?.cspThirdParty !== undefined ||
+          object?.settings?.advanced?.csp !== undefined) {
+        win.webContents.session.webRequest.onHeadersReceived(
+          object.settings.advanced.csp?.enabled ? headerCallback : null
+        );
         win.reload();
+      }
       // Remove window flashing when it is disabled
       if(object?.settings?.general?.taskbar?.flash === false)
         win.flashFrame(false);
