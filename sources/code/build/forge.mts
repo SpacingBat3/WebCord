@@ -129,10 +129,12 @@ const config:ForgeConfig = {
       iconUrl: `https://raw.githubusercontent.com/SpacingBat3/WebCord/${packageJson.data.version}/${iconFile}.ico`,
       noDelta: true
     })),
-    new MakerDMG({
+    new MakerDMG((arch) => ({
+      // See: https://github.com/electron/forge/issues/3517
+      name: `WebCord (${arch})`,
       icon: `${iconFile}.icns`,
-      overwrite: true
-    } satisfies Partial<MakerDMGConfig> as unknown as MakerDMGConfig),
+      overwrite: true,
+    } satisfies Partial<MakerDMGConfig> as unknown as MakerDMGConfig)),
     new MakerAppImage({ options: {
       icon: `${iconFile}.png`,
       genericName: desktopGeneric,
