@@ -46,7 +46,7 @@ jobs:
           path: |
             app
             cache/tsc.json
-      
+
       - name: ESLint cache
         uses: actions/cache@v4
         with:
@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: ['Linux', 'Windows', 'macOS-x64', 'macOS-arm64']
+        name: ['Linux', 'Windows', 'macOS']
         build: [latest, locked]
         include:
           - runner: ubuntu-latest
@@ -70,11 +70,8 @@ jobs:
             name: Windows
             arch: x64,arm64,ia32
           - runner: macos-latest
-            name: macOS-x64
-            arch: x64 #,arm64,universal
-          - runner: macos-14
-            name: macOS-arm64
-            arch: arm64
+            name: macOS
+            arch: x64,arm64 #,universal
 
     name: '${{ matrix.name }} (${{ matrix.build }})'
     runs-on: ${{ matrix.runner }}

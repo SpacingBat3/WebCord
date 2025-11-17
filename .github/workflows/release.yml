@@ -20,12 +20,9 @@ jobs:
           - name: Windows
             runner: windows-latest
             arch: x64,arm64,ia32
-          - name: macOS-x64
+          - name: macOS
             runner: macos-latest
-            arch: x64 #,arm64,universal
-          - name: macOS-arm64
-            runner: macos-14
-            arch: arm64
+            arch: x64,arm64 #,universal
 
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
@@ -35,7 +32,7 @@ jobs:
         with:
           node-version: 'latest'
           cache: npm
-    
+
       - name: Install dependencies (NPM)
         run: npm ci
 
