@@ -1,17 +1,25 @@
 /*
  * A place to move useful WebCord's function that could be exposed to
  * third-party addons in the future as part of planned "API".
+ *
+ * FIXME: it can be optimized for multiple operations.
  */
 
 function randomInt(min = 0, max = 255) {
-  if(min < 0 || max > 255)
-    throw new RangeError("Parameters 'min' and 'max' out of range of type 'u8'.");
+  const range = max - min;
+  if(range < 0 || range > 255)
+    throw new RangeError("Parameters 'min' and 'max' cannot be represented as 'u8'.");
+  // We can guarantee fairness for binary
+  let closestBin;
+  // Naive impl
+  for (closestBin = 1; closestBin <= range; closestBin <<= 1);
+  closestBin -= 1;
+  // Random byte generator
   let random: number|undefined;
-  let maxTries = 30;
-  while (maxTries > 0) {
+  for (let maxTries = 30; maxTries > 0; --maxTries) {
     random = crypto.getRandomValues(new Uint8Array([0]))[0];
-    if(random !== undefined && random >= min && random <= max) break;
-    maxTries--;
+    if(random != undefined && (random &= closestBin) <= range)
+      break;
   }
   if(random === undefined)
     throw new Error("Couldn't generate a valid pseudo-random number!");
