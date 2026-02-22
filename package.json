@@ -52,7 +52,7 @@
     "@types/semver": "^7.3.9",
     "@types/source-map-support": "^0.5.4",
     "@types/ws": "^8.5.1",
-    "electron": "^39.2.0",
+    "electron": "^40.6.0",
     "eslint": "^9.31.0",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import-x": "^4.16.1",
