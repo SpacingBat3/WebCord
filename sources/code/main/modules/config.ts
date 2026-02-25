@@ -64,6 +64,9 @@ const defaultAppConfig = Object.freeze({
       window: {
         transparent: false,
         hideOnClose: true
+      },
+      darwin: {
+        csd: false
       }
     },
     privacy: {

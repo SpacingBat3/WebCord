@@ -30,6 +30,13 @@
                 "transparent": "Zezwól na przezroczyste tło okna.",
                 "hideOnClose": "Ukrywaj okno do zasobnika przyciskiem zamykania."
             }
+        },
+        "darwin": {
+            "name": "Ustawienia dla systemu macOS",
+            "description": "Steruje integracją z systemem macOS.",
+            "labels": {
+                "csd": "Włącz pozycjonowanie sygnalizacji świetlnej po stronie klienta."
+            }
         }
     },
     "privacy": {

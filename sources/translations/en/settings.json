@@ -30,6 +30,13 @@
                 "transparent": "Allow for translucent window background.",
                 "hideOnClose": "Hide window to tray with the close button."
             }
+        },
+        "darwin": {
+            "name": "macOS related settings",
+            "description": "Controls integrations with macOS system.",
+            "labels": {
+                "csd": "Enable client-side traffic lights placement."
+            }
         }
     },
     "privacy": {
