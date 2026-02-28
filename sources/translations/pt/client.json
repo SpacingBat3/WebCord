@@ -3,7 +3,8 @@
         "quit": "Sair",
         "toggle": "Alternar",
         "mention": {
-            "other": "Menções"
+            "other": "Menções",
+            "one": "Menção"
         }
     },
     "context": {
@@ -11,19 +12,21 @@
         "paste": "Colar",
         "cut": "Cortar",
         "dictionaryAdd": "Adicionar ao dicionário local",
-        "copyURL": "Copiar link",
+        "copyURL": "Copiar endereço do link",
         "copyURLText": "Copiar o texto do link",
-        "inspectElement": "Inspecionar"
+        "inspectElement": "Inspecionar",
+        "copyImage": "Copiar imagem",
+        "copyImageURL": "Copiar link para a imagem"
     },
     "menubar": {
         "file": {
-            "groupName": "Ficheiro",
+            "groupName": "Arquivo",
             "quit": "Sair",
             "relaunch": "Reiniciar",
             "addon": {
                 "groupName": "Extensões",
                 "loadNode": "Carregar extensão node",
-                "loadChrome": "Carregar extensão Chrome"
+                "loadChrome": "Carregar extensão do Chrome"
             }
         },
         "view": {
@@ -40,11 +43,12 @@
             "groupName": "Janela",
             "mobileMode": "Ocultar barra lateral"
         },
-        "enabled": "Ativado",
+        "enabled": "Habilitado",
         "edit": {
             "groupName": "Editar",
             "undo": "Desfazer",
-            "redo": "Refazer"
+            "redo": "Refazer",
+            "selectAll": "Selecionar todos"
         }
     },
     "dialog": {
@@ -57,19 +61,26 @@
             "no": "&Não"
         },
         "ver": {
-            "update": "Novo versão do aplicativo está disponível!",
+            "update": "Nova versão do aplicativo está disponível!",
             "updateTitle": "Atualização disponível!",
             "recent": "Aplicativo já está na ultima versão!",
             "devel": "Você está utilizando uma versão de desenvolvimento.",
             "updateBadge": "[ATUALIZAR]",
-            "downgrade": "Sua versão é mais recente que a estavel!"
+            "downgrade": "Sua versão é mais recente que a estável!"
         },
         "permission": {
             "request": {
-                "denied": "%s: Permissão para %s: negada."
+                "denied": "%s: Permissão para %s negada."
             },
             "check": {
                 "denied": "%s: Verificação de permissão para %s negada."
+            },
+            "question": {
+                "title": "Manipulador de solicitações de permissão",
+                "message": "Você deseja conceder ao Discord acesso ao %s?",
+                "video": "câmera",
+                "audio": "microfone",
+                "notifications": "notificações"
             }
         },
         "mod": {
@@ -83,8 +94,8 @@
         "screenShare": {
             "close": "Fechar",
             "sound": {
-                "unavailable": "Compartilhamento de audio não disponível nessa plataforma.",
-                "system": "Compartilhar com dispositivo de audio."
+                "unavailable": "Compartilhamento de audio não está disponível nessa plataforma.",
+                "system": "Compartilhar com áudio do dispositivo."
             },
             "source": {
                 "entire": "Tela do computador",
@@ -104,7 +115,7 @@
         "bugs": "Reportar um bug"
     },
     "log": {
-        "singleInstance": "Mudando para uma janela existente...",
+        "singleInstance": "Alternando para a janela existente...",
         "listenPort": "Escutando na porta %s."
     }
 }
