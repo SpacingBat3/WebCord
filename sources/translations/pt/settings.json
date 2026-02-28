@@ -5,9 +5,20 @@
             "labels": {
                 "audio": "Microfone",
                 "notifications": "Notificações"
-            }
+            },
+            "description": "Permite ou nega as verificações e solicitações de permissão do site do Discord. Observe que outras permissões não listadas aqui são bloqueadas automaticamente pelo WebCord."
         },
-        "name": "Privacidade"
+        "name": "Privacidade",
+        "blockApi": {
+            "name": "Bloqueio da API do Discord",
+            "description": "Bloquear solicitações da API do Discord e scripts para reforçar a privacidade.",
+            "labels": {
+                "science": "Bloquear pontos de extremidade de telemetria conhecidos (<code>/science</code> and <code>/tracing</code>).",
+                "sentry": "Bloquear carregamento do Sentry no Discord",
+                "typingIndicator": "Bloquear indicador de digitação (<code>/typing</code>).",
+                "fingerprinting": "Bloquear métodos conhecidos de coleta de impressão digital (<code>api.js</code> and <code>cdn-cgi</code>)."
+            }
+        }
     },
     "general": {
         "name": "Geral",
@@ -22,7 +33,8 @@
             "description": "Altera a visibilidade do ícone na área de notificação do sistema.",
             "labels": {
                 "disable": "Desativar a funcionalidade de minimizar a janela para a área de notificação."
-            }
+            },
+            "name": "Bandeja"
         },
         "taskbar": {
             "name": "Barra de Tarefas",
@@ -35,7 +47,8 @@
             "name": "Janela principal do WebCord",
             "description": "Controla a aparência e o comportamento da janela que exibe a interface do client.",
             "labels": {
-                "transparent": "Permitir para fundo de janela translúcida."
+                "transparent": "Permitir para fundo de janela translúcida.",
+                "hideOnClose": "Oculte a janela para a bandeja do sistema usando o botão fechar."
             }
         }
     }

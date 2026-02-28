@@ -1,0 +1,120 @@
+{
+    "general": {
+        "name": "Geral",
+        "menuBar": {
+            "name": "Barra de menu",
+            "description": "Altera as configurações de visibilidade da barra de menu nativa.",
+            "labels": {
+                "hide": "Ocultar a barra de menu automaticamente (a tecla <kbd>ALT</kbd> alterna a visibilidade)."
+            }
+        },
+        "tray": {
+            "name": "Bandeja",
+            "description": "Altera a visibilidade do ícone na bandeja do sistema.",
+            "labels": {
+                "disable": "Desabilita a funcionalidade de ocultar a janela na bandeja do sistema."
+            }
+        },
+        "taskbar": {
+            "name": "Barra de tarefas",
+            "description": "Controla o comportamento do WebCord na barra de tarefas.",
+            "labels": {
+                "flash": "Piscar o ícone da barra de tarefas ao receber novas mensagens."
+            }
+        },
+        "window": {
+            "name": "Janela principal do WebCord",
+            "description": "Controla a aparência e o comportamento da janela do aplicativo.",
+            "labels": {
+                "transparent": "Ativar transparência no fundo da janela.",
+                "hideOnClose": "Ocultar janela na bandeja ao fechar."
+            }
+        }
+    },
+    "privacy": {
+        "name": "Privacidade",
+        "blockApi": {
+            "name": "Bloqueio de APIs do Discord",
+            "description": "Bloqueia scripts e requisições da API do Discord para reforçar a privacidade.",
+            "labels": {
+                "science": "Bloquear endpoints de telemetria conhecidos (<code>/science</code> e <code>/tracing</code>).",
+                "sentry": "Bloquear o carregamento do Sentry no Discord",
+                "typingIndicator": "Bloquear indicador de digitação (<code>/typing</code>).",
+                "fingerprinting": "Bloquear métodos conhecidos de fingerprinting (<code>api.js</code> e <code>cdn-cgi</code>)."
+            }
+        },
+        "permissions": {
+            "name": "Permissões",
+            "description": "Permite ou nega as verificações e solicitações de permissão do site do Discord. Observe que outras permissões não listadas aqui são bloqueadas automaticamente pelo WebCord.",
+            "labels": {
+                "video": "Câmera",
+                "audio": "Microfone",
+                "fullscreen": "Tela cheia",
+                "notifications": "Notificações",
+                "display-capture": "Captura de tela",
+                "background-sync": "Sincronização em segundo plano",
+                "speaker-selection": "Lista de dispositivos de áudio",
+                "clipboard-sanitized-write": "Permissão para copiar para a área de transferência"
+            }
+        }
+    },
+    "advanced": {
+        "name": "Avançado",
+        "csp": {
+            "name": "Política de Segurança de Conteúdo",
+            "description": "Define se o aplicativo deve ignorar os cabeçalhos da Política de Segurança de Conteúdo (CSP) do Discord e permitir que o cliente configure sua própria CSP por questões de privacidade e segurança.",
+            "labels": {
+                "enabled": "Usar Política de Segurança de Conteúdo integrada."
+            }
+        },
+        "cspThirdParty": {
+            "name": "Sites de terceiros",
+            "description": "Define uma lista de sites de terceiros com permissão para se conectar ou exibir conteúdo.",
+            "labels": {
+                "gif": "Provedores de GIF"
+            },
+            "info": {
+                "googleStorageApi": "Necessário para o envio de arquivos no Discord!"
+            }
+        },
+        "currentInstance": {
+            "name": "Instância do Discord",
+            "description": "Seleciona a instância do Discord à qual o WebCord deve se conectar."
+        },
+        "devel": {
+            "name": "Modo desenvolvedor",
+            "description": "Ativa o acesso a ferramentas e opções inacabadas que podem ser consideradas instáveis ou perigosas. <b>Aviso</b>: os mantenedores do aplicativo não são responsáveis por quaisquer bugs ou problemas após a ativação desta opção – por favor, não os relate!",
+            "labels": {
+                "enabled": "Habilitar modo desenvolvedor."
+            }
+        },
+        "redirection": {
+            "name": "Comportamento de redirecionamento entre origens",
+            "description": "Controla as ações em redirecionamentos entre origens (cross-origin). <b>Isso afeta a segurança do aplicativo</b>.",
+            "labels": {
+                "warn": "Sempre avisar o usuário sobre redirecionamentos entre origens para aplicativos externos."
+            }
+        },
+        "optimize": {
+            "name": "Otimizações do cliente",
+            "description": "Tenta detectar o software e hardware do usuário para aplicar parâmetros (flags) personalizados ao motor Chromium que <b>podem ou não</b> melhorar o desempenho ou a funcionalidade do Electron. <b>Experimental</b>, pois existe um motivo para o Chromium não aplicar esses parâmetros por padrão.",
+            "labels": {
+                "gpu": "Otimizar o cliente para a placa de vídeo ativa."
+            }
+        },
+        "webApi": {
+            "name": "Acesso às APIs de JavaScript",
+            "description": "Controla quais APIs devem ser permitidas em scripts sem privilégios (DOM).",
+            "labels": {
+                "webGl": "Ativar suporte ao WebGL."
+            }
+        },
+        "unix": {
+            "name": "Recursos experimentais para sistemas Unix/Unix-like",
+            "description": "Ativa recursos marcados como experimentais pelo motor Chromium/Blink. <b>Use-os sob sua própria responsabilidade</b>.",
+            "labels": {
+                "autoscroll": "Ativar rolagem com o botão do meio (A.K.A <i>autoscroll</i>)."
+            }
+        }
+    }
+}
