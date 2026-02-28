@@ -1,1 +1,125 @@
-{}
+{
+    "tray": {
+        "toggle": "Alternar",
+        "quit": "Sair",
+        "mention": {
+            "one": "menção",
+            "other": "menções",
+            "zero": "Nenhuma menção",
+            "two": "menções",
+            "few": "menções",
+            "many": "menções"
+        }
+    },
+    "context": {
+        "copy": "Copiar",
+        "paste": "Colar",
+        "cut": "Recortar",
+        "dictionaryAdd": "Adicionar ao dicionário local",
+        "copyURL": "Copiar endereço do link",
+        "copyURLText": "Copiar texto do link",
+        "copyImage": "Copiar imagem",
+        "copyImageURL": "Copiar link para a imagem",
+        "inspectElement": "Inspecionar"
+    },
+    "menubar": {
+        "enabled": "Habilitado",
+        "file": {
+            "groupName": "Arquivo",
+            "quit": "Sair",
+            "relaunch": "Reiniciar",
+            "addon": {
+                "groupName": "Extensões",
+                "loadNode": "Carregar extensão node",
+                "loadChrome": "Carregar extensão do Chrome"
+            }
+        },
+        "edit": {
+            "groupName": "Editar",
+            "undo": "Desfazer",
+            "redo": "Refazer",
+            "selectAll": "Selecionar todos"
+        },
+        "view": {
+            "groupName": "Exibir",
+            "reload": "Recarregar",
+            "forceReload": "Forçar recarregamento",
+            "devTools": "Ativar/Desativar Ferramentas do Desenvolvedor",
+            "resetZoom": "Tamanho original",
+            "zoomIn": "Mais zoom",
+            "zoomOut": "Menos zoom",
+            "fullScreen": "Ativar/Desativar tela cheia"
+        },
+        "window": {
+            "groupName": "Janela",
+            "mobileMode": "Esconder barra lateral"
+        }
+    },
+    "windows": {
+        "settings": "Configurações",
+        "about": "Sobre",
+        "docs": "Documentação",
+        "invite": "Convidar"
+    },
+    "dialog": {
+        "common": {
+            "error": "Erro",
+            "warning": "Aviso",
+            "continue": "%Continuar",
+            "yes": "%Sim",
+            "no": "&Não",
+            "source": "Origem"
+        },
+        "ver": {
+            "updateBadge": "[ATUALIZAÇÃO]",
+            "updateTitle": "Atualização disponível!",
+            "update": "Uma nova versão do aplicativo está disponível!",
+            "recent": "O aplicativo está atualizado!",
+            "devel": "Você está utilizando uma versão de desenvolvimento.",
+            "downgrade": "Sua versão de produção é mais recente que a estável!"
+        },
+        "permission": {
+            "request": {
+                "denied": "%s: Solicitação de permissão para %s negada."
+            },
+            "check": {
+                "denied": "%s: Verificação de permissão para %s negada."
+            },
+            "question": {
+                "title": "Gerenciador de solicitações de permissão",
+                "message": "Deseja conceder ao Discord acesso ao(à) %s?",
+                "video": "câmera",
+                "audio": "microfone",
+                "notifications": "notificações"
+            }
+        },
+        "mod": {
+            "nodeExt": "Complemento Node.js do WebCord",
+            "crx": "Extensão Chrome/Chromium"
+        },
+        "externalApp": {
+            "title": "Abrindo o link em um aplicativo externo",
+            "message": "Um site está tentando redirecionar um link de origem diferente para um aplicativo externo. Deseja continuar mesmo assim?"
+        },
+        "screenShare": {
+            "close": "Fechar",
+            "sound": {
+                "unavailable": "O compartilhamento de áudio não está disponível nesta plataforma.",
+                "system": "Compartilhar com o áudio do dispositivo."
+            },
+            "source": {
+                "entire": "Tela do computador",
+                "screen": "Tela"
+            }
+        }
+    },
+    "help": {
+        "groupName": "Ajuda",
+        "repo": "Repositório",
+        "bugs": "Reporte um bug"
+    },
+    "log": {
+        "singleInstance": "Alternando para a janela existente...",
+        "listenPort": "Ouvindo na porta %s."
+    }
+}
