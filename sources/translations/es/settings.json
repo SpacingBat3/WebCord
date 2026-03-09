@@ -34,11 +34,12 @@
     "privacy": {
         "blockApi": {
             "name": "Bloqueo de la API de Discord",
-            "description": "Bloquea las solicitudes de la API de Discord para fortalezer la privacidad.",
+            "description": "Bloquea las solicitudes y scripts de la API de Discord para fortalezer la privacidad.",
             "labels": {
                 "science": "Bloquear puntos finales de telemetría conocidos (<code>/science</code> y <code>/tracing</code>).",
                 "typingIndicator": "Bloquear indicador de \"escribiendo...\" (<code>/typing</code>).",
-                "fingerprinting": "Bloquee los métodos de huellas dactilares conocidos (<code>api.js</code> y <code>cdn-cgi</code>)."
+                "fingerprinting": "Bloquee los métodos de huellas dactilares conocidos (<code>api.js</code> y <code>cdn-cgi</code>).",
+                "sentry": "Bloquear la carga de Sentry en Discord"
             }
         },
         "name": "Privacidad",
@@ -51,7 +52,8 @@
                 "audio": "Microfono",
                 "fullscreen": "Pantalla completa",
                 "notifications": "Notificaciones",
-                "speaker-selection": "Lista de dispositivos de audio"
+                "speaker-selection": "Lista de dispositivos de audio",
+                "clipboard-sanitized-write": "Acceso de escritura al portapapeles"
             },
             "description": "Permite o niega los chequeos de permisos desde la pagina web de Discord. Por favor note que los demas permisos no listados aqui son bloqueados automaticamente por WebCord."
         }
@@ -75,7 +77,7 @@
             }
         },
         "currentInstance": {
-            "description": "Selecciona la instancia a la que WebCord deberia conectarse. <b>Experimental</b> ya que la implementación de Fosscord aún no está completamente terminada.",
+            "description": "Selecciona la instancia de Discord a la que WebCord deberia conectarse.",
             "name": "Instancia de Discord"
         },
         "unix": {
