@@ -3,7 +3,8 @@
         "toggle": "Göster/gizle",
         "quit": "Çık",
         "mention": {
-            "one": "bahset"
+            "one": "bahset",
+            "other": "bahsetmeler"
         }
     },
     "context": {
