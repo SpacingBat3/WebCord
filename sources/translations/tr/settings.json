@@ -36,11 +36,12 @@
         "name": "Gizlilik",
         "blockApi": {
             "name": "Discord API engelleme",
-            "description": "Gizliliği artırmak için Discord API isteklerini engeller.",
+            "description": "Gizliliği artırmak için Discord API isteklerini ve betiklerini engelle.",
             "labels": {
                 "science": "Bilinen telemetri yollarını engelle. (<code>/science</code> ve <code>/tracing</code>).",
                 "typingIndicator": "Yazdığını belirten göstergeyi engelle (<code>/typing</code>).",
-                "fingerprinting": "Bilinen tanımlama yöntemlerini engelle. (<code>api.js</code> ve <code>cdn-cgi</code>)."
+                "fingerprinting": "Bilinen tanımlama yöntemlerini engelle. (<code>api.js</code> ve <code>cdn-cgi</code>).",
+                "sentry": "Discord'ta Sentry'yi yüklemeyi engelle"
             }
         },
         "permissions": {
@@ -53,7 +54,8 @@
                 "notifications": "Bildirimler",
                 "display-capture": "Ekran paylaşımı",
                 "background-sync": "Arkaplan eşitlemesi",
-                "speaker-selection": "Ses cihazları listesi"
+                "speaker-selection": "Ses cihazları listesi",
+                "clipboard-sanitized-write": "Panoya yazma erişimi"
             }
         }
     },
@@ -78,7 +80,7 @@
         },
         "currentInstance": {
             "name": "Discord işlemi",
-            "description": "WebCord'un bağlanması gereken sunucuyu (instance) seçer. Fosscord şu an <b>deneysel</b> çünkü daha geliştirme aşamasında."
+            "description": "WebCord'un bağlanması gereken Discord örneğini seçer."
         },
         "devel": {
             "name": "Geliştici Modu",
@@ -103,7 +105,7 @@
         },
         "webApi": {
             "name": "JavaScript API'larına erişim",
-            "description": "Ayrıcalıksız (DOM) betiklerinde (unpriviledged (DOM) scripts) hangi API'a izin verileceğini kontrol eder.",
+            "description": "Ayrıcalıksız (DOM) betiklerinde hangi API'a izin verileceğini kontrol eder.",
             "labels": {
                 "webGl": "WebGL desteğini etkinleştir."
             }
