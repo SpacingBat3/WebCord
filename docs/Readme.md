@@ -19,7 +19,9 @@
 
 # WebCord
 
-[![CodeQL][codeql-badge]][codeql-url] [![Build][build-badge]][build-url]
+<!-- [![CodeQL][codeql-badge]][codeql-url] -->
+
+[![Build][build-badge]][build-url]
 [![Weblate badge][l10nbadge]][l10n] [![GitHub downloads][dlbadge]][downloads]
 [![Discord server][discord-badge]][discord-url]
 

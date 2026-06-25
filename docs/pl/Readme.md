@@ -20,7 +20,9 @@
 
 # WebCord
 
-[![CodeQL][codeql-badge]][codeql-url] [![Status budowy][build-badge]][build-url]
+<!-- [![CodeQL][codeql-badge]][codeql-url] -->
+
+[![Status budowy][build-badge]][build-url] 
 [![Plakietka Weblate][l10nbadge]][l10n] [![Liczba pobrań][dlbadge]][downloads]
 [![Serwer Discorda][discord-badge]][discord-url]
 
