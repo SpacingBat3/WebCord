@@ -26,7 +26,7 @@ jobs:
     name: "Test build"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
           node-version: 'latest'
@@ -40,7 +40,7 @@ jobs:
         run: npm update
 
       - name: TSC cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           key: tsc-${{ matrix.deps }}
           path: |
@@ -48,7 +48,7 @@ jobs:
             cache/tsc.json
 
       - name: ESLint cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           key: eslint-${{ matrix.deps }}
           path: |
@@ -77,8 +77,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     needs: ['test']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.name == 'Windows' && '24.x' || 'latest' }}
           cache: npm
@@ -91,7 +91,7 @@ jobs:
         run: npm update
 
       - name: TSC cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           key: tsc-${{ matrix.build }}
           path: |
@@ -99,7 +99,7 @@ jobs:
             cache/tsc.json
 
       - name: Generate distributables (${{ matrix.arch }})
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v4
         with:
           retry_on: error
           max_attempts: 3
@@ -107,14 +107,14 @@ jobs:
           command: npm run make -- -a ${{ matrix.arch }}
 
       - name: Upload distributables as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.name }}_${{ matrix.build }}
           path: out/devel/make/*
 
       - name: Upload lockfile as artifact
         if: ${{ matrix.build == 'latest' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.name }}-lockfile_updated
           path: package-lock.json

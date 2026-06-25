@@ -27,7 +27,7 @@ jobs:
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.name == 'Windows' && '24.x' || 'latest' }}
@@ -37,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: TSC cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           key: tsc-release
           path: |
@@ -45,7 +45,7 @@ jobs:
             cache/tsc.json
 
       - name: Publish distributables (${{ matrix.arch}})
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
