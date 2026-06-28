@@ -84,5 +84,8 @@
     "electron@41.9.0": true,
     "unrs-resolver@1.12.2": true,
     "electron-winstaller@5.4.0": true
+  },
+  "overrides": {
+    "extract-zip": "npm:@electron-internal/extract-zip@latest"
   }
 }
