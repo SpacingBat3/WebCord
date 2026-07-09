@@ -113,12 +113,8 @@ const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
   }),
   audius: new CSPBuilder({ "frame-src": "https://audius.co/embed/" }),
   gif: new CSPBuilder ({
-    "img-src": "https://i.imgur.com https://*.gfycat.com "+
-      "https://media.tenor.co https://media.tenor.com "+
-      "https://c.tenor.com https://*.giphy.com",
-    "media-src": "https://i.imgur.com https://*.gfycat.com "+
-      "https://media.tenor.co https://media.tenor.com "+
-      "https://c.tenor.com https://*.giphy.com",
+    "img-src": "https://static.klipy.com",
+    "media-src": "https://static.klipy.com",
   }),
   googleStorageApi: new CSPBuilder({
     "connect-src": "https://discord-attachments-uploads-prd.storage.googleapis.com/"

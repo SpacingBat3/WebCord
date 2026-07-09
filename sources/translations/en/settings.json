@@ -71,9 +71,6 @@
         "cspThirdParty": {
             "name": "Third party websites",
             "description": "Sets a list of the third-party websites allowed to connect or display content.",
-            "labels": {
-                "gif": "GIF Providers"
-            },
             "info": {
                 "googleStorageApi": "Required for file uploads on Discord!"
             }

@@ -71,9 +71,6 @@
         "cspThirdParty": {
             "name": "Witryny firm trzecich",
             "description": "Ustala listę firm trzecich, które mogą łączyć się z klientem i wyświetlać treść.",
-            "labels": {
-                "gif": "Dostawcy GIF-ów"
-            },
             "info": {
                 "googleStorageApi": "Wymagane dla wysyłania plików przez Discord!"
             }

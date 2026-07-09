@@ -25,7 +25,7 @@ function generateConfig () {
     hcaptcha: "hCaptcha",
     paypal: "PayPal",
     audius: "Audius",
-    gif: config.advanced.cspThirdParty.labels.gif,
+    gif: "Klipy",
     reddit: "Reddit",
     soundcloud: "SoundCloud",
     streamable: "Streamable",
@@ -39,13 +39,6 @@ function generateConfig () {
   Object.entries(websitesThirdParty).map(stringGroup => {
     if(finalConfig.advanced?.cspThirdParty?.labels && finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] === undefined)
       finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] = stringGroup[1];
-    if(finalConfig.advanced?.cspThirdParty)
-      if(finalConfig.advanced.cspThirdParty.info !== undefined)
-        finalConfig.advanced.cspThirdParty.info["gif"] = "Imgur, Gfcat, Tenor";
-      else
-        finalConfig.advanced.cspThirdParty.info = {
-          gif: "Imgur, Gfcat, Tenor"
-        };
   });
   // Append name from CSP.
   if(finalConfig.advanced?.cspThirdParty?.name !== undefined)
