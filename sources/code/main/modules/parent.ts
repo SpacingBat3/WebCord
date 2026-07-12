@@ -8,9 +8,7 @@ import { commonCatches } from "./error";
 import { fonts } from "../../common/global";
 
 /** A list of popup windows (i.e. non-local ones). */
-const popups = [
-  "invite"
-];
+//const popups = new Set(["invite"]);
 
 /**
  * Initializes the new `BrowserWindow` that will be a child of `mainWindow`.
@@ -18,11 +16,11 @@ const popups = [
  * 
  */
 export function initWindow(name:keyof L10N["client"]["windows"], parent: Electron.BrowserWindow, properties?: Electron.BrowserWindowConstructorOptions) {
-  const isPopup = popups.includes(name);
+  const isPopup = name == "invite";
   if(!app.isReady()) throw new Error("Tried to initialize a new parent window when app is not ready!");
   const wSession = isPopup ? session.defaultSession : session.fromPartition("temp:"+name);
   for (const window of parent.getChildWindows())
-    if(window.webContents.session === wSession) return;
+    if(window.webContents.session === wSession) return undefined;
   if(!parent.isVisible()) parent.show();
   const win = new BrowserWindow(deepmerge<[Electron.BrowserWindowConstructorOptions,Electron.BrowserWindowConstructorOptions]>({
     title: app.getName() + " – " + (new L10N()).client.windows[name],

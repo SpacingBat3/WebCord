@@ -41,7 +41,7 @@ sideBar.on("hide", (contents: Electron.WebContents) => {
 // Context Menu with spell checker
 
 export function context(parent: Electron.BrowserWindow): void {
-  const { context } = new L10N().client;
+  const { context: menu } = new L10N().client;
   parent.webContents.on("context-menu", (_event, params) => Menu.buildFromTemplate([
     { type: "separator" },
     // Dictionary suggestions
@@ -53,17 +53,17 @@ export function context(parent: Electron.BrowserWindow): void {
     ...(params.misspelledWord !== "" ? [
       { type: "separator" },
       {
-        label: context.dictionaryAdd,
+        label: menu.dictionaryAdd,
         click: () => parent.webContents.session.addWordToSpellCheckerDictionary(params.misspelledWord)
       },
       { type: "separator" }
     ] satisfies Electron.MenuItemConstructorOptions[] : []),
     // Copy / Cut / Delete
     ...(params.editFlags.canCopy || params.editFlags.canCut || params.editFlags.canDelete ? [
-      { label: context.cut, role: "cut", enabled: params.editFlags.canCut },
-      { label: context.copy, role: "copy", enabled: params.editFlags.canCopy },
+      { label: menu.cut, role: "cut", enabled: params.editFlags.canCut },
+      { label: menu.copy, role: "copy", enabled: params.editFlags.canCopy },
       {
-        label: context.paste,
+        label: menu.paste,
         enabled: clipboard.availableFormats().length !== 0 && params.editFlags.canPaste,
         role: "paste"
       },
@@ -72,11 +72,11 @@ export function context(parent: Electron.BrowserWindow): void {
     // Copy link text / copy link url
     ...(params.linkURL !== "" ? [
       {
-        label: context.copyURL,
+        label: menu.copyURL,
         click: () => clipboard.writeText(params.linkURL)
       },
       ...(params.linkText !== "" ? [{
-        label: context.copyURLText,
+        label: menu.copyURLText,
         click: () => clipboard.writeText(params.linkText)
       }] : []),
       { type: "separator" }
@@ -84,18 +84,18 @@ export function context(parent: Electron.BrowserWindow): void {
     // Copy image / image link
     ...(params.mediaType === "image" ? [
       {
-        label: context.copyImage,
+        label: menu.copyImage,
         click: () => parent.webContents.copyImageAt(params.x,params.y)
       },
       {
-        label: context.copyImageURL,
+        label: menu.copyImageURL,
         click: () => clipboard.writeText(params.srcURL)
       },
       { type: "separator" }
     ] satisfies Electron.MenuItemConstructorOptions[] : []),
     // Inspect (DevTools)
     ...(devel || appConfig.value.settings.advanced.devel.enabled ? [{
-      label: context.inspectElement,
+      label: menu.inspectElement,
       click: () => parent.webContents.inspectElement(params.x, params.y)
     }] : [])
   ]).popup({
@@ -110,7 +110,7 @@ export function context(parent: Electron.BrowserWindow): void {
 export function tray(parent: Electron.BrowserWindow): Electron.Tray {
   const strings = new L10N().client;
   const {icons} = appInfo;
-  const tray = new Tray(icons.tray.default);
+  const trayObj = new Tray(icons.tray.default);
   function toggleVisibility() {
     if(parent.isVisible() && parent.isFocused()) {
       parent.hide();
@@ -153,9 +153,9 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
       click: () => app.quit()
     }
   ]);
-  tray.setContextMenu(contextMenu);
-  tray.setToolTip(app.getName());
-  tray.on("click", toggleVisibility);
+  trayObj.setContextMenu(contextMenu);
+  trayObj.setToolTip(app.getName());
+  trayObj.on("click", toggleVisibility);
   // Exit to the tray
   {
     let willQuit = false;
@@ -167,7 +167,7 @@ export function tray(parent: Electron.BrowserWindow): Electron.Tray {
       }
     });
   }
-  return tray;
+  return trayObj;
 }
 
 // Menu Bar

@@ -78,6 +78,9 @@ const argv = Object.freeze(parseArgs(argvConfig));
     if((__filename.startsWith(app.getAppPath())&&debug("webcord").enabled) || argv.values.verbose === true)
       stdDebug(typeof message === "string" ? kolor.gray(message) : message, ...optionalParams);
   };
+}
+
+/* oxlint-disable unicorn/consistent-function-scoping */ {
   // Looks like the `console` is still rather unsafe in Node.js:
   // https://github.com/nodejs/node/issues/831
   // This is temporary workaround, as I expect `console` errors to be
@@ -88,7 +91,7 @@ const argv = Object.freeze(parseArgs(argvConfig));
   const clearErr = () => console.error = console.warn = () => {};
   process.stdout.once("error", clearOut).once("close", clearOut);
   process.stderr.once("error", clearErr).once("close", clearErr);
-}
+} /* oxlint-enable unicorn/consistent-function-scoping */
 
 // Set AppUserModelID on Windows
 {
@@ -119,7 +122,7 @@ let overwriteMain: (() => unknown) | undefined;
       "--"+key,
       type !== undefined ? "="+kolor.yellow(type) :
         option.type === "string" ? "="+kolor.yellow("{string}") : "",
-      "short" in option ? "   "+"-"+option.short : ""
+      "short" in option ? `   -${option.short}` : ""
     ].join("");
     const spaceBetween = length - stripVTControlCharacters(parameter).length;
     const formattedDesc = description
@@ -228,7 +231,7 @@ let overwriteMain: (() => unknown) | undefined;
       if(directory !== "string")
         throw new TypeError("Parameter 'export-l10n' should contain a string value!");
       const filePromise: Promise<void>[] = [];
-      for (const file of Object.keys(locale) as (keyof typeof locale)[])
+      for (const file of (Object.keys as <T extends object>(o:T)=>(keyof T)[])(locale))
         filePromise.push(
           fs.writeFile(resolvePath(directory, file + ".json"),JSON.stringify(locale[file], null, 2))
         );
@@ -290,6 +293,7 @@ let overwriteMain: (() => unknown) | undefined;
   }
 }
 {
+  // oxlint-disable-next-line unicorn/consistent-function-scoping
   const applyFlags = (name:string, value?:string) => {
     if(value !== undefined
         && app.commandLine.getSwitchValue(name) !== "")
@@ -384,7 +388,7 @@ if (!singleInstance && !overwriteMain) {
 let webContentsCrashesCount = 0;
 
 // Global `webContents` defaults for hardened security
-app.on("web-contents-created", (_event, webContents) => {
+app.on("web-contents-created", (_, webContents) => {
   const isMainWindow = webContents.session === session.defaultSession;
   // Block all permission requests/checks by the default.
   if(!isMainWindow){
@@ -400,7 +404,7 @@ app.on("web-contents-created", (_event, webContents) => {
   });
 
   // Handle renderer crashes.
-  webContents.on("render-process-gone", (_event, details) => {
+  webContents.on("render-process-gone", (_, details) => {
     console.error(kolor.bold("[WC_%s:%d]")+" %s", webContents.getProcessId(), details.exitCode, details.reason);
     webContents.reloadIgnoringCache();
     if(safeMode) return;

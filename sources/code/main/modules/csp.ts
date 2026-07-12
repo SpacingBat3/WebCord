@@ -54,26 +54,24 @@ class CSPBuilder {
   public static merge(...builders:CSPBuilder[]):CSPBuilder {
     if(!builders.every(builder => builder instanceof CSPBuilder))
       throw new TypeError("One of the argument is not a 'CSPBuilder' class!");
-    switch(builders.length) {
-      case 1: return (builders as [CSPBuilder])[0];
-      default: return new CSPBuilder(builders
-        .map(builder => builder.value)
-        .filter(value => Object.keys(value).length !== 0)
-        .reduce((prev,cur,index) => {
-          if(index === 0) return cur;
-          (Object.keys(cur)).forEach(key => {
-            const policy = cur[key];
-            if(policy === undefined)
-              return;
-            if(prev[key] !== undefined)
-              prev[key] += " " + policy;
-            else
-              prev[key] = policy;
-          },{});
-          return prev;
-        })
-      );
-    }
+    if(builders.length == 1 && builders[0]) return builders[0];
+    return new CSPBuilder(builders
+      .map(builder => builder.value)
+      .filter(value => Object.keys(value).length !== 0)
+      .reduce((prev,cur,index) => {
+        if(index === 0) return cur;
+        (Object.keys(cur)).forEach(key => {
+          const policy = cur[key];
+          if(policy === undefined)
+            return;
+          if(prev[key] !== undefined)
+            prev[key] += " " + policy;
+          else
+            prev[key] = policy;
+        },{});
+        return prev;
+      })
+    );
   }
   constructor(value: string|cspObject = {}) {
     this.value = value;
@@ -200,25 +198,18 @@ const builders: {base:CSPBuilder}&cspTP<CSPBuilder> = {
 let cache:[key:symbol,content:WeakRef<CSPBuilder>]|null = null;
 
 export function getWebCordCSP(configValues: cspTP<boolean>,...additionalPolicies: CSPBuilder[]) {
-  type parties = keyof typeof configValues;
-  type cspFilter = (value:CSPBuilder|undefined) => value is CSPBuilder;
-  const key = Symbol.for(Object.values(configValues).join("")+additionalPolicies.map(policy => policy.build()).join(""));
+  const cKey = Symbol.for(Object.values(configValues).join("")+additionalPolicies.map(policy => policy.build()).join(""));
   let val = cache?.[1].deref();
-  if(val && cache?.[0] === key)
+  if(val && cache?.[0] === cKey)
     return val;
   console.debug("[CSP] Caching function arguments...");
   val = CSPBuilder.merge(
     builders.base,
-    ...Object.keys(configValues)
-      .map((key) => {
-        if(configValues[key as parties])
-          return builders[key as parties];
-        else
-          return undefined;
-      })
-      .filter(((value) => value instanceof CSPBuilder) as cspFilter),
+    ...(Object.keys as <T extends object>(o:T)=>(keyof T)[])(configValues)
+      .map(key => configValues[key] ? builders[key] : undefined)
+      .filter(value => value instanceof CSPBuilder),
     ...additionalPolicies
   );
-  cache = [key, new WeakRef(val)];
+  cache = [cKey, new WeakRef(val)];
   return val;
 }

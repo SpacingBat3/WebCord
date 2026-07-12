@@ -25,7 +25,7 @@ export default function showAboutPanel(parent:Electron.BrowserWindow): Electron.
     buildInfo: getBuildInfo(),
     appRepo: packageJson.data.homepage
   };
-  if(aboutPanel === undefined) return;
+  if(aboutPanel === undefined) return undefined;
   ipc.once("about.close", (event) => {
     if(!aboutPanel.isDestroyed() && event.senderFrame?.url === aboutPanel.webContents.getURL())
       aboutPanel.close();

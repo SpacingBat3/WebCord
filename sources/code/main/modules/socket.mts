@@ -15,7 +15,7 @@ let server: UtilityProcess;
 function getMainWindow() {
   const window = BrowserWindow
     .getAllWindows()
-    .find(window => window.webContents.session === session.defaultSession && window.getParentWindow() === null);
+    .find(win => win.webContents.session === session.defaultSession && win.getParentWindow() === null);
   if(window === undefined){
     console.debug("[WSS] Closed connection due to lack of main window.");
     throw new Error("Server couldn't connect to main window, try again later.");
@@ -50,18 +50,18 @@ export default function startServer() {
       }
       lock = true;
       if(port === undefined)
-        return;
+        return undefined;
       const winProperties = parsedData.cmd === "GUILD_TEMPLATE_BROWSER" ?
         {width: 960} : {};
-      const child = initWindow("invite", parent, {...winProperties,...{
+      const child = initWindow("invite", parent, {...winProperties,
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
           sandbox: true,
           disableDialogs: true
         }
-      }});
-      if(child === undefined) return;
+      });
+      if(child === undefined) return undefined;
       const path = parsedData.cmd === "INVITE_BROWSER" ?
         "/invite/" : "/template/";
       const parentOrigin = new URL(parent.webContents.getURL()).origin;
@@ -79,14 +79,14 @@ export default function startServer() {
       child.webContents.session.webRequest.onBeforeRequest({
         urls: ["ws://127.0.0.1:"+port.toString()+"/*"]
       }, (_details,callback) => callback({cancel: true}));
-      return;
+      return undefined;
     };
     const hooks = Object.freeze([
       "INVITE_BROWSER","GUILD_TEMPLATE_BROWSER","DEEP_LINK_CHANNEL"
     ] as const satisfies readonly (keyof HookSignatures)[]);
 
     hooks.forEach(hook => server.postMessage({evt: "hook-set", hook } satisfies WSHookAdd));
-    server.on("message", (message:string|WSHookTrigger<(typeof hooks)[0|1|2]>) => {
+    server.on("message", (message:string|WSHookTrigger<(typeof hooks)[number]>) => {
       if(typeof message === "string") {
         console.log(message);
         return;
@@ -102,7 +102,7 @@ export default function startServer() {
         return;
       const { hook, nonce } = message;
       let data;
-      const parsedData = message.data[0] as (typeof message.data[0]&{cmd:"DEEP_LINK"});
+      const parsedData = message.data[0];
       switch(hook) {
         case "INVITE_BROWSER":
         case "GUILD_TEMPLATE_BROWSER":
@@ -123,6 +123,7 @@ export default function startServer() {
         case "DEEP_LINK_CHANNEL":
           data=undefined;
           try {
+            if(parsedData.cmd !== "DEEP_LINK") throw TypeError("Invalid parsedData.cmd != DEEP_LINK condition");
             const parent = getMainWindow();
             const path = parsedData.args.params.channelId !== undefined ?
               "/channels/"+parsedData.args.params.guildId+"/"+parsedData.args.params.channelId :
@@ -141,7 +142,7 @@ export default function startServer() {
           break;
         default:
           if((hooks as readonly string[]).includes(hook))
-            throw new Error(`Unhandled hook: "${String(hook)}"`);
+            throw Error(`Unhandled hook: "${String(hook)}"`);
       }
     });
   });

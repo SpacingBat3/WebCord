@@ -16,14 +16,14 @@ async function handleEvents(docsWindow: Electron.BrowserWindow) {
     readmeFile = "docs/"+(await e).app.getLocale()+"/Readme.md";
   (await e).ipcMain.removeHandler("documentation-load");
   (await e).ipcMain.removeAllListeners("documentation-show");
-  (await e).ipcMain.handle("documentation-load", async (event) => {
-    if(event.senderFrame?.url !== docsWindow.webContents.getURL()) return;
-    (await e).ipcMain.once("documentation-show", (event) => {
-      if(!docsWindow.isDestroyed() && event.senderFrame?.url === docsWindow.webContents.getURL()) {
+  (await e).ipcMain.handle("documentation-load", async loadEvt => {
+    if(loadEvt.senderFrame?.url !== docsWindow.webContents.getURL()) return;
+    (await e).ipcMain.once("documentation-show", showEvt => {
+      if(!docsWindow.isDestroyed() && showEvt.senderFrame?.url === docsWindow.webContents.getURL()) {
         docsWindow.show();
       }
     });
-    return (await resolve)((await e).app.getAppPath(), readmeFile);
+    (await resolve)((await e).app.getAppPath(), readmeFile);
   });
 }
 

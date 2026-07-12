@@ -165,10 +165,10 @@ export class PackageJSON<T extends (keyof PackageJsonProperties)[]> {
     }
 
     // Check 9: `devDependencies` or `dependencies` are either `undefined` or `Record<string,string>`:
-    for(const key of ["dependencies", "devDependencies"] as const) {
-      const testValue = (object as PackageJsonProperties)[key];
+    for(const kind of ["dependencies", "devDependencies"] as const) {
+      const testValue = (object as PackageJsonProperties)[kind];
       if (!/undefined|object/.test(typeof testValue))
-        return "Property '"+key+"' is of invalid type!";
+        return "Property '"+kind+"' is of invalid type!";
       else if(testValue instanceof Object) {
         for(const [key,value] of Object.entries(testValue))
           if(typeof key !== "string")

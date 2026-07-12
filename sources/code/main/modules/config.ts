@@ -261,7 +261,7 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
             height: this.#tempstate[this.#windowName]?.height ?? this.value[this.#windowName]?.height ?? window.getNormalBounds().height,
             isMaximized: eventType === "maximize"
           } satisfies WindowStatus)
-        } as unknown as Record<T, Readonly<WindowStatus>>);
+        } as Record<T, Readonly<WindowStatus>>);
         break;
       default:
         if(window.isMaximized()) return;
@@ -271,7 +271,7 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
             height: window.getNormalBounds().height,
             isMaximized: this.#tempstate[this.#windowName]?.isMaximized ?? this.value[this.#windowName]?.isMaximized ?? false
           } satisfies WindowStatus)
-        } as unknown as Record<T, Readonly<WindowStatus>>);
+        } as Record<T, Readonly<WindowStatus>>);
     }
     console.debug(`[WIN] Electron event: ${eventType}`);
     console.debug(`[WIN] State changed to: ${JSON.stringify(this.#tempstate[this.#windowName])}`);
@@ -306,7 +306,7 @@ export class WinStateKeeper<T extends string> extends Config<Partial<Record<T, W
     // Initialize class
     super(path, true, Object.freeze({
       [windowName]: defaults
-    }) as Partial<Record<T, WindowStatus>>, spaces);
+    } as Partial<Record<T, WindowStatus>>), spaces);
 
     this.#windowName = windowName;
     this.initState = Object.freeze({

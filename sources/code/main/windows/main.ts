@@ -32,6 +32,13 @@ type MainWindowFlags = [
   startHidden: boolean
 ];
 
+const headerCallback: Parameters<Electron.WebRequest["onHeadersReceived"]>[0] = (details, callback) => {
+  const {cspThirdParty} = appConfig.value.settings.advanced;
+  const responseHeaders = details.responseHeaders??{};
+  responseHeaders["Content-Security-Policy"] = [getWebCordCSP(cspThirdParty).build()];
+  callback({ responseHeaders });
+}
+
 export default function createMainWindow(...flags:MainWindowFlags): BrowserWindow {
   const l10nStrings = new L10N().client;
 
@@ -97,14 +104,6 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       win.once("show", () => win.maximize());
 
   // CSP
-
-  const headerCallback: Parameters<typeof win.webContents.session.webRequest.onHeadersReceived>[0] = (details, callback) => {
-    const {cspThirdParty} = appConfig.value.settings.advanced;
-    const responseHeaders = details.responseHeaders??{};
-    responseHeaders["Content-Security-Policy"] = [getWebCordCSP(cspThirdParty).build()];
-    callback({ responseHeaders });
-  }
-
   if(appConfig.value.settings.advanced.csp.enabled)
     win.webContents.session.webRequest.onHeadersReceived(headerCallback);
 
@@ -168,7 +167,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     };
     type handlerParamType<H extends "request"|"check"> = Parameters<Exclude<Parameters<Electron.Session[`setPermission${Capitalize<H>}Handler`]>[0],null>>;
     /** Common handler for  */
-    const permissionHandler = <T extends "request"|"check">(type:T,webContentsUrl:string, permission:string, details:handlerParamType<T>[3]) => {
+    const permissionHandler = <T extends "request"|"check">(kind:T,webContentsUrl:string, permission:string, details:handlerParamType<T>[3]) => {
       const perms = appConfig.value.settings.privacy.permissions;
       // Verify URL address of the permissions.
       try {
@@ -186,7 +185,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
           let callbackValue = true;
           if("mediaTypes" in details) {
             callbackValue = getMediaTypesPermission(details.mediaTypes);
-            for(const type of [...new Set(details.mediaTypes)])
+            for(const type of new Set(details.mediaTypes))
               if(!callbackValue)
                 break;
               else
@@ -203,7 +202,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
             // while keeping everything privacy-oriented.
             callbackValue = (perms.audio && perms.video && perms["display-capture"]) === true;
           if(!callbackValue)
-            console.debug(`[PERM]: Permission ${type} denied for 'media'.`);
+            console.debug(`[PERM]: Permission ${kind} denied for 'media'.`);
           return callbackValue;
         }
         case "notifications":
@@ -232,22 +231,22 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
     win.webContents.session.setPermissionRequestHandler((webContents, permission, callback, details) => {
       type nullPermissions = "video"|"audio"|"notifications";
       const dialogLock = new Set<nullPermissions>();
-      async function permissionDialog(permission:nullPermissions) {
-        if(dialogLock.has(permission)) return false;
-        dialogLock.add(permission);
+      async function permissionDialog(perm:nullPermissions) {
+        if(dialogLock.has(perm)) return false;
+        dialogLock.add(perm);
         const {response} = await dialog.showMessageBox(win,{
           type: "question",
           title: l10nStrings.dialog.permission.question.title,
-          message: l10nStrings.dialog.permission.question.message.replace("%s", l10nStrings.dialog.permission.question[permission]),
+          message: l10nStrings.dialog.permission.question.message.replace("%s", l10nStrings.dialog.permission.question[perm]),
           buttons: [l10nStrings.dialog.common.no, l10nStrings.dialog.common.yes],
           defaultId: 0,
           cancelId: 0,
           normalizeAccessKeys: true
         });
-        dialogLock.delete(permission);
+        dialogLock.delete(perm);
         const value = response === 1;
         const config = appConfig.value;
-        config.settings.privacy.permissions[permission] = value;
+        config.settings.privacy.permissions[perm] = value;
         appConfig.value = config;
         return value;
       }
@@ -268,17 +267,17 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
             const mediaTypes = "mediaTypes" in details ? details.mediaTypes : undefined;
             const promises:Promise<boolean>[] = [];
             (["camera","microphone"] as const).forEach(media => {
-              const permission = media === "camera" ? "video" : "audio";
-              if(!(mediaTypes?.includes(permission)??false))
+              const kind = media === "camera" ? "video" : "audio";
+              if(!(mediaTypes?.includes(kind)??false))
                 return;
               // macOS: try asking for media access whenever possible.
               if(process.platform === "darwin" && systemPreferences.getMediaAccessStatus(media) === "not-determined")
                 promises.push(systemPreferences.askForMediaAccess(media));
               // any: Ask user for permission if it is set to "null"
-              if(appConfig.value.settings.privacy.permissions[permission] === null)
-                promises.push(permissionDialog(permission));
+              if(appConfig.value.settings.privacy.permissions[kind] === null)
+                promises.push(permissionDialog(kind));
               else
-                promises.push(Promise.resolve(appConfig.value.settings.privacy.permissions[permission]??false));
+                promises.push(Promise.resolve(appConfig.value.settings.privacy.permissions[kind]??false));
             });
             if(promises.length === 0)
               Promise.all(promises)
@@ -350,23 +349,21 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         sections[2]?.trim() ?? null
       ];
       // Fetch status for ping and title from current title
-      const status=typeof dirty === "string" ? true : dirty ? false : null;
-      win.setTitle((status === true ? "["+(dirty as string)+"] " : status === false ? "*" : "") + client + " - " + section + (group !== null ? " ("+group+")" : ""));
+      const status = typeof dirty === "string" || dirty ? false : null;
+      win.setTitle((typeof dirty === "string" ? `[${dirty}] ` : dirty ? "*" : "") + client + " - " + section + (group !== null ? " ("+group+")" : ""));
       if(lastStatus === status || !tray) return;
       // Set tray icon and taskbar flash
       {
         let icon: Electron.NativeImage, flash = false, tooltipSuffix="";
-        switch(status) {
-          case true:
+        switch(typeof dirty) {
+          case "string":
             icon = appInfo.icons.tray.warn;
             flash = true;
-            tooltipSuffix=` - ${dirty as string} ${l10nStrings.tray.mention[pluralRules.select(parseInt(dirty as string))]}`;
+            tooltipSuffix=` - ${dirty} ${l10nStrings.tray.mention[pluralRules.select(parseInt(dirty))]}`;
             break;
-          case false:
-            icon = appInfo.icons.tray.unread;
+          case "boolean":
+            icon = appInfo.icons.tray[dirty ? "unread" : "default"];
             break;
-          default:
-            icon = appInfo.icons.tray.default;
         }
         // Resize icon on MacOS when its height is longer than 22 pixels.
         if(process.platform === "darwin" && icon.getSize().height > 22)
@@ -482,7 +479,8 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       // Whenever user is the one who most likely triggered this
       req.userGesture;
 
-    if(!checkStatus) {
+    if (!checkStatus) {
+      // Note: null is also valid according to Electron docs
       callback(null as unknown as Electron.Streams);
       return;
     }
@@ -492,7 +490,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       process.env["XDG_SESSION_TYPE"] !== "wayland" ||
       process.platform === "win32";
 
-    const sources = lock || apiGuard.capturer ?
+    const srcPromise = lock || apiGuard.capturer ?
       // Use desktop capturer where it doesn't crash.
       desktopCapturer.getSources({
         types: ["screen", "window"],
@@ -521,7 +519,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
       });
       ipcMain.handleOnce("getDesktopCapturerSources", async (event) => {
         if (event.sender === view.webContents)
-          return await sources;
+          return await srcPromise;
         else
           return null;
       });
@@ -547,7 +545,7 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         autoResize();
         win.on("resize", autoResize);
       });
-    } else sources.then(sources => {
+    } else srcPromise.then(sources => {
       let allowAudioSharing = false;
       // FIXME: L10N
       if (apiGuard.unixAudioSharing) allowAudioSharing = dialog.showMessageBoxSync(win, {

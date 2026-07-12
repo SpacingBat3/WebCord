@@ -9,10 +9,8 @@ const safeStoragePromise = (import("electron/main"))
   .then(main => main.safeStorage);
 
 async function fetchOrRead(url:URL, signal?:AbortSignal) {
-  const readFile = import("fs/promises").then(fs => fs.readFile);
-
   if(url.protocol === "file:")
-    return { read: (await readFile)(url.pathname, {signal}) };
+    return { read: readFile(url.pathname, {signal}) };
   else
     return { download: fetch(url.href, signal ? {signal} : {})};
 }
@@ -30,20 +28,17 @@ async function parseImports(cssString: string, importCalls: string[], maxTries=5
   cssString.match(anyImport)?.forEach(singleImport => {
     const matches = /^@import (?:(?:url\()?["']?([^"';)]*)["']?)\)?;?/m.exec(singleImport);
     if(matches?.[0] === undefined || matches[1] === undefined) return;
-    const file = resolveUrl(importCalls.at(-1) ?? "", matches[1]);
-    if(importCalls.includes(file)) {
-      promises.push(Promise.reject(new Error("Circular reference in CSS imports are disallowed: " + file)));
+    const uri = resolveUrl(importCalls.at(-1) ?? "", matches[1]);
+    if(importCalls.includes(uri)) {
+      promises.push(Promise.reject(new Error("Circular reference in CSS imports are disallowed: " + uri)));
       return;
     }
-    promises.push(fetchOrRead(new URL(file))
-      .then(data => {
-        if (data.download)
-          return data.download.then(data => data.text());
-        else
-          return data.read.then(data => data.toString());
-      })
+    promises.push(fetchOrRead(new URL(uri))
+      .then(file => file.download
+        ? file.download.then(data => data.text())
+        : file.read.then(data => data.toString()))
       .then(content => cssString = cssString.replace(singleImport, content))
-      .then(() => importCalls.push(file))
+      .then(() => importCalls.push(uri))
     );
   });
   const result = await Promise.allSettled(promises);
@@ -67,14 +62,18 @@ async function encrypt(buffer:Buffer) {
   return buffer.toString();
 }
 
-async function decrypt(app:Electron.App, string:Buffer|Promise<Buffer>) {
+async function decrypt(string:Buffer|Promise<Buffer>) {
   if(!(await safeStoragePromise).isEncryptionAvailable() && !app.isReady() && process.platform !== "darwin")
     await app.whenReady();
   if(!(await safeStoragePromise).isEncryptionAvailable())
     return (await string).toString();
-  if(!(await string).toString("utf-8").includes("�"))
-    throw new Error("One of loaded styles was not encrypted and could not be loaded.");
-  return (await safeStoragePromise).decryptString(await string);
+  try {
+    return (await safeStoragePromise).decryptString(await string);
+  } catch(cause) {
+    if (!(await string).toString("utf-8").includes("�"))
+      throw new Error("One of loaded styles is not trusted and could not be loaded.", {cause});
+    else throw cause;
+  }
 }
 
 async function addStyle(window?:Electron.BrowserWindow) {
@@ -92,10 +91,10 @@ async function addStyle(window?:Electron.BrowserWindow) {
     return;
   const promises:Promise<unknown>[] = [];
   for (const path of result.filePaths) {
-    const data = readFile(path).then(data => encrypt(data));
+    const data = readFile(path).then(buf => encrypt(buf));
     const out = resolveFs(app.getPath("userData"),"Themes", basename(path, ".css"));
     if(resolveFs(path) === out) return;
-    promises.push(data.then(data => writeFile(out, data)));
+    promises.push(data.then(buf => writeFile(out, buf)));
   }
   await Promise.all(promises);
 }
@@ -118,10 +117,10 @@ async function loadStyles(webContents:Electron.WebContents) {
         promises.push(readFile(index).then(buff=>[index,buff]));
     }
     const themeIDs:Promise<string>[] = [];
-    for (const res of promises)
+    for (const promise of promises)
       themeIDs.push(
-        decrypt(app,res.then(res => res[1]))
-          .then(async data => parseImports(data,[(await res)[0]]))
+        decrypt(promise.then(result => result[1]))
+          .then(async data => parseImports(data,[(await promise)[0]]))
           /* Makes all CSS variables and color / background properties
             * `!important` (this should fix most styles).
             */

@@ -17,7 +17,7 @@ let marked = import("marked").then(module => module.marked);
 const htmlFileUrl = document.URL;
 
 // Marked extensions:
-marked = marked.then(async marked => marked.use(
+marked = marked.then(async m => m.use(
   (await gfmHeadingId)(),
   (await mdAlerts)()
 ));
@@ -35,7 +35,7 @@ const menuHeader = document.createElement("p");
 function getId(url:string) {
   if (url.split("#").length > 1)
     return url.split("#")[1];
-  return;
+  return undefined;
 }
 
 async function loadMarkdown(mdBody: HTMLElement, mdFile: string) {
@@ -64,9 +64,9 @@ function fixImages(container:HTMLElement) {
     }
 }
 
-function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLElement, mdPrevious: string):void {
+function handleUrls(container:HTMLElement, article:HTMLElement, mdPrevious: string):void {
   for(const link of container.getElementsByTagName("a")){
-    link.onclick = () => {
+    link.addEventListener("click", () => {
       window.history.replaceState("", "", pathToFileURL(mdPrevious));
       // Handle links with the whitelisted protocols
       if(protocols.secure.includes(new URL(link.href).protocol)) {
@@ -80,7 +80,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
         }
         // Handle markdown links and 'LICENSE' files.
       } else if(/^file:\/\/.+(\.md|LICENSE)(#[a-z0-9-]+)?$/.exec(link.href)) {
-        const mdFile = fileURLToPath(link.href);
+        let mdFile = fileURLToPath(link.href);
         const id = getId(link.href);
         const oldHeader = menuHeader.innerHTML;
         menuHeader.innerText = basename(mdFile);
@@ -92,7 +92,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
         } else {
           // Fix for HTML links ('<a>' elements) that are unhandled by marked.
           const relFile = relative(document.URL, link.href);
-          const mdFile = resolve(mdPrevious, relFile);
+          mdFile = resolve(mdPrevious, relFile);
           if(!existsSync(mdFile)) {
             // Failsafe: revert all changes done so far...
             console.error("File '"+mdFile+"' does not exists!");
@@ -107,7 +107,7 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
         }
         window.scroll(0,0);
         void promise
-          .then(() => handleUrls(container, article, header, mdPrevious))
+          .then(() => handleUrls(container, article, mdPrevious))
           .then(() => fixImages(container));
         document.body.appendChild(article);
         if (id !== undefined) {
@@ -117,13 +117,13 @@ function handleUrls(container:HTMLElement, article:HTMLElement, header:HTMLEleme
       }
       window.history.pushState("", "", htmlFileUrl);
       return false;
-    };
+    });
   }
 }
 
-async function setBody(mdBody: HTMLElement, mdHeader: HTMLElement, mdFile: string, mdArticle: HTMLElement) {
+async function setBody(mdBody: HTMLElement, mdFile: string, mdArticle: HTMLElement) {
   await loadMarkdown(mdBody, mdFile);
-  handleUrls(mdBody, mdArticle, mdHeader, mdFile);
+  handleUrls(mdBody, mdArticle, mdFile);
   fixImages(mdBody);
 }
 
@@ -140,17 +140,17 @@ document.addEventListener("readystatechange", () => {
         menuHeader.innerText = basename(readmeFile);
         mdHeader.appendChild(menu);
         mdHeader.appendChild(menuHeader);
-        await setBody(mdBody, mdHeader, readmeFile, mdArticle);
+        await setBody(mdBody, readmeFile, mdArticle);
         mdBody.getElementsByTagName("sub")[0]?.parentElement?.remove();
         document.body.appendChild(mdHeader);
         document.body.appendChild(mdArticle);
-        menu.onclick = () => {
-          let scrollOptions:ScrollIntoViewOptions|undefined;
+        menu.addEventListener("click", () => {
+          let scrollOptions: ScrollIntoViewOptions|undefined;
           let promise:Promise<void> = Promise.resolve();
           if(!menuHeader.innerText.includes("Readme.md")) {
             window.scroll(0,0);
             menuHeader.innerText = basename(readmeFile);
-            promise = setBody(mdBody, mdHeader, readmeFile, mdArticle)
+            promise = setBody(mdBody, readmeFile, mdArticle)
               .then(() => mdBody.getElementsByTagName("sub")[0]?.parentElement?.remove());
           } else {
             scrollOptions = {behavior:"smooth"};
@@ -162,8 +162,7 @@ document.addEventListener("readystatechange", () => {
             const docsHeader = document.getElementById(docsId);
             if(docsHeader) docsHeader.scrollIntoView(scrollOptions);
           });
-        }
-        ;
+        });
       })
       .finally(() => {
         ipc.send("documentation-show");

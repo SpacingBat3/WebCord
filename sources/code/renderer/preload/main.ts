@@ -8,8 +8,8 @@ import L10N from "../../common/modules/l10n";
 if (window.location.protocol === "file:") {
   window.addEventListener("load", () => {
     const element = document.getElementById("logo");
-    if(element && element.tagName === "IMG")
-      (element as HTMLImageElement).src = appInfo.icons.app.toDataURL();
+    if(element instanceof HTMLImageElement)
+      element.src = appInfo.icons.app.toDataURL();
   });
   contextBridge.exposeInMainWorld(
     "webcord",
@@ -40,8 +40,8 @@ if (window.location.protocol === "file:") {
   {
     let lock = true;
     document.addEventListener("paste", (event) => {
-      const contentTypes = clipboard.availableFormats() as []|[string, string];
-      if(contentTypes.length === 2 && contentTypes[0].startsWith("image/") &&
+      const contentTypes = clipboard.availableFormats();
+      if(contentTypes.length === 2 && contentTypes[0]?.startsWith("image/") &&
           contentTypes[1] === "text/html" && lock) {
         console.debug("[WebCord] Applying clipboard workaround to the image…");
         lock = false;

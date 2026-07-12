@@ -69,5 +69,5 @@ export async function getAppHash(algorithm = "sha512", encoding:BinaryToTextEnco
   if((await fso.stat(file)).isFile())
     return fso.readFile(file)
       .then(buffer => createHash(algorithm).update(buffer).digest(encoding));
-  return;
+  return undefined;
 }

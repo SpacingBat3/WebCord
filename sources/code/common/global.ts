@@ -93,7 +93,7 @@ export function isPartialBuildInfo(object: unknown): object is Partial<BuildInfo
     return false;
   // #2 'type' property contains 'release' and 'devel' strings if defined.
   if("type" in object)
-    switch ((object as Partial<BuildInfo>).type) {
+    switch (object.type) {
       case "release":
       case "devel":
         break;
@@ -103,23 +103,23 @@ export function isPartialBuildInfo(object: unknown): object is Partial<BuildInfo
         return false;
     }
   // #3 If object contains 'commit' property, it should be of type 'string'.
-  if ("commit" in object && !(typeof (object as BuildInfo).commit === "string"))
+  if ("commit" in object && !(typeof object.commit === "string"))
     return false;
 
   /** List of valid properties for the `.features` object. */
-  const features = ["updateNotifications"];
+  const features = ["updateNotifications"] as const;
   // #4 If object contains the 'features' property, it should be an object.
   if ("features" in object)
-    if (!((object as BuildInfo).features instanceof Object))
+    if (!(object.features instanceof Object))
       return false;
     else for(const property of features)
     // #5 `features` properties are of type `boolean`.
-      if(Object.prototype.hasOwnProperty.call((object as {features:Record<string, unknown>}).features, property))
-        if(typeof (object as {features:Record<string,unknown>}).features[property] !== "boolean")
+      if(property in object.features)
+        if(typeof object.features[property] !== "boolean")
           return false;
 
   // #6 On Windows, AppUserModelID should be of 'string' type
-  if (process.platform === "win32" && !(typeof (object as BuildInfo).AppUserModelId === "string"))
+  if (process.platform === "win32" && !("AppUserModelId" in object && typeof object.AppUserModelId === "string"))
     return false;
   return true;
 }
@@ -150,6 +150,30 @@ interface TypeMergeConfig {
   nullType?: object;
 }
 
+const typeOf = (o1: unknown, c: unknown) => (o1?.constructor ?? o1) === c;
+const hasOwn = Object.hasOwn as <T>(o: T, s: string | symbol | number) => s is keyof T;
+function deepMerge<U>(config: TypeMergeConfig, src:U, object:unknown) {
+  const result = {...src};
+  if(!(src instanceof Object) || !(object instanceof Object))
+    return src;
+  (Object.keys(src)
+    .filter(
+      key => hasOwn(src as U,key) && hasOwn(object,key) && (
+        typeOf(src[key],object[key]?.constructor) || (config.nullType !== undefined ?
+          src[key] === null && object[key]?.constructor === config.nullType :
+          false
+        )
+      ) && !Array.isArray(src)
+    ) as (keyof U)[])
+    .map(key => {
+      if(typeOf(src[key],Object))
+        result[key] = deepMerge(config, src[key], object[key as keyof object]);
+      else
+        result[key] = object[key as keyof object] satisfies U[typeof key];
+    });
+  return result;
+}
+
 /**
  * Merges deeply objects, but tries to preserve the type of the first ones. This
  * has currently a few assumptions:
@@ -166,32 +190,9 @@ interface TypeMergeConfig {
  *
  * @todo More accurate types (e.g. literals to primitives)
  */
-export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, ...objects:unknown[]&[unknown]) {
-  const hasOwn = Object.hasOwn as <T>(o:T,s:string|symbol|number)=>s is keyof T;
-  const typeOf = (o1:unknown,c:unknown) => (o1?.constructor ?? o1) === c;
-  function deepMerge<T>(source:T,object:unknown) {
-    const result = {...source};
-    if(!(source instanceof Object) || !(object instanceof Object))
-      return source;
-    (Object.keys(source)
-      .filter(
-        key => hasOwn(source as T,key) && hasOwn(object,key) && (
-          typeOf(source[key],(object[key] as unknown)?.constructor) || (config.nullType !== undefined ?
-            (source[key] as unknown) === null && (object[key] as unknown)?.constructor === config.nullType :
-            false
-          )
-        ) && !Array.isArray(source)
-      ) as (keyof T)[])
-      .map(key => {
-        if(typeOf(source[key],Object))
-          result[key] = deepMerge(source[key], object[key as keyof object]);
-        else
-          result[key] = object[key as keyof object] satisfies T[typeof key];
-      });
-    return result;
-  }
+export function typeMerge<T extends object>(source: T, config: TypeMergeConfig, ...objects: unknown[] & [unknown]) {
   return (objects as T[])
-    .reduce((prev, cur:unknown) => deepMerge(prev, cur), source);
+    .reduce((prev, cur:unknown) => deepMerge(config, prev, cur), source);
 }
 
 export function wordWrap(long:string,maxr:number,maxc:number):string {

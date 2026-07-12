@@ -85,12 +85,10 @@ interface AboutWindowDetails {
   responseId: number;
 }
 
-function event2promise<C extends EventTarget>(emitter:C, channel:Parameters<C["addEventListener"]>[0]) {
-  return new Promise<void>(
-    (resolve) => emitter.addEventListener(
-      channel, () => resolve(), { once: true }
-    )
-  );
+function async4evt<C extends EventTarget>(emitter:C, channel:Parameters<C["addEventListener"]>[0]) {
+  return new Promise<void>(ok => emitter.addEventListener(
+    channel, () => ok(), { once: true }
+  ));
 }
 
 function showAppLicense() {
@@ -118,7 +116,7 @@ function showAppLicense() {
           const promises = [];
           for (const animation of animations) {
             animation.reverse();
-            promises.push(event2promise(animation, "finish"));
+            promises.push(async4evt(animation, "finish"));
           }
           void Promise.allSettled(promises).finally(() => {
             dialog.remove();
@@ -172,17 +170,17 @@ async function generateAppContent(l10n:L10N["web"]["aboutWindow"], detailsPromis
 }
 
 function generateLicenseContent(l10n:L10N["web"]["aboutWindow"], details: Promise<AboutWindowDetails>) {
-  const packageJson = new PackageJSON(["dependencies", "devDependencies"]);
-  for (const id of Object.keys(l10n.licenses).filter((value)=>(/^(?:licensedUnder|packageAuthors)$/.exec(value)) === null)) {
+  const deps = new PackageJSON(["dependencies", "devDependencies"]);
+  for (const id of (Object.keys as <T extends object>(o:T)=>(keyof T)[])(l10n.licenses).filter((value)=>(/^(?:licensedUnder|packageAuthors)$/.exec(value)) === null)) {
     const element = document.getElementById(id);
     if(element)
       void details
-        .then(details => details.appName)
-        .then(name => element.innerText = l10n.licenses[id as keyof typeof l10n.licenses]
+        .then(res => res.appName)
+        .then(name => element.innerText = l10n.licenses[id]
           .replace("%s",name)
         );
   }
-  for (const packName in packageJson.data.dependencies) {
+  for (const packName in deps.data.dependencies) {
     if(packName.startsWith("@spacingbat3/")) continue;
     const {data} = new PackageJSON(
       ["author", "license", "version", "description"],

@@ -36,9 +36,10 @@ function generateConfig () {
     googleStorageApi: "Google Storage API"
   } as const) satisfies cspTP<string>);
   // Append more third-party sites labels.
-  Object.entries(websitesThirdParty).map(stringGroup => {
-    if(finalConfig.advanced?.cspThirdParty?.labels && finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] === undefined)
-      finalConfig.advanced.cspThirdParty.labels[stringGroup[0] as keyof cspTP<string>] = stringGroup[1];
+  (Object.entries as <T extends object>(o: T) => [keyof T,T[keyof T]][])(websitesThirdParty)
+  .map(stringGroup => {
+    if(finalConfig.advanced?.cspThirdParty?.labels && finalConfig.advanced.cspThirdParty.labels[stringGroup[0]] === undefined)
+      finalConfig.advanced.cspThirdParty.labels[stringGroup[0]] = stringGroup[1];
   });
   // Append name from CSP.
   if(finalConfig.advanced?.cspThirdParty?.name !== undefined)
@@ -64,10 +65,10 @@ export default function loadSettingsWindow(parent:Electron.BrowserWindow):Electr
     minWidth: appInfo.minWinWidth,
     minHeight: appInfo.minWinHeight,
   });
-  if(settingsWindow === undefined) return;
+  if(settingsWindow === undefined) return undefined;
   ipcMain.handle("settings-generate-html", (event) => {
     if(event.senderFrame && new URL(event.senderFrame.url).protocol !== "file:")
-      return;
+      return undefined;
     if(!settingsWindow.isDestroyed()) settingsWindow.show();
     return htmlConfig;
   });

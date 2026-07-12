@@ -4,19 +4,17 @@ import { EventEmitter } from "events";
 
 const eventLoop = new EventEmitter();
 
-const server = new WebSocket([
-  ...knownInstancesList.map(instance => instance[1].origin)
-]);
+const server = new WebSocket(knownInstancesList.map(instance => instance[1].origin));
 
 const nonceSet = new Set<symbol>();
 
-process.parentPort.on("message", ({data}: {data:unknown}) => void (async() => {
+process.parentPort.on("message", ({data: mData}: {data:unknown}) => void (async() => {
   const port = (await server.details)?.port;
-  if(typeof data === "string") {
-    server.log(data,port);
+  if(typeof mData === "string") {
+    server.log(mData,port);
     return;
   }
-  const message: WSHookAdd|WSHookReturn<keyof HookSignatures> = data as WSHookAdd|WSHookReturn<keyof HookSignatures>;
+  const message: WSHookAdd|WSHookReturn<keyof HookSignatures> = mData as WSHookAdd|WSHookReturn<keyof HookSignatures>;
   const { hook } = message;
   switch(message.evt) {
     case "hook-set":
