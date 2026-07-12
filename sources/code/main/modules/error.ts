@@ -123,6 +123,8 @@ export default function uncaughtExceptionHandler(): void {
       if(!stack.includes("at"))
         stack = stripVTControlCharacters(stackColor);
     }
-    prevDialog = prevDialog.then(() => handleWithGUI(wasReady,name,message,stack,stackColor,error).catch(() => app.exit(200)));
+    prevDialog = prevDialog
+      .then(() => handleWithGUI(wasReady, name, message, stack, stackColor, error)
+      .catch(() => app.exit(200)));
   });
 }
