@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "oxc",
+    "import"
+  ],
+  "categories": {
+    "correctness": "error",
+    "perf":        "error",
+    "suspicious":  "warn"
+  },
+  "rules": {
+    // Disabled since toSorted is new,
+    // and I still target a bit more legacy JS.
+    // There are also "double alloc" worries with
+    // this rule.
+    "unicorn/no-array-sort": ["off"],
+    "no-shadow": ["warn",{"allow": ["_"]}],
+    // Inaccurate in context of Electron
+    "unicorn/require-post-message-target-origin": "off",
+    // Sometimes, TypeScript types are not that much accurate
+    // and I purpurosely assign different types that logically
+    // make sense. Or sometimes I use it for a hints for types.
+    "typescript/no-unsafe-type-assertion": "off"
+  },
+  "options":{
+    "typeAware": true
+  },
+  "env": {
+    "es2022": true,
+    "commonjs": true,
+    "node": true,
+    "browser": true
+  }
+}

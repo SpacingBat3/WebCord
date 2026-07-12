@@ -6,8 +6,8 @@
   "description": "A Discord made with the Electron API.",
   "main": "app/code/common/main.js",
   "scripts": {
-    "test": "tsc && eslint --cache --cache-location cache/eslint.json --ext .ts .",
-    "lint": "eslint --cache --cache-location cache/eslint.json --ext .ts .",
+    "test": "tsc && oxlint",
+    "lint": "oxlint",
     "build": "tsc",
     "compile": "tsc",
     "tsc": "tsc",
@@ -52,11 +52,9 @@
     "@types/source-map-support": "^0.5.4",
     "@types/ws": "^8.5.1",
     "electron": "^42.5.0",
-    "eslint": "^9.31.0",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import-x": "^4.16.1",
-    "typescript": "^6.0.2",
-    "typescript-eslint": "^8.37.0"
+    "oxlint": "^1.73.0",
+    "oxlint-tsgolint": "^0.24.0",
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@spacingbat3/disconnection": "^1.0.3",
@@ -81,9 +79,7 @@
   "private": true,
   "allowScripts": {
     "@bitdisaster/exe-icon-extractor@1.0.10": true,
-    "electron@41.9.0": true,
-    "unrs-resolver@1.12.2": true,
-    "electron-winstaller@5.4.0": true
+    "electron-winstaller@5.4.4": true
   },
   "overrides": {
     "extract-zip": "npm:@electron-internal/extract-zip@latest"
