@@ -37,7 +37,7 @@ jobs:
 
       - name: Update dependencies
         if: ${{ matrix.deps == 'latest' }}
-        run: npm update
+        run: npm update --dangerously-allow-all-scripts
 
       - name: TSC cache
         uses: actions/cache@v6
