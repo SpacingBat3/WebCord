@@ -349,30 +349,27 @@ export default function createMainWindow(...flags:MainWindowFlags): BrowserWindo
         sections[2]?.trim() ?? null
       ];
       // Fetch status for ping and title from current title
-      const status = typeof dirty === "string" || dirty ? false : null;
-      win.setTitle((typeof dirty === "string" ? `[${dirty}] ` : dirty ? "*" : "") + client + " - " + section + (group !== null ? " ("+group+")" : ""));
-      if(lastStatus === status || !tray) return;
+      const flash = typeof dirty === "string";
+      const status = flash || (dirty ? false : null);
+      win.setTitle((typeof dirty === "string" ? `[${dirty}] ` : dirty ? "*" : "") + client + " - " + section + (group !== null ? " (" + group + ")" : ""));
+      if (lastStatus === status || (lastStatus = status,!tray)) return;
       // Set tray icon and taskbar flash
-      {
-        let icon: Electron.NativeImage, flash = false, tooltipSuffix="";
-        switch(typeof dirty) {
-          case "string":
-            icon = appInfo.icons.tray.warn;
-            flash = true;
-            tooltipSuffix=` - ${dirty} ${l10nStrings.tray.mention[pluralRules.select(parseInt(dirty))]}`;
-            break;
-          case "boolean":
-            icon = appInfo.icons.tray[dirty ? "unread" : "default"];
-            break;
-        }
-        // Resize icon on MacOS when its height is longer than 22 pixels.
-        if(process.platform === "darwin" && icon.getSize().height > 22)
-          icon = icon.resize({height:22});
-        tray.setImage(icon);
-        tray.setToolTip(`${app.getName()}${tooltipSuffix}`);
-        win.flashFrame(flash&&appConfig.value.settings.general.taskbar.flash);
+      let icon: Electron.NativeImage, tooltipSuffix="";
+      switch(typeof dirty) {
+        case "string":
+          icon = appInfo.icons.tray.warn;
+          tooltipSuffix=` - ${dirty} ${l10nStrings.tray.mention[pluralRules.select(parseInt(dirty))]}`;
+          break;
+        case "boolean":
+          icon = appInfo.icons.tray[dirty ? "unread" : "default"];
+          break;
       }
-      lastStatus = status;
+      // Resize icon on MacOS when its height is longer than 22 pixels.
+      if(process.platform === "darwin" && icon.getSize().height > 22)
+        icon = icon.resize({height:22});
+      tray.setImage(icon);
+      tray.setToolTip(`${app.getName()}${tooltipSuffix}`);
+      win.flashFrame(flash&&appConfig.value.settings.general.taskbar.flash);
     }
     else if (title.includes("Discord") && !/[0-9]+/.test(win.webContents.getURL()))
       win.setTitle(title.replace("Discord",app.getName()));
