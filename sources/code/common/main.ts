@@ -396,6 +396,7 @@ app.on("web-contents-created", (_, webContents) => {
     webContents.session.setPermissionRequestHandler((_webContents,_permission,callback) => callback(false));
   }
   webContents.session.setDevicePermissionHandler(() => false);
+  webContents.session.setSSLConfig({ minVersion: "tls1.2" });
   // Block navigation to the different origin.
   webContents.on("will-navigate", (event, url) => {
     const originUrl = webContents.getURL();
