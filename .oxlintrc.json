@@ -24,7 +24,13 @@
     // Sometimes, TypeScript types are not that much accurate
     // and I purpurosely assign different types that logically
     // make sense. Or sometimes I use it for a hints for types.
-    "typescript/no-unsafe-type-assertion": "off"
+    "typescript/no-unsafe-type-assertion": "off",
+    "no-restricted-imports": ["error", {
+      "paths": [{
+        "name": "electron",
+        "message": "Prefer 'electron/*' process-scoped packages instead."
+      }]
+    }],
   },
   "options":{
     "typeAware": true

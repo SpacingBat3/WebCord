@@ -19,7 +19,7 @@
         /* Replace a set of core libraries. */
         "lib": ["ES2022", "DOM", "DOM.Iterable"],
         /* Limit module resolution to project's path only */
-        "typeRoots": ["./node_modules/@types"],
+        "typeRoots": ["./node_modules", "./node_modules/@types"],
         /* Use `tslib` for import helpers. */
         "importHelpers": true,
         /* Allow for JSON imports */
@@ -37,7 +37,8 @@
         /* Type workarounds for broken modules: */
         "paths": {
             "marked-*": ["./node_modules/marked-*/src/index.d.ts"]
-        }
+        },
+        "types": ["node", "electron"]
     },
     "include": ["sources/code/**/*.ts", "sources/code/**/*.mts",]
 }

@@ -27,7 +27,7 @@ export function getAppPath() {
 /** Show a message box. Cross-process safe method. */
 export function showMessageBox(options: Electron.MessageBoxOptions): void {
   if (process.type === "browser") {
-    import("electron")
+    import("electron/main")
       .then(api => api.dialog.showMessageBox(options))
       .catch(catchAndThrowErrors);
   } else {
