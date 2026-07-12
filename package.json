@@ -51,7 +51,7 @@
     "@types/semver": "^7.3.9",
     "@types/source-map-support": "^0.5.4",
     "@types/ws": "^8.5.1",
-    "electron": "^42.5.0",
+    "electron": "^43.1.0",
     "oxlint": "^1.73.0",
     "oxlint-tsgolint": "^0.24.0",
     "typescript": "^7.0.2"
