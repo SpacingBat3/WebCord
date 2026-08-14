@@ -65,10 +65,10 @@ jobs:
         include:
           - runner: ubuntu-latest
             name: Linux
-            arch: x64,arm64,armv7l
+            arch: x64,arm64
           - runner: windows-latest
             name: Windows
-            arch: x64,arm64,ia32
+            arch: x64,arm64
           - runner: macos-latest
             name: macOS
             arch: x64,arm64 #,universal
