@@ -1,8 +1,8 @@
 /*
  * menus – OS native menus (tray menu, context menu, menu bar etc.)
  */
-import { app, Menu, Tray } from "electron/main";
-import { shell, clipboard } from "electron/common";
+import { app, Menu, Tray, clipboard } from "electron/main";
+import { shell } from "electron/common";
 
 import {
   getBuildInfo,
@@ -62,11 +62,7 @@ export function context(parent: Electron.BrowserWindow): void {
     ...(params.editFlags.canCopy || params.editFlags.canCut || params.editFlags.canDelete ? [
       { label: menu.cut, role: "cut", enabled: params.editFlags.canCut },
       { label: menu.copy, role: "copy", enabled: params.editFlags.canCopy },
-      {
-        label: menu.paste,
-        enabled: clipboard.availableFormats().length !== 0 && params.editFlags.canPaste,
-        role: "paste"
-      },
+      { label: menu.paste, role: "paste", enabled: params.editFlags.canPaste },
       { type: "separator" }
     ] satisfies Electron.MenuItemConstructorOptions[] : []),
     // Copy link text / copy link url

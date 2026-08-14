@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer as ipc } from "electron/renderer";
-import { clipboard } from "electron/common";
 import { generateSafeKey, navigate } from "../modules/api";
 import { wLog } from "../../common/global";
 import { appInfo } from "../../common/modules/client";
@@ -33,32 +32,6 @@ if (window.location.protocol === "file:") {
    * Hide orange popup about downloading the application.
    */
   window.addEventListener("load", () => window.localStorage.setItem("hideNag", "true"));
-
-  /*
-  * Workaround for clipboard content.
-  */
-  {
-    let lock = true;
-    document.addEventListener("paste", (event) => {
-      const contentTypes = clipboard.availableFormats();
-      if(contentTypes.length === 2 && contentTypes[0]?.startsWith("image/") &&
-          contentTypes[1] === "text/html" && lock) {
-        console.debug("[WebCord] Applying clipboard workaround to the image…");
-        lock = false;
-        // Electron will somehow sort the clipboard to parse it correctly.
-        clipboard.write({
-          image: clipboard.readImage(),
-          html: clipboard.readHTML()
-        });
-        // Retry event, cancel other events.
-        event.stopImmediatePropagation();
-        ipc.send("paste-workaround", contextBridgeApiKey);
-        return;
-      }
-      lock = true;
-      return;
-    }, true);
-  }
 
   /*
    * Handle WebSocket Server IPC communication

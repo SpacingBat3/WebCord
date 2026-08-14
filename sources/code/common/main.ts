@@ -17,8 +17,8 @@ install();
 import crash, {commonCatches} from "../main/modules/error";
 crash();
 
-import { app, BrowserWindow, dialog, session, screen } from "electron/main";
-import { clipboard, shell } from "electron/common";
+import { app, BrowserWindow, dialog, session, screen, clipboard } from "electron/main";
+import { shell } from "electron/common";
 import { promises as fs } from "fs";
 import { protocols, knownInstancesList, wordWrap } from "./global";
 import { checkVersion } from "../main/modules/update";
@@ -465,7 +465,7 @@ app.on("web-contents-created", (_, webContents) => {
       else
         result = dialog.showMessageBoxSync(options);
       if (result === 1)
-        clipboard.writeText(details.url);
+        void clipboard.writeText(details.url);
       if (result < (options.buttons?.length??0)-1)
         return { action: "deny" };
     }
