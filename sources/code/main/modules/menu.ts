@@ -59,7 +59,7 @@ export function context(parent: Electron.BrowserWindow): void {
       { type: "separator" }
     ] satisfies Electron.MenuItemConstructorOptions[] : []),
     // Copy / Cut / Delete
-    ...(params.editFlags.canCopy || params.editFlags.canCut || params.editFlags.canDelete ? [
+    ...(params.editFlags.canCopy || params.editFlags.canCut || params.editFlags.canPaste ? [
       { label: menu.cut, role: "cut", enabled: params.editFlags.canCut },
       { label: menu.copy, role: "copy", enabled: params.editFlags.canCopy },
       { label: menu.paste, role: "paste", enabled: params.editFlags.canPaste },
