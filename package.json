@@ -48,11 +48,11 @@
     "@electron/fuses": "^1.5.0",
     "@reforged/maker-appimage": "^5.0.0",
     "@tsconfig/strictest": "^2.0.0",
-    "@types/node": "^20.16.1",
+    "@types/node": "^22.20.3",
     "@types/semver": "^7.3.9",
     "@types/source-map-support": "^0.5.4",
     "@types/ws": "^8.5.1",
-    "electron": "^44.0.0-beta.3",
+    "electron": "^44.3.0",
     "oxlint": "^1.73.0",
     "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^7.0.2"
@@ -60,7 +60,7 @@
   "dependencies": {
     "@spacingbat3/disconnection": "^1.0.3",
     "@spacingbat3/kolor": "^4.0.0",
-    "deepmerge-ts": "^7.0.3",
+    "deepmerge-ts": "^8.0.2",
     "dompurify": "^3.0.1",
     "marked": "^18.0.2",
     "marked-alert": "^2.1.2",
