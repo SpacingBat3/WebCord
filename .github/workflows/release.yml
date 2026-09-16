@@ -1,10 +1,8 @@
 name: Publish release
 on:
   push:
-    tags-ignore: ['*beta*']
-
-env:
-  WEBCORD_BUILD: RELEASE
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
@@ -16,16 +14,18 @@ jobs:
         include:
           - name: Linux
             runner: ubuntu-latest
-            arch: x64,arm64,armv7l
+            arch: x64,arm64
           - name: Windows
             runner: windows-latest
-            arch: x64,arm64,ia32
+            arch: x64,arm64
           - name: macOS
             runner: macos-latest
             arch: x64,arm64 #,universal
 
     name: ${{ matrix.name }} (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
+    env:
+      WEBCORD_BUILD: ${{ contains(github.ref_name, '-') && 'RELEASE' || 'DEVEL' }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -39,7 +39,7 @@ jobs:
       - name: TSC cache
         uses: actions/cache@v6
         with:
-          key: tsc-prerelease
+          key: tsc
           path: |
             app
             cache/tsc.json
