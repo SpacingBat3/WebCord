@@ -1,3 +1,5 @@
+# $schema: https://json.schemastore.org/github-workflow
+
 name: Publish release
 on:
   push:
@@ -39,7 +41,7 @@ jobs:
       - name: TSC cache
         uses: actions/cache@v6
         with:
-          key: tsc
+          key: tsc-${{ hashFiles('package-lock.json', 'tsconfig.json') }}
           path: |
             app
             cache/tsc.json

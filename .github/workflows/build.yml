@@ -1,3 +1,5 @@
+# $schema: https://json.schemastore.org/github-workflow
+
 name: Build distributables
 on:
   push:
@@ -42,17 +44,10 @@ jobs:
       - name: TSC cache
         uses: actions/cache@v6
         with:
-          key: tsc-${{ matrix.deps }}
+          key: tsc-${{ hashFiles('package-lock.json', 'tsconfig.json') }}
           path: |
             app
             cache/tsc.json
-
-      - name: ESLint cache
-        uses: actions/cache@v6
-        with:
-          key: eslint-${{ matrix.deps }}
-          path: |
-            cache/eslint.json
 
       - name: Run tests with ${{ matrix.deps }} dependencies
         run: npm test

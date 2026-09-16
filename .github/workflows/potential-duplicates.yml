@@ -1,3 +1,5 @@
+# $schema: https://json.schemastore.org/github-workflow
+
 name: Check issues for potential duplicates
 on:
   issues:
