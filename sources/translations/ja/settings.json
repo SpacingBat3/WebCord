@@ -39,7 +39,8 @@
             "labels": {
                 "typingIndicator": "入力中インジケータをブロック (<code>/typing</code>)。",
                 "fingerprinting": "不明な機種特定機能のブロック (<code>api.js</code> and <code>cdn-cgi</code>)。",
-                "science": "不明なテレメトリーのエンドポイントをブロック (<code>/science</code>や<code>/tracing</code>)。"
+                "science": "不明なテレメトリーのエンドポイントをブロック (<code>/science</code>や<code>/tracing</code>)。",
+                "sentry": ""
             }
         },
         "permissions": {
@@ -52,7 +53,8 @@
                 "display-capture": "画面キャプチャ",
                 "notifications": "通知",
                 "background-sync": "バックグラウンド同期",
-                "speaker-selection": "オーディオデバイスのリスト"
+                "speaker-selection": "オーディオデバイスのリスト",
+                "clipboard-sanitized-write": ""
             }
         }
     },
@@ -114,5 +116,6 @@
             }
         },
         "name": "高度な設定"
-    }
+    },
+    "$schema": ""
 }

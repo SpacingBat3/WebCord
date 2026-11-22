@@ -97,7 +97,8 @@
             "labels": {
                 "typingIndicator": "احظر متتبعات الكتابة (<code>/typing</code>).",
                 "fingerprinting": "احظر طُرُق تتبّع بصمة الاستخدام المعروفة (<code>api.js</code> and <code>cdn-cgi</code>).",
-                "science": "احظر نقاط قياس تتبع الاستخدام (<code>/science</code> و <code>/tracing</code>)."
+                "science": "احظر نقاط قياس تتبع الاستخدام (<code>/science</code> و <code>/tracing</code>).",
+                "sentry": ""
             }
         },
         "permissions": {
@@ -107,11 +108,14 @@
                 "fullscreen": "ملء الشاشة",
                 "notifications": "الإشعارات",
                 "display-capture": "التقاط سطح المكتب",
-                "background-sync": "المزامنة في الخلفية"
+                "background-sync": "المزامنة في الخلفية",
+                "speaker-selection": "",
+                "clipboard-sanitized-write": ""
             },
             "name": "الأذونات",
             "description": "يسمح أو يرفض عمليات التحقق من الأذونات من موقع دسكورد الإلكتروني. كن على علم بأن بقية الأذونات غير المذكورة هنا محظورة تلقائياًَ من قبل وِبكورد."
         },
         "name": "الخصوصية"
-    }
+    },
+    "$schema": ""
 }

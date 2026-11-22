@@ -39,7 +39,8 @@
             "labels": {
                 "science": "Αποκλείστε τα γνωστά τελικά σημεία τηλεμετρίας (<code>/science</code> και <code>/tracing</code>).",
                 "typingIndicator": "Αποκλεισμούς Δείκτη πληκτρολόγησης (<code>/typing</code>).",
-                "fingerprinting": "Αποκλεισμός γνωστών μεθόδων δακτυλικών αποτυπωμάτων (<code>api.js</code> και <code>cdn-cgi</code>)."
+                "fingerprinting": "Αποκλεισμός γνωστών μεθόδων δακτυλικών αποτυπωμάτων (<code>api.js</code> και <code>cdn-cgi</code>).",
+                "sentry": ""
             }
         },
         "permissions": {
@@ -51,7 +52,9 @@
                 "fullscreen": "Πλήρης οθόνη",
                 "notifications": "Ειδοποιήσεις",
                 "display-capture": "Καταγραφή επιφάνειας εργασίας",
-                "background-sync": "Συγχρονισμός παρασκηνίου"
+                "background-sync": "Συγχρονισμός παρασκηνίου",
+                "speaker-selection": "",
+                "clipboard-sanitized-write": ""
             }
         }
     },
@@ -113,5 +116,6 @@
             }
         },
         "name": "Προχωρημένες"
-    }
+    },
+    "$schema": ""
 }

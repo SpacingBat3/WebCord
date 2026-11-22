@@ -15,7 +15,11 @@
         "quit": "終了",
         "mention": {
             "one": "言及",
-            "other": "言及"
+            "other": "言及",
+            "zero": "",
+            "few": "",
+            "many": "",
+            "two": ""
         }
     },
     "windows": {

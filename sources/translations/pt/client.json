@@ -4,7 +4,11 @@
         "toggle": "Alternar",
         "mention": {
             "other": "Menções",
-            "one": "Menção"
+            "one": "Menção",
+            "zero": "",
+            "few": "",
+            "many": "",
+            "two": ""
         }
     },
     "context": {

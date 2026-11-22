@@ -6,7 +6,8 @@
     "aboutWindow": {
         "nav": {
             "about": "Sobre",
-            "licenses": "Licenças"
+            "licenses": "Licenças",
+            "credits": ""
         },
         "about": {
             "appDescription": "Cliente web Discord e Fosscord com recursos focados em privacidade.",
@@ -25,7 +26,12 @@
         },
         "licenses": {
             "appLicenseTitle": "Licença do aplicativo",
-            "appLicenseBody": "%s é um software livre: você pode usá-lo, modificá-lo e redistribuí-lo sob os termos da licença MIT, que deve ser distribuída junto a este software."
+            "appLicenseBody": "%s é um software livre: você pode usá-lo, modificá-lo e redistribuí-lo sob os termos da licença MIT, que deve ser distribuída junto a este software.",
+            "showLicense": "",
+            "licensedUnder": "",
+            "packageAuthors": "",
+            "thirdPartyLicensesTitle": "",
+            "thirdPartyLicensesBody": ""
         }
     }
 }

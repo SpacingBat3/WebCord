@@ -6,13 +6,16 @@
         "cut": "Αποκοπή",
         "copyURLText": "Αντιγραφή κειμένου συνδέσμου",
         "copyURL": "Αντιγραφή διεύθυνσης συνδέσμου",
-        "dictionaryAdd": "Προσθήκη στο τοπικό λεξικό"
+        "dictionaryAdd": "Προσθήκη στο τοπικό λεξικό",
+        "copyImage": "",
+        "copyImageURL": ""
     },
     "menubar": {
         "edit": {
             "groupName": "Επεξεργασία",
             "undo": "Αναίρεση",
-            "redo": "Επαναφορά"
+            "redo": "Επαναφορά",
+            "selectAll": ""
         },
         "view": {
             "groupName": "Προβολή",
@@ -69,6 +72,13 @@
             },
             "check": {
                 "denied": "%s: Απορρίφθηκε ο έλεγχος άδειας για %s."
+            },
+            "question": {
+                "notifications": "",
+                "message": "",
+                "title": "",
+                "audio": "",
+                "video": ""
             }
         },
         "mod": {
@@ -98,7 +108,15 @@
     },
     "tray": {
         "toggle": "Εναλλαγή",
-        "quit": "Κλείσιμο προγράμματος"
+        "quit": "Κλείσιμο προγράμματος",
+        "mention": {
+            "zero": "",
+            "few": "",
+            "one": "",
+            "many": "",
+            "other": "",
+            "two": ""
+        }
     },
     "log": {
         "listenPort": "Ακρόαση στη θύρα %s.",
