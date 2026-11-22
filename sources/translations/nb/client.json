@@ -23,7 +23,8 @@
         "edit": {
             "undo": "Angre",
             "groupName": "Rediger",
-            "redo": "Gjenta"
+            "redo": "Gjenta",
+            "selectAll": ""
         },
         "enabled": "Påskrudd",
         "window": {
@@ -33,7 +34,15 @@
     },
     "tray": {
         "toggle": "Veksle",
-        "quit": "Avslutt"
+        "quit": "Avslutt",
+        "mention": {
+            "zero": "",
+            "few": "",
+            "one": "",
+            "many": "",
+            "other": "",
+            "two": ""
+        }
     },
     "context": {
         "paste": "Lim inn",
@@ -42,7 +51,9 @@
         "dictionaryAdd": "Legg til i lokal ordliste",
         "copyURL": "Kopier lenkeadresse",
         "copyURLText": "Kopier lenketekst",
-        "inspectElement": "Inspiser"
+        "inspectElement": "Inspiser",
+        "copyImage": "",
+        "copyImageURL": ""
     },
     "dialog": {
         "common": {
@@ -67,6 +78,13 @@
             },
             "request": {
                 "denied": "%s: Tilgangsforespørsel til %s ble ikke innvilget."
+            },
+            "question": {
+                "notifications": "",
+                "message": "",
+                "title": "",
+                "audio": "",
+                "video": ""
             }
         },
         "mod": {
@@ -76,6 +94,17 @@
         "externalApp": {
             "message": "La en nettside videresende lenken med forskjellig opphav til det eksterne programmet?",
             "title": "Åpner lenke i eksternt program"
+        },
+        "screenShare": {
+            "close": "",
+            "source": {
+                "screen": "",
+                "entire": ""
+            },
+            "sound": {
+                "unavailable": "",
+                "system": ""
+            }
         }
     },
     "help": {

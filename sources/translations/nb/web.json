@@ -1,1 +1,36 @@
-{}
+{
+    "aboutWindow": {
+        "about": {
+            "featuresTitle": "",
+            "featuresDefault": "",
+            "checksumTitle": "",
+            "appRepo": "",
+            "appDescription": ""
+        },
+        "licenses": {
+            "appLicenseTitle": "",
+            "showLicense": "",
+            "licensedUnder": "",
+            "appLicenseBody": "",
+            "packageAuthors": "",
+            "thirdPartyLicensesTitle": "",
+            "thirdPartyLicensesBody": ""
+        },
+        "credits": {
+            "people": {
+                "contributors": {
+                    "default": ""
+                },
+                "author": ""
+            }
+        },
+        "nav": {
+            "about": "",
+            "credits": "",
+            "licenses": ""
+        }
+    },
+    "offline": {
+        "description": ""
+    }
+}
