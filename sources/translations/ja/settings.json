@@ -101,9 +101,6 @@
         "cspThirdParty": {
             "name": "サードパーティーのウェブサイト",
             "description": "接続またはコンテンツを表示しても良いサードパーティーのウェブサイトのリストを設定。",
-            "labels": {
-                "gif": "GIFプロバイダ"
-            },
             "info": {
                 "googleStorageApi": "Discordにファイルをアップロードするには必要です！"
             }
