@@ -55,10 +55,7 @@
         "mention": {
             "one": "erwähnen",
             "other": "erwähnt",
-            "two": "Erwähnungen",
-            "zero": "",
-            "few": "",
-            "many": ""
+            "two": "Erwähnungen"
         }
     },
     "dialog": {

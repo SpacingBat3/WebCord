@@ -38,8 +38,7 @@
             "labels": {
                 "science": "Bloquer les points de terminaison de télémétrie connus (<code>/science</code> et <code>/tracing</code>).",
                 "typingIndicator": "Bloquer l'indicateur de frappe (<code>/typing</code>).",
-                "fingerprinting": "Bloquer le script de fingerprinting (<code>api.js</code> et <code>cdn-cgi</code>).",
-                "sentry": ""
+                "fingerprinting": "Bloquer le script de fingerprinting (<code>api.js</code> et <code>cdn-cgi</code>)."
             },
             "description": "Bloquer les demandes API de Discord pour renforcer la confidentialité."
         },
@@ -52,9 +51,7 @@
                 "fullscreen": "Plein écran",
                 "notifications": "Notifications",
                 "background-sync": "Synchronisation en arrière-plan",
-                "display-capture": "Capture d'écran",
-                "speaker-selection": "",
-                "clipboard-sanitized-write": ""
+                "display-capture": "Capture d'écran"
             }
         }
     },
@@ -113,6 +110,5 @@
                 "autoscroll": "Activer le défilement par le clic du milieu (aka. <i>défilement automatique</i>)."
             }
         }
-    },
-    "$schema": ""
+    }
 }

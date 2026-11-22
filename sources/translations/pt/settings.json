@@ -4,13 +4,7 @@
             "name": "Permissões",
             "labels": {
                 "audio": "Microfone",
-                "notifications": "Notificações",
-                "background-sync": "",
-                "display-capture": "",
-                "fullscreen": "",
-                "speaker-selection": "",
-                "clipboard-sanitized-write": "",
-                "video": ""
+                "notifications": "Notificações"
             },
             "description": "Permite ou nega as verificações e solicitações de permissão do site do Discord. Observe que outras permissões não listadas aqui são bloqueadas automaticamente pelo WebCord."
         },
@@ -57,62 +51,5 @@
                 "hideOnClose": "Oculte a janela para a bandeja do sistema usando o botão fechar."
             }
         }
-    },
-    "advanced": {
-        "cspThirdParty": {
-            "info": {
-                "googleStorageApi": ""
-            },
-            "name": "",
-            "description": ""
-        },
-        "unix": {
-            "description": "",
-            "labels": {
-                "autoscroll": ""
-            },
-            "name": ""
-        },
-        "name": "",
-        "devel": {
-            "labels": {
-                "enabled": ""
-            },
-            "name": "",
-            "description": ""
-        },
-        "optimize": {
-            "name": "",
-            "labels": {
-                "gpu": ""
-            },
-            "description": ""
-        },
-        "webApi": {
-            "labels": {
-                "webGl": ""
-            },
-            "description": "",
-            "name": ""
-        },
-        "redirection": {
-            "name": "",
-            "description": "",
-            "labels": {
-                "warn": ""
-            }
-        },
-        "csp": {
-            "description": "",
-            "labels": {
-                "enabled": ""
-            },
-            "name": ""
-        },
-        "currentInstance": {
-            "description": "",
-            "name": ""
-        }
-    },
-    "$schema": ""
+    }
 }

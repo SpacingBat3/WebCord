@@ -100,11 +100,7 @@
         "quit": "Sortir",
         "mention": {
             "one": "menció",
-            "other": "mencions",
-            "zero": "",
-            "few": "",
-            "many": "",
-            "two": ""
+            "other": "mencions"
         }
     },
     "help": {

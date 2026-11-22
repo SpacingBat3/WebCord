@@ -18,8 +18,7 @@
         "edit": {
             "groupName": "Modifica",
             "undo": "Annulla",
-            "redo": "Ripeti",
-            "selectAll": ""
+            "redo": "Ripeti"
         },
         "view": {
             "groupName": "Visualizza",
@@ -106,15 +105,7 @@
     },
     "tray": {
         "toggle": "Mostra",
-        "quit": "Esci",
-        "mention": {
-            "zero": "",
-            "few": "",
-            "one": "",
-            "many": "",
-            "other": "",
-            "two": ""
-        }
+        "quit": "Esci"
     },
     "windows": {
         "settings": "Impostazioni",

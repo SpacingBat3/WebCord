@@ -3,12 +3,7 @@
         "toggle": "Schakel",
         "quit": "Afsluiten",
         "mention": {
-            "one": "Benoem",
-            "zero": "",
-            "few": "",
-            "many": "",
-            "other": "",
-            "two": ""
+            "one": "Benoem"
         }
     },
     "menubar": {

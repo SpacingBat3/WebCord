@@ -2,11 +2,7 @@
     "tray": {
         "mention": {
             "other": "menciones",
-            "one": "Mencionar",
-            "few": "",
-            "many": "",
-            "two": "",
-            "zero": ""
+            "one": "Mencionar"
         },
         "quit": "Salir",
         "toggle": "Alternar"

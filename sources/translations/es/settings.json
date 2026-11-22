@@ -113,6 +113,5 @@
                 "warn": "Siempre advertir al usuario de las redirecciones de origen cruzado a aplicaciones externas."
             }
         }
-    },
-    "$schema": ""
+    }
 }

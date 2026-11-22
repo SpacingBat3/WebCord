@@ -39,8 +39,7 @@
             "labels": {
                 "science": "Blockiert bekannte Telemetrie (<code>/science</code> und <code>/tracing</code>).",
                 "typingIndicator": "Tippanzeige blockieren (<code>/typing</code>).",
-                "fingerprinting": "Blockiere bekannte Fingerprinting-Methoden (<code>api.js</code> und <code>cdn-cgi</code>).",
-                "sentry": ""
+                "fingerprinting": "Blockiere bekannte Fingerprinting-Methoden (<code>api.js</code> und <code>cdn-cgi</code>)."
             }
         },
         "permissions": {
@@ -52,9 +51,7 @@
                 "audio": "Mikrofon",
                 "fullscreen": "Vollbild",
                 "notifications": "Benachrichtigungen",
-                "background-sync": "Hintergrundsynchronisation",
-                "speaker-selection": "",
-                "clipboard-sanitized-write": ""
+                "background-sync": "Hintergrundsynchronisation"
             }
         }
     },
@@ -76,10 +73,7 @@
         "name": "Fortgeschritten",
         "cspThirdParty": {
             "name": "Drittanbieter-websites",
-            "description": "Legt eine Liste der Websites von Drittanbietern fest, die eine Verbindung herstellen oder Inhalte anzeigen dürfen.",
-            "info": {
-                "googleStorageApi": ""
-            }
+            "description": "Legt eine Liste der Websites von Drittanbietern fest, die eine Verbindung herstellen oder Inhalte anzeigen dürfen."
         },
         "currentInstance": {
             "description": "Wählt die Instanz aus, mit der sich WebCord verbinden soll. Dies ist ein <b>experimentelles</b> Feature, da die Fosscord-Implementierung noch nicht vollständig abgeschlossen ist.",
@@ -113,6 +107,5 @@
                 "autoscroll": "Mittelklick-Scrollen aktivieren (aka. <i>Autoscroll</i>)."
             }
         }
-    },
-    "$schema": ""
+    }
 }

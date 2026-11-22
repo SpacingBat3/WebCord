@@ -8,11 +8,7 @@
             }
         },
         "taskbar": {
-            "name": "Taakbalk",
-            "labels": {
-                "flash": ""
-            },
-            "description": ""
+            "name": "Taakbalk"
         },
         "menuBar": {
             "labels": {
@@ -21,98 +17,6 @@
             "name": "Menubalk",
             "description": "Wijzigt de zichtbaarheidsinstellingen van de eigen menubalk."
         },
-        "name": "Algemeen",
-        "window": {
-            "labels": {
-                "transparent": "",
-                "hideOnClose": ""
-            },
-            "description": "",
-            "name": ""
-        }
-    },
-    "privacy": {
-        "blockApi": {
-            "labels": {
-                "sentry": "",
-                "fingerprinting": "",
-                "science": "",
-                "typingIndicator": ""
-            },
-            "name": "",
-            "description": ""
-        },
-        "permissions": {
-            "labels": {
-                "audio": "",
-                "background-sync": "",
-                "display-capture": "",
-                "fullscreen": "",
-                "speaker-selection": "",
-                "clipboard-sanitized-write": "",
-                "video": "",
-                "notifications": ""
-            },
-            "name": "",
-            "description": ""
-        },
-        "name": ""
-    },
-    "advanced": {
-        "cspThirdParty": {
-            "info": {
-                "googleStorageApi": ""
-            },
-            "name": "",
-            "description": ""
-        },
-        "unix": {
-            "description": "",
-            "labels": {
-                "autoscroll": ""
-            },
-            "name": ""
-        },
-        "name": "",
-        "devel": {
-            "labels": {
-                "enabled": ""
-            },
-            "name": "",
-            "description": ""
-        },
-        "optimize": {
-            "name": "",
-            "labels": {
-                "gpu": ""
-            },
-            "description": ""
-        },
-        "webApi": {
-            "labels": {
-                "webGl": ""
-            },
-            "description": "",
-            "name": ""
-        },
-        "redirection": {
-            "name": "",
-            "description": "",
-            "labels": {
-                "warn": ""
-            }
-        },
-        "csp": {
-            "description": "",
-            "labels": {
-                "enabled": ""
-            },
-            "name": ""
-        },
-        "currentInstance": {
-            "description": "",
-            "name": ""
-        }
-    },
-    "$schema": ""
+        "name": "Algemeen"
+    }
 }

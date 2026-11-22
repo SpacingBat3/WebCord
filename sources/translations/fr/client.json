@@ -45,15 +45,7 @@
     },
     "tray": {
         "quit": "Quitter",
-        "toggle": "Basculer",
-        "mention": {
-            "zero": "",
-            "few": "",
-            "one": "",
-            "many": "",
-            "other": "",
-            "two": ""
-        }
+        "toggle": "Basculer"
     },
     "windows": {
         "settings": "Paramètres",

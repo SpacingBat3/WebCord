@@ -16,20 +16,9 @@
         },
         "taskbar": {
             "description": "Controla el comportament de l'entrada a la barra de tasques de WebCord.",
-            "name": "Barra de tasques",
-            "labels": {
-                "flash": ""
-            }
+            "name": "Barra de tasques"
         },
-        "name": "General",
-        "window": {
-            "labels": {
-                "transparent": "",
-                "hideOnClose": ""
-            },
-            "description": "",
-            "name": ""
-        }
+        "name": "General"
     },
     "privacy": {
         "name": "Privacitat",
@@ -38,8 +27,7 @@
             "labels": {
                 "typingIndicator": "Bloqueja l'indicació d'escriptura (<code>/typing</code>).",
                 "science": "Bloqueja els punts finals de telemetria coneguts (<code>/science</code> i <code>/tracing</code>).",
-                "fingerprinting": "Bloqueja els mètodes coneguts d'empremta digital (<code>api.js</code> i <code>cdn-cgi</code>).",
-                "sentry": ""
+                "fingerprinting": "Bloqueja els mètodes coneguts d'empremta digital (<code>api.js</code> i <code>cdn-cgi</code>)."
             },
             "description": "Bloqueja les sol·licituds de l'API de Discord per endurir la privadesa."
         },
@@ -51,9 +39,7 @@
                 "display-capture": "Captura d'escriptori",
                 "background-sync": "Sincronització de fons",
                 "notifications": "Notificacions",
-                "audio": "Micròfon",
-                "speaker-selection": "",
-                "clipboard-sanitized-write": ""
+                "audio": "Micròfon"
             },
             "description": "Permet o denega les comprovacions de permisos i la sol·licitud des del lloc web de Discord. Tingueu en compte que WebCord bloqueja automàticament altres permisos que no s'inclouen aquí."
         }
@@ -61,58 +47,7 @@
     "advanced": {
         "name": "Avançat",
         "csp": {
-            "name": "Política de seguretat de contingut",
-            "description": "",
-            "labels": {
-                "enabled": ""
-            }
-        },
-        "cspThirdParty": {
-            "info": {
-                "googleStorageApi": ""
-            },
-            "name": "",
-            "description": ""
-        },
-        "unix": {
-            "description": "",
-            "labels": {
-                "autoscroll": ""
-            },
-            "name": ""
-        },
-        "devel": {
-            "labels": {
-                "enabled": ""
-            },
-            "name": "",
-            "description": ""
-        },
-        "optimize": {
-            "name": "",
-            "labels": {
-                "gpu": ""
-            },
-            "description": ""
-        },
-        "webApi": {
-            "labels": {
-                "webGl": ""
-            },
-            "description": "",
-            "name": ""
-        },
-        "redirection": {
-            "name": "",
-            "description": "",
-            "labels": {
-                "warn": ""
-            }
-        },
-        "currentInstance": {
-            "description": "",
-            "name": ""
+            "name": "Política de seguretat de contingut"
         }
-    },
-    "$schema": ""
+    }
 }
