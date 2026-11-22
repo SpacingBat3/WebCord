@@ -5,7 +5,8 @@
             "one": "Mencionar",
             "few": "",
             "many": "",
-            "two": ""
+            "two": "",
+            "zero": ""
         },
         "quit": "Salir",
         "toggle": "Alternar"
