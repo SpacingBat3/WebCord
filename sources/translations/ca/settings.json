@@ -89,7 +89,11 @@
             "description": ""
         },
         "optimize": {
-            "name": ""
+            "name": "",
+            "labels": {
+                "gpu": ""
+            },
+            "description": ""
         },
         "webApi": {
             "labels": {
