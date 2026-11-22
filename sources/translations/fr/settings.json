@@ -67,9 +67,6 @@
         "cspThirdParty": {
             "description": "Définit une liste des sites Web tiers autorisés à se connecter ou à afficher du contenu.",
             "name": "Sites Web de tiers",
-            "labels": {
-                "gif": "Fournisseurs de GIF"
-            },
             "info": {
                 "googleStorageApi": "Requis pour télécharger des fichiers sur Discord !"
             }

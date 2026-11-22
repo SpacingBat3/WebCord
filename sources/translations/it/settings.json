@@ -65,10 +65,7 @@
         },
         "cspThirdParty": {
             "name": "Siti di terze parti",
-            "description": "Imposta una lista di siti di terze parti che possono collegarsi o mostrare contenuti.",
-            "labels": {
-                "gif": "Fornitori di GIFS"
-            }
+            "description": "Imposta una lista di siti di terze parti che possono collegarsi o mostrare contenuti."
         },
         "name": "Avanzato",
         "devel": {

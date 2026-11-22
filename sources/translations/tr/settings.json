@@ -71,9 +71,6 @@
         "cspThirdParty": {
             "name": "Üçüncü parti siteler",
             "description": "Bağlanıp içerik göstermesine izin verilen üçüncü parti sitelerin listesini tutar.",
-            "labels": {
-                "gif": "GIF Sağlayıcıları"
-            },
             "info": {
                 "googleStorageApi": "Discord'a dosya yüklemek için gerekli!"
             }

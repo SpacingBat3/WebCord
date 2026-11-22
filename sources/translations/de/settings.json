@@ -73,10 +73,7 @@
         "name": "Fortgeschritten",
         "cspThirdParty": {
             "name": "Drittanbieter-websites",
-            "description": "Legt eine Liste der Websites von Drittanbietern fest, die eine Verbindung herstellen oder Inhalte anzeigen dürfen.",
-            "labels": {
-                "gif": "GIF-Anbieter"
-            }
+            "description": "Legt eine Liste der Websites von Drittanbietern fest, die eine Verbindung herstellen oder Inhalte anzeigen dürfen."
         },
         "currentInstance": {
             "description": "Wählt die Instanz aus, mit der sich WebCord verbinden soll. Dies ist ein <b>experimentelles</b> Feature, da die Fosscord-Implementierung noch nicht vollständig abgeschlossen ist.",

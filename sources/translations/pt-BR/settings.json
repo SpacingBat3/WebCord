@@ -70,9 +70,6 @@
         "cspThirdParty": {
             "name": "Sites de terceiros",
             "description": "Define uma lista de sites de terceiros com permissão para se conectar ou exibir conteúdo.",
-            "labels": {
-                "gif": "Provedores de GIF"
-            },
             "info": {
                 "googleStorageApi": "Necessário para o envio de arquivos no Discord!"
             }

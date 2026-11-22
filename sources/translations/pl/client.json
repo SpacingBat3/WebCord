@@ -3,10 +3,10 @@
         "toggle": "Przełącz",
         "quit": "Zakończ",
         "mention": {
-            "one":"wzmianka",
-            "few":"wzmianki",
-            "many":"wzmianek",
-            "other":"wzmianek"
+            "one": "wzmianka",
+            "few": "wzmianki",
+            "many": "wzmianek",
+            "other": "wzmianek"
         }
     },
     "context": {
