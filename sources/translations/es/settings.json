@@ -69,9 +69,6 @@
         "cspThirdParty": {
             "description": "Establece una lista de las paginas web de terceros permitidas a conectarse o mostrar contenido.",
             "name": "Paginas web de tercero",
-            "labels": {
-                "gif": "Proveedor de GIFs"
-            },
             "info": {
                 "googleStorageApi": "¡Necesario para cargar archivos en Discord!"
             }
