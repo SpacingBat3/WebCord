@@ -36,7 +36,8 @@
             "labels": {
                 "science": "Blocca endpoint di telemetria noti (<code>/science</code> e <code>/tracing</code>).",
                 "typingIndicator": "Blocca indicatore di scrittura (<code>/typing</code>).",
-                "fingerprinting": "Blocca metodi di fingerprinting noti (<code>api.js</code> e <code> cdn-cgi</code>)."
+                "fingerprinting": "Blocca metodi di fingerprinting noti (<code>api.js</code> e <code> cdn-cgi</code>).",
+                "sentry": ""
             },
             "description": "Blocca specifiche API di Discord per migliorare la tua privacy.",
             "name": "Disabilita API di Discord"
@@ -50,7 +51,9 @@
                 "audio": "Microfono",
                 "fullscreen": "Schermo intero",
                 "notifications": "Notifiche",
-                "display-capture": "Acquisizione del desktop"
+                "display-capture": "Acquisizione del desktop",
+                "speaker-selection": "",
+                "clipboard-sanitized-write": ""
             },
             "description": "Permetti o nega permessi e richieste specifici dal sito di Discord. Ricorda che i permessi non elencati qua sono bloccati automaticamente da WebCord."
         }
@@ -65,7 +68,10 @@
         },
         "cspThirdParty": {
             "name": "Siti di terze parti",
-            "description": "Imposta una lista di siti di terze parti che possono collegarsi o mostrare contenuti."
+            "description": "Imposta una lista di siti di terze parti che possono collegarsi o mostrare contenuti.",
+            "info": {
+                "googleStorageApi": ""
+            }
         },
         "name": "Avanzato",
         "devel": {
@@ -107,5 +113,6 @@
             "name": "Istanza di Discord",
             "description": "Seleziona l'istanza alla quale WebCord dovrebbe collegarsi. <b>Sperimentale</b> visto che l'implementazione di Fosscord non è ancora completa."
         }
-    }
+    },
+    "$schema": ""
 }

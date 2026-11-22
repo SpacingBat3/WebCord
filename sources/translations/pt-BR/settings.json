@@ -116,5 +116,6 @@
                 "autoscroll": "Ativar rolagem com o botão do meio (A.K.A <i>autoscroll</i>)."
             }
         }
-    }
+    },
+    "$schema": ""
 }

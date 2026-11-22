@@ -4,7 +4,11 @@
         "quit": "Çık",
         "mention": {
             "one": "bahset",
-            "other": "bahsetmeler"
+            "other": "bahsetmeler",
+            "zero": "",
+            "few": "",
+            "many": "",
+            "two": ""
         }
     },
     "context": {
